@@ -21,3 +21,10 @@ function channelsListAllV1(authUserId) {
         ],
     };
 }
+
+// channelsCreateV1 function with stub response
+function channelsCreateV1 (authUserId, name, isPublic) {
+  return {
+    channelId: 1,
+  };
+}
