@@ -6,7 +6,7 @@ function authLoginV1(authUserId, email, password) {
 }
 
 // authRegisterV1 function with stub response
-function authLoginV1(email, password, nameFirst, nameLast) {
+function authRegisterV1(email, password, nameFirst, nameLast) {
     return {
         authUserId: 1,
     };
