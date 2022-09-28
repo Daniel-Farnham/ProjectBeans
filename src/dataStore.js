@@ -1,5 +1,30 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {};
+let data = {
+  // TODO: insert your data structure that contains 
+  // users + channels here
+  users: [
+    {
+      uId: 10,
+      password: 'password1',
+      nameFirst: 'Ada',
+      nameLast: 'Lovelace',
+      email: 'ada.l@gmail.com',
+      handleStr: 'adalovelace',
+    },
+  ],
+
+  channels: [
+    {
+      channelId: 1,
+      name: 'W17C_BOOST',
+      ownerMembers: [user1, user2],
+      allMembers: [user1, user2, user3],
+      messages: messagesObject,
+      isPublic: true,
+    },
+  ],
+}
+
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
