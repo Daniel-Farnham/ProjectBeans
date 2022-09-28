@@ -27,12 +27,12 @@ describe('Fail cases', () => {
   });
   
   test('uID to search does not exist', () => {
-    const result = userProfileV1(authUserId, 1000);
+    const result = userProfileV1(authUserId, -1000);
     expect(result).toMatchObject({error: 'error'});
   });
   
   test('authUserId does not exist', () => {
-    const result = userProfileV1(, authUserId);
+    const result = userProfileV1(-1000, authUserId);
     expect(result).toMatchObject({error: 'error'});
   });
 
