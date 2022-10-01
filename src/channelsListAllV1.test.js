@@ -27,10 +27,10 @@ test('Testing successful return of all channels', () => {
   expect(resultChannels).toMatchObject(expectedChannels);
 });
 
-describe('Fail cases', () => {
-  // Clear data store
-  beforeEach(() => {
-    clearV1();
-  });
+test('Testing invalid authUserId', () => {
+  const userId = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
+  const channelId1 = channelsCreateV1(userId, "General", true);
   
+  const resultChannels = channelsListAllV1(userId + 1);
+  expect(resultChannels).toMatchObject(expectedChannels);
 });
