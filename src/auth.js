@@ -12,3 +12,4 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
     };
 }
 
+export { authLoginV1 };  
