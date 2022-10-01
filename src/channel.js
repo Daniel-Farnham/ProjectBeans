@@ -1,3 +1,5 @@
+
+
 function channelDetailsV1(authUserId, channelId) {
     return {
         name: 'Hayden',
