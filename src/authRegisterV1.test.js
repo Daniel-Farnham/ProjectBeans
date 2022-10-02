@@ -1,6 +1,6 @@
 import { authRegisterV1 } from './auth';
-import { userProfileV1 } from './users'
-import { clear } from './other';
+import { userProfileV1 } from './users';
+import { clearV1 } from './other';
 
 beforeEach(() => {
   clearV1();
@@ -58,7 +58,7 @@ describe('Testing authRegisterV1 error handling', () => {
     { email: 'z5361935@ad.unsw.edu.au', password: 'password', nameFirst: 'ThisIsGoingToBeAVeryLongFirstNameWhichIsNotAllowedSinceItIsOverTheLimit', nameLast: 'Scully', desc: 'Testing registration with first name too long' },
     { email: 'z5361935@ad.unsw.edu.au', password: 'password', nameFirst: 'Curtis', nameLast: '', desc: 'Testing registration with last name too short' },
     { email: 'z5361935@ad.unsw.edu.au', password: 'password', nameFirst: 'Curtis', nameLast: 'ThisIsGoingToBeAVeryLongLastNameWhichIsNotAllowedSinceItIsOverTheLimit', desc: 'Testing registration with last name too long' },
-  ])("$desc", ({ email, password, nameFirst, nameLast }) => {
+  ])('$desc', ({ email, password, nameFirst, nameLast }) => {
     const newId = authRegisterV1(email, password, nameFirst, nameLast);
     expect(newId).toMatchObject({ error: 'error' });
   });
