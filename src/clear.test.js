@@ -1,5 +1,5 @@
 import { clearV1 } from './other';
-import { authLoginV1, authRegisterv1 } from './auth';
+import { authLoginV1, authRegisterV1 } from './auth';
 
 describe('ClearV1 test cases', () => {
   test('Testing clearV1 returns {}', () => {
