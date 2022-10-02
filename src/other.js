@@ -11,5 +11,6 @@ function channelIdExists(channelId) {
     }
   }
   return false;
-};
+}
 
+export { channelIdExists };
