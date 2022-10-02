@@ -11,4 +11,6 @@ function userIdExists(userId) {
     }
   }
   return false;
-};
+}
+
+export { userIdExists };
