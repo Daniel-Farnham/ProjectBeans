@@ -13,4 +13,17 @@ function userIdExists(userId) {
   return false;
 }
 
-export { userIdExists };
+// Check if channelId exists in database
+function channelIdExists(channelId) {
+  const data = getData();
+
+  // Loop through channels array to check if channel exists
+  for (const channel of data.channels) {
+    if (channel.id === channelId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export { userIdExists, channelIdExists };
