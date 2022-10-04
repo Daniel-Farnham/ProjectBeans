@@ -9,18 +9,18 @@ beforeEach(() => {
 
 // Working cases
 test('Testing successful return of user profile', () => {
-  const userId = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-  const authUserId = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
+  const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
+  const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
   
   const expectedUser = {
-    uId: authUserId,
+    uId: user1.authUserId,
     nameFirst: 'Hang',
     nameLast: 'Pham',
     email: 'hang.pham1@student.unsw.edu.au',
     handleStr: 'hangpham',
   };
   
-  const resultUser = userProfileV1(authUserId, userId);
+  const resultUser = userProfileV1(user2.authUserId, user1.authUserId);
   expect(resultUser).toMatchObject(expectedUser);
 });
 
@@ -30,8 +30,8 @@ describe('Testing userProfileV1 error handling', () => {
       { aUId: 0, uId: 100, desc: 'uID to search does not exist' },
       { aUId: 100, uId: 0, desc: 'authUserId does not exist' },
     ])('$desc', ({ aUId, uId }) => {
-      const authUserId = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-      const result = userProfileV1(authUserId + aUId, authUserId + uId);
+      const user = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
+      const result = userProfileV1(user.authUserId + aUId, user.authUserId + uId);
       expect(result).toStrictEqual(
         {
           error: expect.any(String),
