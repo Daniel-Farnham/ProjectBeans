@@ -10,7 +10,7 @@ describe('Testing basic authLoginV1 functionality', () => {
   test('Test that authLoginV1 successfully logs in and returns an integer Id', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const authId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
-    expect(typeof authId.authUserId).toBe('number');
+    expect(authId).toStrictEqual({ authUserId: expect.any(Number) });
   });
 
   test('Test uniqueness of Ids when logging into registered accounts', () => {
@@ -18,7 +18,6 @@ describe('Testing basic authLoginV1 functionality', () => {
     const firstId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
     authRegisterV1('hayden.smith@unsw.edu.au', '123456', 'Hayden', 'Smith');
     const secondId = authLoginV1('hayden.smith@unsw.edu.au', '123456');
-
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
 
