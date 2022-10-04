@@ -24,10 +24,11 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   }
 
   // If the handle's in use, append the smallest number that makes it unique
+  let originalLength = handleStr.length;
   let num = 0;
   while (handleExists(handleStr, data)) {
     // Reset the handle and increment the number at the end until it's unique
-    handleStr = handleStr.replace(0, 20);
+    handleStr = handleStr.replace(0, originalLength);
     handleStr = handleStr + num.toString();
     num++;
   }
