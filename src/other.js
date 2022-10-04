@@ -2,12 +2,13 @@ import { getData, setData } from './dataStore.js';
 
 // Function to clear the data store object
 function clearV1 () {
-  let data = {};
+  let data = {
+    users: [],
+    channels: [],
+  };
   setData(data);
   return {};
 }
-
-
 
 // Check if channelId exists in database
 function channelIdExists(channelId) {
