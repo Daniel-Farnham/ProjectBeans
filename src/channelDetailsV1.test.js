@@ -64,7 +64,8 @@ import { clear } from './other'
       
       expect(channel).not.toMatchObject(NonMemberChannel); 
 
-      /*  this is an alternative test, not sure which is better. 
+      /*  An alternative to the above test is, not sure which is better. 
+     
       expect(NonMemberChannel).toMatchObject({ error: 'error' }); 
 
       */ 
