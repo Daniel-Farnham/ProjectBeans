@@ -1,120 +1,53 @@
-import { channelJoinV1 } from './channel';
-import { authLoginV1, authRegisterV1  } from './auth'
-import { channelsListV1, channelsListAllV1, channelsCreateV1} from './channels'
+import { channelJoinV1, channelDetailsV1 } from './channel';
+import { authRegisterV1  } from './auth'
+import { channelsCreateV1 } from './channels'
 import { clear } from './other'
 
 
 
-/*
-beforeEach(() => {
-    clearV1(); 
-})
+describe('Testing channelJoin', () => {
+    /*
+    beforeEach(() => {
+        clearV1(); 
+    })
 
 */ 
 
-test('Checking authId is valid', () => {
-    const userId = authLoginV1();
-    expect(typeof userId.authUserId).toBe('number'); //stub test, expecting auth.js to return a number if the user account is authenticated. 
-
-});
-
-describe('Checking ChannelId refers to a valid channel', () => {
-   
-
-    // Test that channel object receives the same 
-    const receivedChannels = channelsListAllV1(); //Checking all channels. 
-  /*  const expectChannels = [
-        {
-            "channelId": channelId1,
-            "name": "Boost1",
+    test('Testing invalid authUserId', () => {
+        const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+        const channel = channelsCreateV1(userId, 'ChannelBoost', true);
+        const ReturnedChannelObject = channelJoinV1(userId + 1, channel.channelId)
         
-        },
-        {
-            "channelId": channelId2,
-            "name": "Boost2",
-        },
-        {
-            "channelId": channelId3,
-            "name": "Boost3"
-        }
-    ]
-*/
-
-    test('Checking that channel to join is an object part of the channels array from the complete list of channelsListAllV1', () => {
-        expect (typeof receivedChannels.channels).toBe('object'); 
-    }); 
-
-  
-    
-
-    const channel = channelsListAllV1();
-    test ("That the channel is valid", () => {
-        expect(channel).toBe(
-            expect.arrayContaining([
-                expect.objectContaining({ channelId: 1}),
-                expect.objectContaining({ name: "My Channel"})
-            
-            ])
-        );
+        expect(ReturnedChannelObject).toMatchObject({ error: 'error' }); 
+     
     });
-        
     
+      test('Testing invalid channelId', () => { 
+        const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+        const channel = channelsCreateV1(userId, 'ChannelBoost', true);
+        const ReturnedChannelObject = channelJoinV1(userId, channel.channelId + 1)  
     
-
-    /*
-
-    Need to find way to access the objects in the channel array. 
-
-    console.log(channelsListAllV1().channels.channelId);
-    test('Checking that channel to join has channelId and name', () => {
-    
-        expect (typeof channelArray.channels.channelId).toBe('number'); 
-
-        We are also assuming that the channelId is a positive integer. 
-    
+        expect(ReturnedChannelObject).toMatchObject({ error: 'error' }); 
+     
     });
 
-    */ 
-}); 
+      test('Testing if the user is already a member of the channel', () => {
+        const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+        const channel = channelsCreateV1(userId, 'ChannelBoost', true);
+        
+        expect(channelJoinV1(userId, channel.channelId)).toMatchObject({ error: 'error' });  //expecting channelJoin to return error if the user is already a member. 
 
-/*
+      });
 
-describe ('authenticated user is already a member of the channel', () => {
-    const authID = authLoginV1()
-    expect(typeof authID.authUserId).toBe('number'); //stub test, expecting channels.js to return a number if the user account is authenticated
-});
+      test('Testing if user is trying to join private channel that they do not own', () => {
+        
+        const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+        const channel = channelsCreateV1(userId, 'ChannelBoost', false); //Creating private channel
 
-describe ('authUserId is trying to join a private channel', () => { 
-    //not sure on this test yet
+        expect(channelJoinV1(userId, channel.channelId)).toMatchObject({ error: 'error'});  
 
-}); 
+      });
 
-
-
-
-test('authenticated user is already a member of the channel', () => {
-    const authID = authLoginV1()
-    expect(typeof authID.authUserID).toBe('number'); //stub test, expecting channels.js to return a number if the user account is authenticated
-});
-
-test('authUserId is invalid', () => { 
-    //not sure on this test yet
 
 }); 
-
-test('channelId refers to a channel that is private when the authorised user is not already a channel member/global owner', () => {
-
-    //not sure on this one yet. 
-}); 
-
-
-
-
-
-/* Some assumptions we are making. 
-
-    That when implemented auth.js and channel.js will only return numbers. 
-    That when implemented channel.js will exist. 
-
-*/
 
