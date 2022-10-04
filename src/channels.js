@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore.js';
+import { userIdExists } from './other.js';
 
 // channelsListV1 function with stub response
 function channelsListV1(authUserId) {
@@ -12,17 +13,27 @@ function channelsListV1(authUserId) {
     };
 }
 
-// channelsListAllV1 function with stub response
+// channelsListAllV1 function
+// Paramater: authuserId
+// Return: array of channel objects containing channelId and name
 function channelsListAllV1(authUserId) {
   // Check authUserId exists
-  // If exists, return channels
-  const data = getData();
+  if (userIdExists(authUserId)) {
+    const data = getData();
+    let channels = [];
+    // Loop through each channel and push to channels array
+    for (const channel of data.channels) {
+      const channelObj = {
+        channelId: channel.channelId,
+        name: channel.name,
+      };
 
-  let channels = [];
-  for (let channel of data.channels) {
-    channels.push(channel);
+      channels.push(channelObj);
+    }
+    return channels
+  } else {
+    return { error: "authUserId is invalid"};
   }
-  return channels;
 }
 
 // channelsCreateV1 function with stub response
