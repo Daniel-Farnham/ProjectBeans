@@ -1,24 +1,76 @@
 import { channelDetailsV1 } from './channel';
-import { channelsListV1 } from './channels'
-import { authLoginV1 } from './auth'
+import { channelsCreateV1 } from './channels'
+import { authRegisterV1 } from './auth'
 import { clear } from './other'
 
-/* 
 
-    Given a channel with ID channelId that the authorised user is a member of, provides basic details about the channel.
-
-*/ 
-
-// Checking authUserId is valid. 
-
-test('Checking authId is valid', () => {
-    const userID = authLoginV1();
-    expect(typeof userID.authUserId).toBe('number'); //stub test, expecting auth.js to return a number if the user account is authenticated. 
-
-});
+/* describe('Testing channelDetails', () => {
+  
+  beforeEach(() => {
+    clear();
+  }); */
 
 
-// test to check that the authenticated user is part of the channel. 
+  test('Successfully view channel details', () => {
+    const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+    const channel = channelsCreateV1(userId, 'ChannelBoost', true); 
+    const ReturnedChannelObj = channelDetailsV1(userId, channel.channelId);
+    const ExpectedChannelObj = { name: 'Hayden', ownerMembers: 
+    [
+      {
+        uId: 1,
+        email: 'example@gmail.com',
+        nameFirst: 'Hayden',
+        nameLast: 'Jacobs',
+        handleStr: 'haydenjacobs',
+      }
+    ],
+    allMembers: [
+      {
+        uId: 1,
+        email: 'example@gmail.com',
+        nameFirst: 'Hayden',
+        nameLast: 'Jacobs',
+        handleStr: 'haydenjacobs',
+      }
+    ], 
+    }; 
+
+    expect(ReturnedChannelObj).toMatchObject(ExpectedChannelObj);
+
+    });
 
 
-// channelId does not refer to a valid channel. 
+    test('Testing invalid authUserId', () => {
+      const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+      const channel = channelsCreateV1(userId, 'ChannelBoost', true);
+      const ReturnedChannelObject = channelDetailsV1(userId + 1, channel.channelId)
+      
+      expect(ReturnedChannelObject).toMatchObject({ error: 'error' }); 
+    });
+
+    test('Testing invalid channelId', () => { 
+      const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+      const channel = channelsCreateV1(userId, 'ChannelBoost', true);
+      const ReturnedChannelObject = channelDetailsV1(userId, channel.channelId + 1)  
+
+      expect(ReturnedChannelObject).toMatchObject({ error: 'error' }); 
+    });
+
+    test('Authorised user is not a member of the channel', () => {
+      const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+      const channel = channelsCreateV1(userId, 'ChannelBoost', true);
+      const NonMemberChannel = channelsCreateV1(userId, 'ChannelBoostWithoutDaniel', true); 
+      
+      expect(channel).not.toMatchObject(NonMemberChannel); 
+
+      /*  this is an alternative test, not sure which is better. 
+      expect(NonMemberChannel).toMatchObject({ error: 'error' }); 
+
+      */ 
+
+    });
+
+// });
+
+//Assumed that the isPublic question is boolean. 

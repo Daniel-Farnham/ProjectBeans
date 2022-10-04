@@ -29,4 +29,4 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   };
 }
 
-export { channelsListV1 }
+export { channelsCreateV1 }
