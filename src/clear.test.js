@@ -11,14 +11,22 @@ describe('ClearV1 test cases', () => {
     authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     clearV1();
     const result = authLoginV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!');
-    expect(result).toMatchObject({error: 'error'});
+    expect(result).toStrictEqual(
+      {
+        error: expect.any(String),
+      }
+    );
   });
 
   test('Testing re-creating the same user after running clearV1', () => {
     authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     clearV1();
     const result = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    expect(typeof result).toBe('number');
+    expect(result).toStrictEqual(
+      {
+        authUserId: expect.any(Number),
+      }
+    );
   });
 });
 
