@@ -9,7 +9,7 @@ beforeEach(() => {
 describe('Testing basic authRegisterV1 functionality', () => {
   test('Test successful registration of new account', () => {
     const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    expect(typeof newId.authUserId).toBe('number');
+    expect(newId).toStrictEqual({ authUserId: expect.any(Number) });
   });
 
   test('Test uniqueness of newly registered account Ids', () => {
