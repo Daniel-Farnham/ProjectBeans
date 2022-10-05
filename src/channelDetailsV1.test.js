@@ -1,15 +1,14 @@
 import { channelDetailsV1 } from './channel';
 import { channelsCreateV1 } from './channels'
 import { authRegisterV1 } from './auth'
-import { clear } from './other'
+import { clearV1 } from './other'
 
 
-/* describe('Testing channelDetails', () => {
-  
+describe('Testing channelDetails', () => {
+
   beforeEach(() => {
     clear();
-  }); */
-
+  }); 
 
   test('Successfully view channel details', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
@@ -61,17 +60,12 @@ import { clear } from './other'
       const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
       const channel = channelsCreateV1(userId, 'ChannelBoost', true);
       const NonMemberChannel = channelsCreateV1(userId, 'ChannelBoostWithoutDaniel', true); 
-      
-      expect(channel).not.toMatchObject(NonMemberChannel); 
-
-      /*  An alternative to the above test is, not sure which is better. 
      
       expect(NonMemberChannel).toMatchObject({ error: 'error' }); 
 
-      */ 
 
     });
 
-// });
+});
 
 //Assumed that the isPublic question is boolean. 
