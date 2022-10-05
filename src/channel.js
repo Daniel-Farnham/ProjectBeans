@@ -11,66 +11,26 @@ function channelDetailsV1(authUserId, channelId) {
     return { error: 'error' }
   }
   
-  //Check if the user is the member of the channel. Return details if true, return error if false. 
-  /*
+  //Check if the user is the member of the channel. Return channel details if true, return error if false. 
   else {
     for (const channels of data.channels) { // loop through each channel
-      for (const channelMembers of data.channels["allMembers"]) { // loop through each member of the channel. 
-        if (channelMembers = userIdExits) { //This line might be broken. 
+      for (const channelMembers of channels.allMembers) { // loop through each member of the channel. 
+        if (channelMembers.uId = authUserId) { // Checking if the user is a member of the channel. 
           return {
             name: channels.name,
-            //Errors with this. 
-            ownerMembers: [
-          {
-            uId: 1,
-            email: 'example@gmail.com',
-            nameFirst: 'Hayden',
-            nameLast: 'Jacobs',
-            handleStr: 'haydenjacobs',
+            isPublic: channels.isPublic,
+            ownerMembers: channels.ownerMembers,
+            allMembers: channels.allMembers
           }
-          ],
-          allMembers: [
-          {
-            uId: 1,
-            email: 'example@gmail.com',
-            nameFirst: 'Hayden',
-            nameLast: 'Jacobs',
-            handleStr: 'haydenjacobs',
-          }
-          ],
-          }
+        }
+        else {
+          return { error: 'error' }
         }
       }    
     }
   }
+};
 
-  //Check if user is member of channel. Loop through all channels, checking the members of each channel. 
-  
-
-    return {
-        name: 'Hayden',
-        ownerMembers: [
-          {
-            uId: 1,
-            email: 'example@gmail.com',
-            nameFirst: 'Hayden',
-            nameLast: 'Jacobs',
-            handleStr: 'haydenjacobs',
-          }
-        ],
-        allMembers: [
-          {
-            uId: 1,
-            email: 'example@gmail.com',
-            nameFirst: 'Hayden',
-            nameLast: 'Jacobs',
-            handleStr: 'haydenjacobs',
-          }
-        ],
-    };
-
-*/ 
-}
 
 function channelJoinV1(authUserId, channelId) {
     return {};
