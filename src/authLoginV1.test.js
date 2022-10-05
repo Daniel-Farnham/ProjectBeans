@@ -43,6 +43,6 @@ describe('Testing authLoginV1 error handling', () => {
   ])('$desc', ({ email, password }) => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const authId = authLoginV1(email, password);
-    expect(authId).toMatchObject({ error: 'error' });
+    expect(authId).toMatchObject({ error: expect.any(String) });
   });
 });

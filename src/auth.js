@@ -4,17 +4,19 @@ import validator from 'validator';
 const MAX_HANDLE_LEN = 20;
 
 // authLoginV1 function with stub response
-function authLoginV1(authUserId, email, password) {
+function authLoginV1(email, password) {
   // If a user exists with matching email and password, return authUserId
   const data = getData();
   for (const user of data.users) {
     if (user.email === email && user.password === password) {
       return { authUserId: user.uId };
+    } else if (user.email === email && user.password !== password) {
+      return { error: 'Incorrect password.' };
     }
   }
 
-  // If haven't returned yet, email isn't registered or password is wrong
-  return { error: 'error' };
+  // If haven't returned yet, email doesn't belong to a user
+  return { error: 'Email doesn\'t belong to a user.' };
 }
 
 // authRegisterV1 function with implementation
