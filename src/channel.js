@@ -40,7 +40,7 @@ function channelInviteV1(authUserId, channelId, uId) {
     
     let authUserExists = false;
     
-    const allMembers = data.channels.find(o => o.channelId === 1).allMembers;
+    const allMembers = data.channels.find(o => o.channelId === channelId).allMembers;
     for (const member of allMembers) {
       // If authUserId exists in member list, then set authUserExists to true
       if (member.uId === authUserId) { 
