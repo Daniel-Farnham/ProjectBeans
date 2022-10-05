@@ -1,5 +1,15 @@
-import { getData } from './dataStore.js';
+import { getData, setData } from './dataStore.js';
 import { validator } from 'validator';
+
+// Function to clear the data store object
+function clearV1 () {
+  let data = {
+    users: [],
+    channels: [],
+  };
+  setData(data);
+  return {};
+}
 
 // Check if userId exists in database
 function userIdExists(userId) {
@@ -17,7 +27,7 @@ function userIdExists(userId) {
 // Check if channelId exists in database
 function channelIdExists(channelId) {
   const data = getData();
-
+  
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     if (channel.id === channelId) {
@@ -59,4 +69,4 @@ function handleExists(handleStr, data) {
   return false;
 }
 
-export { userIdExists, channelIdExists, registerInfoInvalid, handleExists };
+export { userIdExists, channelIdExists, registerInfoInvalid, handleExists, clearV1 };
