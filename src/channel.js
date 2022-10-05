@@ -1,4 +1,6 @@
-
+import { getData, setData } from './dataStore.js'
+import { userIdExists } from './other,js'
+import { channelIdExists } from './other.js'
 
 function channelDetailsV1(authUserId, channelId) {
     return {
@@ -25,7 +27,41 @@ function channelDetailsV1(authUserId, channelId) {
 }
 
 function channelJoinV1(authUserId, channelId) {
-    return {};
+
+  const data = getData();
+  const findChannel = data.channels.find(o => o.channelId === channelId);
+  
+  //Check if userId or channelId are invalid
+  if (!(userIdExists(authUserId)) || !(channelIdExists(channelId)) ) {
+    return { error: 'userId / channelId is invalid' };
+  }
+
+
+  //check if channel Id is private 
+  else if (findChannel.isPublic === false) {
+    //check if user is already an ownerMember
+    for (const ownerMembers of findChannel.ownerMembers) {
+      if (ownerMembers.uId === authUserId) {
+        return { error: 'User is already the owner of private channel'};
+      }
+      //check if user is already member
+      for (const channelMembers of findChannel.channelMembers) {
+        if (channelMembers.uId === authUserId) {
+          return { error: 'User is already a member of the private channel'};
+        }
+      }
+    }
+  }
+
+  //Check if the user is a member of the channel. 
+  else {
+    for (const channelMembers of findChannel.channelMembers) {
+      if (channelMembers.uId === authUserId) {
+        return { error: 'User is already a member of the public channel'};
+      }
+    }
+  }
+
 }
 
 function channelInviteV1(authUserId, channelId, uId) {
