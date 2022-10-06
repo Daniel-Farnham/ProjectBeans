@@ -9,18 +9,19 @@ function channelDetailsV1(authUserId, channelId) {
   if (userIdExists(authUserId) && channelIdExists(channelId)) {
     //Check if the user is the member of the channel. Return channel details if true, return error if false. 
     for (const allMembers of findChannel.allMembers) {
-        if (allMembers.uId === authUserId) { // Checking if the user is a member of the channel. 
-          return {
-            name: findChannel.name,
-            isPublic: findChannel.isPublic,
-            ownerMembers: findChannel.ownerMembers,
-            allMembers: findChannel.allMembers
-          }
+      // Checking if the user is a member of the channel. 
+      console.log(allMembers);
+      if (allMembers.uId === authUserId) { 
+        return {
+          name: findChannel.name,
+          isPublic: findChannel.isPublic,
+          ownerMembers: findChannel.ownerMembers,
+          allMembers: findChannel.allMembers
         }
-        else {
-          return { error: 'user is already a part of the channel' }
-        }
-      }    
+      }
+    }    
+    // Case where authUserId is not a member of the channel
+    return { error: 'authUserId is not a member of the channel' }
   } else {
     return { error: 'userId or channelId is invalid' }
   }
@@ -49,5 +50,3 @@ function channelMessagesV1(authUserId, channelId, start) {
         end: 50,
       };
 }
-
-export { channelDetailsV1 }; 

@@ -12,8 +12,8 @@ describe('Testing channelDetails', () => {
 
   test('Successfully view channel details', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const channel = channelsCreateV1(userId, 'ChannelBoost', true); 
-    const ReturnedChannelObj = channelDetailsV1(userId, channel.channelId); //Should provide a valid channelId
+    const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true); 
+    const ReturnedChannelObj = channelDetailsV1(userId.authUserId, channel.channelId); //Should provide a valid channelId
     
     const ExpectedChannelObj = { 
       name: 'ChannelBoost', 
@@ -45,24 +45,24 @@ describe('Testing channelDetails', () => {
 
     test('Testing invalid authUserId', () => {
       const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
-      const channel = channelsCreateV1(userId, 'ChannelBoost', true);
-      const ReturnedChannelObject = channelDetailsV1(userId + 1, channel.channelId)
+      const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
+      const ReturnedChannelObject = channelDetailsV1(userId.authUserId + 1, channel.channelId)
       
       expect(ReturnedChannelObject).toMatchObject({ error: expect.any(String) }); 
     });
 
     test('Testing invalid channelId', () => { 
       const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
-      const channel = channelsCreateV1(userId, 'ChannelBoost', true);
-      const ReturnedChannelObject = channelDetailsV1(userId, channel.channelId + 1)  
+      const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
+      const ReturnedChannelObject = channelDetailsV1(userId.authUserId, channel.channelId + 1)  
 
       expect(ReturnedChannelObject).toMatchObject({ error: expect.any(String) }); 
     });
 
     test('Authorised user is not a member of the channel', () => {
       const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
-      const channel = channelsCreateV1(userId, 'ChannelBoost', true);
-      const NonMemberChannel = channelsCreateV1(userId, 'ChannelBoostWithoutDaniel', true); 
+      const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
+      const NonMemberChannel = channelsCreateV1(userId.authUserId, 'ChannelBoostWithoutDaniel', true); 
      
       expect(NonMemberChannel).toMatchObject({ error: expect.any(String) }); 
 
