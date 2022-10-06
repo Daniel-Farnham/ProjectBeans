@@ -5,10 +5,21 @@ let data = {
   users: [
     {
       uId: 10,
+      email: 'ada.l@gmail.com',
       nameFirst: 'Ada',
       nameLast: 'Lovelace',
-      email: 'ada.l@gmail.com',
       handleStr: 'adalovelace',
+      password: 'P@ssword',
+      permissionId: 1,
+    },
+    {
+      uId: 20,
+      email: 'jane.doe@gmail.com',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+      handleStr: 'janedoe',
+      password: 'P@ssword',
+      permissionId: 2,
     },
   ],
 
@@ -16,14 +27,56 @@ let data = {
     {
       channelId: 1,
       name: 'W17C_BOOST',
-      ownerMembers: [user1, user2],
-      allMembers: [user1, user2, user3],
-      messages: messagesObject,
+      ownerMembers: [
+        {
+          uId: 10,
+          email: 'ada.l@gmail.com',
+          nameFirst: 'Ada',
+          nameLast: 'Lovelace',
+          handleStr: 'adalovelace',
+          password: 'P@ssword',
+          permissionId: 1,
+        },
+      ],
+      allMembers: [
+        {
+          uId: 10,
+          email: 'ada.l@gmail.com',
+          nameFirst: 'Ada',
+          nameLast: 'Lovelace',
+          handleStr: 'adalovelace',
+          password: 'P@ssword',
+          permissionId: 1,
+        },
+        {
+          uId: 20,
+          email: 'jane.doe@gmail.com',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          handleStr: 'janedoe',
+          password: 'P@ssword',
+          permissionId: 2,
+       },
+      ],
+      messages: [
+        {
+          messageId: 0,
+          uId: 10,
+          message: "Hello",
+          timeSent: 1665037588,
+        },
+        {
+          messageId: 1,
+          uId: 20,
+          message: "Hello",
+          timeSent: 1665037580,
+        },
+       
+      ],
       isPublic: true,
     },
   ],
 }
-
 
 ```
 
