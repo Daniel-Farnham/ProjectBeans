@@ -4,6 +4,16 @@ import { userIdExists } from './other.js';
 // userProfileV1 function
 // Parameters: authUserId, uId
 // Return: Returns valid user ID, email, first name, last name, and handle
+
+/**
+  * Returns user object if a valid user is found
+  * 
+  * @param {number} authUserId - uId of authorised user requesting profile
+  * @param {number} uId - uId of user to search
+  * 
+  * @returns {user} - Returns valid user ID, email, first name, last name, 
+  * and handle
+*/
 function userProfileV1 (authUserId, uId) {
   // Check if authUserId exists
   if (userIdExists(authUserId)) {
