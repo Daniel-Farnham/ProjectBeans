@@ -1,30 +1,32 @@
 import { getData, setData } from './dataStore.js'
-import { userIdExists } from './other,js'
-import { channelIdExists } from './other.js'
+import { userIdExists, channelIdExists } from './other.js'
+
 
 function channelDetailsV1(authUserId, channelId) {
-    return {
-        name: 'Hayden',
-        ownerMembers: [
-          {
-            uId: 1,
-            email: 'example@gmail.com',
-            nameFirst: 'Hayden',
-            nameLast: 'Jacobs',
-            handleStr: 'haydenjacobs',
-          }
-        ],
-        allMembers: [
-          {
-            uId: 1,
-            email: 'example@gmail.com',
-            nameFirst: 'Hayden',
-            nameLast: 'Jacobs',
-            handleStr: 'haydenjacobs',
-          }
-        ],
-    };
+
+  const data = getData(); 
+  const findChannel = data.channels.find(o => o.channelId === channelId);
+  //Check if userId or channelId is invalid. 
+  if (userIdExists(authUserId) && channelIdExists(channelId)) {
+    //Check if the user is the member of the channel. Return channel details if true, return error if false. 
+    for (const allMembers of findChannel.allMembers) {
+      // Checking if the user is a member of the channel. 
+      if (allMembers.uId === authUserId) { 
+        return {
+          name: findChannel.name,
+          isPublic: findChannel.isPublic,
+          ownerMembers: findChannel.ownerMembers,
+          allMembers: findChannel.allMembers
+        }
+      }
+    }    
+    // Case where authUserId is not a member of the channel
+    return { error: 'authUserId is not a member of the channel' }
+  } else {
+    return { error: 'userId or channelId is invalid' }
+  }
 }
+
 
 function channelJoinV1(authUserId, channelId) {
 
@@ -83,4 +85,6 @@ function channelMessagesV1(authUserId, channelId, start) {
       };
 }
 
+
 export { channelJoinV1, channelDetailsV1 }
+
