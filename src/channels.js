@@ -13,9 +13,13 @@ function channelsListV1(authUserId) {
     };
 }
 
-// channelsListAllV1 function
-// Paramater: authuserId
-// Return: array of channel objects containing channelId and name
+/**
+  * Get an array with channels containing channelId and name
+  * 
+  * @param {number} authUserId - userId making the request
+  * 
+  * @returns {channels} - array of channel objects containing channelId and name
+*/
 function channelsListAllV1(authUserId) {
   // Check authUserId exists
   if (userIdExists(authUserId)) {
