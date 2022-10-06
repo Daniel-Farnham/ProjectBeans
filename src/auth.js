@@ -3,7 +3,16 @@ import validator from 'validator';
 
 const MAX_HANDLE_LEN = 20;
 
-// authLoginV1 function with stub response
+/**
+  * Will attempt to login to an account with the given email and password,
+  * returning an object containing the user's id.
+  * 
+  * @param {string} email - The email of the account being logged in to
+  * @param {string} password - The password of the account being logged in to
+  * 
+  * @returns {{error: string}} - An error message if email/password is invalid
+  * @returns {{authUserId: number}} - The user id of the logged in account
+  */
 function authLoginV1(email, password) {
   // If a user exists with matching email and password, return authUserId
   const data = getData();
@@ -14,7 +23,7 @@ function authLoginV1(email, password) {
       return { error: 'Incorrect password.' };
     }
   }
-
+  
   // If haven't returned yet, email doesn't belong to a user
   return { error: 'Email doesn\'t belong to a user.' };
 }
