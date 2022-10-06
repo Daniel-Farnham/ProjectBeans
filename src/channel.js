@@ -7,7 +7,7 @@ function channelDetailsV1(authUserId, channelId) {
 
   const data = getData(); 
   const findChannel = data.channels.find(o => o.channelId === channelId);
-  //Check if userId or channelId is invalid. 
+  //Check if userId and channelId is invalid. 
   if (userIdExists(authUserId) && channelIdExists(channelId)) {
     //Check if the user is the member of the channel. Return channel details if true, return error if false. 
     for (const allMembers of findChannel.allMembers) {
@@ -39,18 +39,18 @@ function channelJoinV1(authUserId, channelId) {
     return { error: 'userId or channelId is invalid' };
   }
 
-  //Check if user is already member of channel
-  for (const channelMembers of findChannel.channelMembers) {
-    if (channelMembers.uId === authUserId) {
-      return { error: 'User is already a member of the public channel' };
-    }
-  }
-
   //If member is not Global Owner and channel is private. 
   const findUser = data.users.find(o => o.uId === authUserId)
   
   if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
     return { error: 'Channel is private and user is not global owner or a member of the channel'}
+  }
+
+  //Check if user is already member of channel, something wrong in here
+  for (const allMembers of findChannel.allMembers) {
+    if (allMembers.uId === authUserId) {
+      return { error: 'User is already a member of the public channel' };
+    }
   }
 
   const userObj = {
