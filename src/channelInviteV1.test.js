@@ -72,7 +72,7 @@ describe('Testing channelInviteV1 error handling', () => {
     const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
     const channel = channelsCreateV1(user1.authUserId, "General", true);
-    const result = channelInviteV1(user1.authUserId, channel.channelId, user1.authUserId + user2.authUserId);
+    const result = channelInviteV1(user1.authUserId, channel.channelId, user1.authUserId + user2.authUserId + 10);
     
     expect(result).toStrictEqual( {
       error: expect.any(String),
@@ -105,7 +105,7 @@ describe('Testing channelInviteV1 error handling', () => {
     const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
     const channel = channelsCreateV1(user1.authUserId, "General", true);
-    const result = channelInviteV1(user1.authUserId + user2.authUserId, channel.channelId, user2.authUserId);
+    const result = channelInviteV1(user1.authUserId + user2.authUserId + 10, channel.channelId, user2.authUserId);
 
     expect(result).toStrictEqual( {
       error: expect.any(String),

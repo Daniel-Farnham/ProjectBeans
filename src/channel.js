@@ -1,6 +1,6 @@
 import { userIdExists, channelIdExists } from './other.js';
 import { getData, setData } from './dataStore.js';
-import { userProfileV1 } from './users';
+import { userProfileV1 } from './users.js';
 
 function channelDetailsV1(authUserId, channelId) {
 
@@ -39,8 +39,8 @@ function channelInviteV1(authUserId, channelId, uId) {
   // If authUserId, uId and channelId are valid Ids
   if (userIdExists(authUserId) && userIdExists(uId) 
   && channelIdExists(channelId)) {
-    
     let authUserExists = false;
+    const data = getData(); 
     
     const allMembers = data.channels.find(o => o.channelId === channelId).allMembers;
     for (const member of allMembers) {
@@ -51,25 +51,26 @@ function channelInviteV1(authUserId, channelId, uId) {
       
       // If user already exists as member, return error
       if (member.uId === uId) {
-        return { error: "error"};
+        return { error: "User to invite already a member of channel"};
       } 
     }
     // Invite new member to channel if authUserId is member of channel
     if (authUserExists) {
       const newMember = userProfileV1(authUserId, uId);
       let data = getData();
+      // Loop through channel and add new member
       for (let channel of data.channels) {
         if (channel.channelId === channelId) {
           channel.allMembers.push(newMember);
           setData(data);
+          return {};
         }
-      }
-      return {};
+      } 
     } else {
-      return { error: "error"};
+      return { error: "authUserId is not a member of channel"};
     }
   } else {
-    return { error : "error" };
+    return { error : "authUserId/uId/channelId not valid" };
   }
 }
 
