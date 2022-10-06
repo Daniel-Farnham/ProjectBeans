@@ -47,7 +47,7 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   const data = getData();
   const userId = data.users.length;
 
-  const permissionId = GLOBAL_OWNER;
+  let permissionId = GLOBAL_OWNER;
   if (userId === 0) {
     permissionId= GLOBAL_MEMBER;
   }
