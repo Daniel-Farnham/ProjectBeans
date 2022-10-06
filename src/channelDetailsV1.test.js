@@ -11,29 +11,30 @@ describe('Testing channelDetails', () => {
   }); 
 
   test('Successfully view channel details', () => {
-    const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
+    const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const channel = channelsCreateV1(userId, 'ChannelBoost', true); 
     const ReturnedChannelObj = channelDetailsV1(userId, channel.channelId); //Should provide a valid channelId
-    const ExpectedChannelObj = 
-    { 
-      name: 'Hayden', 
+    
+    const ExpectedChannelObj = { 
+      name: 'ChannelBoost', 
+      isPublic: true,
       ownerMembers: 
     [
       {
-        uId: 1,
-        email: 'example@gmail.com',
-        nameFirst: 'Hayden',
-        nameLast: 'Jacobs',
-        handleStr: 'haydenjacobs',
+        uId: userId.authUserId,
+        email: 'daniel.farnham@student.unsw.edu.au@gmail.com',
+        nameFirst: 'Daniel',
+        nameLast: 'Farnham',
+        handleStr: 'danialfarnham',
       }
     ],
     allMembers: [
       {
-        uId: 1,
-        email: 'example@gmail.com',
-        nameFirst: 'Hayden',
-        nameLast: 'Jacobs',
-        handleStr: 'haydenjacobs',
+        uId: userId.authUserId,
+        email: 'daniel.farnham@student.unsw.edu.au@gmail.com',
+        nameFirst: 'Daniel',
+        nameLast: 'Farnham',
+        handleStr: 'danialfarnham',
       }
     ], 
     }; 
