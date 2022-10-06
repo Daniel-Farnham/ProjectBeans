@@ -39,15 +39,15 @@ function channelJoinV1(authUserId, channelId) {
 
   //check if channel Id is private 
   else if (findChannel.isPublic === false) {
-    //check if user is already an ownerMember
+    //check if user is not a global owner 
     for (const ownerMembers of findChannel.ownerMembers) {
       if (ownerMembers.uId === authUserId) {
         return { error: 'User is already the owner of private channel'};
       }
       //check if user is already member
-      for (const channelMembers of findChannel.channelMembers) {
-        if (channelMembers.uId === authUserId) {
-          return { error: 'User is already a member of the private channel'};
+    for (const channelMembers of findChannel.channelMembers) {
+      if (channelMembers.uId === authUserId) {
+        return { error: 'User is already a member of the private channel'};
         }
       }
     }
