@@ -1,6 +1,11 @@
 import { getData } from './dataStore.js';
 
-// Check if userId exists in database
+/**
+  * Check if userId exists within database
+  * 
+  * @param {number} userId - userId to check
+  * @returns {Boolean} - returns true if exists, false otherwise
+*/
 function userIdExists(userId) {
   const data = getData();
   
