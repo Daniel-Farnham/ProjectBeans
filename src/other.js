@@ -1,6 +1,10 @@
 import { getData, setData } from './dataStore.js';
 
-// Function to clear the data store object
+/**
+  * Function to clear the data store object
+  * @param {}  - no parameters required
+  * @returns {} - returns empty object
+*/
 function clearV1 () {
   let data = {
     users: [],
@@ -11,7 +15,6 @@ function clearV1 () {
 }
 
 /**
-  * Check if userId exists within database
   * 
   * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise
@@ -29,7 +32,6 @@ function userIdExists(userId) {
 }
 
 /**
-  * Check if channelId exists in database
   * 
   * @param {number} channelId - channelId to check
   * 
