@@ -68,7 +68,7 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   for(const user of data.users) {
     // Create user object with required values
     const userObj = {
-      uId: user.uID,
+      uId: user.uId,
       email: user.email,
       nameFirst: user.nameFirst,
       nameLast: user.nameLast,
