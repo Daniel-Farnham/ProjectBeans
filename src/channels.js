@@ -1,5 +1,6 @@
-import { channelIdExists, userIdExists } from "./other";
+import { channelIdExists, userIdExists } from "./other.js";
 import { getData, setData } from './dataStore.js';
+import { userProfileV1 } from './users.js';
 
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
@@ -36,7 +37,7 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   // Check authUserId exists
   if (!(userIdExists(authUserId))) {
     return {error: 'authUserId is invalid.'};
-  }
+  };
   
   // Check if the length of the name is between 1-20 characters long.
   // Create channel if true, return error if false.
@@ -45,22 +46,19 @@ function channelsCreateV1 (authUserId, name, isPublic) {
     return {error: 'Channel name is invalid.'};
   };
   
-  // Create the new channel ID
-  let originalLength = channelStr.length
-  let num = 0
-  while (channelIdExists(channelStr, data)) {
-    channelStr = channelStr.replace(0, originalLength);
-    channelStr = channelStr + num.toString();
-    num++;
-  };
 
-
-  // Push channel owner and member
+  // Add the new channel to the database and push users
   const ownerMembers = [];
   const allMembers = [];
+  
+  for(const user of data.users) {
+    if (user.uId === authUserId) {
+      ownerMembers.push(user);
+      allMembers.push(user);
+    }
+  }
 
-  // Add the new channel to the database
-  const channelId = data.channels.length
+  const channelId = data.channels.length;
   const channelObj = {
     channelId: channelId,
     name: name,
@@ -69,11 +67,12 @@ function channelsCreateV1 (authUserId, name, isPublic) {
     messages: [],
     isPublic: isPublic,
   };
-
-  ownerMembers.push(user);
-  allMembers.push(user);
+  
+  // Push the user to the channel
+  data.channels.push(channelObj);
   setData(data);
 
-  return 
+
+  return {channelId: channelId};
 }
 export { channelsCreateV1, channelsListAllV1, channelsListV1 };

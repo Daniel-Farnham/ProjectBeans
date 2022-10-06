@@ -146,8 +146,4 @@ function generateHandle(nameFirst, nameLast) {
   return handleStr;
 }
 
-<<<<<<< HEAD
-export { authRegisterV1, authLoginV1 };
-=======
 export { authLoginV1, authRegisterV1 };
->>>>>>> master
