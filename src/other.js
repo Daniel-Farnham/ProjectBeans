@@ -1,6 +1,13 @@
 import { getData } from './dataStore.js';
 
-// Check if channelId exists in database
+/**
+  * Check if channelId exists in database
+  * 
+  * @param {number} channelId - channelId to check
+  * 
+  * @returns {boolean} - true if channel exists, false otherwise
+*/
+
 function channelIdExists(channelId) {
   const data = getData();
 
