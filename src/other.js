@@ -6,7 +6,7 @@ function userIdExists(userId) {
   
   // Loop through users array to check if user exists
   for (const user of data.users) {
-    if (user.id === userId) {
+    if (user.uId === userId) {
       return true;
     }
   }
