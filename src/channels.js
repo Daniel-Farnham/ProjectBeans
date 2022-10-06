@@ -1,6 +1,5 @@
-import { channelIdExists, userIdExists } from "./other.js";
+import { userIdExists } from "./other.js";
 import { getData, setData } from './dataStore.js';
-import { userProfileV1 } from './users.js';
 
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
