@@ -22,19 +22,19 @@ describe('Testing channelDetails', () => {
     [
       {
         uId: userId.authUserId,
-        email: 'daniel.farnham@student.unsw.edu.au@gmail.com',
+        email: 'daniel.farnham@student.unsw.edu.au',
         nameFirst: 'Daniel',
         nameLast: 'Farnham',
-        handleStr: 'danialfarnham',
+        handleStr: 'danielfarnham',
       }
     ],
     allMembers: [
       {
         uId: userId.authUserId,
-        email: 'daniel.farnham@student.unsw.edu.au@gmail.com',
+        email: 'daniel.farnham@student.unsw.edu.au',
         nameFirst: 'Daniel',
         nameLast: 'Farnham',
-        handleStr: 'danialfarnham',
+        handleStr: 'danielfarnham',
       }
     ], 
     }; 

@@ -10,7 +10,6 @@ function channelDetailsV1(authUserId, channelId) {
     //Check if the user is the member of the channel. Return channel details if true, return error if false. 
     for (const allMembers of findChannel.allMembers) {
       // Checking if the user is a member of the channel. 
-      console.log(allMembers);
       if (allMembers.uId === authUserId) { 
         return {
           name: findChannel.name,
@@ -50,3 +49,5 @@ function channelMessagesV1(authUserId, channelId, start) {
         end: 50,
       };
 }
+
+export { channelDetailsV1 };
