@@ -10,15 +10,15 @@ test('Testing successful return of all channels', () => {
   const channelId3 = channelsCreateV1(user.authUserId, "Random", true);
   const expectedChannels = [
     {
-      channelId: channelId1,
+      channelId: channelId1.channelId,
       name: "General",
     },
     {
-      channelId: channelId2,
+      channelId: channelId2.channelId,
       name: "Boost",
     },
     {
-      channelId: channelId3,
+      channelId: channelId3.channelId,
       name: "Random",
     },
   ];
