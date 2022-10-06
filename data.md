@@ -10,6 +10,7 @@ let data = {
       email: 'ada.l@gmail.com',
       handleStr: 'adalovelace',
       isGlobalOwner: true,
+      permissionId: 1,
     },
     {
       uId: 20,
@@ -18,6 +19,7 @@ let data = {
       email: 'jane.doe@gmail.com',
       handleStr: 'janedoe',
       isGlobalOwner: false,
+      permissionId: 2,
     },
   ],
 
@@ -33,6 +35,7 @@ let data = {
           email: 'ada.l@gmail.com',
           handleStr: 'adalovelace',
           isGlobalOwner: true,
+          permissionId: 1,
         }
       ],
       allMembers: [
@@ -43,7 +46,17 @@ let data = {
           email: 'ada.l@gmail.com',
           handleStr: 'adalovelace',
           isGlobalOwner: true,
-        }
+          permissionId: 1,
+        },
+        {
+          uId: 20,
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          email: 'jane.doe@gmail.com',
+          handleStr: 'janedoe',
+          isGlobalOwner: false,
+          permissionId: 2,
+       },
       ],
       messages: [
         {
