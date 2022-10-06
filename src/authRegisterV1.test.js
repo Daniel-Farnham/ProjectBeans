@@ -21,9 +21,9 @@ describe('Testing basic authRegisterV1 functionality', () => {
   test('Test user info is registered correctly', () => {
     const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
 
-    const resultUser = userProfileV1(newId, newId);
+    const resultUser = userProfileV1(newId.authUserId, newId.authUserId);
     const expectedUser = {
-      uId: newId,
+      uId: newId.authUserId,
       nameFirst: 'Johnathon',
       nameLast: 'Augustus-Jones',
       email: 'z5361935@ad.unsw.edu.au',
@@ -39,12 +39,12 @@ describe('Testing basic authRegisterV1 functionality', () => {
     authRegisterV1('edwin.ngo@student.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
     const newId = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
 
-    const resultUser = userProfileV1(newId, newId);
+    const resultUser = userProfileV1(newId.authUserId, newId.authUserId);
     const expectedUser = {
-      uId: newId,
+      uId: newId.authUserId,
       nameFirst: 'Johnathon',
       nameLast: 'Augustus-Jones',
-      email: 'hang.pham1@unsw.edu.au',
+      email: 'hang.pham1@student.unsw.edu.au',
       handleStr: 'johnathonaugustusjon2',
     };
 
