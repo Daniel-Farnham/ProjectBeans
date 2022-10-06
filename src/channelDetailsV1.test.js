@@ -7,14 +7,17 @@ import { clearV1 } from './other'
 describe('Testing channelDetails', () => {
 
   beforeEach(() => {
-    clear();
+    clearV1();
   }); 
 
   test('Successfully view channel details', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
     const channel = channelsCreateV1(userId, 'ChannelBoost', true); 
-    const ReturnedChannelObj = channelDetailsV1(userId, channel.channelId);
-    const ExpectedChannelObj = { name: 'Hayden', ownerMembers: 
+    const ReturnedChannelObj = channelDetailsV1(userId, channel.channelId); //Should provide a valid channelId
+    const ExpectedChannelObj = 
+    { 
+      name: 'Hayden', 
+      ownerMembers: 
     [
       {
         uId: 1,
@@ -39,7 +42,6 @@ describe('Testing channelDetails', () => {
 
     });
 
-
     test('Testing invalid authUserId', () => {
       const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham')
       const channel = channelsCreateV1(userId, 'ChannelBoost', true);
@@ -63,9 +65,6 @@ describe('Testing channelDetails', () => {
      
       expect(NonMemberChannel).toMatchObject({ error: expect.any(String) }); 
 
-
     });
 
 });
-
-//Assumed that the isPublic question is boolean. 

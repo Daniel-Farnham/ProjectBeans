@@ -1,6 +1,5 @@
 import { getData, setData } from './dataStore.js'
-import { userIdExists } from './other,js'
-import { channelIdExists } from './other.js'
+import { userIdExists, channelIdExists } from './other.js'
 
 function channelDetailsV1(authUserId, channelId) {
 
