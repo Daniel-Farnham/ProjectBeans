@@ -19,7 +19,18 @@ function authLoginV1(email, password) {
   return { error: 'Email doesn\'t belong to a user.' };
 }
 
-// authRegisterV1 function with implementation
+/**
+  * Will attempt to register a new account with the given information, returning
+  * an object containing the user's new unique id. 
+  * 
+  * @param {string} email - The email of the account being registered
+  * @param {string} password - The password of the account being registered
+  * @param {string} nameFirst - The users first name
+  * @param {string} nameFirst - The users last name
+  * 
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {{authUserId: number}} - The user id of the registered account
+  */
 function authRegisterV1(email, password, nameFirst, nameLast) {
   // Check if the given information is valid, then generate a unique handle
   const isInvalid = registerInfoInvalid(email, password, nameFirst, nameLast);
@@ -50,7 +61,17 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   };
 }
 
-// Check if the information used to register a new account is valid
+/**
+  * Checks if the information used to register a new account is valid
+  * 
+  * @param {string} email - The email of the account being registered
+  * @param {string} password - The password of the account being registered
+  * @param {string} nameFirst - The users first name
+  * @param {string} nameFirst - The users last name
+  * 
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {boolean} - False if the information isn't invalid
+  */
 function registerInfoInvalid(email, password, nameFirst, nameLast) {
   // Check whether email, password and first/last name meet the criteria
   if (!(validator.isEmail(email))) {
@@ -78,7 +99,13 @@ function registerInfoInvalid(email, password, nameFirst, nameLast) {
   return false;
 }
 
-// Check if a handle string exists in database
+/**
+  * Checks if a handle string exists in the database
+  * 
+  * @param {string} handleStr - The generated handle for a new account
+  * 
+  * @returns {boolean} - True if the handle already exists, false otherwise
+  */
 function handleExists(handleStr) {
   // Loop through users array to check if the handle already exists
   const data = getData();
@@ -90,7 +117,14 @@ function handleExists(handleStr) {
   return false;
 }
 
-// Generate a unique handle string
+/**
+  * Generates a unique handle string
+  * 
+  * @param {string} nameFirst - The users first name
+  * @param {string} nameLast - The users last name
+  * 
+  * @returns {string} - A unique handle made from the first and last name
+  */
 function generateHandle(nameFirst, nameLast) {
   // Create an alphanumeric handle string of length <= 20
   let handleStr = (nameFirst + nameLast).toLowerCase();
