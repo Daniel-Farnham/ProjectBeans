@@ -2,6 +2,8 @@ import { getData, setData } from './dataStore.js';
 import validator from 'validator';
 
 const MAX_HANDLE_LEN = 20;
+const GLOBAL_OWNER = 1;
+const GLOBAL_MEMBER = 2;
 
 /**
   * Will attempt to login to an account with the given email and password,
@@ -53,13 +55,20 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   // Add the new user to the database
   const data = getData();
   const userId = data.users.length;
+
+  const permissionId = GLOBAL_OWNER;
+  if (userId === 0) {
+    permissionId= GLOBAL_MEMBER;
+  }
+
   const user = {
     uId: userId,
     email: email,
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
-    password: password
+    password: password,
+    permissionId: permissionId
   };
 
   data.users.push(user);
