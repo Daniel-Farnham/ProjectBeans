@@ -45,7 +45,7 @@ describe('Testing channelDetails', () => {
       const channel = channelsCreateV1(userId, 'ChannelBoost', true);
       const ReturnedChannelObject = channelDetailsV1(userId + 1, channel.channelId)
       
-      expect(ReturnedChannelObject).toMatchObject({ error: 'error' }); 
+      expect(ReturnedChannelObject).toMatchObject({ error: expect.any(String) }); 
     });
 
     test('Testing invalid channelId', () => { 
@@ -53,7 +53,7 @@ describe('Testing channelDetails', () => {
       const channel = channelsCreateV1(userId, 'ChannelBoost', true);
       const ReturnedChannelObject = channelDetailsV1(userId, channel.channelId + 1)  
 
-      expect(ReturnedChannelObject).toMatchObject({ error: 'error' }); 
+      expect(ReturnedChannelObject).toMatchObject({ error: expect.any(String) }); 
     });
 
     test('Authorised user is not a member of the channel', () => {
@@ -61,7 +61,7 @@ describe('Testing channelDetails', () => {
       const channel = channelsCreateV1(userId, 'ChannelBoost', true);
       const NonMemberChannel = channelsCreateV1(userId, 'ChannelBoostWithoutDaniel', true); 
      
-      expect(NonMemberChannel).toMatchObject({ error: 'error' }); 
+      expect(NonMemberChannel).toMatchObject({ error: expect.any(String) }); 
 
 
     });
