@@ -13,7 +13,7 @@ function channelIdExists(channelId) {
 
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
-    if (channel.channelId=== channelId) {
+    if (channel.channelId === channelId) {
       return true;
     }
   }
