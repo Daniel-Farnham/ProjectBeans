@@ -8,7 +8,7 @@ function userProfileV1 (authUserId, uId) {
   // Check if authUserId exists
   if (userIdExists(authUserId)) {
     // Check if userId to search exists, then return user data
-    if (userIdExists(authUserId)) {
+    if (userIdExists(uId)) {
       const data = getData();
       for (const user of data.users) {
         if (user.uId === uId) {
