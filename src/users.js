@@ -1,6 +1,7 @@
 import { getData } from './dataStore.js';
 import { userIdExists } from './other.js';
 
+// userProfileV1 function
 // Parameters: authUserId, uId
 // Return: Returns valid user ID, email, first name, last name, and handle
 
