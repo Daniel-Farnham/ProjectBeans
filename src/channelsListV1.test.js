@@ -2,6 +2,10 @@ import { clearV1 } from './other';
 import { channelsCreateV1, channelsListV1 } from './channels';
 import { authRegisterV1 } from './auth';
 
+beforeEach (() => {
+  clearV1();
+});
+
 describe('Testing channelsListV1', () => {
   test('Test successful return of users channels', () => {
     const userId = authRegisterV1('edwin.ngo@student.unsw.edu.au', 'ANicePassword', 'Edwin', 'Ngo');
