@@ -99,5 +99,4 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   return {channelId: channelId};
 }
 
-export { channelsCreateV1, channelsListAllV1, channelsListV1 };
-
+export { channelsListV1, channelsListAllV1, channelsCreateV1 };
