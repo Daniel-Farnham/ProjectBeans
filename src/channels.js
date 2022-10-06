@@ -51,9 +51,18 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   const allMembers = [];
   
   for(const user of data.users) {
+    // Create user object with required values
+    const userObj = {
+      uId: user.uID,
+      email: user.email,
+      nameFirst: user.nameFirst,
+      nameLast: user.nameLast,
+      handleStr: user.handleStr,
+    };
+
     if (user.uId === authUserId) {
-      ownerMembers.push(user);
-      allMembers.push(user);
+      ownerMembers.push(userObj);
+      allMembers.push(userObj);
     }
   }
 
@@ -75,3 +84,4 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   return {channelId: channelId};
 }
 export { channelsCreateV1, channelsListAllV1, channelsListV1 };
+
