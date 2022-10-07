@@ -12,32 +12,30 @@ const MAX_CHANNEL_LEN = 20;
  * 
  * @returns {{channels: channels}} - array of channel objects containing channelId and name
 */
-
 function channelsListV1(authUserId) {
   // Check if authUserId Exists
   if (userIdExists(authUserId)) {
-    const data = getData();
-    let channels = [];
-    
-    // Check if user is a member of channel
-    for (const channel of data.channels) {
-      const channelObj = {
-        channelId: channel.channelId,
-        name: channel.name ,
-      };
-      
-      // Checking if the user is a member of the channel
-      for (const allMembers of channel.allMembers) {
-        if (allMembers.uId === authUserId) {
-          channels.push(channelObj);
-        };
-      };
-    };
-    return { channels: channels }
-  }
-  else {
     return {error: "authUserId is invalid"};
   }
+
+  const data = getData();
+  let channels = [];
+  
+  // Check if user is a member of channel
+  for (const channel of data.channels) {
+    const channelObj = {
+      channelId: channel.channelId,
+      name: channel.name ,
+    };
+    
+    for (const allMembers of channel.allMembers) {
+      if (allMembers.uId === authUserId) {
+        channels.push(channelObj);
+      };
+    };
+  };
+
+  return { channels: channels }
 };
 
 
