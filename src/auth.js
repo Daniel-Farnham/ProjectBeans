@@ -110,8 +110,9 @@ function registerInfoInvalid(email, password, nameFirst, nameLast) {
   
   // Check if the email is in use
   const data = getData();
+  const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
-    if (email === user.email) {
+    if (caseInsensitiveEmail === user.email) {
       return { error: 'Email is already in use.' };
     }
   }
