@@ -16,16 +16,31 @@ function channelsListV1(authUserId) {
     };
 }
 
-// channelsListAllV1 function with stub response
+/**
+  * Get an array with channels containing channelId and name
+  * 
+  * @param {number} authUserId - userId making the request
+  * 
+  * @returns {channels} - array of channel objects containing channelId and name
+*/
 function channelsListAllV1(authUserId) {
-    return {
-        channels: [
-          {
-            channelId: 1,
-            name: 'My Channel',
-          }
-        ],
-    };
+  // Check authUserId exists
+  if (userIdExists(authUserId)) {
+    const data = getData();
+    let channels = [];
+    // Loop through each channel and push to channels array
+    for (const channel of data.channels) {
+      const channelObj = {
+        channelId: channel.channelId,
+        name: channel.name,
+      };
+
+      channels.push(channelObj);
+    }
+    return channels
+  } else {
+    return { error: "authUserId is invalid"};
+  }
 }
 
 // channelsCreateV1 function with stub response
@@ -51,9 +66,18 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   const allMembers = [];
   
   for(const user of data.users) {
+    // Create user object with required values
+    const userObj = {
+      uId: user.uId,
+      email: user.email,
+      nameFirst: user.nameFirst,
+      nameLast: user.nameLast,
+      handleStr: user.handleStr,
+    };
+
     if (user.uId === authUserId) {
-      ownerMembers.push(user);
-      allMembers.push(user);
+      ownerMembers.push(userObj);
+      allMembers.push(userObj);
     }
   }
 
@@ -75,5 +99,9 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   return {channelId: channelId};
 }
 
+<<<<<<< HEAD
 export { channelsCreateV1, channelsListAllV1, channelsListV1 };
 
+=======
+export { channelsListV1, channelsListAllV1, channelsCreateV1 };
+>>>>>>> 7a3c03566d58b74a4f2511f75582181c9e384e5a
