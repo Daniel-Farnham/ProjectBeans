@@ -20,6 +20,7 @@ const MAX_NAME_LEN = 50;
   */
 function authLoginV1(email, password) {
   // If a user exists with matching email and password, return authUserId
+  // If email matches, but password is wrong return an error
   const data = getData();
   const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
