@@ -62,7 +62,7 @@ function channelsListAllV1(authUserId) {
 
       channels.push(channelObj);
     }
-    return channels
+    return { channels };
   } else {
     return { error: "authUserId is invalid"};
   }
