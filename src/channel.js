@@ -4,14 +4,18 @@ import { userProfileV1 } from './users.js';
 
 const GLOBAL_OWNER = 1; 
 
+// Allows authorised user of channel to access the details of the channel.
+// Parameters authUserId, channelId
+// Return channelDetails if the user is a member of the channel. Return error otherwise. 
+
 function channelDetailsV1(authUserId, channelId) {
 
   const data = getData(); 
   const findChannel = data.channels.find(o => o.channelId === channelId);
   
-  //Check if userId and channelId is invalid. 
+  // Check if userId and channelId is invalid. 
   if (userIdExists(authUserId) && channelIdExists(channelId)) {
-    //Check if the user is the member of the channel. Return channel details if true, return error if false. 
+    // Check if the user is the member of the channel. Return channel details if true, return error if false. 
     for (const allMembers of findChannel.allMembers) {
       // Checking if the user is a member of the channel. 
       if (allMembers.uId === authUserId) { 
