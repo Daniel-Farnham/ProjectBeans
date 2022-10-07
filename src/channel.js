@@ -89,7 +89,6 @@ function channelJoinV1(authUserId, channelId) {
 
   setData(data);
   return {};
-
 }
 
 /**
