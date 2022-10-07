@@ -12,16 +12,17 @@ describe('Testing channelsListV1', () => {
     const channelId1 = channelsCreateV1(userId.authUserId, "General" , true);
     const channelId2 = channelsCreateV1(userId.authUserId, "Boost", false);
     const channelId3 = channelsCreateV1(userId.authUserId + 1, "Aero", false);
-    const expectedChannels = [
+    const expectedChannels = 
+    {channels: [
       {
-        channelId: channelId1,
+        channelId: channelId1.channelId,
         name: "General",
       },
       {
-        channelId: channelId2,
+        channelId: channelId2.channelId,
         name: "Boost",
       },
-    ];
+    ]};
 
     const resultChannels = channelsListV1(userId.authUserId);
 
