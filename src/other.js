@@ -48,5 +48,23 @@ function channelIdExists(channelId) {
   }
   return false;
 }
+/** 
+  *  Check if a user is a member of a channel
+  * @param {number} uId - uId to check 
+  * @param {number} channel - channel object 
+  * 
+  * @returns {boolean} - true if user is member, false otherwise
+*/
+function isMemberOfChannel(channel, uId) {
+  const data = getData();
+  // Loop through all members of channel 
+  // if user is found, then return true
+  for (const member of channel.allMembers) {
+    if (member.uId === uId) {
+      return true;
+    }
+  } 
+  return false;
+}
 
-export { userIdExists, channelIdExists, clearV1 };
+export { userIdExists, channelIdExists, clearV1, isMemberOfChannel };
