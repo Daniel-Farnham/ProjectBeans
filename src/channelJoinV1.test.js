@@ -32,7 +32,6 @@ describe('Testing positive cases for channelJoinV1', () => {
     const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
     channelJoinV1(user2.authUserId, channel.channelId);
     const channelObj = channelDetailsV1(user1.authUserId, channel.channelId);
-    console.log(channelObj);
     const expectedChannelObj = {
       name: "ChannelBoost",
       isPublic: true,
