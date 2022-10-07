@@ -19,7 +19,6 @@ test('Testing successful return of user profile', () => {
       nameFirst: 'Hang',
       nameLast: 'Pham',
       handleStr: 'hangpham',
-      password: 'AP@ssW0rd!'
     }
   };
   
