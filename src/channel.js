@@ -124,6 +124,16 @@ function channelMessagesV1(authUserId, channelId, start) {
   };
 }
 
+/**
+  * Checks if the channel information given is invalid
+  * 
+  * @param {number} authUserId - The authoirsed user trying to view messages
+  * @param {number} channelId - The id of the channel that has the messages
+  * @param {number} start - The starting index of the messages being viewed
+  * 
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {boolean} - False if the information isn't invalid
+  */
 function messagesInfoInvalid(authUserId, channelId, start) {
   // If channelId or authUserId doesn't exist return error
   if (!(channelIdExists(channelId))) {
