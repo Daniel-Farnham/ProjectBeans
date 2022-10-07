@@ -11,7 +11,7 @@ describe('Testing positive cases for channelJoinV1', () => {
   test('Successful return of empty object when joining public channel', () => {
     const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user1.authUserID, 'ChannelBoost', true);
+    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
     
     expect(returnedChannelObject).toMatchObject({}); 
@@ -20,15 +20,16 @@ describe('Testing positive cases for channelJoinV1', () => {
   test('Successful return of empty object when joining private channel as global owner', () => {
     const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user2.authUserID, 'ChannelBoost', false);
+    const channel = channelsCreateV1(user2.authUserId, 'ChannelBoost', false);
     const returnedChannelObject = channelJoinV1(user1.authUserId, channel.channelId);
     
     expect(returnedChannelObject).toMatchObject({}); 
   });
+
   test('User is added as a new member of allMembers array', () => {
     const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user1.authUserID, 'ChannelBoost', true);
+    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
     channelJoinV1(user2.authUserId, channel.channelId);
     const channelObj = channelDetailsV1(user1.authUserId, channel.channelId);
     console.log(channelObj);
@@ -73,7 +74,7 @@ describe('Testing negative cases for channelJoinV1', () => {
 
   test('Testing invalid authUserId', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const channel = channelsCreateV1(userId.authUserID, 'ChannelBoost', true);
+    const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(userId.authUserId + 1, channel.channelId);
     
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); 
