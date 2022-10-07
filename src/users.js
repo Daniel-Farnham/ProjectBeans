@@ -22,7 +22,7 @@ function userProfileV1 (authUserId, uId) {
       const data = getData();
       for (const user of data.users) {
         if (user.uId === uId) {
-          return user;
+          return { user };
         }
       }
     } else {
