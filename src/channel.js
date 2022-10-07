@@ -36,7 +36,7 @@ function channelDetailsV1(authUserId, channelId) {
     isPublic: findChannel.isPublic,
     ownerMembers: findChannel.ownerMembers,
     allMembers: findChannel.allMembers
-  }
+  };
 }
 
 /**
