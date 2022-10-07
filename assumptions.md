@@ -1,5 +1,5 @@
 1. For channelMessagesV1, the parameter start is defined to just be an integer. However integers can be negative, whereas array indices cannot. So if a negative start value is passed into channelMessagesV1 we have assumed this is an error, since it naturally has undefined behaviour, and so the function returns a relevant error message.
 
-2. authRegisterV1 uses the validator function to test if the email is valid. We're unsure of whether validator returns an email to be valid if it's a real email or if the email address is simply of the correct format (e.g. foo@bar.com). We assumed that we need to be using real emails and so authRegisterV1.test.js uses are real student emails.
+2. authRegisterV1 uses the validator function to test if the email is valid. We're unsure of whether validator returns an email to be valid if it's a real email or if the email address is simply of the correct format (e.g. foo@bar.com). We assumed that we need to be using real emails and so authRegisterV1.test.js uses our real student emails.
 
 3. 
