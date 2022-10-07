@@ -61,7 +61,7 @@ function channelInviteV1(authUserId, channelId, uId) {
       // Loop through channel and add new member
       for (let channel of data.channels) {
         if (channel.channelId === channelId) {
-          channel.allMembers.push(newMember);
+          channel.allMembers.push(newMember.user);
           setData(data);
           return {};
         }
