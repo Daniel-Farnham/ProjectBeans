@@ -21,7 +21,7 @@ function channelDetailsV1(authUserId, channelId) {
   const data = getData(); 
   const findChannel = data.channels.find(o => o.channelId === channelId);
   
-  //Check if userId and channelId is invalid. 
+  // Check if userId and channelId is invalid. 
   if (!userIdExists(authUserId) || !channelIdExists(channelId)) { 
     return { error: 'userId or channelId is invalid' }
   }
