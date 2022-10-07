@@ -169,3 +169,4 @@ function generateHandle(nameFirst, nameLast) {
 
 
 export { authLoginV1, authRegisterV1 };
+

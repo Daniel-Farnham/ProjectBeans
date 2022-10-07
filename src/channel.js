@@ -2,11 +2,14 @@ import { userIdExists, channelIdExists } from './other.js';
 import { getData, setData } from './dataStore.js';
 import { userProfileV1 } from './users.js';
 
+const GLOBAL_OWNER = 1; 
+
 function channelDetailsV1(authUserId, channelId) {
 
   const data = getData(); 
   const findChannel = data.channels.find(o => o.channelId === channelId);
-  //Check if userId or channelId is invalid. 
+  
+  //Check if userId and channelId is invalid. 
   if (userIdExists(authUserId) && channelIdExists(channelId)) {
     //Check if the user is the member of the channel. Return channel details if true, return error if false. 
     for (const allMembers of findChannel.allMembers) {
@@ -27,13 +30,58 @@ function channelDetailsV1(authUserId, channelId) {
   }
 }
 
+// Allows an authorised user to join a channel 
+// Parameters authUserId, channelId
+// Return: empty object or error message
 
 function channelJoinV1(authUserId, channelId) {
-    return {};
+
+  const data = getData();
+  const findChannel = data.channels.find(o => o.channelId === channelId);
+  
+  //Check if userId or channelId are invalid
+  if (!(userIdExists(authUserId)) || !(channelIdExists(channelId)) ) {
+    return { error: 'userId or channelId is invalid' };
+  }
+
+  const findUser = data.users.find(o => o.uId === authUserId)
+  
+  //Check if member is not Global Owner and the channel is private. 
+  if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
+    return { error: 'Channel is private and user is not global owner or a member of the channel'}
+  }
+
+  //Check if user is already member of channel
+  for (const allMembers of findChannel.allMembers) {
+    if (allMembers.uId === authUserId) {
+      return { error: 'User is already a member of the public channel' };
+    }
+  }
+
+  const userObj = {
+    uId: findUser.uId, 
+    email: findUser.email,
+    nameFirst: findUser.nameFirst,
+    nameLast: findUser.nameLast,
+    handleStr: findUser.handleStr,
+  };
+
+  //Loop through channel and add new member
+  for (let channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.allMembers.push(userObj);
+    }
+  } 
+
+  setData(data);
+  return {};
+
 }
+
 // Invites a user to a channel with an authorised user
 // Paramaters: authUserId, channelId, uId
 // Return: empty object or error message
+
 function channelInviteV1(authUserId, channelId, uId) {
   
   // If authUserId, uId and channelId are valid Ids
@@ -156,4 +204,4 @@ function messagesInfoInvalid(authUserId, channelId, start) {
   return false;
 }
 
-export { channelInviteV1, channelDetailsV1, channelMessagesV1 };
+export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1 };
