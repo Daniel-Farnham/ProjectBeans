@@ -42,30 +42,30 @@ function channelsListV1(authUserId) {
 
 
 /**
-  * Get an array with channels containing channelId and name
+  * Get an array of channels, which contains channelId and name for each channel
   * 
   * @param {number} authUserId - userId making the request
   * 
-  * @returns {channels} - array of channel objects containing channelId and name
+  * @returns {{channels}} - array of channel objects containing channelId and name
 */
 function channelsListAllV1(authUserId) {
-  // Check authUserId exists
-  if (userIdExists(authUserId)) {
-    const data = getData();
-    let channels = [];
-    // Loop through each channel and push to channels array
-    for (const channel of data.channels) {
-      const channelObj = {
-        channelId: channel.channelId,
-        name: channel.name,
-      };
-
-      channels.push(channelObj);
-    }
-    return { channels };
-  } else {
+  // Case where authUserId is not valid
+  if (!userIdExists(authUserId)) {
     return { error: "authUserId is invalid"};
   }
+
+  // Case for when authUserId is valid
+  const data = getData();
+  let channels = [];
+
+  // Loop through each channel and push to channels array
+  for (const channel of data.channels) {
+    channels.push({
+      channelId: channel.channelId,
+      name: channel.name,
+    });
+  }
+  return { channels };
 }
 
 /**
