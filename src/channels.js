@@ -35,7 +35,7 @@ function channelsListV1(authUserId) {
     };
   };
 
-  return { channels: channels }
+  return { channels: channels };
 };
 
 
