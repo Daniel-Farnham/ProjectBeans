@@ -32,9 +32,8 @@ function userIdExists(userId) {
 }
 
 /**
-  * 
+  * Checks if the channel id exists in the database.
   * @param {number} channelId - channelId to check
-  * 
   * @returns {boolean} - true if channel exists, false otherwise
 */
 function channelIdExists(channelId) {
