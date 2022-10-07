@@ -13,7 +13,6 @@ const MAX_CHANNEL_LEN = 20;
  * @returns {channels} - array of channel objects containing channelId and name
 */
 
-
 function channelsListV1(authUserId) {
   // Check if authUserId Exists
   if (userIdExists(authUserId)) {
