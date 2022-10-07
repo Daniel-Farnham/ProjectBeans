@@ -58,6 +58,7 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   // Add the new user to the database
   const data = getData();
   const userId = data.users.length;
+  const caseInsensitiveEmail = email.toLowerCase();
 
   let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
@@ -66,7 +67,7 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 
   const user = {
     uId: userId,
-    email: email,
+    email: caseInsensitiveEmail,
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
@@ -110,8 +111,9 @@ function registerInfoInvalid(email, password, nameFirst, nameLast) {
   
   // Check if the email is in use
   const data = getData();
+  const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
-    if (email === user.email) {
+    if (caseInsensitiveEmail === user.email) {
       return { error: 'Email is already in use.' };
     }
   }
