@@ -63,11 +63,12 @@ describe('Testing channelInviteV1 error handling', () => {
     const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
     const channel = channelsCreateV1(user1.authUserId, "General", true);
     const result = channelInviteV1(user1.authUserId, channel.channelId + 10, user2.authUserId);
+    
     expect(result).toStrictEqual( {
-        error: expect.any(String),
+      error: expect.any(String),
     });
   });
-
+  
   test('uId does not refer to a valid user', () =>{
     const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
@@ -79,6 +80,17 @@ describe('Testing channelInviteV1 error handling', () => {
     });
   });
   
+  test('authUserId is invalid', () =>{
+    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
+    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.authUserId, "General", true);
+    const result = channelInviteV1(user1.authUserId + user2.authUserId + 10, channel.channelId, user2.authUserId);
+    
+    expect(result).toStrictEqual( {
+      error: expect.any(String),
+    });
+  });
+
   test('uId refers to a user who is already a member of the channel', () =>{
     const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     const channel = channelsCreateV1(user1.authUserId, "General", true);
@@ -95,20 +107,10 @@ describe('Testing channelInviteV1 error handling', () => {
     const user3 = authRegisterV1('stella.jones@student.unsw.edu.au', 'AP@ssW0rd!', 'Stella', 'Jones');
     const channel = channelsCreateV1(user1.authUserId, "General", true);
     const result = channelInviteV1(user3.authUserId, channel.channelId, user2.authUserId);
-
+    
     expect(result).toStrictEqual( {
       error: expect.any(String),
     });
   });
-
-  test('authUserId is invalid', () =>{
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const channel = channelsCreateV1(user1.authUserId, "General", true);
-    const result = channelInviteV1(user1.authUserId + user2.authUserId + 10, channel.channelId, user2.authUserId);
-
-    expect(result).toStrictEqual( {
-      error: expect.any(String),
-    });
-  });
+  
 });
