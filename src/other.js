@@ -15,7 +15,7 @@ function clearV1 () {
 }
 
 /**
-  * 
+  * Checks if the user id is registered in the database.
   * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise
 */
