@@ -5,3 +5,5 @@
 3. After a new account is registered using authRegisterV1, we never logged into that account using authLoginV1. Since both authRegisterV1 and authLoginV1 return an authUserId, we have assumed that it is unnecessary to login to an account immediately after it has been registered since they would return the same id.
 
 4. For channelsListAllV1, it is assumed that when executing the function where no channels have been created, the function will return an object containing an empty channels array.
+
+5. Emails are case insensitive and email has just been defined to be of type string. This means there is no restriction on whether variations of the same email with different amounts of capitalization are passed in to authRegisterV1 or authLoginV1. So, we have assumed that we must handle these variations by storing and comparing emails with their lower case versions to ensure they remain case insensitive.
