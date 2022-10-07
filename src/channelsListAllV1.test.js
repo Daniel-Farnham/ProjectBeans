@@ -8,7 +8,9 @@ test('Testing successful return of all channels', () => {
   const channelId1 = channelsCreateV1(user.authUserId, "General", true);
   const channelId2 = channelsCreateV1(user.authUserId, "Boost", false);
   const channelId3 = channelsCreateV1(user.authUserId, "Random", true);
-  const expectedChannels = [
+
+  const expectedChannels = {
+    channels: [
     {
       channelId: channelId1.channelId,
       name: "General",
@@ -21,8 +23,9 @@ test('Testing successful return of all channels', () => {
       channelId: channelId3.channelId,
       name: "Random",
     },
-  ];
-  
+    ],
+  };
+
   const resultChannels = channelsListAllV1(user.authUserId);
   expect(resultChannels).toMatchObject(expectedChannels);
 });

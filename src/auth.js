@@ -4,6 +4,9 @@ import validator from 'validator';
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
 const GLOBAL_MEMBER = 2;
+const MIN_PASSWORD_LEN = 6;
+const MIN_NAME_LEN = 1;
+const MAX_NAME_LEN = 50;
 
 /**
   * Will attempt to login to an account with the given email and password,
@@ -17,11 +20,13 @@ const GLOBAL_MEMBER = 2;
   */
 function authLoginV1(email, password) {
   // If a user exists with matching email and password, return authUserId
+  // If email matches, but password is wrong return an error
   const data = getData();
+  const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
-    if (user.email === email && user.password === password) {
+    if (user.email === caseInsensitiveEmail && user.password === password) {
       return { authUserId: user.uId };
-    } else if (user.email === email && user.password !== password) {
+    } else if (user.email === caseInsensitiveEmail && user.password !== password) {
       return { error: 'Incorrect password.' };
     }
   }
@@ -55,15 +60,16 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   // Add the new user to the database
   const data = getData();
   const userId = data.users.length;
+  const caseInsensitiveEmail = email.toLowerCase();
 
-  let permissionId = GLOBAL_OWNER;
+  let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
-    permissionId= GLOBAL_MEMBER;
+    permissionId= GLOBAL_OWNER
   }
 
   const user = {
     uId: userId,
-    email: email,
+    email: caseInsensitiveEmail,
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
@@ -95,20 +101,21 @@ function registerInfoInvalid(email, password, nameFirst, nameLast) {
   if (!(validator.isEmail(email))) {
     return { error: 'Invalid email.' };
   }
-  if (password.length < 6) {
+  if (password.length < MIN_PASSWORD_LEN) {
     return { error: 'Password is less than 6 characters.' };
   }
-  if (nameFirst.length < 1 || nameFirst.length > 50) {
+  if (nameFirst.length < MIN_NAME_LEN || nameFirst.length > MAX_NAME_LEN) {
     return { error: 'First name isn\'t between 1 and 50 characters (inclusive)' };
   }
-  if (nameLast.length < 1 || nameLast.length > 50) {
+  if (nameLast.length < MIN_NAME_LEN || nameLast.length > MAX_NAME_LEN) {
     return { error: 'Last name isn\'t between 1 and 50 characters (inclusive)' };
   }
   
   // Check if the email is in use
   const data = getData();
+  const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
-    if (email === user.email) {
+    if (caseInsensitiveEmail === user.email) {
       return { error: 'Email is already in use.' };
     }
   }
@@ -166,3 +173,4 @@ function generateHandle(nameFirst, nameLast) {
 
 
 export { authLoginV1, authRegisterV1 };
+

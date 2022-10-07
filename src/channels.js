@@ -40,33 +40,43 @@ function channelsListV1(authUserId) {
 
 
 /**
-  * Get an array with channels containing channelId and name
+  * Get an array of channels, which contains channelId and name for each channel
   * 
   * @param {number} authUserId - userId making the request
   * 
-  * @returns {channels} - array of channel objects containing channelId and name
+  * @returns {{channels}} - array of channel objects containing channelId and name
 */
 function channelsListAllV1(authUserId) {
-  // Check authUserId exists
-  if (userIdExists(authUserId)) {
-    const data = getData();
-    let channels = [];
-    // Loop through each channel and push to channels array
-    for (const channel of data.channels) {
-      const channelObj = {
-        channelId: channel.channelId,
-        name: channel.name,
-      };
-
-      channels.push(channelObj);
-    }
-    return channels
-  } else {
+  // Case where authUserId is not valid
+  if (!userIdExists(authUserId)) {
     return { error: "authUserId is invalid"};
   }
+
+  // Case for when authUserId is valid
+  const data = getData();
+  let channels = [];
+
+  // Loop through each channel and push to channels array
+  for (const channel of data.channels) {
+    channels.push({
+      channelId: channel.channelId,
+      name: channel.name,
+    });
+  }
+  return { channels };
 }
 
-// channelsCreateV1 function with stub response
+/**
+  * Will attempt to create a new chanel, returning an object 
+  * containing the channels unique id.
+  * 
+  * @param {number} authUserId - userId making the request
+  * @param {string} name - name of the new channel
+  * @param {boolean} isPublic - Whether or not the channel is public
+  * 
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {{channelId: channelId}} - The channel id of the new channel
+*/
 function channelsCreateV1 (authUserId, name, isPublic) {
   
   const data = getData();
@@ -82,7 +92,6 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   if (channelStr.length < MIN_CHANNEL_LEN || channelStr.length > MAX_CHANNEL_LEN) {
     return {error: 'Channel name is invalid.'};
   };
-  
 
   // Add the new channel to the database and push users
   const ownerMembers = [];
@@ -118,8 +127,9 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   data.channels.push(channelObj);
   setData(data);
 
-
   return {channelId: channelId};
 }
 
+
 export { channelsListV1, channelsListAllV1, channelsCreateV1 };
+
