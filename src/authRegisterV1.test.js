@@ -23,11 +23,13 @@ describe('Testing basic authRegisterV1 functionality', () => {
 
     const resultUser = userProfileV1(newId.authUserId, newId.authUserId);
     const expectedUser = {
-      uId: newId.authUserId,
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones',
-      email: 'z5361935@ad.unsw.edu.au',
-      handleStr: 'johnathonaugustusjon',
+      user: {
+        uId: newId.authUserId,
+        nameFirst: 'Johnathon',
+        nameLast: 'Augustus-Jones',
+        email: 'z5361935@ad.unsw.edu.au',
+        handleStr: 'johnathonaugustusjon',
+      }
     };
 
     expect(resultUser).toMatchObject(expectedUser);
@@ -41,11 +43,13 @@ describe('Testing basic authRegisterV1 functionality', () => {
 
     const resultUser = userProfileV1(newId.authUserId, newId.authUserId);
     const expectedUser = {
-      uId: newId.authUserId,
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones',
-      email: 'hang.pham1@student.unsw.edu.au',
-      handleStr: 'johnathonaugustusjon2',
+      user:  {
+        uId: newId.authUserId,
+        nameFirst: 'Johnathon',
+        nameLast: 'Augustus-Jones',
+        email: 'hang.pham1@student.unsw.edu.au',
+        handleStr: 'johnathonaugustusjon2',
+      }
     };
 
     expect(resultUser).toMatchObject(expectedUser);
