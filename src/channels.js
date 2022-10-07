@@ -1,5 +1,7 @@
 import { userIdExists } from "./other.js";
 import { getData, setData } from './dataStore.js';
+import { isMemberOfChannel } from './other.js';
+
 
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
@@ -21,18 +23,16 @@ function channelsListV1(authUserId) {
   const data = getData();
   let channels = [];
   
-  // Check if user is a member of channel
+  // If user is member of channel, then push channel to channels array 
   for (const channel of data.channels) {
     const channelObj = {
       channelId: channel.channelId,
       name: channel.name ,
     };
     
-    for (const allMembers of channel.allMembers) {
-      if (allMembers.uId === authUserId) {
+    if (isMemberOfChannel(channel, authUserId)) {
         channels.push(channelObj);
-      };
-    };
+    }
   };
 
   return { channels: channels };
