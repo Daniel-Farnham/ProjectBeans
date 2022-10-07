@@ -14,7 +14,7 @@ const MAX_CHANNEL_LEN = 20;
 */
 function channelsListV1(authUserId) {
   // Check if authUserId Exists
-  if (userIdExists(authUserId)) {
+  if (!(userIdExists(authUserId))) {
     return {error: "authUserId is invalid"};
   }
 
@@ -35,7 +35,7 @@ function channelsListV1(authUserId) {
     };
   };
 
-  return { channels: channels }
+  return { channels: channels };
 };
 
 
