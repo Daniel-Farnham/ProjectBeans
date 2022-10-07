@@ -4,6 +4,19 @@ import { userProfileV1 } from './users.js';
 
 const GLOBAL_OWNER = 1; 
 
+/**
+  * Allows a user to return the channelDetails of a channel that 
+  * they are a member of. 
+  *
+  * 
+  * @param {number} authUserId - uId of authorised user
+  * @param {number} channelId - id of channel to invite to
+  * ...
+  * 
+  * @returns {Object} {} - returns an object of channel details if successful
+  * @returns {{error: string}} - An error message if any parameter is invalid
+*/
+
 function channelDetailsV1(authUserId, channelId) {
 
   const data = getData(); 
@@ -30,10 +43,17 @@ function channelDetailsV1(authUserId, channelId) {
   }
 }
 
-// Allows an authorised user to join a channel 
-// Parameters authUserId, channelId
-// Return: empty object or error message
-
+/**
+  * Allows a user to join a channel with an authorised userId 
+  * and add them to the allMembers array of the channel
+  * 
+  * @param {number} authUserId - uId of authorised user
+  * @param {number} channelId - id of channel to invite to
+  * ...
+  * 
+  * @returns {Object} {} - returns an empty object upon success
+  * @returns {{error: string}} - An error message if any parameter is invalid
+*/
 function channelJoinV1(authUserId, channelId) {
 
   const data = getData();
