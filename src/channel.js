@@ -18,28 +18,24 @@ const GLOBAL_OWNER = 1;
 */
 
 function channelDetailsV1(authUserId, channelId) {
-
   const data = getData(); 
   const findChannel = data.channels.find(o => o.channelId === channelId);
   
   //Check if userId and channelId is invalid. 
-  if (userIdExists(authUserId) && channelIdExists(channelId)) {
-    //Check if the user is the member of the channel. Return channel details if true, return error if false. 
-    for (const allMembers of findChannel.allMembers) {
-      // Checking if the user is a member of the channel. 
-      if (allMembers.uId === authUserId) { 
-        return {
-          name: findChannel.name,
-          isPublic: findChannel.isPublic,
-          ownerMembers: findChannel.ownerMembers,
-          allMembers: findChannel.allMembers
-        }
-      }
-    }    
-    // Case where authUserId is not a member of the channel
-    return { error: 'authUserId is not a member of the channel' }
-  } else {
+  if (!userIdExists(authUserId) || !channelIdExists(channelId)) { 
     return { error: 'userId or channelId is invalid' }
+  }
+  // Case where authUserId is not a member of the channel
+  if (!isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'authUserId is not a member of the channel' }
+  }
+
+  // Return channel details
+  return {
+    name: findChannel.name,
+    isPublic: findChannel.isPublic,
+    ownerMembers: findChannel.ownerMembers,
+    allMembers: findChannel.allMembers
   }
 }
 
@@ -72,10 +68,8 @@ function channelJoinV1(authUserId, channelId) {
   }
 
   //Check if user is already member of channel
-  for (const allMembers of findChannel.allMembers) {
-    if (allMembers.uId === authUserId) {
-      return { error: 'User is already a member of the public channel' };
-    }
+  if (isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'User is already a member of the public channel' };
   }
 
   const userObj = {
