@@ -3,3 +3,5 @@
 2. authRegisterV1 uses the validator function to test if the email is valid. We're unsure of whether validator returns an email to be valid if it's a real email or if the email address is simply of the correct format (e.g. foo@bar.com). We assumed that we need to be using real emails and so authRegisterV1.test.js uses our real student emails.
 
 3. After a new account is registered using authRegisterV1, we never logged into that account using authLoginV1. Since both authRegisterV1 and authLoginV1 return an authUserId, we have assumed that it is unnecessary to login to an account immediately after it has been registered since they would return the same id.
+
+4. For channelsListAllV1, it is assumed that when executing the function where no channels have been created, the function will return an object containing an empty channels array.
