@@ -21,10 +21,11 @@ const MAX_NAME_LEN = 50;
 function authLoginV1(email, password) {
   // If a user exists with matching email and password, return authUserId
   const data = getData();
+  const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
-    if (user.email === email && user.password === password) {
+    if (user.email === caseInsensitiveEmail && user.password === password) {
       return { authUserId: user.uId };
-    } else if (user.email === email && user.password !== password) {
+    } else if (user.email === caseInsensitiveEmail && user.password !== password) {
       return { error: 'Incorrect password.' };
     }
   }
