@@ -181,7 +181,10 @@ function messagesInfoInvalid(authUserId, channelId, start) {
     return { error: 'authUserId is invalid' };
   }
 
-  // If start is greater than number of messages in channel return error
+  // If start is negative or greater than number of messages return error
+  if (start < 0) {
+    return { error: 'Starting index can\'t be negative' };
+  }
   const data = getData();
   const channel = data.channels.find(o => o.channelId === channelId);
   const numMessages = channel.messages.length;
