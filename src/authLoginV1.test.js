@@ -31,15 +31,27 @@ describe('Testing basic authLoginV1 functionality', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const loginId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
     const user = userProfileV1(loginId.authUserId, loginId.authUserId);
-    expect(loginId.authUserId).toBe(user.uId);
+    expect(loginId.authUserId).toBe(user.user.uId);
   });
 });
 
 describe('Testing authLoginV1 error handling', () => {
   test.each([
-    { email: 'notRegisteredEmail', password: 'password', desc: 'Testing an email that doesn\'t belong to a user' },
-    { email: 'z5361935@ad.unsw.edu.au', password: '123456', desc: 'Testing an incorrect password for an existing email' },
-    { email: 'hayden.smith@unsw.edu.au', password: 'drowssap', desc: 'Testing an email and password that both don\'t belong to a user' },
+    { 
+      email: 'notRegisteredEmail', 
+      password: 'password', 
+      desc: 'Testing an email that doesn\'t belong to a user' 
+    },
+    { 
+      email: 'z5361935@ad.unsw.edu.au', 
+      password: '123456', 
+      desc: 'Testing an incorrect password for an existing email' 
+    },
+    { 
+      email: 'hayden.smith@unsw.edu.au', 
+      password: 'drowssap', 
+      desc: 'Testing an email and password that both don\'t belong to a user' 
+    },
   ])('$desc', ({ email, password }) => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const authId = authLoginV1(email, password);

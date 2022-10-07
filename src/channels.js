@@ -4,46 +4,79 @@ import { getData, setData } from './dataStore.js';
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
 
-// channelsListV1 function with stub response
+/** 
+ * Will return an object containing an array of channels
+ * that the user is in.
+ * 
+ * @param {number} authUserId - userId making the request
+ * 
+ * @returns {{channels: channels}} - array of channel objects containing channelId and name
+*/
 function channelsListV1(authUserId) {
-    return {
-        channels: [
-          {
-            channelId: 1,
-            name: 'My Channel',
-          }
-        ],
+  // Check if authUserId Exists
+  if (!(userIdExists(authUserId))) {
+    return {error: "authUserId is invalid"};
+  }
+
+  const data = getData();
+  let channels = [];
+  
+  // Check if user is a member of channel
+  for (const channel of data.channels) {
+    const channelObj = {
+      channelId: channel.channelId,
+      name: channel.name ,
     };
-}
+    
+    for (const allMembers of channel.allMembers) {
+      if (allMembers.uId === authUserId) {
+        channels.push(channelObj);
+      };
+    };
+  };
+
+  return { channels: channels };
+};
+
 
 /**
-  * Get an array with channels containing channelId and name
+  * Get an array of channels, which contains channelId and name for each channel
   * 
   * @param {number} authUserId - userId making the request
   * 
-  * @returns {channels} - array of channel objects containing channelId and name
+  * @returns {{channels}} - array of channel objects containing channelId and name
 */
 function channelsListAllV1(authUserId) {
-  // Check authUserId exists
-  if (userIdExists(authUserId)) {
-    const data = getData();
-    let channels = [];
-    // Loop through each channel and push to channels array
-    for (const channel of data.channels) {
-      const channelObj = {
-        channelId: channel.channelId,
-        name: channel.name,
-      };
-
-      channels.push(channelObj);
-    }
-    return channels
-  } else {
+  // Case where authUserId is not valid
+  if (!userIdExists(authUserId)) {
     return { error: "authUserId is invalid"};
   }
+
+  // Case for when authUserId is valid
+  const data = getData();
+  let channels = [];
+
+  // Loop through each channel and push to channels array
+  for (const channel of data.channels) {
+    channels.push({
+      channelId: channel.channelId,
+      name: channel.name,
+    });
+  }
+  return { channels };
 }
 
-// channelsCreateV1 function with stub response
+/**
+  * Will attempt to create a new chanel, returning an object 
+  * containing the channels unique id.
+  * 
+  * @param {number} authUserId - userId making the request
+  * @param {string} name - name of the new channel
+  * @param {boolean} isPublic - Whether or not the channel is public
+  * 
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {{channelId: channelId}} - The channel id of the new channel
+*/
 function channelsCreateV1 (authUserId, name, isPublic) {
   
   const data = getData();
@@ -59,7 +92,6 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   if (channelStr.length < MIN_CHANNEL_LEN || channelStr.length > MAX_CHANNEL_LEN) {
     return {error: 'Channel name is invalid.'};
   };
-  
 
   // Add the new channel to the database and push users
   const ownerMembers = [];
@@ -95,13 +127,9 @@ function channelsCreateV1 (authUserId, name, isPublic) {
   data.channels.push(channelObj);
   setData(data);
 
-
   return {channelId: channelId};
 }
 
-<<<<<<< HEAD
-export { channelsCreateV1, channelsListAllV1, channelsListV1 };
 
-=======
 export { channelsListV1, channelsListAllV1, channelsCreateV1 };
->>>>>>> 7a3c03566d58b74a4f2511f75582181c9e384e5a
+

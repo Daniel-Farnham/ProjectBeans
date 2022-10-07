@@ -13,12 +13,13 @@ test('Testing successful return of user profile', () => {
   const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
   
   const expectedUser = {
+    user: {      
       uId: user1.authUserId,
       email: 'hang.pham1@student.unsw.edu.au',
       nameFirst: 'Hang',
       nameLast: 'Pham',
       handleStr: 'hangpham',
-      password: 'AP@ssW0rd!'
+    }
   };
   
   const resultUser = userProfileV1(user2.authUserId, user1.authUserId);
