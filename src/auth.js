@@ -4,6 +4,9 @@ import validator from 'validator';
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
 const GLOBAL_MEMBER = 2;
+const MIN_PASSWORD_LEN = 6;
+const MIN_NAME_LEN = 1;
+const MAX_NAME_LEN = 50;
 
 /**
   * Will attempt to login to an account with the given email and password,
@@ -56,9 +59,9 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   const data = getData();
   const userId = data.users.length;
 
-  let permissionId = GLOBAL_OWNER;
+  let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
-    permissionId= GLOBAL_MEMBER;
+    permissionId= GLOBAL_OWNER
   }
 
   const user = {
@@ -95,13 +98,13 @@ function registerInfoInvalid(email, password, nameFirst, nameLast) {
   if (!(validator.isEmail(email))) {
     return { error: 'Invalid email.' };
   }
-  if (password.length < 6) {
+  if (password.length < MIN_PASSWORD_LEN) {
     return { error: 'Password is less than 6 characters.' };
   }
-  if (nameFirst.length < 1 || nameFirst.length > 50) {
+  if (nameFirst.length < MIN_NAME_LEN || nameFirst.length > MAX_NAME_LEN) {
     return { error: 'First name isn\'t between 1 and 50 characters (inclusive)' };
   }
-  if (nameLast.length < 1 || nameLast.length > 50) {
+  if (nameLast.length < MIN_NAME_LEN || nameLast.length > MAX_NAME_LEN) {
     return { error: 'Last name isn\'t between 1 and 50 characters (inclusive)' };
   }
   
