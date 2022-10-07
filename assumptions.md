@@ -5,3 +5,5 @@
 3. After a new account is registered using authRegisterV1, we never logged into that account using authLoginV1. Since both authRegisterV1 and authLoginV1 return an authUserId, we have assumed that it is unnecessary to login to an account immediately after it has been registered since they would return the same id.
 
 4. For channelsListAllV1, it is assumed that when executing the function where no channels have been created, the function will return an object containing an empty channels array.
+
+5. In channelsCreateV1 we assume that we can have multiple channels with the same name. Meaning that in other functions such as channelDetailsV1, channelJoinV1 channelId is used to differentiate between channels. 
