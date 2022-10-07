@@ -4,17 +4,42 @@ import { getData, setData } from './dataStore.js';
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
 
-// channelsListV1 function with stub response
+/** 
+ * Will return an object containing an array of channels
+ * that the user is in.
+ * 
+ * @param {number} authUserId - userId making the request
+ * 
+ * @returns {{channels: channels}} - array of channel objects containing channelId and name
+*/
+
 function channelsListV1(authUserId) {
-    return {
-        channels: [
-          {
-            channelId: 1,
-            name: 'My Channel',
-          }
-        ],
+  // Check if authUserId Exists
+  if (userIdExists(authUserId)) {
+    const data = getData();
+    let channels = [];
+    
+    // Check if user is a member of channel
+    for (const channel of data.channels) {
+      const channelObj = {
+        channelId: channel.channelId,
+        name: channel.name ,
+      };
+      
+      // Checking if the user is a member of the channel
+      for (const allMembers of channel.allMembers) {
+        if (allMembers.uId === authUserId) {
+          channels.push(channelObj);
+        };
+      };
     };
-}
+    return { channels: channels }
+  }
+  else {
+    return {error: "authUserId is invalid"};
+  }
+};
+
 
 /**
   * Get an array with channels containing channelId and name
