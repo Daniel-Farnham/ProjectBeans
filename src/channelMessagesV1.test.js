@@ -12,7 +12,14 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const channel = channelsCreateV1(newId.authUserId, 'General', false);
     const messages = channelMessagesV1(newId.authUserId, channel.channelId, 0);
-    expect(messages).toMatchObject({});
+
+    const messagesObj = {
+      messages: [],
+      start: 0,
+      end: -1
+    };
+
+    expect(messages).toMatchObject(messagesObj);
   });
 });
 
