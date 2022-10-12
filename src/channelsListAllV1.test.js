@@ -27,7 +27,13 @@ test('Testing successful return of all channels', () => {
   };
 
   const resultChannels = channelsListAllV1(user.authUserId);
-  expect(resultChannels).toMatchObject(expectedChannels);
+  expect(resultChannels.channels).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({channelId: channelId1.channelId}),
+      expect.objectContaining({channelId: channelId2.channelId}),
+      expect.objectContaining({channelId: channelId3.channelId}),
+    ])
+  );
 });
 
 test('Testing invalid authUserId', () => {
