@@ -1,0 +1,59 @@
+npm verb cli /import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/bin/node /import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/bin/npm
+npm info using npm@8.19.2
+npm info using node@v18.10.0
+npm timing npm:load:whichnode Completed in 1ms
+npm timing config:load:defaults Completed in 1ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/lib/node_modules/npm/npmrc Completed in 1ms
+npm timing config:load:builtin Completed in 1ms
+npm timing config:load:cli Completed in 2ms
+npm timing config:load:env Completed in 0ms
+npm timing config:load:file:/import/kamen/3/cs1531/project-automarking/tempstore/.npmrc Completed in 0ms
+npm timing config:load:project Completed in 16ms
+npm timing config:load:file:/import/kamen/3/cs1531/.npmrc Completed in 0ms
+npm timing config:load:user Completed in 0ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/etc/npmrc Completed in 0ms
+npm timing config:load:global Completed in 0ms
+npm timing config:load:validate Completed in 1ms
+npm timing config:load:credentials Completed in 0ms
+npm timing config:load:setEnvs Completed in 1ms
+npm timing config:load Completed in 22ms
+npm timing npm:load:configload Completed in 22ms
+npm timing npm:load:mkdirpcache Completed in 1ms
+npm timing npm:load:mkdirplogs Completed in 1ms
+npm verb title npm run test
+npm verb argv "run" "test" "--loglevel" "verbose"
+npm timing npm:load:setTitle Completed in 1ms
+npm timing config:load:flatten Completed in 2ms
+npm timing npm:load:display Completed in 5ms
+npm verb logfile logs-max:10 dir:/import/kamen/3/cs1531/.npm/_logs
+npm verb logfile /import/kamen/3/cs1531/.npm/_logs/2022-10-14T05_33_37_200Z-debug-0.log
+npm timing npm:load:logFile Completed in 4ms
+npm timing npm:load:timers Completed in 0ms
+npm timing npm:load:configScope Completed in 0ms
+npm timing npm:load Completed in 36ms
+
+> test
+> jest
+
+PASS src/echo.test.ts (5.852 s)
+PASS src/clear.test.js (8.614 s)
+PASS src/channelsListV1.test.js (8.556 s)
+PASS src/channelsListAllV1.test.js (8.705 s)
+PASS src/channelDetailsV1.test.js (8.707 s)
+PASS src/authLoginV1.test.js (8.715 s)
+PASS src/userProfileV1.test.js (8.702 s)
+PASS src/channelsCreateV1.test.js (8.629 s)
+PASS src/channelJoinV1.test.js (8.613 s)
+PASS src/authRegisterV1.test.js (8.726 s)
+PASS src/channelMessagesV1.test.js (8.637 s)
+PASS src/channelInviteV1.test.js (8.644 s)
+
+Test Suites: 12 passed, 12 total
+Tests:       58 passed, 58 total
+Snapshots:   0 total
+Time:        11.951 s
+Ran all test suites.
+npm timing command:run Completed in 15006ms
+npm verb exit 0
+npm timing npm Completed in 15048ms
+npm info ok 
