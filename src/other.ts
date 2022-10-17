@@ -1,4 +1,4 @@
-import { getData, setData, DataStore } from './dataStore';
+import { getData, setData } from './dataStore';
 import request from 'sync-request';
 
 /**
@@ -7,7 +7,7 @@ import request from 'sync-request';
   * @returns {} - returns empty object
 */
 function clearV1 () {
-  let data = {
+  const data = {
     users: [],
     channels: [],
   };
@@ -93,7 +93,7 @@ export const getRequest = (url: string, data: any) => {
 */
 function userIdExists(userId: number) {
   const data = getData();
-  
+
   // Loop through users array to check if user exists
   for (const user of data.users) {
     if (user.uId === userId) {
@@ -110,7 +110,7 @@ function userIdExists(userId: number) {
 */
 function channelIdExists(channelId: number) {
   const data = getData();
-  
+
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
