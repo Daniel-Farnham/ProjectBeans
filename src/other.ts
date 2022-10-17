@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { getData, setData, DataStore } from './dataStore';
 import request from 'sync-request';
 
 /**
@@ -8,8 +8,8 @@ import request from 'sync-request';
 */
 function clearV1 () {
   let data = {
-    users: Array,
-    channels: Array,
+    users: [],
+    channels: [],
   };
   setData(data);
   return {};
@@ -19,6 +19,7 @@ function clearV1 () {
   * Specifies the channel interface
 */
 export interface Channel {
+  channelId: number;
   name: string;
   isPublic: boolean;
   ownerMembers: Array<User>;
