@@ -1,8 +1,6 @@
-import { Channel, User } from './other';
-
 export interface DataStore {
-  users: Array<User>;
-  channels: Array<Channel>;
+  users: [];
+  channels: [];
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
