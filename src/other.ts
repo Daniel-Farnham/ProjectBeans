@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData } from './dataStore';
 
 /**
   * Function to clear the data store object
@@ -7,19 +7,34 @@ import { getData, setData } from './dataStore.js';
 */
 function clearV1 () {
   let data = {
-    users: [],
-    channels: [],
+    users: Array,
+    channels: Array,
   };
   setData(data);
   return {};
 }
+
+interface Channel {
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
+};
+
+interface User {
+  uId: number;
+  email: string;
+  nameFirst: string;
+  nameLast: string;
+  handelStr: string;
+};
 
 /**
   * Checks if the user id is registered in the database.
   * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise
 */
-function userIdExists(userId) {
+function userIdExists(userId: number) {
   const data = getData();
   
   // Loop through users array to check if user exists
@@ -36,7 +51,7 @@ function userIdExists(userId) {
   * @param {number} channelId - channelId to check
   * @returns {boolean} - true if channel exists, false otherwise
 */
-function channelIdExists(channelId) {
+function channelIdExists(channelId: number) {
   const data = getData();
   
   // Loop through channels array to check if channel exists
@@ -54,11 +69,13 @@ function channelIdExists(channelId) {
   * 
   * @returns {boolean} - true if user is member, false otherwise
 */
-function isMemberOfChannel(channel, uId) {
+function isMemberOfChannel(channel: Channel, uId: number) {
   const data = getData();
   // Loop through all members of channel 
   // if user is found, then return true
-  for (const member of channel.allMembers) {
+  let allMembers: Array<User>;
+  allMembers = channel.allMembers;
+  for (const member of allMembers) {
     if (member.uId === uId) {
       return true;
     }
