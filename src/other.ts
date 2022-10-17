@@ -1,4 +1,4 @@
-import { getData, setData, DataStore } from './dataStore';
+import { getData, setData } from './dataStore';
 import request from 'sync-request';
 
 /**
@@ -50,6 +50,17 @@ export interface Channel {
   isPublic: boolean;
   ownerMembers: Array<User>;
   allMembers: Array<User>;
+}
+/**
+  * Specifies the channel interface which contains user objects that have
+  * private properties
+*/
+export interface ChannelPrivate {
+  channelId: number;
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<UserPrivate>;
+  allMembers: Array<UserPrivate>;
 }
 
 /**
