@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { getData, setData, DataStore } from './dataStore';
 import request from 'sync-request';
 
 /**
@@ -7,7 +7,7 @@ import request from 'sync-request';
   * @returns {} - returns empty object
 */
 function clearV1 () {
-  const data = {
+  const data: DataStore = {
     users: [],
     channels: [],
   };
