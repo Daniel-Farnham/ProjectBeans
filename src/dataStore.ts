@@ -3,7 +3,7 @@ import { Channel, User } from './other';
 export interface DataStore {
   users: Array<User>;
   channels: Array<Channel>;
-};
+}
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data: DataStore = {
