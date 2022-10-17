@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore.js';
 import validator from 'validator';
+import { error } from './other';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -9,7 +10,6 @@ const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
 
 type authUserId = { authUserId: number };
-type error = { error: string };
 
 /**
   * Will attempt to login to an account with the given email and password,
