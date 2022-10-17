@@ -4,7 +4,7 @@ export interface DataStore {
 }
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data: DataStore = {
+let data = {
 
   users: [],
   channels: [],
@@ -33,7 +33,7 @@ function getData() {
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData: DataStore) {
+function setData(newData) {
   data = newData;
 }
 
