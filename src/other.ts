@@ -15,6 +15,8 @@ function clearV1 () {
   return {};
 }
 
+export type error = { error: string };
+
 /**
   * Specifies the user interface
 */
@@ -23,7 +25,7 @@ export interface User {
   email: string;
   nameFirst: string;
   nameLast: string;
-  handelStr: string;
+  handleStr: string;
 }
 
 /**
