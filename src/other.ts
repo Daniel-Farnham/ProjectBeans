@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import request from 'sync-request';
 
 /**
   * Function to clear the data store object
@@ -14,19 +15,74 @@ function clearV1 () {
   return {};
 }
 
-interface Channel {
+/**
+  * Specifies the channel interface
+*/
+export interface Channel {
   name: string;
   isPublic: boolean;
   ownerMembers: Array<User>;
   allMembers: Array<User>;
 };
 
-interface User {
+/**
+  * Specifies the user interface
+*/
+export interface User {
   uId: number;
   email: string;
   nameFirst: string;
   nameLast: string;
   handelStr: string;
+};
+
+/**
+  * Parses the JSON response body into a string
+*/
+export const parseBody = (res: any) => {
+  return JSON.parse(res.getBody() as string);
+};
+
+/**
+  * Function used to create a post request
+*/
+export const postRequest = (url: string, data: any) => {
+  const res = request(
+    'POST',
+    url,
+    {
+      json: data,
+    }
+    );
+  return parseBody(res);
+};
+  
+/**
+  * Function used to create a delete request
+*/
+ export const deleteRequest = (url: string, data: any) => {
+   const res = request(
+     'DELETE',
+     url,
+     {
+       qs: data,
+      }
+    );
+  return parseBody(res);
+};
+
+/**
+  * Function used to create a get request
+*/
+export const getRequest = (url: string, data: any) => {
+  const res = request(
+    'GET',
+    url,
+    {
+      qs: data,
+    }
+  );
+  return parseBody(res);
 };
 
 /**
