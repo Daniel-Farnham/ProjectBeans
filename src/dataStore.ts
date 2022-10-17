@@ -1,5 +1,12 @@
+import { Channel, User } from './other';
+
+export interface DataStore {
+  users: Array<User>;
+  channels: Array<Channel>;
+}
+
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {
+let data: DataStore = {
 
   users: [],
   channels: [],
@@ -28,7 +35,7 @@ function getData() {
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+function setData(newData: DataStore) {
   data = newData;
 }
 

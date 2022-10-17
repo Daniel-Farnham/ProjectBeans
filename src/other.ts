@@ -16,17 +16,6 @@ function clearV1 () {
 }
 
 /**
-  * Specifies the channel interface
-*/
-export interface Channel {
-  channelId: number;
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-};
-
-/**
   * Specifies the user interface
 */
 export interface User {
@@ -35,7 +24,18 @@ export interface User {
   nameFirst: string;
   nameLast: string;
   handelStr: string;
-};
+}
+
+/**
+  * Specifies the channel interface
+*/
+export interface Channel {
+  channelId: number;
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
+}
 
 /**
   * Parses the JSON response body into a string
@@ -54,21 +54,21 @@ export const postRequest = (url: string, data: any) => {
     {
       json: data,
     }
-    );
+  );
   return parseBody(res);
 };
-  
+
 /**
   * Function used to create a delete request
 */
- export const deleteRequest = (url: string, data: any) => {
-   const res = request(
-     'DELETE',
-     url,
-     {
-       qs: data,
-      }
-    );
+export const deleteRequest = (url: string, data: any) => {
+  const res = request(
+    'DELETE',
+    url,
+    {
+      qs: data,
+    }
+  );
   return parseBody(res);
 };
 
@@ -119,24 +119,22 @@ function channelIdExists(channelId: number) {
   }
   return false;
 }
-/** 
+/**
   *  Check if a user is a member of a channel
-  * @param {number} uId - uId to check 
-  * @param {number} channel - channel object 
-  * 
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
   * @returns {boolean} - true if user is member, false otherwise
 */
 function isMemberOfChannel(channel: Channel, uId: number) {
-  const data = getData();
-  // Loop through all members of channel 
+  // Loop through all members of channel
   // if user is found, then return true
-  let allMembers: Array<User>;
-  allMembers = channel.allMembers;
+  const allMembers = channel.allMembers;
   for (const member of allMembers) {
     if (member.uId === uId) {
       return true;
     }
-  } 
+  }
   return false;
 }
 
