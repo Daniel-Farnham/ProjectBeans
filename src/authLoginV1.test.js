@@ -2,7 +2,7 @@ import { authLoginV1, authRegisterV1 } from './auth';
 import { userProfileV1 } from './users';
 import { clearV1 } from './other';
 
-beforeEach (() =>  {
+beforeEach(() => {
   clearV1();
 });
 
@@ -37,20 +37,20 @@ describe('Testing basic authLoginV1 functionality', () => {
 
 describe('Testing authLoginV1 error handling', () => {
   test.each([
-    { 
-      email: 'notRegisteredEmail', 
-      password: 'password', 
-      desc: 'Testing an email that doesn\'t belong to a user' 
+    {
+      email: 'notRegisteredEmail',
+      password: 'password',
+      desc: 'Testing an email that doesn\'t belong to a user'
     },
-    { 
-      email: 'z5361935@ad.unsw.edu.au', 
-      password: '123456', 
-      desc: 'Testing an incorrect password for an existing email' 
+    {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: '123456',
+      desc: 'Testing an incorrect password for an existing email'
     },
-    { 
-      email: 'hayden.smith@unsw.edu.au', 
-      password: 'drowssap', 
-      desc: 'Testing an email and password that both don\'t belong to a user' 
+    {
+      email: 'hayden.smith@unsw.edu.au',
+      password: 'drowssap',
+      desc: 'Testing an email and password that both don\'t belong to a user'
     },
   ])('$desc', ({ email, password }) => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
