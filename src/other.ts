@@ -7,25 +7,15 @@ import request from 'sync-request';
   * @returns {} - returns empty object
 */
 function clearV1 () {
-  let data = {
-    users: Array,
-    channels: Array,
+  const data = {
+    users: [],
+    channels: [],
   };
   setData(data);
   return {};
 }
 
 export type error = { error: string };
-
-/**
-  * Specifies the channel interface
-*/
-export interface Channel {
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-};
 
 /**
   * Specifies the user interface
@@ -35,8 +25,19 @@ export interface User {
   email: string;
   nameFirst: string;
   nameLast: string;
-  handelStr: string;
-};
+  handleStr: string;
+}
+
+/**
+  * Specifies the channel interface
+*/
+export interface Channel {
+  channelId: number;
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
+}
 
 /**
   * Parses the JSON response body into a string
@@ -55,21 +56,21 @@ export const postRequest = (url: string, data: any) => {
     {
       json: data,
     }
-    );
+  );
   return parseBody(res);
 };
-  
+
 /**
   * Function used to create a delete request
 */
- export const deleteRequest = (url: string, data: any) => {
-   const res = request(
-     'DELETE',
-     url,
-     {
-       qs: data,
-      }
-    );
+export const deleteRequest = (url: string, data: any) => {
+  const res = request(
+    'DELETE',
+    url,
+    {
+      qs: data,
+    }
+  );
   return parseBody(res);
 };
 
@@ -94,7 +95,7 @@ export const getRequest = (url: string, data: any) => {
 */
 function userIdExists(userId: number) {
   const data = getData();
-  
+
   // Loop through users array to check if user exists
   for (const user of data.users) {
     if (user.uId === userId) {
@@ -111,7 +112,7 @@ function userIdExists(userId: number) {
 */
 function channelIdExists(channelId: number) {
   const data = getData();
-  
+
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
@@ -120,24 +121,22 @@ function channelIdExists(channelId: number) {
   }
   return false;
 }
-/** 
+/**
   *  Check if a user is a member of a channel
-  * @param {number} uId - uId to check 
-  * @param {number} channel - channel object 
-  * 
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
   * @returns {boolean} - true if user is member, false otherwise
 */
 function isMemberOfChannel(channel: Channel, uId: number) {
-  const data = getData();
-  // Loop through all members of channel 
+  // Loop through all members of channel
   // if user is found, then return true
-  let allMembers: Array<User>;
-  allMembers = channel.allMembers;
+  const allMembers = channel.allMembers;
   for (const member of allMembers) {
     if (member.uId === uId) {
       return true;
     }
-  } 
+  }
   return false;
 }
 

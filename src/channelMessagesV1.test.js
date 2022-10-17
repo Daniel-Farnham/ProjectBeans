@@ -3,7 +3,7 @@ import { channelMessagesV1 } from './channel';
 import { channelsCreateV1 } from './channels';
 import { clearV1 } from './other';
 
-beforeEach (() =>  {
+beforeEach(() => {
   clearV1();
 });
 
@@ -25,29 +25,29 @@ describe('Testing basic functionality for channelMessagesV1', () => {
 
 describe('Testing channelMessagesV1 error handling', () => {
   test.each([
-    { 
-      name: 'General', 
-      isPublic: true, 
-      uIdOffset: 0, 
-      channelIdOffset: 1, 
-      start: 0, 
-      desc: 'Testing an invalid channelId' 
+    {
+      name: 'General',
+      isPublic: true,
+      uIdOffset: 0,
+      channelIdOffset: 1,
+      start: 0,
+      desc: 'Testing an invalid channelId'
     },
-    { 
-      name: 'Test', 
-      isPublic: false, 
-      uIdOffset: 0, 
-      channelIdOffset: 0, 
-      start: 1, 
-      desc: 'Testing when start is greater than number of messages' 
+    {
+      name: 'Test',
+      isPublic: false,
+      uIdOffset: 0,
+      channelIdOffset: 0,
+      start: 1,
+      desc: 'Testing when start is greater than number of messages'
     },
-    { 
-      name: '1234', 
-      isPublic: true, 
-      uIdOffset: 1, 
-      channelIdOffset: 0, 
-      start: 0, 
-      desc: 'Testing an invalid authUserId' 
+    {
+      name: '1234',
+      isPublic: true,
+      uIdOffset: 1,
+      channelIdOffset: 0,
+      start: 0,
+      desc: 'Testing an invalid authUserId'
     },
   ])('$desc', ({ name, isPublic, uIdOffset, channelIdOffset, start }) => {
     const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
