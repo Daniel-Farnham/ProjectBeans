@@ -15,6 +15,8 @@ function clearV1 () {
   return {};
 }
 
+export type error = { error: string };
+
 /**
   * Specifies the channel interface
 */
