@@ -51,17 +51,6 @@ export interface Channel {
   ownerMembers: Array<User>;
   allMembers: Array<User>;
 }
-/**
-  * Specifies the channel interface which contains user objects that have
-  * private properties
-*/
-export interface ChannelPrivate {
-  channelId: number;
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<UserPrivate>;
-  allMembers: Array<UserPrivate>;
-}
 
 /**
   * Parses the JSON response body into a string
