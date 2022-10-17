@@ -180,8 +180,10 @@ function channelMessagesV1(authUserId, channelId, start) {
     end = -1;
   } else {
     // If start and number of messages aren't both 0, add up to 50 messages
-    for (let index = 0; index < numMessages && index < start + 50; index++) {
+    let index = 0;
+    while (index < numMessages && index < start + 50) {
       messages.push(channel.messages[index]);
+      index++;
     }
 
     // Now determine if index is the least recent message or not
