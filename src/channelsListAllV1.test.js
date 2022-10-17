@@ -2,6 +2,10 @@ import { clearV1 } from './other';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { authRegisterV1 } from './auth';
 
+beforeEach(() => {
+  clearV1();
+});
+
 // Working cases
 test('Testing successful return of all channels', () => {
   const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
@@ -32,7 +36,7 @@ test('Testing successful return of all channels', () => {
 
 test('Testing invalid authUserId', () => {
   const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-  const channelId1 = channelsCreateV1(user.authUserId, 'General', true);
+  channelsCreateV1(user.authUserId, 'General', true);
 
   const resultChannels = channelsListAllV1(user.authUserId + 1);
   expect(resultChannels).toStrictEqual(

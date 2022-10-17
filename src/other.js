@@ -55,7 +55,6 @@ function channelIdExists(channelId) {
   * @returns {boolean} - true if user is member, false otherwise
 */
 function isMemberOfChannel(channel, uId) {
-  const data = getData();
   // Loop through all members of channel
   // if user is found, then return true
   for (const member of channel.allMembers) {

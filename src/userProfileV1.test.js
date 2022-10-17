@@ -1,6 +1,6 @@
 import { clearV1 } from './other';
 import { userProfileV1 } from './users';
-import { authLoginV1, authRegisterV1 } from './auth';
+import { authRegisterV1 } from './auth';
 
 // Before each test, clear dataStore
 beforeEach(() => {

@@ -58,7 +58,7 @@ describe('Testing channelDetails', () => {
 
   test('Authorised user is not a member of the channel', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
+    channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
     const NonMemberChannel = channelsCreateV1(userId.authUserId, 'ChannelBoostWithoutDaniel', true);
 
     expect(NonMemberChannel).toMatchObject({ error: expect.any(String) });
