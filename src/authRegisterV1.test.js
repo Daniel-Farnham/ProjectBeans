@@ -17,7 +17,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
     const secondId = authRegisterV1('hayden.smith@unsw.edu.au', '123456', 'Hayden', 'Smith');
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
-  
+
   test('Test user info is registered correctly', () => {
     const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
 
@@ -34,7 +34,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
 
     expect(resultUser).toMatchObject(expectedUser);
   });
-  
+
   test('Test user info is registered correctly when user handle is already taken', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
     authRegisterV1('hayden.smith@unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
@@ -43,7 +43,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
 
     const resultUser = userProfileV1(newId.authUserId, newId.authUserId);
     const expectedUser = {
-      user:  {
+      user: {
         uId: newId.authUserId,
         nameFirst: 'Johnathon',
         nameLast: 'Augustus-Jones',
@@ -58,52 +58,56 @@ describe('Testing basic authRegisterV1 functionality', () => {
 
 describe('Testing authRegisterV1 error handling', () => {
   test.each([
-    { 
-      email: 'notAnEmail', 
-      password: 'password', 
-      nameFirst: 'Curtis', 
-      nameLast: 'Scully', 
-      desc: 'Testing registration with invalid email' 
+    {
+      email: 'notAnEmail',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully',
+      desc: 'Testing registration with invalid email'
     },
-    { 
-      email: 'z5361935@ad.unsw.edu.au', 
-      password: 'five', 
-      nameFirst: 'Curtis', 
-      nameLast: 'Scully', 
-      desc: 'Testing registration with password too short' },
-    { 
-      email: 'z5361935@ad.unsw.edu.au', 
-      password: 'password', 
-      nameFirst: '', 
-      nameLast: 'Scully', 
-      desc: 'Testing registration with first name too short' },
-    { 
-      email: 'z5361935@ad.unsw.edu.au', 
-      password: 'password', 
-      nameFirst: 'ThisIsGoingToBeAVeryLongFirstNameWhichIsNotAllowedSinceItIsOverTheLimit', 
-      nameLast: 'Scully', 
-      desc: 'Testing registration with first name too long' },
-    { 
-      email: 'z5361935@ad.unsw.edu.au', 
-      password: 'password', 
-      nameFirst: 'Curtis', 
-      nameLast: '', 
-      desc: 'Testing registration with last name too short' },
-    { 
-      email: 'z5361935@ad.unsw.edu.au', 
-      password: 'password', 
-      nameFirst: 'Curtis', 
-      nameLast: 'ThisIsGoingToBeAVeryLongLastNameWhichIsNotAllowedSinceItIsOverTheLimit', 
-      desc: 'Testing registration with last name too long' 
+    {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'five',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully',
+      desc: 'Testing registration with password too short'
+    },
+    {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: '',
+      nameLast: 'Scully',
+      desc: 'Testing registration with first name too short'
+    },
+    {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'ThisIsGoingToBeAVeryLongFirstNameWhichIsNotAllowedSinceItIsOverTheLimit',
+      nameLast: 'Scully',
+      desc: 'Testing registration with first name too long'
+    },
+    {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: '',
+      desc: 'Testing registration with last name too short'
+    },
+    {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'ThisIsGoingToBeAVeryLongLastNameWhichIsNotAllowedSinceItIsOverTheLimit',
+      desc: 'Testing registration with last name too long'
     },
   ])('$desc', ({ email, password, nameFirst, nameLast }) => {
     const newId = authRegisterV1(email, password, nameFirst, nameLast);
     expect(newId).toMatchObject({ error: expect.any(String) });
   });
-  
+
   test('Testing registration with in use email', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    const newId = authRegisterV1('z5361935@ad.unsw.edu.au', '123456', 'Mike', 'Wazowski')
+    const newId = authRegisterV1('z5361935@ad.unsw.edu.au', '123456', 'Mike', 'Wazowski');
     expect(newId).toMatchObject({ error: expect.any(String) });
   });
 });
