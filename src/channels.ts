@@ -2,8 +2,17 @@ import { userIdExists } from './other.js';
 import { getData, setData } from './dataStore.js';
 import { isMemberOfChannel, error } from './other.js';
 
+// Constants
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
+
+type channelSummary = {
+  channelId: number,
+  name: string,
+};
+
+type channelId = { channelId: number };
+type channels = { channels: Array<channelSummary> };
 
 /**
  * Will return an object containing an array of channels
@@ -13,7 +22,7 @@ const MAX_CHANNEL_LEN = 20;
  *
  * @returns {{channels: channels}} - array of channel objects containing channelId and name
 */
-function channelsListV1(authUserId: number) {
+function channelsListV1(authUserId: number): channels | error {
   // Check if authUserId Exists
   if (!(userIdExists(authUserId))) {
     return { error: 'authUserId is invalid' };
@@ -44,7 +53,7 @@ function channelsListV1(authUserId: number) {
   *
   * @returns {{channels}} - array of channel objects containing channelId and name
 */
-function channelsListAllV1(authUserId: number) {
+function channelsListAllV1(authUserId: number): channels | error {
   // Case where authUserId is not valid
   if (!userIdExists(authUserId)) {
     return { error: 'authUserId is invalid' };
@@ -75,8 +84,7 @@ function channelsListAllV1(authUserId: number) {
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {{channelId: channelId}} - The channel id of the new channel
 */
-function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean) {
-  
+function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean): channelId | error {
   const data = getData();
 
   // Check authUserId exists
@@ -117,7 +125,6 @@ function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean) 
     name: name,
     ownerMembers: ownerMembers,
     allMembers: allMembers,
-    //@ts-ignore - need to fix this in future to pass tsc
     messages: [],
     isPublic: isPublic,
   };
