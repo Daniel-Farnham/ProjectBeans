@@ -14,7 +14,7 @@ const MAX_CHANNEL_LEN = 20;
  * 
  * @returns {{channels: channels}} - array of channel objects containing channelId and name
 */
-function channelsListV1(authUserId) {
+function channelsListV1(authUserId: number) {
   // Check if authUserId Exists
   if (!(userIdExists(authUserId))) {
     return {error: "authUserId is invalid"};
@@ -46,7 +46,7 @@ function channelsListV1(authUserId) {
   * 
   * @returns {{channels}} - array of channel objects containing channelId and name
 */
-function channelsListAllV1(authUserId) {
+function channelsListAllV1(authUserId: number) {
   // Case where authUserId is not valid
   if (!userIdExists(authUserId)) {
     return { error: "authUserId is invalid"};
@@ -77,7 +77,7 @@ function channelsListAllV1(authUserId) {
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {{channelId: channelId}} - The channel id of the new channel
 */
-function channelsCreateV1 (authUserId, name, isPublic) {
+function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean) {
   
   const data = getData();
 
@@ -119,6 +119,7 @@ function channelsCreateV1 (authUserId, name, isPublic) {
     name: name,
     ownerMembers: ownerMembers,
     allMembers: allMembers,
+    //@ts-ignore - need to fix this in future to pass tsc
     messages: [],
     isPublic: isPublic,
   };
