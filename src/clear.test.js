@@ -6,7 +6,7 @@ describe('ClearV1 test cases', () => {
     const result = clearV1();
     expect(result).toMatchObject({});
   });
-  
+
   test('Testing logging in as a user should fail after running clearV1', () => {
     authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
     clearV1();
@@ -29,4 +29,3 @@ describe('ClearV1 test cases', () => {
     );
   });
 });
-
