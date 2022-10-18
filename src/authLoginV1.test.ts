@@ -70,7 +70,7 @@ describe('Testing basic authLoginV1 functionality', () => {
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
 
-  test('Test authRegisterV1 and authLoginV1 return the same token and Id for the same account', () => {
+  test('Test authRegisterV1 and authLoginV1 return the same Id but different tokens for the same account', () => {
     //const regId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     //const loginId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
     //expect(regId.authUserId).toBe(loginId.authUserId);
@@ -88,7 +88,7 @@ describe('Testing basic authLoginV1 functionality', () => {
     });
 
     expect(loginId.statusCode).toBe(OK);
-    expect(regId.token).toBe(loginId.token);
+    expect(regId.token).not.toBe(loginId.token);
     expect(regId.authUserId).toBe(loginId.authUserId);
   });
 
