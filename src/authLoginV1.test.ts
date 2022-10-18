@@ -87,7 +87,7 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: 'password'
     });
 
-    expect(regId.statusCode).toBe(OK);
+    expect(loginId.statusCode).toBe(OK);
     expect(regId.token).toBe(loginId.token);
     expect(regId.authUserId).toBe(loginId.authUserId);
   });
