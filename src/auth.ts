@@ -9,7 +9,7 @@ const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
 
-type authUserId = { authUserId: number };
+type authInfo = { token: string, authUserId: number };
 
 /**
   * Will attempt to login to an account with the given email and password,
@@ -21,14 +21,26 @@ type authUserId = { authUserId: number };
   * @returns {{error: string}} - An error message if email/password is invalid
   * @returns {{authUserId: number}} - The user id of the logged in account
   */
-function authLoginV1(email: string, password: string): authUserId | error {
+function authLoginV1(email: string, password: string): authInfo | error {
   // If a user exists with matching email and password, return authUserId
   // If email matches, but password is wrong return an error
   const data = getData();
   const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
     if (user.email === caseInsensitiveEmail && user.password === password) {
-      return { authUserId: user.uId };
+      const userId = user.uId;
+      const token = generateToken();
+
+      // Once we have found the user to log into, locate their session info
+      // and add a new token for this login
+      for (const user of data.sessions) {
+        if (user.uId === userId) {
+          user.tokens.push(token);
+        }
+      }
+
+      return { token: token, authUserId: userId };
+
     } else if (user.email === caseInsensitiveEmail && user.password !== password) {
       return { error: 'Incorrect password.' };
     }
