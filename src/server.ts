@@ -3,6 +3,7 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+import { authLoginV1 } from './auth';
 
 // Set up web app
 const app = express();
@@ -22,6 +23,11 @@ app.get('/echo', (req: Request, res: Response, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.post('/auth/login/v2', (req: Request, res: Response, next) => {
+  const { email, password } = req.body;
+  res.json(authLoginV1(email, password));
 });
 
 // for logging errors (print to terminal)
