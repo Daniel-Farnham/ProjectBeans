@@ -1,19 +1,19 @@
 import { getData } from './dataStore';
-import { userIdExists, User, error } from './other';
+import { userIdExists, tokenExists, User, error } from './other';
 
 /**
   * Returns user object if a valid user is found
   *
-  * @param {number} authUserId - uId of authorised user requesting profile
+  * @param {string} token - token session for user requesting profile
   * @param {number} uId - uId of user to search
   *
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
 */
-function userProfileV1 (authUserId: number, uId: number): error | { user: User } {
-  // If either uId or authUserId does not exist, then return error
-  if (!userIdExists(authUserId) || !userIdExists(uId)) {
-    return { error: 'authUserId/uId to search is invalid' };
+function userProfileV1 (token: string, uId: number): error | { user: User } {
+  // If either uId or token does not exist, then return error
+  if (!tokenExists(token) || !userIdExists(uId)) {
+    return { error: 'token/uId to search is invalid' };
   }
 
   // Retrieve user profile for matching user
