@@ -17,6 +17,15 @@ const GLOBAL_OWNER = 1;
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
+/*
+type channelDetails = { 
+  name: string,
+  isPublic: boolean,
+  ownerMembers: Array<User>,
+  allMembers: Array<User> ,
+}
+*/
+
 function channelDetailsV1(authUserId: number, channelId: number) {
   const data = getData(); 
   const findChannel = data.channels.find(o => o.channelId === channelId);
@@ -140,7 +149,7 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number) {
 */
 
 
-function invalidMemberships (channel: object, authUserId: number, uId: number) {
+function invalidMemberships (channel, authUserId: number, uId: number) {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
     return { error: 'User to invite already a member of channel' };
