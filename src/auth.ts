@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore.js';
 import validator from 'validator';
+import { error } from './other';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -7,6 +8,8 @@ const GLOBAL_MEMBER = 2;
 const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
+
+type authUserId = { authUserId: number };
 
 /**
   * Will attempt to login to an account with the given email and password,
@@ -18,7 +21,7 @@ const MAX_NAME_LEN = 50;
   * @returns {{error: string}} - An error message if email/password is invalid
   * @returns {{authUserId: number}} - The user id of the logged in account
   */
-function authLoginV1(email, password) {
+function authLoginV1(email: string, password: string): authUserId | error {
   // If a user exists with matching email and password, return authUserId
   // If email matches, but password is wrong return an error
   const data = getData();
@@ -47,7 +50,7 @@ function authLoginV1(email, password) {
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {{authUserId: number}} - The user id of the registered account
   */
-function authRegisterV1(email, password, nameFirst, nameLast) {
+function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string): authUserId | error | boolean {
   // Check if the given information is valid, then generate a unique handle
   const isInvalid = registerInfoInvalid(email, password, nameFirst, nameLast);
   if (isInvalid !== false) {
@@ -96,7 +99,7 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {boolean} - False if the information isn't invalid
   */
-function registerInfoInvalid(email, password, nameFirst, nameLast) {
+function registerInfoInvalid(email: string, password: string, nameFirst: string, nameLast: string): error | boolean {
   // Check whether email, password and first/last name meet the criteria
   if (!(validator.isEmail(email))) {
     return { error: 'Invalid email.' };
@@ -131,7 +134,7 @@ function registerInfoInvalid(email, password, nameFirst, nameLast) {
   *
   * @returns {boolean} - True if the handle already exists, false otherwise
   */
-function handleExists(handleStr) {
+function handleExists(handleStr: string): boolean {
   // Loop through users array to check if the handle already exists
   const data = getData();
   for (const user of data.users) {
@@ -150,7 +153,7 @@ function handleExists(handleStr) {
   *
   * @returns {string} - A unique handle made from the first and last name
   */
-function generateHandle(nameFirst, nameLast) {
+function generateHandle(nameFirst: string, nameLast: string): string {
   // Create an alphanumeric handle string of length <= 20
   let handleStr = (nameFirst + nameLast).toLowerCase();
   handleStr = handleStr.replace(/[^a-z0-9]/gi, '');

@@ -18,7 +18,7 @@ function clearV1 () {
 export type error = { error: string };
 
 /**
-  * Specifies the user interface
+  * Specifies the user interface (used for return types)
 */
 export interface User {
   uId: number;
@@ -27,9 +27,22 @@ export interface User {
   nameLast: string;
   handleStr: string;
 }
+/**
+  * Specifies the user interface for user objects which contain all properties
+  * including private properties
+*/
+export interface UserPrivate {
+  uId: number,
+  email: string,
+  nameFirst: string,
+  nameLast: string,
+  handleStr: string,
+  password: string,
+  permissionId: number,
+}
 
 /**
-  * Specifies the channel interface
+  * Specifies the channel interface (used for return types)
 */
 export interface Channel {
   channelId: number;
