@@ -9,7 +9,7 @@ const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
 
-type authUserId = { authUserId: number };
+type authInfo= { token: string, authUserId: number };
 
 /**
   * Will attempt to login to an account with the given email and password,
@@ -50,7 +50,7 @@ function authLoginV1(email: string, password: string): authUserId | error {
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {{authUserId: number}} - The user id of the registered account
   */
-function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string): authUserId | error | boolean {
+function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string): authInfo | error | boolean {
   // Check if the given information is valid, then generate a unique handle
   const isInvalid = registerInfoInvalid(email, password, nameFirst, nameLast);
   if (isInvalid !== false) {
@@ -81,10 +81,22 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   };
 
   data.users.push(user);
+
+  // Add the new token to the database
+  const token = generateToken();
+
+  const sessionInfo = {
+    uId: userId,
+    tokens: [token]
+  };
+
+  data.sessions.push(sessionInfo);
+
   setData(data);
 
   return {
-    authUserId: userId,
+    token: token,
+    authUserId: userId
   };
 }
 
@@ -172,6 +184,28 @@ function generateHandle(nameFirst: string, nameLast: string): string {
   }
 
   return handleStr;
+}
+
+/**
+  * Generates a unique token
+  *
+  * @returns {string} - A unique token
+  */
+function generateToken(): string {
+  const data = getData();
+
+  // Find the token with the greatest value then add 1 so our new token is unique
+  let newToken = 0;
+  for (const user of data.sessions) {
+    for (const token of user.tokens) {
+      if (parseInt(token) > newToken) {
+        newToken = parseInt(token);
+      }
+    }
+  }
+  newToken++;
+
+  return newToken.toString();
 }
 
 export { authLoginV1, authRegisterV1 };
