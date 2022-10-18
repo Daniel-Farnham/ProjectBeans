@@ -1,5 +1,5 @@
-import { getData } from './dataStore.js';
-import { userIdExists } from './other.js';
+import { getData } from './dataStore';
+import { userIdExists, User, error } from './other';
 
 /**
   * Returns user object if a valid user is found
@@ -10,7 +10,7 @@ import { userIdExists } from './other.js';
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
 */
-function userProfileV1 (authUserId, uId) {
+function userProfileV1 (authUserId: number, uId: number): error | { user: User } {
   // If either uId or authUserId does not exist, then return error
   if (!userIdExists(authUserId) || !userIdExists(uId)) {
     return { error: 'authUserId/uId to search is invalid' };

@@ -1,20 +1,20 @@
 import { channelJoinV1, channelDetailsV1 } from './channel';
-import { authRegisterV1  } from './auth'
-import { channelsCreateV1 } from './channels'
-import { clearV1 } from './other'
+import { authRegisterV1 } from './auth';
+import { channelsCreateV1 } from './channels';
+import { clearV1 } from './other';
 
 describe('Testing positive cases for channelJoinV1', () => {
   beforeEach(() => {
-      clearV1(); 
-  })
-  
+    clearV1();
+  });
+
   test('Successful return of empty object when joining public channel', () => {
     const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
     const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
-    
-    expect(returnedChannelObject).toMatchObject({}); 
+
+    expect(returnedChannelObject).toMatchObject({});
   });
 
   test('Successful return of empty object when joining private channel as global owner', () => {
@@ -22,8 +22,8 @@ describe('Testing positive cases for channelJoinV1', () => {
     const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
     const channel = channelsCreateV1(user2.authUserId, 'ChannelBoost', false);
     const returnedChannelObject = channelJoinV1(user1.authUserId, channel.channelId);
-    
-    expect(returnedChannelObject).toMatchObject({}); 
+
+    expect(returnedChannelObject).toMatchObject({});
   });
 
   test('User is added as a new member of allMembers array', () => {
@@ -33,7 +33,7 @@ describe('Testing positive cases for channelJoinV1', () => {
     channelJoinV1(user2.authUserId, channel.channelId);
     const channelObj = channelDetailsV1(user1.authUserId, channel.channelId);
     const expectedChannelObj = {
-      name: "ChannelBoost",
+      name: 'ChannelBoost',
       isPublic: true,
       ownerMembers: [
         {
@@ -61,30 +61,29 @@ describe('Testing positive cases for channelJoinV1', () => {
         },
       ],
     };
-    expect(channelObj).toMatchObject(expectedChannelObj); 
+    expect(channelObj).toMatchObject(expectedChannelObj);
   });
-
 });
 
 describe('Testing negative cases for channelJoinV1', () => {
   beforeEach(() => {
-    clearV1(); 
-  })
+    clearV1();
+  });
 
   test('Testing invalid authUserId', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(userId.authUserId + 1, channel.channelId);
-    
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); 
+
+    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
 
-  test('Testing invalid channelId', () => { 
+  test('Testing invalid channelId', () => {
     const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-    const returnedChannelObject = channelJoinV1(userId.authUserId, channel.channelId + 1)  ;
-    
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); 
+    const returnedChannelObject = channelJoinV1(userId.authUserId, channel.channelId + 1);
+
+    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
 
   test('Testing if the user is already a member of the channel', () => {
@@ -92,17 +91,16 @@ describe('Testing negative cases for channelJoinV1', () => {
     const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(userId.authUserId, channel.channelId);
 
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });  //expecting channelJoin to return error if the user is already a member. 
+    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); // expecting channelJoin to return error if the user is already a member.
   });
-  
+
   test('Testing if user is trying to join private channel assuming they are not global owner', () => {
     const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
 
-    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', false); 
+    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', false);
     const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
-    
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String)});  
-  });
-}); 
 
+    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
+  });
+});

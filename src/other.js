@@ -6,7 +6,7 @@ import { getData, setData } from './dataStore.js';
   * @returns {} - returns empty object
 */
 function clearV1 () {
-  let data = {
+  const data = {
     users: [],
     channels: [],
   };
@@ -21,7 +21,7 @@ function clearV1 () {
 */
 function userIdExists(userId) {
   const data = getData();
-  
+
   // Loop through users array to check if user exists
   for (const user of data.users) {
     if (user.uId === userId) {
@@ -38,7 +38,7 @@ function userIdExists(userId) {
 */
 function channelIdExists(channelId) {
   const data = getData();
-  
+
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
@@ -47,22 +47,21 @@ function channelIdExists(channelId) {
   }
   return false;
 }
-/** 
+/**
   *  Check if a user is a member of a channel
-  * @param {number} uId - uId to check 
-  * @param {number} channel - channel object 
-  * 
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
   * @returns {boolean} - true if user is member, false otherwise
 */
 function isMemberOfChannel(channel, uId) {
-  const data = getData();
-  // Loop through all members of channel 
+  // Loop through all members of channel
   // if user is found, then return true
   for (const member of channel.allMembers) {
     if (member.uId === uId) {
       return true;
     }
-  } 
+  }
   return false;
 }
 
