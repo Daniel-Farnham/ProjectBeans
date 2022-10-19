@@ -115,7 +115,7 @@ function channelJoinV1(authUserId: number, channelId: number): error | Record<st
   *
   * @returns {Object} {} - returns an empty object upon success
 */
-function channelInviteV1(authUserId: number, channelId: number, uId: number): error | Record<string, never> {
+function channelInviteV1(authUserId: number, channelId: number, uId: number): error | boolean | Record<string, never> {
   // If any ids do not exist, return error
   if (!userIdExists(authUserId) || !userIdExists(uId) || !channelIdExists(channelId)) {
     return { error: 'authUserId/uId/channelId not valid' };
@@ -133,7 +133,7 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number): er
   // Loop through channel and add new member
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      channel.allMembers.push(newMember.user); // THIS IS THE ERROR LINE
+      channel.allMembers.push(newMember.user);
       setData(data);
       return {};
     }
