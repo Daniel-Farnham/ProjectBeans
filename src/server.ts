@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import { clearV1 } from './other';
-import { authRegisterV1 } from './auth';
+import { authLoginV1, authRegisterV1 } from './auth';
 
 // Set up web app
 const app = express();
@@ -41,6 +41,11 @@ app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const uId = parseInt(req.query.uId as string);
 
   res.json(userProfileV1(token, uId));
+});
+
+app.post('/auth/login/v2', (req: Request, res: Response, next) => {
+  const { email, password } = req.body;
+  res.json(authLoginV1(email, password));
 });
 
 // for logging errors (print to terminal)

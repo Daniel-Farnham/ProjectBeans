@@ -46,6 +46,7 @@ describe('ClearV1 test cases', () => {
     expect(result).toStrictEqual(
       {
         authUserId: expect.any(Number),
+        token: expect.any(String),
       }
     );
   });

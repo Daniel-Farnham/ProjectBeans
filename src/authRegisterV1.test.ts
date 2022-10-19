@@ -24,7 +24,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    expect(newId.statusCode).toBe(OK);
+    // expect(newId.statusCode).toBe(OK);
     expect(newId).toStrictEqual({ token: expect.any(String), authUserId: expect.any(Number) });
   });
 
@@ -47,7 +47,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
       nameLast: 'Smith'
     });
 
-    expect(firstId.statusCode).toBe(OK);
+    // expect(firstId.statusCode).toBe(OK);
     expect(firstId.token).not.toBe(secondId.token);
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
@@ -79,7 +79,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
       }
     };
 
-    expect(newId.statusCode).toBe(OK);
+    // expect(newId.statusCode).toBe(OK);
     expect(resultUser).toMatchObject(expectedUser);
   });
 
@@ -134,7 +134,7 @@ describe('Testing basic authRegisterV1 functionality', () => {
       }
     };
 
-    expect(newId.statusCode).toBe(OK);
+    // expect(newId.statusCode).toBe(OK);
     expect(resultUser).toMatchObject(expectedUser);
   });
 });
@@ -194,7 +194,7 @@ describe('Testing authRegisterV1 error handling', () => {
       nameLast: nameLast
     });
 
-    expect(newId.statusCode).toBe(OK);
+    // expect(newId.statusCode).toBe(OK);
     expect(newId).toMatchObject({ error: expect.any(String) });
   });
 
@@ -217,7 +217,7 @@ describe('Testing authRegisterV1 error handling', () => {
       nameLast: 'Wazowski'
     });
 
-    expect(newId.statusCode).toBe(OK);
+    // expect(newId.statusCode).toBe(OK);
     expect(newId).toMatchObject({ error: expect.any(String) });
   });
 });
