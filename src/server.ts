@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import { clearV1 } from './other';
+import { authRegisterV1 } from './auth';
 
 // Set up web app
 const app = express();
@@ -29,6 +30,11 @@ app.get('/echo', (req: Request, res: Response, next) => {
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
 });
+app.get('/auth/register/v2', (req: Request, res: Response, next) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  res.json(authRegisterV1(email, password, nameFirst, nameLast));
+});
+
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
 
