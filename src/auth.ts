@@ -40,7 +40,6 @@ function authLoginV1(email: string, password: string): authInfo | error {
       }
 
       return { token: token, authUserId: userId };
-
     } else if (user.email === caseInsensitiveEmail && user.password !== password) {
       return { error: 'Incorrect password.' };
     }

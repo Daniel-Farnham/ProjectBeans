@@ -16,7 +16,7 @@ describe('ClearV1 test cases', () => {
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-  
+
     deleteRequest(SERVER_URL + '/clear/v1', {});
     const result = postRequest(SERVER_URL + '/auth/login/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
