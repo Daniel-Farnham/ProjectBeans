@@ -107,7 +107,7 @@ export const getRequest = (url: string, data: any) => {
   * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise
 */
-export function userIdExists(userId: number) {
+export function userIdExists(userId: number): boolean {
   const data = getData();
 
   // Loop through users array to check if user exists
@@ -124,7 +124,7 @@ export function userIdExists(userId: number) {
   * @param {number} channelId - channelId to check
   * @returns {boolean} - true if channel exists, false otherwise
 */
-export function channelIdExists(channelId: number) {
+export function channelIdExists(channelId: number): boolean {
   const data = getData();
 
   // Loop through channels array to check if channel exists
@@ -142,7 +142,7 @@ export function channelIdExists(channelId: number) {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfChannel(channel: Channel, uId: number) {
+export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
   const allMembers = channel.allMembers;
