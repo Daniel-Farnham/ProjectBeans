@@ -8,6 +8,7 @@ let data = {
 
   users: [],
   channels: [],
+  sessions: [],
 
 };
 
