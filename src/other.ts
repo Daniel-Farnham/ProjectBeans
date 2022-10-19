@@ -6,10 +6,11 @@ import request from 'sync-request';
   * @param {}  - no parameters required
   * @returns {} - returns empty object
 */
-function clearV1 () {
+export function clearV1 (): Record<string, never> {
   const data = {
     users: [],
     channels: [],
+    sessions: [],
   };
   setData(data);
   return {};
@@ -106,7 +107,7 @@ export const getRequest = (url: string, data: any) => {
   * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise
 */
-function userIdExists(userId: number) {
+export function userIdExists(userId: number): boolean {
   const data = getData();
 
   // Loop through users array to check if user exists
@@ -123,7 +124,7 @@ function userIdExists(userId: number) {
   * @param {number} channelId - channelId to check
   * @returns {boolean} - true if channel exists, false otherwise
 */
-function channelIdExists(channelId: number) {
+export function channelIdExists(channelId: number): boolean {
   const data = getData();
 
   // Loop through channels array to check if channel exists
@@ -141,7 +142,7 @@ function channelIdExists(channelId: number) {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-function isMemberOfChannel(channel: Channel, uId: number) {
+export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
   const allMembers = channel.allMembers;
@@ -153,4 +154,19 @@ function isMemberOfChannel(channel: Channel, uId: number) {
   return false;
 }
 
-export { userIdExists, channelIdExists, clearV1, isMemberOfChannel };
+/**
+  * Checks if the user id is registered in the database.
+  * @param {string} token - userId to check
+  * @returns {Boolean} - returns true if exists, false otherwise
+*/
+export function tokenExists (token: string): boolean {
+  const data = getData();
+
+  // Loop through sessions array to check if token exists
+  for (const session of data.sessions) {
+    if (session.tokens.includes(token)) {
+      return true;
+    }
+  }
+  return false;
+}
