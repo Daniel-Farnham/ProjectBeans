@@ -17,8 +17,6 @@ type start = { start: number };
 
 type end = { end: number };
 
-type EmptyObject = {};
-
 /**
   * Allows a user to return the channelDetails of a channel that
   * they are a member of.
@@ -62,11 +60,11 @@ function channelDetailsV1(authUserId: number, channelId: number): channelDetails
   * @param {number} channelId - id of channel to invite to
   * ...
   *
-  * @returns {Object: EmptyObject} {} - returns an empty object upon success
+  * @returns {Object} {} - returns an empty object upon success
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelJoinV1(authUserId: number, channelId: number): error | EmptyObject {
+function channelJoinV1(authUserId: number, channelId: number): error | Record<string, never> {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
@@ -115,9 +113,9 @@ function channelJoinV1(authUserId: number, channelId: number): error | EmptyObje
   * @param {number} uId - id of user being invited to channel
   * ...
   *
-  * @returns {Object: EmptyObject} {} - returns an empty object upon success
+  * @returns {Object} {} - returns an empty object upon success
 */
-function channelInviteV1(authUserId: number, channelId: number, uId: number): error | EmptyObject {
+function channelInviteV1(authUserId: number, channelId: number, uId: number): error | Record<string, never> {
   // If any ids do not exist, return error
   if (!userIdExists(authUserId) || !userIdExists(uId) || !channelIdExists(channelId)) {
     return { error: 'authUserId/uId/channelId not valid' };
@@ -135,7 +133,7 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number): er
   // Loop through channel and add new member
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      channel.allMembers.push(newMember.user);
+      channel.allMembers.push(newMember.user); // THIS IS THE ERROR LINE
       setData(data);
       return {};
     }
