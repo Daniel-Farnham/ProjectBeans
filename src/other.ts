@@ -164,7 +164,7 @@ export function tokenExists (token: string): boolean {
 
   // Loop through sessions array to check if token exists
   for (const session of data.sessions) {
-    if (session.includes(token)) {
+    if (session.tokens.includes(token)) {
       return true;
     }
   }

@@ -18,6 +18,7 @@ const HOST: string = process.env.IP || 'localhost';
 
 // Importing implementation functions
 import { userProfileV1 } from './users';
+
 // Example get request
 app.get('/echo', (req: Request, res: Response, next) => {
   try {
@@ -42,12 +43,12 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const uId = parseInt(req.query.uId as string);
-
   res.json(userProfileV1(token, uId));
 });
 
 app.post('/auth/login/v2', (req: Request, res: Response, next) => {
-  const { email, password } = req.body;
+  const email = req.body.email as string;
+  const password = req.body.password as string;
   res.json(authLoginV1(email, password));
 });
 
