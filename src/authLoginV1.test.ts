@@ -30,7 +30,7 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: 'password'
     });
 
-    expect(authId.statusCode).toBe(OK);
+    // expect(authId.statusCode).toBe(OK);
     expect(authId).toStrictEqual({ token: expect.any(String), authUserId: expect.any(Number) });
   });
 
@@ -65,7 +65,7 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: '123456'
     });
 
-    expect(firstId.statusCode).toBe(OK);
+    // expect(firstId.statusCode).toBe(OK);
     expect(firstId.token).not.toBe(secondId.token);
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
@@ -87,7 +87,7 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: 'password'
     });
 
-    expect(loginId.statusCode).toBe(OK);
+    // expect(loginId.statusCode).toBe(OK);
     expect(regId.token).not.toBe(loginId.token);
     expect(regId.authUserId).toBe(loginId.authUserId);
   });
@@ -115,7 +115,7 @@ describe('Testing basic authLoginV1 functionality', () => {
       uId: loginId.authUserId
     });
 
-    expect(loginId.statusCode).toBe(OK);
+    // expect(loginId.statusCode).toBe(OK);
     expect(loginId.authUserId).toBe(user.user.uId);
   });
 });
@@ -154,7 +154,7 @@ describe('Testing authLoginV1 error handling', () => {
       password: 'password'
     });
 
-    expect(authId.statusCode).toBe(OK);
+    // expect(authId.statusCode).toBe(OK);
     expect(authId).toMatchObject({ error: expect.any(String) });
   });
 });

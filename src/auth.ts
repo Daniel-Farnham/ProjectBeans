@@ -9,11 +9,7 @@ const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
 
-<<<<<<< HEAD
-type authInfo= { token: string, authUserId: number };
-=======
 type authInfo = { token: string, authUserId: number };
->>>>>>> 54636444482618c0b25610793672c6d098888659
 
 /**
   * Will attempt to login to an account with the given email and password,

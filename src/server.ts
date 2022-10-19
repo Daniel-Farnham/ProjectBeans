@@ -32,9 +32,12 @@ app.get('/echo', (req: Request, res: Response, next) => {
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
 });
-app.get('/auth/register/v2', (req: Request, res: Response, next) => {
+
+app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   const { email, password, nameFirst, nameLast } = req.body;
   res.json(authRegisterV1(email, password, nameFirst, nameLast));
+});
+
 // Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
