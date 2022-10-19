@@ -153,3 +153,20 @@ export function isMemberOfChannel(channel: Channel, uId: number) {
   }
   return false;
 }
+
+/**
+  * Checks if the user id is registered in the database.
+  * @param {string} token - userId to check
+  * @returns {Boolean} - returns true if exists, false otherwise
+*/
+export function tokenExists (token: string): boolean {
+  const data = getData();
+
+  // Loop through sessions array to check if token exists
+  for (const session of data.sessions) {
+    if (session.includes(token)) {
+      return true;
+    }
+  }
+  return false;
+}
