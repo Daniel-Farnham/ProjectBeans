@@ -148,8 +148,8 @@ describe('Testing authLoginV1 error handling', () => {
     });
 
     const authId = postRequest(SERVER_URL + '/auth/login/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: 'password'
+      email: email,
+      password: password
     });
 
     // expect(authId.statusCode).toBe(OK);
