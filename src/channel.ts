@@ -1,8 +1,21 @@
-import { userIdExists, channelIdExists, isMemberOfChannel } from './other.js';
+import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.js';
 import { getData, setData } from './dataStore.js';
 import { userProfileV1 } from './users.js';
 
 const GLOBAL_OWNER = 1;
+
+type channelDetails = {
+  name: string,
+  isPublic: boolean,
+  ownerMembers: Array<User>,
+  allMembers: Array<User>,
+};
+
+type messages = { messages: Array<messages> };
+
+type start = { start: number };
+
+type end = { end: number };
 
 /**
   * Allows a user to return the channelDetails of a channel that
@@ -13,11 +26,11 @@ const GLOBAL_OWNER = 1;
   * @param {number} channelId - id of channel to invite to
   * ...
   *
-  * @returns {Object} {} - returns an object of channel details if successful
+  * @returns {Object: EmptyObject} {} - returns an object of channel details if successful
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelDetailsV1(authUserId, channelId) {
+function channelDetailsV1(authUserId: number, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
@@ -50,7 +63,8 @@ function channelDetailsV1(authUserId, channelId) {
   * @returns {Object} {} - returns an empty object upon success
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
-function channelJoinV1(authUserId, channelId) {
+
+function channelJoinV1(authUserId: number, channelId: number): error | Record<string, never> {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
@@ -101,7 +115,7 @@ function channelJoinV1(authUserId, channelId) {
   *
   * @returns {Object} {} - returns an empty object upon success
 */
-function channelInviteV1(authUserId, channelId, uId) {
+function channelInviteV1(authUserId: number, channelId: number, uId: number): error | boolean | Record<string, never> {
   // If any ids do not exist, return error
   if (!userIdExists(authUserId) || !userIdExists(uId) || !channelIdExists(channelId)) {
     return { error: 'authUserId/uId/channelId not valid' };
@@ -136,7 +150,8 @@ function channelInviteV1(authUserId, channelId, uId) {
   *
   * @returns {Object} {} - returns error object if fail, false otherwise
 */
-function invalidMemberships (channel, authUserId, uId) {
+
+function invalidMemberships (channel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
     return { error: 'User to invite already a member of channel' };
@@ -162,7 +177,7 @@ function invalidMemberships (channel, authUserId, uId) {
   * @returns {{start: number}} - The starting index of the returned messages
   * @returns {{end: number}} - The final index of the returned messages
   */
-function channelMessagesV1(authUserId, channelId, start) {
+function channelMessagesV1(authUserId: number, channelId: number, start: number): boolean | error | messages | start | end {
   // Check if the given information is valid
   const isInvalid = messagesInfoInvalid(authUserId, channelId, start);
   if (isInvalid !== false) {
@@ -211,7 +226,7 @@ function channelMessagesV1(authUserId, channelId, start) {
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {boolean} - False if the information isn't invalid
   */
-function messagesInfoInvalid(authUserId, channelId, start) {
+function messagesInfoInvalid(authUserId: number, channelId: number, start: number): error | boolean {
   // If channelId or authUserId doesn't exist return error
   if (!(channelIdExists(channelId))) {
     return { error: 'ChannelId is invalid' };
