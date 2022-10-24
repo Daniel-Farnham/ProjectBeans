@@ -1,10 +1,12 @@
 import express, { json, Request, Response } from 'express';
 import { echo } from './echo';
+import fs from 'fs';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
+import { getData, setData } from './dataStore';
 
 // Set up web app
 const app = express();
@@ -19,6 +21,21 @@ const HOST: string = process.env.IP || 'localhost';
 // Importing implementation functions
 import { userProfileV1 } from './users';
 
+// Get data. If datastore file exists, then update data to match datastore
+let data = getData();
+if (fs.existsSync('./dataStore.json')) {
+  const dbStr = fs.readFileSync('./dataStore.json');
+  data = JSON.parse(String(dbStr));
+  setData(data);
+}
+
+// Function to fetch current datastore and store into datastore file
+const save = () => {
+  data = getData();
+  const jsonStr = JSON.stringify(data);
+  fs.writeFileSync('./dataStore.json', jsonStr);
+};
+
 // Example get request
 app.get('/echo', (req: Request, res: Response, next) => {
   try {
@@ -32,11 +49,13 @@ app.get('/echo', (req: Request, res: Response, next) => {
 // Delete request for /clear/v1
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
+  save();
 });
 
 app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   const { email, password, nameFirst, nameLast } = req.body;
   res.json(authRegisterV1(email, password, nameFirst, nameLast));
+  save();
 });
 
 // Get userProfileV2
@@ -44,12 +63,14 @@ app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const uId = parseInt(req.query.uId as string);
   res.json(userProfileV1(token, uId));
+  save();
 });
 
 app.post('/auth/login/v2', (req: Request, res: Response, next) => {
   const email = req.body.email as string;
   const password = req.body.password as string;
   res.json(authLoginV1(email, password));
+  save();
 });
 
 // for logging errors (print to terminal)
