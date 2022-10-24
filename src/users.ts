@@ -42,9 +42,28 @@ function userProfileV1 (token: string, uId: number): error | { user: User } {
   *                      first name, last name, and handle string
   * and handle
 */
-export function usersAllV1 (token: string): error | {users: []} {
+export function usersAllV1 (token: string): error | {users: any[]} {
 
-  return {users: []};
+  // If token invalid, return error
+  if (!tokenExists(token)) {
+    return {error: 'token provided is invalid'};
+  }
+  const data = getData();
+
+  const users = [];
+
+  for (const user of data.users) {
+    users.push(
+      {
+        uId: user.uId,
+        email: user.email,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+        handleStr: user.handleStr,
+      }
+    );
+  }
+  return { users };
 }
 
 export { userProfileV1 };

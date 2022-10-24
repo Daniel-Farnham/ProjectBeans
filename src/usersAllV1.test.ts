@@ -14,8 +14,8 @@ describe('Testing usersAllV1 successful case handling', () => {
   
     // Create multiple users
     const users = [];
-    const firstNames = ['Jane', 'Bob', 'Sally', 'John', 'Peter'];
-    const lastNames = ['Doe', 'Junior', 'Beans', 'Wick', 'Cordial'];
+    const firstNames = ['jane', 'bob', 'sally', 'john', 'peter'];
+    const lastNames = ['doe', 'junior', 'beans', 'wick', 'cordial'];
     for (let i = 0; i <= 4; i++) {
       const user = postRequest(SERVER_URL + '/auth/register/v2', {
         email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
@@ -23,25 +23,29 @@ describe('Testing usersAllV1 successful case handling', () => {
         nameFirst: firstNames[i],
         nameLast: lastNames[i],
       });
-      
       users.push(user);
     }
   
+    
     const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
       token: users[0].token,
     });
     
+    // Loop through each user and check the user object exists within the
+    // returned users object that was called by /users/all/v1
     for (let i = 0; i <= 4; i++) {
       const expectedUser = {
-        user: {
           uId: users[i].authUserId,
           email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
           nameFirst: firstNames[i],
           nameLast: lastNames[i],
           handleStr: `${firstNames[i]}${lastNames[i]}`,
-        }
-      };  
-      expect(resultUsers).toContain(expectedUser);
+      };
+      expect(resultUsers.users).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(expectedUser)
+        ])
+      );
     }
   });
 
@@ -70,7 +74,7 @@ describe('Testing usersAllV1 successful case handling', () => {
       ],
     };
 
-      expect(resultUsers).toContain(expectedUsers);
+      expect(resultUsers).toMatchObject(expectedUsers);
     
   });
 
