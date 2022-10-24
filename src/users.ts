@@ -33,4 +33,36 @@ function userProfileV1 (token: string, uId: number): error | { user: User } {
   }
 }
 
+/**
+  * Returns object containing an array of user objects if valid token provided
+  *
+  * @param {string} token - token session for user requesting all users
+  *
+  * @returns { users } - Returns array of objects with valid user ID, email,
+  *                      first name, last name, and handle string
+  * and handle
+*/
+export function usersAllV1 (token: string): error | {users: any[]} {
+  // If token invalid, return error
+  if (!tokenExists(token)) {
+    return { error: 'token provided is invalid' };
+  }
+  const data = getData();
+
+  const users = [];
+
+  for (const user of data.users) {
+    users.push(
+      {
+        uId: user.uId,
+        email: user.email,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+        handleStr: user.handleStr,
+      }
+    );
+  }
+  return { users };
+}
+
 export { userProfileV1 };
