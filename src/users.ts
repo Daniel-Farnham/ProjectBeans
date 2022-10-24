@@ -15,7 +15,7 @@ function userProfileV1 (token: string, uId: number): error | { user: User } {
   if (!tokenExists(token) || !userIdExists(uId)) {
     return { error: 'token/uId to search is invalid' };
   }
-  
+
   // Retrieve user profile for matching user
   const data = getData();
   for (const user of data.users) {
@@ -38,15 +38,14 @@ function userProfileV1 (token: string, uId: number): error | { user: User } {
   *
   * @param {string} token - token session for user requesting all users
   *
-  * @returns { users } - Returns array of objects with valid user ID, email, 
+  * @returns { users } - Returns array of objects with valid user ID, email,
   *                      first name, last name, and handle string
   * and handle
 */
 export function usersAllV1 (token: string): error | {users: any[]} {
-
   // If token invalid, return error
   if (!tokenExists(token)) {
-    return {error: 'token provided is invalid'};
+    return { error: 'token provided is invalid' };
   }
   const data = getData();
 

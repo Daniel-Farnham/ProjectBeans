@@ -11,7 +11,6 @@ beforeEach(() => {
 // Working cases
 describe('Testing usersAllV1 successful case handling', () => {
   test('Testing successful return of users array with multiple users', () => {
-  
     // Create multiple users
     const users = [];
     const firstNames = ['jane', 'bob', 'sally', 'john', 'peter'];
@@ -25,21 +24,20 @@ describe('Testing usersAllV1 successful case handling', () => {
       });
       users.push(user);
     }
-  
-    
+
     const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
       token: users[0].token,
     });
-    
+
     // Loop through each user and check the user object exists within the
     // returned users object that was called by /users/all/v1
     for (let i = 0; i <= 4; i++) {
       const expectedUser = {
-          uId: users[i].authUserId,
-          email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
-          nameFirst: firstNames[i],
-          nameLast: lastNames[i],
-          handleStr: `${firstNames[i]}${lastNames[i]}`,
+        uId: users[i].authUserId,
+        email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
+        nameFirst: firstNames[i],
+        nameLast: lastNames[i],
+        handleStr: `${firstNames[i]}${lastNames[i]}`,
       };
       expect(resultUsers.users).toEqual(
         expect.arrayContaining([
@@ -50,7 +48,6 @@ describe('Testing usersAllV1 successful case handling', () => {
   });
 
   test('Testing successful return of users array with one user', () => {
-  
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -61,7 +58,7 @@ describe('Testing usersAllV1 successful case handling', () => {
     const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
       token: user.token,
     });
-    
+
     const expectedUsers = {
       users: [
         {
@@ -74,10 +71,8 @@ describe('Testing usersAllV1 successful case handling', () => {
       ],
     };
 
-      expect(resultUsers).toMatchObject(expectedUsers);
-    
+    expect(resultUsers).toMatchObject(expectedUsers);
   });
-
 });
 
 describe('Testing usersAllV1 error handling', () => {
