@@ -20,7 +20,7 @@ const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
 // Importing implementation functions
-import { userProfileV1 } from './users';
+import { userProfileV1, usersAllV1 } from './users';
 
 // Get data. If datastore file exists, then update data to match datastore
 let data = getData();
@@ -70,6 +70,13 @@ app.get('/user/profile/v2', (req: Request, res: Response, next) => {
 app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
   const { token, nameFirst, nameLast } = req.body;
   res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  save();
+});
+
+// users/all/v1
+app.get('/users/all/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  res.json(usersAllV1(token));
   save();
 });
 
