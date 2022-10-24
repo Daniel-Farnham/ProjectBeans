@@ -89,8 +89,8 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   const data = getData();
   for (let user of data.users) {
     if (user.uId === uId) {
-      user.nameFirst = nameFirst.toLowerCase();
-      user.nameLast = nameLast.toLowerCase();
+      user.nameFirst = nameFirst;
+      user.nameLast = nameLast;
     }
   }
 
