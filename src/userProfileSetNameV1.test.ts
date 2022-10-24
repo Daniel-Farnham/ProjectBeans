@@ -11,7 +11,6 @@ beforeEach(() => {
 
 // Working cases
 describe('Testing userProfileSetNameV1 successful case handling', () => {
-
   test('Testing successful return of empty object', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
@@ -28,18 +27,19 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
     expect(result).toMatchObject({});
   });
-  
+
   test.each([
-    { nameFirst: 'John', nameLast: 'Doe', desc: 'Successful return of empty object'},
+    { nameFirst: 'John', nameLast: 'Doe', desc: 'Successful return of empty object' },
     { nameFirst: 'John', nameLast: 'Doe', desc: 'Successfully updated first name' },
     { nameFirst: 'Jane', nameLast: 'Silly', desc: 'Successfully updated last name' },
     { nameFirst: 'Jabba', nameLast: 'The Hutt', desc: 'Successfully updated both names' },
     { nameFirst: 'J', nameLast: 'D', desc: 'Both names 1 letter long' },
-    { nameFirst: 'ThisIsARealNameThatIsFiftyCharactersLongForSureHa', 
-        nameLast: 'ThisIsARealNameThatIsFiftyCharactersLongForSureHa', 
-          desc: 'Both names 50 letters long' },
+    {
+      nameFirst: 'ThisIsARealNameThatIsFiftyCharactersLongForSureHa',
+      nameLast: 'ThisIsARealNameThatIsFiftyCharactersLongForSureHa',
+      desc: 'Both names 50 letters long'
+    },
   ])('$desc', ({ nameFirst, nameLast }) => {
-
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -67,7 +67,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       token: user.token,
       uId: user.authUserId,
     });
-  
+
     expect(resultUser).toMatchObject(expectedUser);
   });
 
@@ -116,16 +116,18 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       );
     }
   });
-
 });
 
 describe('Testing user/profile/setname/v1 error handling', () => {
   test.each([
     { token: 'InvalidToken', nameFirst: 'John', nameLast: 'Doe', desc: 'token is invalid' },
     { token: '', nameFirst: '', nameLast: '', desc: 'Both names are not longer than 1 character' },
-    { token: '', nameFirst: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa', 
-        nameLast: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa', 
-          desc: 'Both names are over 50 letters long' },
+    {
+      token: '',
+      nameFirst: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa',
+      nameLast: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa',
+      desc: 'Both names are over 50 letters long'
+    },
   ])('$desc', ({ token, nameFirst, nameLast }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',

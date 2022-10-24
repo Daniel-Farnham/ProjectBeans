@@ -74,20 +74,20 @@ export function usersAllV1 (token: string): error | {users: any[]} {
   *
   * @returns {{}} - Returns empty object upon successful name change
 */
-export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string): error | {} {
+export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string): error | Record<string, never> {
   if (!tokenExists(token)) {
     return { error: 'token provided is invalid' };
   }
-  
+
   if (!validName(nameFirst) || !validName(nameLast)) {
     return { error: 'length of nameFirst/nameLast is not between 1 and 50' };
   }
-  
+
   // Update user profile for matching user with new names
   const uId = getUidFromToken(token);
-  
+
   const data = getData();
-  for (let user of data.users) {
+  for (const user of data.users) {
     if (user.uId === uId) {
       user.nameFirst = nameFirst;
       user.nameLast = nameLast;
