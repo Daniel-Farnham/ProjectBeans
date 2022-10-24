@@ -90,7 +90,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       putRequest(SERVER_URL + '/user/profile/setname/v1', {
         token: user.token,
         nameFirst: lastNames[i],
-        nameLast: firstNames[],
+        nameLast: firstNames[i],
       });
       users.push(user);
     }
