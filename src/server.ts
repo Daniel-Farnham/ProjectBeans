@@ -7,7 +7,7 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelsCreateV1 } from './channels';
+import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 
 // Set up web app
@@ -63,6 +63,12 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
 app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   const { token, name, isPublic } = req.body;
   res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
+app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
+  const token  = req.query.token as string;
+  res.json(channelsListAllV1(token));
   save();
 });
 
