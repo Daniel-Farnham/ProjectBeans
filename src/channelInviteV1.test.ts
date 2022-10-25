@@ -1,29 +1,71 @@
-import { clearV1 } from './other';
-import { channelsCreateV1 } from './channels';
-import { channelInviteV1, channelDetailsV1 } from './channel';
-import { authRegisterV1 } from './auth';
+import { postRequest, deleteRequest, getRequest } from './other';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
-  clearV1();
+  deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 describe('Working cases', () => {
   test('Successful return of empty object when executing channelInviteV1', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    const result = channelInviteV1(user1.authUserId, channel.channelId, user2.authUserId);
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+    
+    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user1.token,
+      channelId: channel.channelId,
+      uId: user2.authUserId
+    });
 
     expect(result).toMatchObject({});
   });
 
   test('User listed as member of channel after being invited to the channel', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    channelInviteV1(user1.authUserId, channel.channelId, user2.authUserId);
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
 
-    const result = channelDetailsV1(user2.authUserId, channel.channelId);
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+
+    postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user1.token,
+      channelId: channel.channelId,
+      uId: user2.authUserId
+    });
+    
+    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: user2.token,
+      channelId: channel.channelId,
+    });
+
     const expectedResult = {
       name: 'General',
       isPublic: true,
@@ -59,10 +101,31 @@ describe('Working cases', () => {
 
 describe('Testing channelInviteV1 error handling', () => {
   test('channelId does not refer to a valid channel', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    const result = channelInviteV1(user1.authUserId, channel.channelId + 10, user2.authUserId);
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+
+    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user1.token,
+      channelId: channel.channelId + 10,
+      uId: user2.authUserId
+    });
 
     expect(result).toStrictEqual({
       error: expect.any(String),
@@ -70,21 +133,59 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('uId does not refer to a valid user', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    const result = channelInviteV1(user1.authUserId, channel.channelId, user1.authUserId + user2.authUserId + 10);
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user1.token,
+      channelId: channel.channelId,
+      uId: user1.authUserId + user2.authUserId + 10
+    });
 
     expect(result).toStrictEqual({
       error: expect.any(String),
     });
   });
 
-  test('authUserId is invalid', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    const result = channelInviteV1(user1.authUserId + user2.authUserId + 10, channel.channelId, user2.authUserId);
+  test('token is invalid', () => {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+    
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+
+    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user1.token + user2.token + 'InvalidToken',
+      channelId: channel.channelId,
+      uId: user2.authUserId
+    });
 
     expect(result).toStrictEqual({
       error: expect.any(String),
@@ -92,9 +193,22 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('uId refers to a user who is already a member of the channel', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    const result = channelInviteV1(user1.authUserId, channel.channelId, user1.authUserId);
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user1.token,
+      channelId: channel.channelId,
+      uId: user1.authUserId
+    });
 
     expect(result).toStrictEqual({
       error: expect.any(String),
@@ -102,11 +216,34 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('channelId is valid and the authorised user is not a member of the channel', () => {
-    const user1 = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-    const user2 = authRegisterV1('jane.doe@student.unsw.edu.au', 'AP@ssW0rd!', 'Jane', 'Doe');
-    const user3 = authRegisterV1('stella.jones@student.unsw.edu.au', 'AP@ssW0rd!', 'Stella', 'Jones');
-    const channel = channelsCreateV1(user1.authUserId, 'General', true);
-    const result = channelInviteV1(user3.authUserId, channel.channelId, user2.authUserId);
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+    const user3 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'stella.jones@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Stella',
+      nameLast: 'Jones',
+    });
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'General',
+      isPublic: true
+    });
+    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
+      token: user3.token,
+      channelId: channel.channelId,
+      uId: user2.authUserId
+    });
 
     expect(result).toStrictEqual({
       error: expect.any(String),
