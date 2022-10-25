@@ -94,10 +94,11 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       const expectedUser = {
         uId: users[i].authUserId,
         email: `${firstNames[i]}.${lastNames[i]}@gmail.com`,
-        nameFirst: lastNames[i],
-        nameLast: firstNames[i],
+        nameFirst: firstNames[i],
+        nameLast:  lastNames[i],
         handleStr: `${firstNames[i]}${lastNames[i]}`,
       };
+
       expect(resultUsers.users).toEqual(
         expect.arrayContaining([
           expect.objectContaining(expectedUser)
@@ -110,7 +111,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
 describe('Testing user/profile/setemail/v1 error handling', () => {
   test.each([
     { token: 'InvalidToken', email: 'jdoe@gmail.com', desc: 'token is invalid' },
-    { token: '', email: 'jdoe@gmail.com', desc: 'email address is already being used by another user' },
+    { token: '', email: 'jane.doe@student.unsw.edu.au', desc: 'email address is already being used by another user' },
     { token: '', email: 'jdoe@gmail', desc: 'email entered is not a valid email' },
   ])('$desc', ({ token, email }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
