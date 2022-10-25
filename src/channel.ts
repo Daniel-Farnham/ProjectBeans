@@ -1,6 +1,6 @@
-import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.js';
-import { getData, setData } from './dataStore.js';
-import { userProfileV1 } from './users.js';
+import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.ts';
+import { getData, setData } from './dataStore.ts';
+import { userProfileV1 } from './users.ts';
 
 const GLOBAL_OWNER = 1;
 
