@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import { clearV1 } from './other';
-import { authLoginV1, authRegisterV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
@@ -109,6 +109,12 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
   const email = req.body.email as string;
   const password = req.body.password as string;
   res.json(authLoginV1(email, password));
+  save();
+});
+
+app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  res.json(authLogoutV1(token));
   save();
 });
 
