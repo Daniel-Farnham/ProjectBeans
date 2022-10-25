@@ -114,15 +114,15 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
   if (handleInUse(handleStr)) {
     return { error: 'Handle already in use' };
   }
-  
+
   // Check if handle is valid, if not, then return error appropriate
   // error messages
-  const notAlphanumeric = new RegExp('[^A-Za-z0-9]');
-  if (notAlphanumeric.test(handleStr)){
-    return {error: 'Handle is not alphanumeric'};
+  const notAlphanumeric = /[^A-Za-z0-9]/;
+  if (notAlphanumeric.test(handleStr)) {
+    return { error: 'Handle is not alphanumeric' };
   }
   if (handleStr.length < 3 || handleStr.length > 20) {
-    return {error: 'Handle is not between 3 and 20 characters in length'};
+    return { error: 'Handle is not between 3 and 20 characters in length' };
   }
 
   // Update user profile for matching user with new handle
@@ -154,7 +154,6 @@ function getUidFromToken (token: string) {
     }
   }
 }
-
 
 function handleInUse (handleStr: string) {
   const data = getData();

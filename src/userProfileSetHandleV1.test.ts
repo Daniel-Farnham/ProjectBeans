@@ -79,7 +79,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
         nameFirst: firstNames[i],
         nameLast: lastNames[i],
       });
-      
+
       // Update handleStr for user
       putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
         token: user.token,
