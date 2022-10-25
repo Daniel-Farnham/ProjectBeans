@@ -1,6 +1,6 @@
-import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other';
+import { userIdExists, channelIdExists, isMemberOfChannel, error, User, tokenExists } from './other';
 import { getData, setData } from './dataStore';
-import { userProfileV1 } from './users';
+import { userProfileV1, getUidFromToken } from './users';
 
 const GLOBAL_OWNER = 1;
 
@@ -35,11 +35,13 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
   // Check if userId and channelId is invalid.
-  if (!userIdExists(token) || !channelIdExists(channelId)) {
+  if (!tokenExists(token) || !channelIdExists(channelId)) {
     return { error: 'userId or channelId is invalid' };
   }
+  const uId = getUidFromToken(token);
+
   // Case where authUserId is not a member of the channel
-  if (!isMemberOfChannel(findChannel, token)) {
+  if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'authUserId is not a member of the channel' };
   }
 

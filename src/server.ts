@@ -67,7 +67,7 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   save();
 });
 
-app.get('channel/details/v2', (req: Request, res: Response, next) => {
+app.get('/channel/details/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const channelId = parseInt(req.query.channelId as string);
   res.json(channelDetailsV1(token, channelId));
