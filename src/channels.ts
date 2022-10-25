@@ -1,6 +1,6 @@
-import { userIdExists } from './other.js';
-import { getData, setData } from './dataStore.js';
-import { isMemberOfChannel, error } from './other.js';
+import { userIdExists } from './other';
+import { getData, setData } from './dataStore';
+import { isMemberOfChannel, error } from './other';
 
 // Constants
 const MIN_CHANNEL_LEN = 1;

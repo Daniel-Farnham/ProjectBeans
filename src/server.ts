@@ -8,6 +8,7 @@ import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { userProfileSetNameV1 } from './users';
+import { channelsCreateV1 } from './channels';
 
 // Set up web app
 const app = express();
@@ -56,6 +57,12 @@ app.delete('/clear/v1', (req: Request, res: Response, next) => {
 app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   const { email, password, nameFirst, nameLast } = req.body;
   res.json(authRegisterV1(email, password, nameFirst, nameLast));
+  save();
+});
+
+app.post('/channels/create/v2', (req: Request, res: Response, next) => {
+  const { token, name, isPublic } = req.body;
+  res.json(channelsCreateV1(token, name, isPublic));
   save();
 });
 
