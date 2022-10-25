@@ -126,7 +126,7 @@ describe('Testing channelDetails', () => {
 
     // post request sending data to channelsCreateV1
     // const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
       IsPublic: true,
