@@ -3,15 +3,12 @@ import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 describe('Testing successful cases for authLogoutV1', () => {
-
   test('Testing returning empty object upon successful logout', () => {
-
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'password',
@@ -27,7 +24,6 @@ describe('Testing successful cases for authLogoutV1', () => {
   });
 
   test('Testing unsuccessful user profile access when using token that is no longer valid', () => {
-
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'password',
@@ -48,14 +44,13 @@ describe('Testing successful cases for authLogoutV1', () => {
   });
 
   test('Testing ability to login with another token if logged out of one token', () => {
-
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'password',
       nameFirst: 'Hang',
       nameLast: 'Pham'
     });
-    
+
     const loggedInSession = postRequest(SERVER_URL + '/auth/login/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'password'
@@ -81,15 +76,12 @@ describe('Testing successful cases for authLogoutV1', () => {
     };
     expect(result).toMatchObject(expectedResult);
   });
-
 });
 
 describe('Testing authLogoutV1 error handling', () => {
   test.each([
     { token: 'InvalidToken', desc: 'Testing invalid token' },
   ])('$desc', ({ token }) => {
-
-
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'password',
