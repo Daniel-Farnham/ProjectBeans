@@ -1,6 +1,6 @@
-import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.ts';
-import { getData, setData } from './dataStore.ts';
-import { userProfileV1 } from './users.ts';
+import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other';
+import { getData, setData } from './dataStore';
+import { userProfileV1 } from './users';
 
 const GLOBAL_OWNER = 1;
 
@@ -30,7 +30,7 @@ type end = { end: number };
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelDetailsV1(token: number, channelId: number): channelDetails | error {
+function channelDetailsV1(token: string, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
