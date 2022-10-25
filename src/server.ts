@@ -108,7 +108,7 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 });
 
 // Get channel/details/v2
-app.get('channel/details/v2', (req: Request, res: Response, next) => {
+app.get('/channel/details/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const channelId = parseInt(req.query.channelId as string);
   res.json(channelDetailsV1(token, channelId));

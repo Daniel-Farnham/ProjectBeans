@@ -6,7 +6,7 @@ describe('Testing channelDetails', () => {
   beforeEach(() => {
     deleteRequest(SERVER_URL + '/clear/v1', {});
   });
-
+  
   test('Successfully view channel details', () => {
     // post request sending data to authRegisterV1
     // const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
@@ -19,13 +19,14 @@ describe('Testing channelDetails', () => {
 
     // post request sending data to channelsCreateV1
     // const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-
+  
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
+  
     // get request to receve data back from channelDetailsV1
     // const ReturnedChannelObj = channelDetailsV1(userId.token, channel.channelId); // Should provide a valid channelId
 
@@ -60,7 +61,8 @@ describe('Testing channelDetails', () => {
     // checking that we have a match
     expect(ReturnedChannelObj).toMatchObject(ExpectedChannelObj);
   });
-
+  
+  
   test('Testing invalid authUserId', () => {
     // post request sending data to authRegisterV1
     // const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
@@ -74,7 +76,7 @@ describe('Testing channelDetails', () => {
     // post request sending data to channelsCreateV1
     // const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
+      token: userId.token + 1,
       name: 'ChannelBoost',
       IsPublic: true,
     });
@@ -84,7 +86,6 @@ describe('Testing channelDetails', () => {
       token: userId.token,
       channelId: channel.channelId
     });
-
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 
@@ -109,7 +110,7 @@ describe('Testing channelDetails', () => {
     // const ReturnedChannelObject = channelDetailsV1(userId.token, channel.channelId + 1);
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
       token: userId.token,
-      channelId: channel.channelId
+      channelId: channel.channelId + 1
     });
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
@@ -142,7 +143,7 @@ describe('Testing channelDetails', () => {
     // expect(NonMemberChannel).toMatchObject({ error: expect.any(String) });
     // const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
     // channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-
+    console.log(NonMemberChannel);
     expect(NonMemberChannel).toMatchObject({ error: expect.any(String) });
   });
 });
