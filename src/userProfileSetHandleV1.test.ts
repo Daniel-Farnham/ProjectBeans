@@ -28,6 +28,57 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     expect(result).toMatchObject({});
   });
 
+  test('Testing channel ownerMembers and allMembers contain user with updated handleStr', () => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const channel = putRequest(SERVER_URL + '/channels/create/v2', {
+      token: user.token,
+      name: 'Boost',
+      isPublic: true,
+    });
+
+    putRequest(SERVER_URL + '/user/profile/handle/v1', {
+      token: user.token,
+      handleStr: 'janeiscool123',
+    });
+    
+    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: user.token,
+      channelId: channel.channelId,
+    });
+
+    const expectedChannelObj = {
+      name: 'Boost',
+      isPublic: true,
+      ownerMembers:
+      [
+        {
+          uId: user.authUserId,
+          email: 'jane.doe@student.unsw.edu.au',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          handleStr: 'janeiscool123',
+        }
+      ],
+      allMembers: [
+        {
+          uId: user.authUserId,
+          email: 'jane.doe@student.unsw.edu.au',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          handleStr: 'janeiscool123',
+        }
+      ],
+    };
+
+    expect(result).toMatchObject(expectedChannelObj);
+  });
+
   test.each([
     { handleStr: 'coolestperson', desc: 'handleStr updated correctly in user profile' },
     { handleStr: 'dog', desc: 'handleStr 3 characters long' },
