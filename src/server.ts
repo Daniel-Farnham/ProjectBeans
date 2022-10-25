@@ -9,6 +9,7 @@ import { authLoginV1, authRegisterV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
+import { channelInviteV1 } from './channel';
 
 // Set up web app
 const app = express();
@@ -69,6 +70,14 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   res.json(channelsListAllV1(token));
+  save();
+});
+
+app.get('/channel/invite/v2', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const channelId = parseInt(req.query.channelId as string);
+  const uId = parseInt(req.query.uId as string);
+  res.json(channelInviteV1(token, channelId, uId));
   save();
 });
 
