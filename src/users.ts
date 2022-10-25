@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import { userIdExists, tokenExists, User, error } from './other';
+import validator from 'validator';
 
 /**
   * Returns user object if a valid user is found
@@ -68,7 +69,7 @@ export function usersAllV1 (token: string): error | {users: any[]} {
 /**
   * Returns user object if a valid user is found
   *
-  * @param {string} token - token session for user requesting profile
+  * @param {string} token - token session for user requesting change
   * @param {string} nameFirst - user's first name to change to
   * @param {string} nameLast - user's last name to change to
   *
@@ -138,6 +139,40 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
   return {};
 }
 
+/**
+  * Returns user object if a valid user is found
+  *
+  * @param {string} token - token session for user requesting change
+  * @param {string} email - new e-mail address to change to
+  *
+  * @returns {{}} - Returns empty object upon successful email change
+*/
+export function userProfileSetEmailV1 (token: string, email: string): error | Record<string, never> {
+  if (!tokenExists(token)) {
+    return { error: 'token provided is invalid' };
+  }
+
+  if (!(validator.isEmail(email))) {
+    return { error: 'Invalid email address entered' };
+  }
+
+  if (emailInUse(email)) {
+    return { error: 'E-mail already in use' };
+  }
+
+  // Update user profile for matching user with new email address
+  const uId = getUidFromToken(token);
+
+  const data = getData();
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      user.email = email.toLowerCase();
+    }
+  }
+  setData(data);
+  return {};
+}
+
 function validName(name: string): boolean {
   if (name.length >= 1 && name.length <= 50) {
     return true;
@@ -153,6 +188,17 @@ function getUidFromToken (token: string) {
       return session.uId;
     }
   }
+}
+
+function emailInUse (email: string) {
+  const data = getData();
+
+  for (const user of data.users) {
+    if (user.email.toLowerCase() === email) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function handleInUse (handleStr: string) {
