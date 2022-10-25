@@ -8,7 +8,7 @@ import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { userProfileSetNameV1 } from './users';
-import { channelJoinV1 } from './channel'; 
+import { channelJoinV1 } from './channel';
 
 // Set up web app
 const app = express();
@@ -94,7 +94,6 @@ app.post('/channel/join/v2', (req: Request, res: Response, next) => {
   res.json(channelJoinV1(token, channelId));
   save();
 });
-
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
