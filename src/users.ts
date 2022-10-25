@@ -102,9 +102,9 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   * Returns user object if a valid user is found
   *
   * @param {string} token - token session for user requesting change
-  * @param {string} email - new e-mail address to change to
+  * @param {string} handleStr - new handleStr to change to
   *
-  * @returns {{}} - Returns empty object upon successful email change
+  * @returns {{}} - Returns empty object upon successful handleStr change
 */
 export function userProfileSetHandleV1 (token: string, handleStr: string): error | Record<string, never> {
   if (!tokenExists(token)) {
@@ -115,11 +115,14 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
     return { error: 'Handle already in use' };
   }
   
-  // Check if handle is valid, if not, then return error message
-  const validHandleResult = validHandle(token);
-  if (!validHandleResult && typeof validHandleResult === 'string' ) {
-  const errorMessage: string = (validHandleResult as string);
-    return {error: errorMessage};
+  // Check if handle is valid, if not, then return error appropriate
+  // error messages
+  const notAlphanumeric = new RegExp('[^A-Za-z0-9]');
+  if (notAlphanumeric.test(handleStr)){
+    return {error: 'Handle is not alphanumeric'};
+  }
+  if (handleStr.length < 3 || handleStr.length > 20) {
+    return {error: 'Handle is not between 3 and 20 characters in length'};
   }
 
   // Update user profile for matching user with new handle
@@ -140,20 +143,6 @@ function validName(name: string): boolean {
     return true;
   }
   return false;
-}
-
-function validHandle(handleStr: string): string | boolean  {
-  // Check if handleStr is alpha numeric
-  const notAlphanumeric = new RegExp('[^A-Za-z0-9]');
-  if (notAlphanumeric.test(handleStr)){
-    return 'Handle is not alphanumeric';
-  }
-  
-  if (handleStr.length < 3 || handleStr.length > 20) {
-    return 'Handle is not between 3 and 20 characters in length';
-  }
-
-  return true;
 }
 
 function getUidFromToken (token: string) {

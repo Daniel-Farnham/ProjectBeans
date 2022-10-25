@@ -68,14 +68,14 @@ app.get('/user/profile/v2', (req: Request, res: Response, next) => {
 });
 
 app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
-  const { token, handleStr } = req.body;
-  res.json(userProfileSetHandleV1(token, handleStr));
+  const { token, nameFirst, nameLast } = req.body;
+  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
   save();
 });
 
 app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
-  const { token, nameFirst, nameLast } = req.body;
-  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  const { token, handleStr } = req.body;
+  res.json(userProfileSetHandleV1(token, handleStr));
   save();
 });
 

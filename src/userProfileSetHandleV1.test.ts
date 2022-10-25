@@ -74,7 +74,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     for (let i = 0; i <= 4; i++) {
       // Create the user
       const user = postRequest(SERVER_URL + '/auth/register/v2', {
-        handleStr: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
+        email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
         password: 'AP@ssW0rd!',
         nameFirst: firstNames[i],
         nameLast: lastNames[i],
@@ -120,7 +120,7 @@ describe('Testing user/profile/sethandle/v1 error handling', () => {
     { token: 'InvalidToken', handleStr: 'jdoe@gmail.com', desc: 'token is invalid' },
   ])('$desc', ({ token, handleStr }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
-      handleStr: 'jane.doe@student.unsw.edu.au',
+      email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
