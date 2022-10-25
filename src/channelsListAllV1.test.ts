@@ -2,14 +2,12 @@ import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 // Working cases
 describe('Testing successful cases for channels/listAll/v2', () => {
-
   test('Testing successful return of empty channels array', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
@@ -20,8 +18,8 @@ describe('Testing successful cases for channels/listAll/v2', () => {
     const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
       token: user.token,
     });
-  
-    expect(resultChannels).toMatchObject({ channels: []});
+
+    expect(resultChannels).toMatchObject({ channels: [] });
   });
 
   test('Testing successful return of all channels', () => {
@@ -31,25 +29,25 @@ describe('Testing successful cases for channels/listAll/v2', () => {
       nameFirst: 'Hang',
       nameLast: 'Pham'
     });
-  
+
     const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user.token,
       name: 'General',
       isPublic: true
     });
-  
+
     const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user.token,
       name: 'Boost',
       isPublic: false
     });
-  
+
     const channelId3 = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user.token,
       name: 'Random',
       isPublic: true
     });
-  
+
     const expectedChannels = {
       channels: [
         {
@@ -66,11 +64,11 @@ describe('Testing successful cases for channels/listAll/v2', () => {
         },
       ],
     };
-  
+
     const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
       token: user.token,
     });
-  
+
     expect(resultChannels).toMatchObject(expectedChannels);
   });
 });
@@ -93,7 +91,7 @@ test('Testing invalid token', () => {
     token: user.token + 'InvalidToken',
   });
   expect(resultChannels).toStrictEqual(
-  {
-    error: expect.any(String),
-  });
+    {
+      error: expect.any(String),
+    });
 });

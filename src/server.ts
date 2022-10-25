@@ -67,7 +67,7 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
 });
 
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
-  const token  = req.query.token as string;
+  const token = req.query.token as string;
   res.json(channelsListAllV1(token));
   save();
 });
