@@ -73,7 +73,7 @@ app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
   save();
 });
 
-app.get('/channel/invite/v2', (req: Request, res: Response, next) => {
+app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const channelId = parseInt(req.query.channelId as string);
   const uId = parseInt(req.query.uId as string);
