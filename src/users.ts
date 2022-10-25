@@ -180,7 +180,7 @@ function validName(name: string): boolean {
   return false;
 }
 
-function getUidFromToken (token: string) {
+export function getUidFromToken (token: string) {
   const data = getData();
 
   for (const session of data.sessions) {
