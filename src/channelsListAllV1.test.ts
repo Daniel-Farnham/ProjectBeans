@@ -1,17 +1,38 @@
-import { clearV1 } from './other';
-import { channelsCreateV1, channelsListAllV1 } from './channels';
-import { authRegisterV1 } from './auth';
+import { postRequest, deleteRequest, getRequest } from './other';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
+
 
 beforeEach(() => {
-  clearV1();
+  deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 // Working cases
 test('Testing successful return of all channels', () => {
-  const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-  const channelId1 = channelsCreateV1(user.authUserId, 'General', true);
-  const channelId2 = channelsCreateV1(user.authUserId, 'Boost', false);
-  const channelId3 = channelsCreateV1(user.authUserId, 'Random', true);
+  const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    email: 'hang.pham1@student.unsw.edu.au',
+    password: 'AP@ssW0rd!',
+    nameFirst: 'Hang',
+    nameLast: 'Pham'
+  });
+
+  const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    token: user.token,
+    name: 'General',
+    isPublic: true
+  });
+
+  const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    token: user.token,
+    name: 'Boost',
+    isPublic: false
+  });
+
+  const channelId3 = postRequest(SERVER_URL + '/channels/create/v2', {
+    token: user.token,
+    name: 'Random',
+    isPublic: true
+  });
 
   const expectedChannels = {
     channels: [
@@ -30,18 +51,32 @@ test('Testing successful return of all channels', () => {
     ],
   };
 
-  const resultChannels = channelsListAllV1(user.authUserId);
+  const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
+    token: user.token,
+  });
+
   expect(resultChannels).toMatchObject(expectedChannels);
 });
 
-test('Testing invalid authUserId', () => {
-  const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'AP@ssW0rd!', 'Hang', 'Pham');
-  channelsCreateV1(user.authUserId, 'General', true);
+test('Testing invalid token', () => {
+  const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    email: 'hang.pham1@student.unsw.edu.au',
+    password: 'AP@ssW0rd!',
+    nameFirst: 'Hang',
+    nameLast: 'Pham'
+  });
 
-  const resultChannels = channelsListAllV1(user.authUserId + 1);
+  postRequest(SERVER_URL + '/channels/create/v2', {
+    token: user.token,
+    name: 'General',
+    isPublic: true
+  });
+
+  const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
+    token: user.token + 'InvalidToken',
+  });
   expect(resultChannels).toStrictEqual(
-    {
-      error: expect.any(String),
-    }
-  );
+  {
+    error: expect.any(String),
+  });
 });
