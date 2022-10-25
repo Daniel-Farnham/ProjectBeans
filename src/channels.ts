@@ -1,6 +1,7 @@
-import { userIdExists } from './other.js';
-import { getData, setData } from './dataStore.js';
-import { isMemberOfChannel, error } from './other.js';
+import { userIdExists, tokenExists } from './other';
+import { getData, setData } from './dataStore';
+import { isMemberOfChannel, error } from './other';
+import { getUidFromToken } from './users';
 
 // Constants
 const MIN_CHANNEL_LEN = 1;
@@ -77,19 +78,19 @@ function channelsListAllV1(authUserId: number): channels | error {
   * Will attempt to create a new chanel, returning an object
   * containing the channels unique id.
   *
-  * @param {number} authUserId - userId making the request
+  * @param {string} token - token making the request
   * @param {string} name - name of the new channel
   * @param {boolean} isPublic - Whether or not the channel is public
   *
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {{channelId: channelId}} - The channel id of the new channel
 */
-function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean): channelId | error {
+function channelsCreateV1 (token: string, name: string, isPublic: boolean): channelId | error {
   const data = getData();
 
-  // Check authUserId exists
-  if (!(userIdExists(authUserId))) {
-    return { error: 'authUserId is invalid.' };
+  // Check token exists
+  if (!(tokenExists(token))) {
+    return { error: 'token is invalid.' };
   }
 
   // Check if the length of the name is between 1-20 characters long.
@@ -103,6 +104,7 @@ function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean):
   const ownerMembers = [];
   const allMembers = [];
 
+  const uId = getUidFromToken(token);
   for (const user of data.users) {
     // Create user object with required values
     const userObj = {
@@ -113,7 +115,7 @@ function channelsCreateV1 (authUserId: number, name: string, isPublic: boolean):
       handleStr: user.handleStr,
     };
 
-    if (user.uId === authUserId) {
+    if (user.uId === uId) {
       ownerMembers.push(userObj);
       allMembers.push(userObj);
     }

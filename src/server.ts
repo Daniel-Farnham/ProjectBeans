@@ -7,6 +7,8 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
 import { getData, setData } from './dataStore';
+import { channelsCreateV1 } from './channels';
+import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 
 // Set up web app
 const app = express();
@@ -58,11 +60,35 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channels/create/v2', (req: Request, res: Response, next) => {
+  const { token, name, isPublic } = req.body;
+  res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
 // Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const uId = parseInt(req.query.uId as string);
   res.json(userProfileV1(token, uId));
+  save();
+});
+
+app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
+  const { token, nameFirst, nameLast } = req.body;
+  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  save();
+});
+
+app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
+  const { token, email } = req.body;
+  res.json(userProfileSetEmailV1(token, email));
+  save();
+});
+
+app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
+  const { token, handleStr } = req.body;
+  res.json(userProfileSetHandleV1(token, handleStr));
   save();
 });
 
