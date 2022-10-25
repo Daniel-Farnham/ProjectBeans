@@ -25,7 +25,7 @@ describe('Working cases', () => {
       name: 'General',
       isPublic: true
     });
-
+    
     const result = postRequest(SERVER_URL + '/channel/invite/v2', {
       token: user1.token,
       channelId: channel.channelId,
