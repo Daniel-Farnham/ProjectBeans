@@ -27,6 +27,58 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
     expect(result).toMatchObject({});
   });
+  
+  test('Testing channel ownerMembers and allMembers contain user with updated name', () => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const channel = putRequest(SERVER_URL + '/channels/create/v2', {
+      token: user.token,
+      name: 'Boost',
+      isPublic: true,
+    });
+
+    putRequest(SERVER_URL + '/user/profile/setname/v1', {
+      token: user.token,
+      nameFirst: 'John',
+      nameLast: 'Darcy',
+    });
+    
+    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: user.token,
+      channelId: channel.channelId,
+    });
+
+    const expectedChannelObj = {
+      name: 'Boost',
+      isPublic: true,
+      ownerMembers:
+      [
+        {
+          uId: user.authUserId,
+          email: 'jane.doe@student.unsw.edu.au',
+          nameFirst: 'John',
+          nameLast: 'Darcy',
+          handleStr: 'janedoe',
+        }
+      ],
+      allMembers: [
+        {
+          uId: user.authUserId,
+          email: 'jane.doe@student.unsw.edu.au',
+          nameFirst: 'John',
+          nameLast: 'Darcy',
+          handleStr: 'janedoe',
+        }
+      ],
+    };
+
+    expect(result).toMatchObject(expectedChannelObj);
+  });
 
   test.each([
     { nameFirst: 'John', nameLast: 'Doe', desc: 'Successful return of empty object' },
