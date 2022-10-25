@@ -1,4 +1,4 @@
-import { tokenExists, channelIdExists, isMemberOfChannel, error, User, Channel } from './other.ts';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.ts';
 import { getData, setData } from './dataStore.ts';
 import { userProfileV1, getUidFromToken } from './users.ts';
 
@@ -30,20 +30,19 @@ type end = { end: number };
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-// Need to replace with authUserId to userIdExists 
+// Need to replace with authUserId to userIdExists
 
 function channelDetailsV1(token: string, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
-  
   // Check if userId and channelId is invalid.
   if (!tokenExists(token) || !channelIdExists(channelId)) {
     return { error: 'userId or channelId is invalid' };
   }
   // Case where authUserId is not a member of the channel
-  const uId = getUidFromToken(token); 
-  console.log('uId: '+ uId);
+  const uId = getUidFromToken(token);
+  console.log('uId: ' + uId);
 
   if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'authUserId is not a member of the channel' };
