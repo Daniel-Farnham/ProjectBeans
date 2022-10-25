@@ -115,7 +115,7 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
   if (!(validator.isEmail(email))) {
     return { error: 'Invalid email address entered' };
   }
-  
+
   if (emailInUse(email)) {
     return { error: 'E-mail already in use' };
   }

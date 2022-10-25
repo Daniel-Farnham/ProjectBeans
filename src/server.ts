@@ -74,7 +74,7 @@ app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
 });
 
 app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
-  const { token, email} = req.body;
+  const { token, email } = req.body;
   res.json(userProfileSetEmailV1(token, email));
   save();
 });

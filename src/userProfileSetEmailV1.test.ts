@@ -95,7 +95,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
         uId: users[i].authUserId,
         email: `${firstNames[i]}.${lastNames[i]}@gmail.com`,
         nameFirst: firstNames[i],
-        nameLast:  lastNames[i],
+        nameLast: lastNames[i],
         handleStr: `${firstNames[i]}${lastNames[i]}`,
       };
 
