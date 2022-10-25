@@ -50,17 +50,17 @@ function channelsListV1(authUserId: number): channels | error {
 /**
   * Get an array of channels, which contains channelId and name for each channel
   *
-  * @param {number} authUserId - userId making the request
+  * @param {string} token - token of user making the request
   *
   * @returns {{channels}} - array of channel objects containing channelId and name
 */
-function channelsListAllV1(authUserId: number): channels | error {
-  // Case where authUserId is not valid
-  if (!userIdExists(authUserId)) {
-    return { error: 'authUserId is invalid' };
+function channelsListAllV1(token: string): channels | error {
+  // Case where token is not valid
+  if (!tokenExists(token)) {
+    return { error: 'token is invalid' };
   }
 
-  // Case for when authUserId is valid
+  // Case for when token is valid
   const data = getData();
   const channels = [];
 
