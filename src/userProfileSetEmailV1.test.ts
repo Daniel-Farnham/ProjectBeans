@@ -28,6 +28,57 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     expect(result).toMatchObject({});
   });
 
+  test('Testing channel ownerMembers and allMembers contain user with updated email', () => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const channel = putRequest(SERVER_URL + '/channels/create/v2', {
+      token: user.token,
+      name: 'Boost',
+      isPublic: true,
+    });
+
+    putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+      token: user.token,
+      email: 'janed@gmail.com',
+    });
+
+    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: user.token,
+      channelId: channel.channelId,
+    });
+
+    const expectedChannelObj = {
+      name: 'Boost',
+      isPublic: true,
+      ownerMembers:
+      [
+        {
+          uId: user.authUserId,
+          email: 'janed@gmail.com',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          handleStr: 'janedoe',
+        }
+      ],
+      allMembers: [
+        {
+          uId: user.authUserId,
+          email: 'janed@gmail.com',
+          nameFirst: 'John',
+          nameLast: 'Darcy',
+          handleStr: 'janedoe',
+        }
+      ],
+    };
+
+    expect(result).toMatchObject(expectedChannelObj);
+  });
+
   test.each([
     { email: 'jdoe@gmail.com', desc: 'Email updated correctly in user profile' },
   ])('$desc', ({ email }) => {
