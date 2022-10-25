@@ -98,11 +98,62 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   return {};
 }
 
+/**
+  * Returns user object if a valid user is found
+  *
+  * @param {string} token - token session for user requesting change
+  * @param {string} email - new e-mail address to change to
+  *
+  * @returns {{}} - Returns empty object upon successful email change
+*/
+export function userProfileSetHandleV1 (token: string, handleStr: string): error | Record<string, never> {
+  if (!tokenExists(token)) {
+    return { error: 'token provided is invalid' };
+  }
+
+  if (handleInUse(handleStr)) {
+    return { error: 'Handle already in use' };
+  }
+  
+  // Check if handle is valid, if not, then return error message
+  const validHandleResult = validHandle(token);
+  if (!validHandleResult && typeof validHandleResult === 'string' ) {
+  const errorMessage: string = (validHandleResult as string);
+    return {error: errorMessage};
+  }
+
+  // Update user profile for matching user with new handle
+  const uId = getUidFromToken(token);
+
+  const data = getData();
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      user.handleStr = handleStr.toLowerCase();
+    }
+  }
+  setData(data);
+  return {};
+}
+
 function validName(name: string): boolean {
   if (name.length >= 1 && name.length <= 50) {
     return true;
   }
   return false;
+}
+
+function validHandle(handleStr: string): string | boolean  {
+  // Check if handleStr is alpha numeric
+  const notAlphanumeric = new RegExp('[^A-Za-z0-9]');
+  if (notAlphanumeric.test(handleStr)){
+    return 'Handle is not alphanumeric';
+  }
+  
+  if (handleStr.length < 3 || handleStr.length > 20) {
+    return 'Handle is not between 3 and 20 characters in length';
+  }
+
+  return true;
 }
 
 function getUidFromToken (token: string) {
@@ -113,6 +164,18 @@ function getUidFromToken (token: string) {
       return session.uId;
     }
   }
+}
+
+
+function handleInUse (handleStr: string) {
+  const data = getData();
+
+  for (const user of data.users) {
+    if (user.handleStr.toLowerCase() === handleStr.toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export { userProfileV1 };
