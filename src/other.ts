@@ -73,6 +73,19 @@ export const postRequest = (url: string, data: any) => {
   );
   return parseBody(res);
 };
+/**
+  * Function used to create a put request
+*/
+export const putRequest = (url: string, data: any) => {
+  const res = request(
+    'PUT',
+    url,
+    {
+      json: data,
+    }
+  );
+  return parseBody(res);
+};
 
 /**
   * Function used to create a delete request
