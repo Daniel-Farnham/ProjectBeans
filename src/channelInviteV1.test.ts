@@ -25,7 +25,7 @@ describe('Working cases', () => {
       name: 'General',
       isPublic: true
     });
-    
+
     const result = postRequest(SERVER_URL + '/channel/invite/v2', {
       token: user1.token,
       channelId: channel.channelId,
@@ -60,7 +60,7 @@ describe('Working cases', () => {
       channelId: channel.channelId,
       uId: user2.authUserId
     });
-    
+
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
       token: user2.token,
       channelId: channel.channelId,
@@ -174,7 +174,7 @@ describe('Testing channelInviteV1 error handling', () => {
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
-    
+
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'General',
