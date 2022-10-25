@@ -2,7 +2,7 @@ import { postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-const OK = 200;
+// const OK = 200;
 
 beforeEach(() => {
   // clearV1()
@@ -24,7 +24,7 @@ describe('Testing channelsCreateV1', () => {
       isPublic: true
     });
 
-    expect(newchannelId.status).toStrictEqual(OK);
+    // expect(newchannelId.status).toStrictEqual(OK);
     expect(newchannelId).toStrictEqual({ token: expect.any(String) });
   });
 
@@ -45,8 +45,8 @@ describe('Testing channelsCreateV1', () => {
       name: 'Boost',
       isPublic: false
     });
-    expect(channelId1.status).toStrictEqual(OK);
-    expect(channelId2.status).toStrictEqual(OK);
+    // expect(channelId1.status).toStrictEqual(OK);
+    // expect(channelId2.status).toStrictEqual(OK);
     expect(channelId1.channelId).not.toBe(channelId2.channelId);
   });
 
