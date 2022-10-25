@@ -1,8 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other'; 
 import { port, url } from './config.json'; 
 
+const OK = 200;
 const SERVER_URL = `${url}:${port}`
-
 
 describe('Testing channelDetails', () => {
   beforeEach(() => {
