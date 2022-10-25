@@ -80,6 +80,14 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+// Get channel/details/v2
+app.get('channel/details/v2', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
+  save();
+});
+
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
 
