@@ -25,7 +25,7 @@ describe('Testing channelsCreateV1', () => {
     });
 
     // expect(newchannelId.status).toStrictEqual(OK);
-    expect(newchannelId).toStrictEqual({ token: expect.any(String) });
+    expect(newchannelId).toStrictEqual({ channelId: expect.any(Number) });
   });
 
   test('Testing Channel Uniqueness', () => {
