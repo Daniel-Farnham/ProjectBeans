@@ -163,12 +163,28 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
   // Update user profile for matching user with new email address
   const uId = getUidFromToken(token);
 
-  const data = getData();
+  let data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
       user.email = email.toLowerCase();
     }
   }
+   // Update user profile within channels that they are a member of
+   for (const channel of data.channels) {
+    // Update for ownerMembers
+    for (const member of channel.ownerMembers) {
+      if (member.uId === uId) {
+        member.email = email;
+      }
+    }
+    // Update for allMembers
+    for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        member.email = email;
+      }
+    }
+  }
+  
   setData(data);
   return {};
 }
