@@ -6,6 +6,7 @@ import config from './config.json';
 import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
+import { channelDetailsV1 } from './channel';
 import { getData, setData } from './dataStore';
 
 // Set up web app
