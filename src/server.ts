@@ -8,7 +8,7 @@ import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { channelsCreateV1 } from './channels';
-import { channelDetailsV1 } from './channel'; 
+import { channelDetailsV1 } from './channel';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 
 // Set up web app
@@ -73,7 +73,6 @@ app.get('channel/details/v2', (req: Request, res: Response, next) => {
   res.json(channelDetailsV1(token, channelId));
   save();
 });
-
 
 // Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {

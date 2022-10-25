@@ -35,11 +35,11 @@ function channelDetailsV1(token: number, channelId: number): channelDetails | er
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
   // Check if userId and channelId is invalid.
-  if (!userIdExists(authUserId) || !channelIdExists(channelId)) {
+  if (!userIdExists(token) || !channelIdExists(channelId)) {
     return { error: 'userId or channelId is invalid' };
   }
   // Case where authUserId is not a member of the channel
-  if (!isMemberOfChannel(findChannel, authUserId)) {
+  if (!isMemberOfChannel(findChannel, token)) {
     return { error: 'authUserId is not a member of the channel' };
   }
 
