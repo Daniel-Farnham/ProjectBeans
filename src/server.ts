@@ -7,13 +7,9 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-<<<<<<< HEAD
-import { userProfileSetNameV1 } from './users';
 import { channelJoinV1 } from './channel';
-=======
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
->>>>>>> master
 
 // Set up web app
 const app = express();
