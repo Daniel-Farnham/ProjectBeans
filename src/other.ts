@@ -11,6 +11,7 @@ export function clearV1 (): Record<string, never> {
     users: [],
     channels: [],
     sessions: [],
+    messageCount: 0,
   };
   setData(data);
   return {};
@@ -139,7 +140,6 @@ export function userIdExists(userId: number): boolean {
 */
 export function channelIdExists(channelId: number): boolean {
   const data = getData();
-
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
@@ -182,4 +182,30 @@ export function tokenExists (token: string): boolean {
     }
   }
   return false;
+}
+
+/**
+  * Generates a new messageId to be used for dms and messages
+  * @param {} - no parameters required
+  * @returns {newMessageId} - returns a new messageId
+*/
+export function getMessageId(): number {
+  const data = getData();
+  const newMessageId = data.messageCount;
+
+  data.messageCount += 1;
+
+  setData(data);
+
+  return newMessageId;
+}
+
+export function getUidFromToken (token: string) {
+  const data = getData();
+
+  for (const session of data.sessions) {
+    if (session.tokens.includes(token)) {
+      return session.uId;
+    }
+  }
 }

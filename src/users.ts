@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error } from './other';
+import { userIdExists, tokenExists, User, error, getUidFromToken } from './other';
 import validator from 'validator';
 
 /**
@@ -84,14 +84,32 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
     return { error: 'length of nameFirst/nameLast is not between 1 and 50' };
   }
 
-  // Update user profile for matching user with new names
   const uId = getUidFromToken(token);
 
+  // Update user profile for matching user with new names
   const data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
       user.nameFirst = nameFirst;
       user.nameLast = nameLast;
+    }
+  }
+
+  // Update user profile within channels that they are a member of
+  for (const channel of data.channels) {
+    // Update for ownerMembers
+    for (const member of channel.ownerMembers) {
+      if (member.uId === uId) {
+        member.nameFirst = nameFirst;
+        member.nameLast = nameLast;
+      }
+    }
+    // Update for allMembers
+    for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        member.nameFirst = nameFirst;
+        member.nameLast = nameLast;
+      }
     }
   }
 
@@ -126,13 +144,27 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
     return { error: 'Handle is not between 3 and 20 characters in length' };
   }
 
+  const data = getData();
   // Update user profile for matching user with new handle
   const uId = getUidFromToken(token);
-
-  const data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
       user.handleStr = handleStr.toLowerCase();
+    }
+  }
+  // Update user profile within channels that they are a member of
+  for (const channel of data.channels) {
+    // Update for ownerMembers
+    for (const member of channel.ownerMembers) {
+      if (member.uId === uId) {
+        member.handleStr = handleStr;
+      }
+    }
+    // Update for allMembers
+    for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        member.handleStr = handleStr;
+      }
     }
   }
   setData(data);
@@ -169,6 +201,22 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
       user.email = email.toLowerCase();
     }
   }
+  // Update user profile within channels that they are a member of
+  for (const channel of data.channels) {
+    // Update for ownerMembers
+    for (const member of channel.ownerMembers) {
+      if (member.uId === uId) {
+        member.email = email;
+      }
+    }
+    // Update for allMembers
+    for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        member.email = email;
+      }
+    }
+  }
+
   setData(data);
   return {};
 }
@@ -178,16 +226,6 @@ function validName(name: string): boolean {
     return true;
   }
   return false;
-}
-
-export function getUidFromToken (token: string) {
-  const data = getData();
-
-  for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
-      return session.uId;
-    }
-  }
 }
 
 function emailInUse (email: string) {
@@ -212,4 +250,4 @@ function handleInUse (handleStr: string) {
   return false;
 }
 
-export { userProfileV1, getUidFromToken };
+export { userProfileV1 };

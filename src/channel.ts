@@ -1,6 +1,6 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
-import { userProfileV1, getUidFromToken } from './users';
+import { userProfileV1 } from './users';
 
 const GLOBAL_OWNER = 1;
 
@@ -67,16 +67,18 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelJoinV1(authUserId: number, channelId: number): error | Record<string, never> {
+function channelJoinV1(token: string, channelId: number): error | Record<string, never> {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
-
-  // Check if userId or channelId are invalid
-  if (!(userIdExists(authUserId)) || !(channelIdExists(channelId))) {
-    return { error: 'userId or channelId is invalid' };
+  if (!(tokenExists(token))) {
+    return { error: 'userId is invalid' };
   }
-
-  const findUser = data.users.find(o => o.uId === authUserId);
+  // Check if userId or channelId are invalid
+  if (!channelIdExists(channelId)) {
+    return { error: 'channelId is invalid' };
+  }
+  const authUserId = getUidFromToken(token);
+  const findUser = data.users.find(user => user.uId === authUserId);
 
   // Check if member is not Global Owner and the channel is private.
   if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
