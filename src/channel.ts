@@ -318,4 +318,4 @@ export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
   return false;
 }
 
-export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1 };
+export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1 };
