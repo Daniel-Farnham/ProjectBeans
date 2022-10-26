@@ -9,7 +9,7 @@ import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
-import { channelDetailsV1 } from './channel';
+import { channelDetailsV1, channelMessagesV1 } from './channel';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { channelInviteV1 } from './channel';
 
@@ -81,6 +81,11 @@ app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channel/messages/v2', (req: Request, res: Response, next) => {
+  const { token, channelId, start } = req.body; 
+  res.json(channelMessagesV1(token, channelId, start)); 
+})
+
 // Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
@@ -137,7 +142,6 @@ app.get('/channel/details/v2', (req: Request, res: Response, next) => {
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
   const token = req.body.token as string;
   res.json(authLogoutV1(token));
-
   save();
 });
 
