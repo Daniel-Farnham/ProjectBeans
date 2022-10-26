@@ -11,6 +11,7 @@ import { channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { channelDetailsV1 } from './channel';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
+import { channelInviteV1 } from './channel';
 
 // Set up web app
 const app = express();
@@ -71,6 +72,12 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   res.json(channelsListAllV1(token));
+  save();
+});
+
+app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
+  const { token, channelId, uId } = req.body;
+  res.json(channelInviteV1(token, channelId, uId));
   save();
 });
 
