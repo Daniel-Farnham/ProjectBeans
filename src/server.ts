@@ -7,8 +7,9 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelDetailsV1 } from './channel';
+import { channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
+import { channelDetailsV1 } from './channel';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { channelInviteV1 } from './channel';
 import { messageSendV1 } from './message'
@@ -118,6 +119,12 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
   const email = req.body.email as string;
   const password = req.body.password as string;
   res.json(authLoginV1(email, password));
+  save();
+});
+
+app.post('/channel/join/v2', (req: Request, res: Response, next) => {
+  const { token, channelId } = req.body;
+  res.json(channelJoinV1(token, channelId));
   save();
 });
 
