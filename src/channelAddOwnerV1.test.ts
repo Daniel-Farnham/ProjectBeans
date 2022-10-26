@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest } from './other';
+import { postRequest, deleteRequest, getRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
@@ -34,13 +34,30 @@ describe('Testing channelAddOwnerV1', () => {
       channelId: channel.channelId
     });
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
     });
 
-    expect(expectedResult).toMatchObject({});
+    const expectedOwners = new Set ([
+      {
+        uId: userId1.authUserId,
+        email: 'edwin.ngo@ad.unsw.edu.au',
+        nameFirst: 'Edwin',
+        nameLast: 'Ngo',
+        handleStr: 'edwinngo'
+      },
+      {
+        uId: userId2.authUserId,
+        email: 'john.smith@ad.unsw.edu.au',
+        nameFirst: 'John',
+        nameLast: 'Smith',
+        handleStr: 'johnsmith'
+      }
+    ]);
+
+    expect(expectedOwners).toStrictEqual(new Set(channel.ownerMembers));
   });
 
   test('Testing invalid channelId', () => {
