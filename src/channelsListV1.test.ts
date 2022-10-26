@@ -56,12 +56,6 @@ describe('Testing channelsListV1', () => {
       nameLast: 'Ngo'
     });
 
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
-      name: 'General',
-      isPublic: true
-    });
-
     const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {
       token: userId.token + 1
     });
@@ -151,7 +145,6 @@ describe('Testing channelsListV1', () => {
       name: 'Egg',
       isPublic: false
     });
-
 
     const expectedChannels =
     {
