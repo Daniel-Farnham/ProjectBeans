@@ -59,7 +59,7 @@ describe('Testing positive cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user2.token,
       name: 'ChannelBoost',
-      IsPublic: false,
+      isPublic: false,
     });
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
@@ -102,15 +102,6 @@ describe('Testing positive cases for channelJoinV1', () => {
       channelId: channel.channelId
     });
 
-    /*
-
-    const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
-    channelJoinV1(user2.authUserId, channel.channelId);
-    const channelObj = channelDetailsV1(user1.authUserId, channel.channelId);
-
-    */
     const expectedChannelObj = {
       name: 'ChannelBoost',
       isPublic: true,
@@ -160,19 +151,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId.token + 1,
       channelId: channel.channelId
     });
-
-    /*
-    const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-    const returnedChannelObject = channelJoinV1(userId.authUserId + 1, channel.channelId);
-    */
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
@@ -188,19 +173,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId.token,
       channelId: channel.channelId + 1,
     });
-
-    /*
-    const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-    const returnedChannelObject = channelJoinV1(userId.authUserId, channel.channelId + 1);
-    */
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
@@ -216,19 +195,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId.token,
       channelId: channel.channelId,
     });
-
-    /*
-    const userId = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const channel = channelsCreateV1(userId.authUserId, 'ChannelBoost', true);
-    const returnedChannelObject = channelJoinV1(userId.authUserId, channel.channelId);
-    */
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); // expecting channelJoin to return error if the user is already a member.
   });
@@ -251,7 +224,7 @@ describe('Testing negative cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
-      IsPublic: false,
+      isPublic: false,
     });
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
@@ -259,15 +232,6 @@ describe('Testing negative cases for channelJoinV1', () => {
       channelId: channel.channelId
     });
 
-    /*
-
-    const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-
-    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', false);
-    const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
-
-    */
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
 });
