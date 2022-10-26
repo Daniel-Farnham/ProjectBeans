@@ -139,7 +139,6 @@ export function userIdExists(userId: number): boolean {
 */
 export function channelIdExists(channelId: number): boolean {
   const data = getData();
-
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
