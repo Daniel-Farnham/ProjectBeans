@@ -1,6 +1,6 @@
-import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.ts';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.ts';
 import { getData, setData } from './dataStore.ts';
-import { userProfileV1 } from './users.ts';
+import { userProfileV1, getUidFromToken } from './users.ts';
 
 const GLOBAL_OWNER = 1;
 
@@ -22,7 +22,7 @@ type end = { end: number };
   * they are a member of.
   *
   *
-  * @param {number} authUserId - uId of authorised user
+  * @param {string} token - uId of authorised user
   * @param {number} channelId - id of channel to invite to
   * ...
   *
@@ -30,19 +30,22 @@ type end = { end: number };
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelDetailsV1(authUserId: number, channelId: number): channelDetails | error {
+// Need to replace with authUserId to userIdExists
+
+function channelDetailsV1(token: string, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
   // Check if userId and channelId is invalid.
-  if (!userIdExists(authUserId) || !channelIdExists(channelId)) {
+  if (!tokenExists(token) || !channelIdExists(channelId)) {
     return { error: 'userId or channelId is invalid' };
   }
   // Case where authUserId is not a member of the channel
-  if (!isMemberOfChannel(findChannel, authUserId)) {
+  const uId = getUidFromToken(token);
+
+  if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'authUserId is not a member of the channel' };
   }
-
   // Return channel details
   return {
     name: findChannel.name,
@@ -64,13 +67,16 @@ function channelDetailsV1(authUserId: number, channelId: number): channelDetails
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelJoinV1(authUserId: number, channelId: number): error | Record<string, never> {
+function channelJoinV1(token: string, channelId: number): error | Record<string, never> {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
+  if (!(tokenExists(token))) {
+    return { error: 'userId is invalid'}
+  };
   // Check if userId or channelId are invalid
-  if (!(userIdExists(authUserId)) || !(channelIdExists(channelId))) {
-    return { error: 'userId or channelId is invalid' };
+  if (!channelIdExists(channelId)) {
+    return { error: 'channelId is invalid' };
   }
 
   const findUser = data.users.find(o => o.uId === authUserId);
@@ -80,8 +86,9 @@ function channelJoinV1(authUserId: number, channelId: number): error | Record<st
     return { error: 'Channel is private and user is not global owner or a member of the channel' };
   }
 
+  const uId = getUidFromToken(token); 
   // Check if user is already member of channel
-  if (isMemberOfChannel(findChannel, authUserId)) {
+  if (isMemberOfChannel(findChannel, uId)) {
     return { error: 'User is already a member of the public channel' };
   }
 

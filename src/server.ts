@@ -7,13 +7,9 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-<<<<<<< HEAD
-import { userProfileSetNameV1 } from './users';
 import { channelJoinV1 } from './channel';
-=======
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
->>>>>>> master
 
 // Set up web app
 const app = express();
@@ -118,15 +114,32 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/channel/join/v2', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
-  const channelId = req.body.channelId as number;
+  const { token, channelId } = req.body;
   res.json(channelJoinV1(token, channelId));
+<<<<<<< HEAD
   save();
   });
   
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
   const token = req.body.token as string;
   res.json(authLogoutV1(token));
+=======
+  save(); 
+});
+
+app.get('/channel/details/v2', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
+  save();
+
+});
+
+app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  res.json(authLogoutV1(token));
+
+>>>>>>> dd8fad1db31a5fda9a23c063d8d9d63ccef14309
   save();
 });
 

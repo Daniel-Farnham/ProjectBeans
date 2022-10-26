@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -25,7 +25,7 @@ describe('Testing positive cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
@@ -39,7 +39,7 @@ describe('Testing positive cases for channelJoinV1', () => {
     const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
     */
-
+    console.log(returnedChannelObject); 
     expect(returnedChannelObject).toMatchObject({});
   });
 
@@ -69,13 +69,6 @@ describe('Testing positive cases for channelJoinV1', () => {
       channel: channel.channelId
     });
 
-    /*
-    const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user2.authUserId, 'ChannelBoost', false);
-    const returnedChannelObject = channelJoinV1(user1.authUserId, channel.channelId);
-    */
-
     expect(returnedChannelObject).toMatchObject({});
   });
 
@@ -94,6 +87,7 @@ describe('Testing positive cases for channelJoinV1', () => {
       nameLast: 'Pham',
     });
 
+    // Creates a channel with 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
@@ -105,7 +99,7 @@ describe('Testing positive cases for channelJoinV1', () => {
       channel: channel.channelId,
     });
 
-    const channelObj = postRequest(SERVER_URL + '/channel/join/v2', {
+    const channelObj = getRequest(SERVER_URL + '/channel/details/v2', {
       token: user2.token,
       channel: channel.channelId
     });
@@ -124,7 +118,7 @@ describe('Testing positive cases for channelJoinV1', () => {
       isPublic: true,
       ownerMembers: [
         {
-          uId: user1.token,
+          uId: user1.authUserId,
           email: 'daniel.farnham@student.unsw.edu.au',
           nameFirst: 'Daniel',
           nameLast: 'Farnham',
@@ -133,14 +127,14 @@ describe('Testing positive cases for channelJoinV1', () => {
       ],
       allMembers: [
         {
-          uId: user1.token,
+          uId: user1.authUserId,
           email: 'daniel.farnham@student.unsw.edu.au',
           nameFirst: 'Daniel',
           nameLast: 'Farnham',
           handleStr: 'danielfarnham',
         },
         {
-          uId: user2.token,
+          uId: user2.authUserId,
           email: 'hang.pham@student.unsw.edu.au',
           nameFirst: 'Hang',
           nameLast: 'Pham',
