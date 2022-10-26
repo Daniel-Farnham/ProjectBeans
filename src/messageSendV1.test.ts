@@ -38,27 +38,27 @@ describe('Testing positive cases for messageSendV1', () => {
       nameLast: 'Farnham',
     });
 
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel1 = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'General',
       isPublic: true
     });
 
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel2 = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'Boost',
-      isPublic: false
+      isPublic: true
     });
 
     const messageId1 = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
-      channelId: channel.channelId1,
+      channelId: channel1.channelId,
       message: 'Hello this is a random test message'
     });
 
     const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
-      channelId: channel.channelId2,
+      channelId: channel2.channel,
       message: 'Hello this is a random test message'
     });
 
@@ -85,7 +85,7 @@ describe('Testing negative cases for messageSendV1', () => {
       isPublic: true,
     });
 
-    const returnedMessagelObject = postRequest(SERVER_URL + '/message/send/v1', {
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token + 1,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
@@ -108,14 +108,14 @@ describe('Testing negative cases for messageSendV1', () => {
       isPublic: true,
     });
 
-    const returnedMessagelObject = postRequest(SERVER_URL + '/message/send/v1', {
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
       channelId: channel.channelId + 1,
       message: 'Hello this is a random test message'
     });
 
     // expect(returnedMessageObject.status).toStrictEqual(OK);
-    expect(ReturnedMessageObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
   });
 
   test('Authorised user is not a member of the channel', () => {
@@ -155,7 +155,7 @@ describe('Testing negative cases for messageSendV1', () => {
       nameLast: 'Farnham',
     });
 
-    postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
