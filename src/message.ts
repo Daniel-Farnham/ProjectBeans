@@ -19,7 +19,7 @@ function messageSendV1 (token: string, channelId: number, message: string): mess
         return { error: 'token is invalid.' };
     }
 
-    console.log('ChannelId: ' + channelId )
+    console.log('ChannelId:' + channelId )
     if (!channelIdExists(channelId)) {
         return { error: 'channelId is invalid' };
     }
