@@ -231,8 +231,6 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
-  const authUserId = getUidFromToken(token);
-
   // Check if user is not a member of channel
   if (isMemberOfChannel(findChannel, uId) !== true) {
     return { error: 'User is not a member of the channel' };

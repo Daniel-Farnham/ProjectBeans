@@ -89,7 +89,7 @@ app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelAddOwnerV1(token, channelId, uId));
   save();
-})
+});
 
 // Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {

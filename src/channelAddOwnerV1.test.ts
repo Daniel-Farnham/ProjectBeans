@@ -1,7 +1,6 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 
 import { port, url } from './config.json';
-import { Server } from 'http';
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
@@ -31,11 +30,11 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token:userId2.token,
+      token: userId2.token,
       channelId: channel.channelId
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
@@ -66,17 +65,17 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token:userId2.token,
+      token: userId2.token,
       channelId: channel.channelId
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token,
       channelId: channel.channelId + 5,
       uId: userId2.authUserId
     });
 
-    expect(expectedResult).toStrictEqual({error: expect.any(String)});
+    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing invalid uId', () => {
@@ -101,17 +100,17 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token:userId2.token,
+      token: userId2.token,
       channelId: channel.channelId
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId + 10
     });
 
-    expect(expectedResult).toStrictEqual({error: expect.any(String)});
+    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing user is not member of channel', () => {
@@ -135,13 +134,13 @@ describe('Testing channelAddOwnerV1', () => {
       isPublic: true
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
     });
 
-    expect(expectedResult).toStrictEqual({error: expect.any(String)});
+    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing user is already an owner of channel', () => {
@@ -158,13 +157,13 @@ describe('Testing channelAddOwnerV1', () => {
       isPublic: true
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId1.authUserId
     });
 
-    expect(expectedResult).toStrictEqual({error: expect.any(String)});
+    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing valid channelId, but user has no owner permissions', () => {
@@ -189,17 +188,17 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token:userId2.token,
+      token: userId2.token,
       channelId: channel.channelId
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId2.token,
       channelId: channel.channelId,
       uId: userId1.authUserId
     });
 
-    expect(expectedResult).toStrictEqual({error: expect.any(String)});
+    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing invalid token', () => {
@@ -224,17 +223,16 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token:userId2.token,
+      token: userId2.token,
       channelId: channel.channelId
     });
 
-    const expectedResult = getRequest(SERVER_URL + '/channel/addowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
       token: userId1.token + 10,
       channelId: channel.channelId,
       uId: userId2.authUserId
     });
 
-    expect(expectedResult).toStrictEqual({error: expect.any(String)});
+    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
-
 });
