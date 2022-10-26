@@ -71,6 +71,14 @@ function storeMessageInChannel(message: Message, channelId: number) {
       channel.messages.push(message);
     }
   }
-
   setData(data);
+}
+
+
+export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
+  const data = getData(); 
+
+  return 101; 
+
+
 }
