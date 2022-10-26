@@ -36,7 +36,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameLast: 'Doe',
     });
 
-    const channel = putRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user.token,
       name: 'Boost',
       isPublic: true,
