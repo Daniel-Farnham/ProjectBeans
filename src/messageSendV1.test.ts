@@ -21,8 +21,6 @@ describe('Testing positive cases for messageSendV1', () => {
       isPublic: true,
     });
 
-    console.log(typeof (channel.channelId));
-
     const newMessageId = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
       channelId: channel.channelId,
