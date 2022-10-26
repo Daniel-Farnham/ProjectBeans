@@ -187,7 +187,6 @@ function invalidMemberships (channel, authUserId: number, uId: number): error | 
 function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messages | start | end {
   // Check if the given information is valid
 
-  console.log("start: " + start)
   const isInvalid = messagesInfoInvalid(token, channelId, start);
   if (isInvalid !== false) {
     return isInvalid;
@@ -237,16 +236,15 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   */
 function messagesInfoInvalid(token: string, channelId: number, start: number): error | boolean {
   // If channelId or authUserId doesn't exist return error
-  console.log("Start 2nd point: " + start); 
-  if (!(channelIdExists(channelId))) {
-    return { error: 'ChannelId is invalid' };
-  }
-  console.log("Token 2nd point: " + start); 
+
   if (!(tokenExists(token))) {
     return { error: 'authUserId is invalid' };
   }
 
-  console.log("Start 3rd point: " + start);
+  if (!(channelIdExists(channelId))) {
+    return { error: 'ChannelId is invalid' };
+  }
+  
   // If start is negative or greater than number of messages return error
   if (start < 0) {
     return { error: 'Starting index can\'t be negative' };
@@ -259,7 +257,6 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   }
 
   // If channelId is valid but user isn't a member of the channel return error
-
   const uId = getUidFromToken(token);
 
   if (!isMemberOfChannel(channel, uId)) {

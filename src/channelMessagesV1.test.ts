@@ -33,27 +33,17 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       end: -1
     };
 
-    /* const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    const channel = channelsCreateV1(newId.authUserId, 'General', false);
-    const messages = channelMessagesV1(newId.authUserId, channel.channelId, 0);
-
-    const messagesObj = {
-      messages: [],
-      start: 0,
-      end: -1
-    };
-    */
     console.log(messages);
     expect(messages).toMatchObject(messagesObj);
   });
 });
 
-describe('Testing channelMessagesV1 error handling', () => {
+describe('Testing channelMessagesV1 error handling', () => { 
   test.each([
     {
       name: 'General',
       isPublic: true,
-      uIdOffset: 0,
+      tokenOffset: '',
       channelIdOffset: 1,
       start: 0,
       desc: 'Testing an invalid channelId'
@@ -61,7 +51,7 @@ describe('Testing channelMessagesV1 error handling', () => {
     {
       name: 'Test',
       isPublic: false,
-      uIdOffset: 0,
+      tokenOffset: '',
       channelIdOffset: 0,
       start: 1,
       desc: 'Testing when start is greater than number of messages'
@@ -69,12 +59,13 @@ describe('Testing channelMessagesV1 error handling', () => {
     {
       name: '1234',
       isPublic: true,
-      uIdOffset: 1,
+      tokenOffset: 'invalid token',
       channelIdOffset: 0,
       start: 0,
       desc: 'Testing an invalid authUserId'
     },
-  ])('$desc', ({ name, isPublic, uIdOffset, channelIdOffset, start }) => {
+  ])('$desc', ({ name, isPublic, tokenOffset, channelIdOffset, start }) => {
+
     const newId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -89,18 +80,16 @@ describe('Testing channelMessagesV1 error handling', () => {
     });
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token + uIdOffset,
+      token: newId.token + tokenOffset,
       channelId: channel.channelId + channelIdOffset,
       start: start,
     });
 
     console.log(messages);
-    /* const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    const channel = channelsCreateV1(newId.authUserId, name, isPublic);
-    const messages = channelMessagesV1(newId.authUserId + uIdOffset, channel.channelId + channelIdOffset, start); */
     expect(messages).toMatchObject({ error: expect.any(String) });
+  
   });
-
+  
   test('Testing a user that isn\'t a member of the channel', () => {
     const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
@@ -113,7 +102,7 @@ describe('Testing channelMessagesV1 error handling', () => {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
-      nameLast: 'Scullyh',
+      nameLast: 'Scully',
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
@@ -128,10 +117,8 @@ describe('Testing channelMessagesV1 error handling', () => {
       start: 0,
     });
 
-    /*  const firstId = authRegisterV1('hayden.smith@unsw.edu.au', '123456', 'Hayden', 'Smith');
-    const channel = channelsCreateV1(firstId.authUserId, 'ABD', true);
-    const secondId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    const messages = channelMessagesV1(secondId.authUserId, channel.channelId, 0); */
+    console.log(messages); 
     expect(messages).toMatchObject({ error: expect.any(String) });
   });
-});
+
+}); 
