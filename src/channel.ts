@@ -84,10 +84,9 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
     return { error: 'Channel is private and user is not global owner or a member of the channel' };
   }
-  const uId = getUidFromToken(token);
 
   // Check if user is already member of channel
-  if (isMemberOfChannel(findChannel, uId)) {
+  if (isMemberOfChannel(findChannel, authUserId)) {
     return { error: 'User is already a member of the public channel' };
   }
 
