@@ -1,4 +1,4 @@
-import { channelIdExists, getMessageId, tokenExists, getMessageId,
+import { channelIdExists, tokenExists, getMessageId,
           isMemberOfChannel, error, getUidFromToken} from './other';
 import { getData, setData } from './dataStore';
 import {  } from './other';
@@ -73,6 +73,8 @@ function storeMessageInChannel(message: Message, channelId: number) {
       channel.messages.push(message);
     }
   }
+
+  setData(data);
 }
 
 //   const exampleMessages = [
