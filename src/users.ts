@@ -226,4 +226,4 @@ function handleInUse (handleStr: string) {
   return false;
 }
 
-export { userProfileV1 };
+export { userProfileV1, getUidFromToken };

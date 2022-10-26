@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { error } from './other';
+import { error, tokenExists } from './other';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -110,7 +110,29 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     authUserId: userId
   };
 }
+/**
+  * Will attempt to logout of a session with the token provided
+  *
+  * @param {string} token - token of user to be logged out
+  *
+  * @returns {{}} - empty object upon successful logout
+  */
+export function authLogoutV1 (token: string): Record<string, never> | error {
+  if (!tokenExists(token)) {
+    return { error: 'Token provided is invalid' };
+  }
 
+  const data = getData();
+
+  // Filter out the token from the user's sessions
+  for (const session of data.sessions) {
+    session.tokens = session.tokens.filter(activeToken => activeToken !== token);
+  }
+
+  setData(data);
+
+  return {};
+}
 /**
   * Checks if the information used to register a new account is valid
   *
