@@ -36,7 +36,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    const channel = putRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user.token,
       name: 'Boost',
       isPublic: true,
@@ -69,8 +69,8 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
         {
           uId: user.authUserId,
           email: 'janed@gmail.com',
-          nameFirst: 'John',
-          nameLast: 'Darcy',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
           handleStr: 'janedoe',
         }
       ],
