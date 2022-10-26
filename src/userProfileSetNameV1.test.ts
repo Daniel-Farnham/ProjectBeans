@@ -27,7 +27,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
     expect(result).toMatchObject({});
   });
-  
+
   test('Testing channel ownerMembers and allMembers contain user with updated name', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
@@ -47,7 +47,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameFirst: 'John',
       nameLast: 'Darcy',
     });
-    
+
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
       token: user.token,
       channelId: channel.channelId,

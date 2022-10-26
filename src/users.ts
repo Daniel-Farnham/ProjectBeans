@@ -87,7 +87,7 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   const uId = getUidFromToken(token);
 
   // Update user profile for matching user with new names
-  let data = getData();
+  const data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
       user.nameFirst = nameFirst;
@@ -112,7 +112,7 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
       }
     }
   }
-  
+
   setData(data);
   return {};
 }
