@@ -49,6 +49,7 @@ export function messageSendV1 (token: string, channelId: number, message: string
   
   // Create message
   const messageId = getMessageId();
+  console.log('stuff', messageId);
   const timeSent = Math.floor((new Date()).getTime() / 1000);
   const messageObj = {
     messageId: messageId, 

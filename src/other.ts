@@ -11,6 +11,7 @@ export function clearV1 (): Record<string, never> {
     users: [],
     channels: [],
     sessions: [],
+    messageCount: 0,
   };
   setData(data);
   return {};

@@ -55,13 +55,13 @@ describe('Testing positive cases for messageSendV1', () => {
       channelId: channel1.channelId,
       message: 'Hello this is a random test message'
     });
-
+    
     const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
       channelId: channel2.channelId,
       message: 'Hello this is a random test message'
     });
-
+    
     expect(messageId1.messageId).not.toBe(messageId2.messageId);
   });
 });
