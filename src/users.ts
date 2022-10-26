@@ -11,7 +11,7 @@ import validator from 'validator';
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
 */
-function userProfileV1 (token: string, uId: number): error | { user: User } {
+function userProfileV1 (token: string, uId: number): error | { user: User } | any {
   // If either uId or token does not exist, then return error
   if (!tokenExists(token) || !userIdExists(uId)) {
     return { error: 'token/uId to search is invalid' };
