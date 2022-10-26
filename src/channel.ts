@@ -75,7 +75,7 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
     return { error: 'userId is invalid'}
   };
   // Check if userId or channelId are invalid
-  if (/*!(tokenExists(token)) ||*/ !(channelIdExists(channelId))) {
+  if (!channelIdExists(channelId)) {
     return { error: 'channelId is invalid' };
   }
 
