@@ -9,6 +9,7 @@ import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
+import { channelDetailsV1 } from './channel';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 
 // Set up web app
@@ -116,14 +117,6 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 app.post('/channel/join/v2', (req: Request, res: Response, next) => {
   const { token, channelId } = req.body;
   res.json(channelJoinV1(token, channelId));
-<<<<<<< HEAD
-  save();
-  });
-  
-app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
-  res.json(authLogoutV1(token));
-=======
   save(); 
 });
 
@@ -139,7 +132,6 @@ app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
   const token = req.body.token as string;
   res.json(authLogoutV1(token));
 
->>>>>>> dd8fad1db31a5fda9a23c063d8d9d63ccef14309
   save();
 });
 
