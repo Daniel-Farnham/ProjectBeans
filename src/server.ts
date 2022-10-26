@@ -11,7 +11,6 @@ import { channelDetailsV1, channelInviteV1, channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 
-
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
