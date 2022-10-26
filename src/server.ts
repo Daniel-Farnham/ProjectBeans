@@ -115,8 +115,7 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/channel/join/v2', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
-  const channelId = req.body.channelId as number;
+  const { token, channelId } = req.body;
   res.json(channelJoinV1(token, channelId));
   save(); 
 });

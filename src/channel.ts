@@ -71,9 +71,12 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
+  if (!(tokenExists(token))) {
+    return { error: 'userId is invalid'}
+  };
   // Check if userId or channelId are invalid
-  if (!(tokenExists(token)) || !(channelIdExists(channelId))) {
-    return { error: 'userId or channelId is invalid' };
+  if (/*!(tokenExists(token)) ||*/ !(channelIdExists(channelId))) {
+    return { error: 'channelId is invalid' };
   }
 
   const findUser = data.users.find(o => o.uId === authUserId);
