@@ -27,10 +27,9 @@ describe('Testing positive cases for channelJoinV1', () => {
       name: 'ChannelBoost',
       isPublic: true,
     });
-
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: user2.token,
-      channel: channel.channelId
+      channelId: channel.channelId
     });
 
     /*
@@ -39,7 +38,6 @@ describe('Testing positive cases for channelJoinV1', () => {
     const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
     const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
     */
-    console.log(returnedChannelObject); 
     expect(returnedChannelObject).toMatchObject({});
   });
 
@@ -66,7 +64,7 @@ describe('Testing positive cases for channelJoinV1', () => {
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: user1.token,
-      channel: channel.channelId
+      channelId: channel.channelId
     });
 
     expect(returnedChannelObject).toMatchObject({});
@@ -91,17 +89,17 @@ describe('Testing positive cases for channelJoinV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    const result = postRequest(SERVER_URL + '/channel/join/v2', {
       token: user2.token,
-      channel: channel.channelId,
+      channelId: channel.channelId,
     });
-
+    
     const channelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user2.token,
-      channel: channel.channelId
+      token: user1.token,
+      channelId: channel.channelId
     });
 
     /*
@@ -167,7 +165,7 @@ describe('Testing negative cases for channelJoinV1', () => {
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId.token + 1,
-      channel: channel.channelId
+      channelId: channel.channelId
     });
 
     /*
@@ -195,7 +193,7 @@ describe('Testing negative cases for channelJoinV1', () => {
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId.token,
-      channel: channel.channelId + 1,
+      channelId: channel.channelId + 1,
     });
 
     /*
@@ -223,7 +221,7 @@ describe('Testing negative cases for channelJoinV1', () => {
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId.token,
-      channel: channel.channelId,
+      channelId: channel.channelId,
     });
 
     /*
@@ -258,7 +256,7 @@ describe('Testing negative cases for channelJoinV1', () => {
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
       token: user2.token,
-      channel: channel.channelId
+      channelId: channel.channelId
     });
 
     /*

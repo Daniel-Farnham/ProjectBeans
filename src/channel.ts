@@ -1,6 +1,6 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.ts';
-import { getData, setData } from './dataStore.ts';
-import { userProfileV1, getUidFromToken } from './users.ts';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other';
+import { getData, setData } from './dataStore';
+import { userProfileV1, getUidFromToken } from './users';
 
 const GLOBAL_OWNER = 1;
 
@@ -70,7 +70,6 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
 function channelJoinV1(token: string, channelId: number): error | Record<string, never> {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
-
   if (!(tokenExists(token))) {
     return { error: 'userId is invalid'}
   };
@@ -78,15 +77,15 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   if (!channelIdExists(channelId)) {
     return { error: 'channelId is invalid' };
   }
-
-  const findUser = data.users.find(o => o.uId === authUserId);
-
+  const authUserId = getUidFromToken(token);
+  const findUser = data.users.find( user=> user.uId === authUserId);
+  
   // Check if member is not Global Owner and the channel is private.
   if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
     return { error: 'Channel is private and user is not global owner or a member of the channel' };
   }
-
   const uId = getUidFromToken(token); 
+
   // Check if user is already member of channel
   if (isMemberOfChannel(findChannel, uId)) {
     return { error: 'User is already a member of the public channel' };
