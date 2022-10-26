@@ -11,6 +11,7 @@ export function clearV1 (): Record<string, never> {
     users: [],
     channels: [],
     sessions: [],
+    messageCount: 0,
   };
   setData(data);
   return {};
@@ -181,6 +182,22 @@ export function tokenExists (token: string): boolean {
     }
   }
   return false;
+}
+
+/**
+  * Generates a new messageId to be used for dms and messages
+  * @param {} - no parameters required
+  * @returns {newMessageId} - returns a new messageId
+*/
+export function getMessageId(): number {
+  const data = getData();
+  const newMessageId = data.messageCount;
+
+  data.messageCount += 1;
+
+  setData(data);
+
+  return newMessageId;
 }
 
 export function getUidFromToken (token: string) {
