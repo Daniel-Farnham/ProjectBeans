@@ -9,6 +9,7 @@ import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
 import { channelsCreateV1, channelsListAllV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
+import { dmCreateV1 } from './dm';
 
 // Set up web app
 const app = express();
@@ -115,6 +116,12 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
   const token = req.body.token as string;
   res.json(authLogoutV1(token));
+  save();
+});
+
+app.post('/dm/create/v1', (req: Request, res: Response, next) => {
+  const { token, uIds } = req.body;
+  res.json(dmCreateV1(token, uIds));
   save();
 });
 
