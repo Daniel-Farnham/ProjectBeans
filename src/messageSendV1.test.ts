@@ -2,158 +2,198 @@ import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
+describe('Testing positive cases for messageSendV1', () => {
+  beforeEach(() => {
+    deleteRequest(SERVER_URL + '/clear/v1', {});
+  });
 
+  test('Successfully create messageId', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
 
-describe('Testing negative cases for messageSendV1'), () => {
-    beforeEach(() => {
-        deleteRequest(SERVER_URL + '/clear/v1', {}); 
-    })
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId.token,
+      name: 'ChannelBoost',
+      isPublic: true,
+    });
 
+    const newMessageId = postRequest(SERVER_URL + '/message/send/v1', {
+      token: userId.token,
+      channelId: channel.channelId,
+      message: 'Hello this is a random test message'
+    });
 
-    test('Testing invalid token'), () => {
-        const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-          email: 'daniel.farnham@student.unsw.edu.au',
-          password: 'AVeryPoorPassword',
-          nameFirst: 'Daniel',
-          nameLast: 'Farnham',
-        });
-    
-        const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-          token: userId.token,
-          name: 'ChannelBoost',
-          IsPublic: true,
-        });
-    
-        const returnedMessagelObject = postRequest(SERVER_URL + 'message/send/v1', {
-          token: userId.token + 1,
-          channel: channel.channelId,
-          message: "Hello this is a random test message"
-        });
-    
-        // expect(returnedMessageObject.status).toStrictEqual(OK); 
-        expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
-    }
+    expect(newMessageId).toStrictEqual({ channelId: expect.any(Number) });
+  });
 
-    test('Test invalid channelId', () => {
-        const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-            email: 'daniel.farnham@student.unsw.edu.au',
-            password: 'AVeryPoorPassword',
-            nameFirst: 'Daniel',
-            nameLast: 'Farnham',
-        });
-    
-        const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-            token: userId.token,
-            name: 'ChannelBoost',
-            IsPublic: true,
-        });
-    
-        const returnedMessagelObject = postRequest(SERVER_URL + 'message/send/v1', {
-            token: userId.token,
-            channel: channel.channelId + 1,
-            message: "Hello this is a random test message"
-        });
+  test('Testing messageId uniqueness', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
 
-        // expect(returnedMessageObject.status).toStrictEqual(OK);
-        expect(ReturnedMessageObject).toMatchObject({ error: expect.any(String) });
-        });
-  
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId.token,
+      name: 'General',
+      isPublic: true
+    });
 
-    test('Authorised user is not a member of the channel', () => {
-        const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-            email: 'daniel.farnham@student.unsw.edu.au',
-            password: 'AVeryPoorPassword',
-            nameFirst: 'Daniel',
-            nameLast: 'Farnham',
-        });
-    
-        postRequest(SERVER_URL + '/channels/create/v2', {
-            token: userId.token,
-            name: 'ChannelBoost',
-            IsPublic: true,
-        });
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId.token,
+      name: 'Boost',
+      isPublic: false
+    });
 
-        const NonMemberChannel = postRequest(SERVER_URL + '/channels/create/v2', {
-            token: userId.token,
-            name: 'ChannelBoostWithoutDaniel',
-            IsPublic: true,
-        });
-    
-    
-        // expect(returnedMessageObject.status).toStrictEqual(OK);
-        expect(NonMemberChannel).toMatchObject({ error: expect.any(String) });
-        });
+    const messageId1 = postRequest(SERVER_URL + '/message/send/v1', {
+      token: userId.token,
+      channelId: channel.channelId1,
+      message: 'Hello this is a random test message'
+    });
 
-    describe('Testing message is a valid length', () => {
+    const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
+      token: userId.token,
+      channelId: channel.channelId2,
+      message: 'Hello this is a random test message'
+    });
 
-        const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-            email: 'daniel.farnham@student.unsw.edu.au',
-            password: 'AVeryPoorPassword',
-            nameFirst: 'Daniel',
-            nameLast: 'Farnham',
-        });
-    
-        postRequest(SERVER_URL + '/channels/create/v2', {
-            token: userId.token,
-            name: 'ChannelBoost',
-            IsPublic: true,
-        });
+    expect(messageId1.messageId).not.toBe(messageId2.messageId);
+  });
+});
 
-        const messageGreaterThan1000Char = 'a'.repeat(1001)
-        const messageLessThan1Char = '' 
+describe('Testing negative cases for messageSendV1', () => {
+  beforeEach(() => {
+    deleteRequest(SERVER_URL + '/clear/v1', {});
+  });
 
-        test.each([
-            {
-                token: userId.token,
-                channel: channel.channelId + 1,
-                message:  messageGreaterThan1000Char,
-            },
-            {
-                token: userId.token,
-                channel: channel.channelId + 1,
-                message:  messageLessThan1Char,
-            },
-        ])
-    })
+  test('Testing invalid token', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
 
-    // Refer to test in channelCreate to do this. 
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId.token,
+      name: 'ChannelBoost',
+      isPublic: true,
+    });
+
+    const returnedMessagelObject = postRequest(SERVER_URL + '/message/send/v1', {
+      token: userId.token + 1,
+      channelId: channel.channelId,
+      message: 'Hello this is a random test message'
+    });
+
+    // expect(returnedMessageObject.status).toStrictEqual(OK);
+    expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
+  });
+  test('Test invalid channelId', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId.token,
+      name: 'ChannelBoost',
+      isPublic: true,
+    });
+
+    const returnedMessagelObject = postRequest(SERVER_URL + '/message/send/v1', {
+      token: userId.token,
+      channelId: channel.channelId + 1,
+      message: 'Hello this is a random test message'
+    });
+
+    // expect(returnedMessageObject.status).toStrictEqual(OK);
+    expect(ReturnedMessageObject).toMatchObject({ error: expect.any(String) });
+  });
+
+  test('Authorised user is not a member of the channel', () => {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'fake.mcfake@student.unsw.edu.au',
+      password: 'AnEvenWorsePassword',
+      nameFirst: 'Fake',
+      nameLast: 'McFake',
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: user1.token,
+      name: 'ChannelBoost',
+      isPublic: true,
+    });
+
+    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: user2.token,
+      channelId: channel.channelId
+    });
+
+    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+  });
+
+  test('Message is an invalid length', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+
+    postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId.token,
+      name: 'ChannelBoost',
+      isPublic: true,
+    });
+
+    const messageGreaterThan1000Char = 'a'.repeat(1001);
+    const messageLessThan1Char = '';
+
+    test.each([
+      {
+        token: userId.token,
+        channelId: channel.channelId,
+        message: messageGreaterThan1000Char,
+        desc: 'Testing message too long'
+      },
+      {
+        token: userId.token,
+        channelId: channel.channelId,
+        message: messageLessThan1Char,
+        desc: 'Testing message too short '
+      },
+    ])('$desc', ({ token, channelId, message }) => {
+      const newMessage = postRequest(SERVER_URL + '/message/send/v1', {
+        token: userId.token,
+        channelId: channel.channelId,
+        message: message,
+      });
+
+      expect(newMessage).toMatchObject({ error: expect.any(String) });
+    });
+
     test('Testing MessageId Uniqueness', () => {
-        
-        const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-            email: 'daniel.farnham@student.unsw.edu.au',
-            password: 'AVeryPoorPassword',
-            nameFirst: 'Daniel',
-            nameLast: 'Farnham',
-        });
-
-         
-
-    })
-    
-
-
-
-
-    
-
-
-
-
-
-/*
-    Negative cases (returns error) 
-        1. channelId does not refer to a valid channel DONE 
-        2. length of message is less than 1 
-        3. length of message is over 1000 characters 
-        4. channelId is valid and the user is not a member of the channel DONE
-        5. token is invalid DONE
-        6. Test that messageId is not shared with another message. 
-
-    Positive cases (returns messageId)
-        1. length of message is between 1 and 1000. 
-        2. channelId is valid 
-        3. token is invalid 
-
-
-*/
-}
+      const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+        email: 'daniel.farnham@student.unsw.edu.au',
+        password: 'AVeryPoorPassword',
+        nameFirst: 'Daniel',
+        nameLast: 'Farnham',
+      });
+    });
+  });
+});
