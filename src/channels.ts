@@ -1,4 +1,4 @@
-import { tokenExists, isMemberOfChannel, error, userIdExists, getUidFromToken } from './other';
+import { tokenExists, isMemberOfChannel, error, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
 
 // Constants
