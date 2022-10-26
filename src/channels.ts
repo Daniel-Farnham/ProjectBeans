@@ -1,6 +1,5 @@
-import { userIdExists, tokenExists } from './other';
+import { tokenExists, isMemberOfChannel, error } from './other';
 import { getData, setData } from './dataStore';
-import { isMemberOfChannel, error } from './other';
 import { getUidFromToken } from './users';
 
 // Constants
@@ -19,14 +18,14 @@ type channels = { channels: Array<channelSummary> };
  * Will return an object containing an array of channels
  * that the user is in.
  *
- * @param {number} authUserId - userId making the request
+ * @param {string} token - token of authorised user
  *
  * @returns {{channels: channels}} - array of channel objects containing channelId and name
 */
-function channelsListV1(authUserId: number): channels | error {
-  // Check if authUserId Exists
-  if (!(userIdExists(authUserId))) {
-    return { error: 'authUserId is invalid' };
+function channelsListV1(token: string): channels | error {
+  // Check if token exists
+  if (!(tokenExists(token))) {
+    return { error: 'token is invalid' };
   }
 
   const data = getData();
@@ -39,7 +38,9 @@ function channelsListV1(authUserId: number): channels | error {
       name: channel.name,
     };
 
-    if (isMemberOfChannel(channel, authUserId)) {
+    const uId = getUidFromToken(token);
+
+    if (isMemberOfChannel(channel, uId)) {
       channels.push(channelObj);
     }
   }
