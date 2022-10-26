@@ -1,4 +1,4 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User, getUidFromToken } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User, Channel, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 
@@ -223,6 +223,44 @@ function channelMessagesV1(authUserId: number, channelId: number, start: number)
   };
 }
 
+function channelAddOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
+  if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
+    return { error: 'token/uId/channelId not valid' };
+  }
+
+  const data = getData();
+  const findChannel = data.channels.find(channel => channel.channelId === channelId);
+
+  const authUserId = getUidFromToken(token);
+
+  // Check if user is not a member of channel
+  if (isMemberOfChannel(findChannel, uId) !== true) {
+    return { error: 'User is not a member of the channel' };
+  }
+
+  // Check if member is not an owner already
+  const ownerCheck = isOwnerOfChannel(findChannel, uId);
+  if (ownerCheck !== false) {
+    return { error: 'User is already an owner of the channel' };
+  }
+
+  // Checkif channelId is valid and user has owner permissions
+  if (!channelIdExists(channelId) && ownerCheck === false) {
+    return { error: 'User does not have owner permissions in this channel' };
+  }
+
+  // Add new owner to array if token is member of channel
+  const newOwner = userProfileV1(token, uId);
+  // Loop through channel and add new owner
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.ownerMembers.push(newOwner.user);
+      setData(data);
+      return {};
+    }
+  }
+}
+
 /**
   * Checks if the channel information given is invalid
   *
@@ -265,6 +303,18 @@ function messagesInfoInvalid(authUserId: number, channelId: number, start: numbe
   }
 
   // If no error by now, the info isn't invalid
+  return false;
+}
+
+export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+  // Loop through owner members of channel
+  // if user is found, then return true
+  const ownerMembers = channel.ownerMembers;
+  for (const member of ownerMembers) {
+    if (member.uId === uId) {
+      return true;
+    }
+  }
   return false;
 }
 
