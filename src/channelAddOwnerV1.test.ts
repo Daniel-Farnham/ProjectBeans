@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest, getRequest } from './other';
+import { postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
@@ -40,7 +40,7 @@ describe('Testing channelAddOwnerV1', () => {
       uId: userId2.authUserId
     });
 
-    const expectedOwners = new Set ([
+    const expectedOwners = new Set([
       {
         uId: userId1.authUserId,
         email: 'edwin.ngo@ad.unsw.edu.au',
