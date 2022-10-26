@@ -148,6 +148,22 @@ export function channelIdExists(channelId: number): boolean {
   }
   return false;
 }
+
+export function messageIdExists(messageId: number): boolean {
+  const data = getData(); 
+  // Loop through channels array to check if channel exists
+  for (const channel of data.channels) {
+    // Loop through messages array to check is messageId exists
+    for (const targetmessage of channel.messages) {
+      if (targetmessage.messageId === messageId) {
+        return true; 
+      };   
+    };
+       
+  }
+  return false; 
+}
+
 /**
   *  Check if a user is a member of a channel
   * @param {number} uId - uId to check

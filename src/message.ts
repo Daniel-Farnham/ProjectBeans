@@ -1,6 +1,6 @@
 import {
   channelIdExists, tokenExists, getMessageId,
-  isMemberOfChannel, error, getUidFromToken
+  isMemberOfChannel, error, getUidFromToken, messageIdExists
 } from './other';
 import { getData, setData } from './dataStore';
 
@@ -77,6 +77,27 @@ function storeMessageInChannel(message: Message, channelId: number) {
 
 export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
   const data = getData(); 
+  // this springs up an error. 
+  // const findMessage = data.messages.find(chan => chan.messagelId === messageId); 
+
+  console.log(findChannel); 
+
+  if (!(tokenExists(token))) {
+    return { error: 'token is invalid.' };
+  }
+
+  
+  if (!messageIdExists(messageId)) {
+    return { error: 'messageId is invalid.' }; 
+  }
+
+  if (message.length > MAX_MESSAGE_LEN) {
+    return { error: 'length of message is over 1000 characters' };
+  }
+
+  // Create helper function 'isOwnerofMessage'(findMessage, authUserId)
+  // Check if the message was sent by the authorised user and the user does not have owner permissions. 
+
 
   return 101; 
 

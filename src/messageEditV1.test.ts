@@ -39,14 +39,14 @@ describe('Testing messageEditV1 success', () => {
             channelId: channel.channelId,
             message: 'Hello this is a random test message'
           });
-      
+
           const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
             token: userId.token, 
             messageId: message.messageId,
             message: 'This is an edited message'
           });
-      
-          expect(editedMessage).toMatchObject({});
+          console.log(editedMessage);
+          expect(editedMessage).toStrictEqual({});
     })
 })
 
@@ -76,7 +76,7 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
           });
-      
+          console.log(editedMessage);
           expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
@@ -105,7 +105,7 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId + 1,
             message: 'This is an edited message'
           });
-
+          console.log(editedMessage);
           expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
@@ -135,7 +135,7 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId,
             message: messageGreaterThan1000Char,
           });
-
+          console.log(editedMessage);
           expect(editedMessage).toMatchObject({ error: expect.any(String) })
     });
 
@@ -176,7 +176,7 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
         });
-
+        console.log(editedMessage);
         expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
