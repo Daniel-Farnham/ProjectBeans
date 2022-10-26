@@ -129,6 +129,7 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
     name: name,
     creator: creatorId,
     members: members,
+    messages: []
   };
 
   return dm;
