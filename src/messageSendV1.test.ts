@@ -21,13 +21,15 @@ describe('Testing positive cases for messageSendV1', () => {
       isPublic: true,
     });
 
+    console.log(typeof (channel.channelId));
+
     const newMessageId = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     });
 
-    expect(newMessageId).toStrictEqual({ channelId: expect.any(Number) });
+    expect(newMessageId).toStrictEqual({ messageId: expect.any(Number) });
   });
 
   test('Testing messageId uniqueness', () => {
@@ -58,7 +60,7 @@ describe('Testing positive cases for messageSendV1', () => {
 
     const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
-      channelId: channel2.channel,
+      channelId: channel2.channelId,
       message: 'Hello this is a random test message'
     });
 
@@ -147,7 +149,7 @@ describe('Testing negative cases for messageSendV1', () => {
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 
-  test('Message is an invalid length', () => {
+describe('Message is an invalid length', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',

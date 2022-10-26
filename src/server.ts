@@ -135,8 +135,10 @@ app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/message/send/v1', (req: Request, res: Response, next) => {
-  const { token, channelId, uId } = req.body;
-  res.json(messageSendV1(token, channelId, uId)); 
+  const token = req.body.token as string
+  const channelId = parseInt(req.query.channelId as string);
+  const message = req.body.message as string
+  res.json(messageSendV1(token, channelId, message)); 
 })
 
 // for logging errors (print to terminal)

@@ -19,6 +19,7 @@ function messageSendV1 (token: string, channelId: number, message: string): mess
         return { error: 'token is invalid.' };
     }
 
+    console.log('ChannelId: ' + channelId )
     if (!channelIdExists(channelId)) {
         return { error: 'channelId is invalid' };
     }
@@ -30,5 +31,8 @@ function messageSendV1 (token: string, channelId: number, message: string): mess
         return { error: 'Message is invalid' }; 
     }
 
-    return 'nothing'; 
+    const messageId = 1; // Dummy variable to be deleted 
+    return messageId; 
 }
+
+export { messageSendV1 }; 
