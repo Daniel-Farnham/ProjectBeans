@@ -36,17 +36,17 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    const channel = putRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user.token,
       name: 'Boost',
       isPublic: true,
     });
 
-    putRequest(SERVER_URL + '/user/profile/handle/v1', {
+    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
       token: user.token,
       handleStr: 'janeiscool123',
     });
-    
+
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
       token: user.token,
       channelId: channel.channelId,

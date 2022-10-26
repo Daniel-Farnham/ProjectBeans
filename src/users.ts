@@ -126,7 +126,7 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
     return { error: 'Handle is not between 3 and 20 characters in length' };
   }
 
-  let data = getData();
+  const data = getData();
   // Update user profile for matching user with new handle
   const uId = getUidFromToken(token);
   for (const user of data.users) {
@@ -134,8 +134,8 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
       user.handleStr = handleStr.toLowerCase();
     }
   }
-    // Update user profile within channels that they are a member of
-    for (const channel of data.channels) {
+  // Update user profile within channels that they are a member of
+  for (const channel of data.channels) {
     // Update for ownerMembers
     for (const member of channel.ownerMembers) {
       if (member.uId === uId) {
