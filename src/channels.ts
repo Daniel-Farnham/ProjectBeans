@@ -1,6 +1,5 @@
-import { tokenExists, isMemberOfChannel, error } from './other';
+import { tokenExists, isMemberOfChannel, error, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
-import { getUidFromToken } from './users';
 
 // Constants
 const MIN_CHANNEL_LEN = 1;
