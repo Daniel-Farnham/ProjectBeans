@@ -33,12 +33,11 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       end: -1
     };
 
-    console.log(messages);
     expect(messages).toMatchObject(messagesObj);
   });
 });
 
-describe('Testing channelMessagesV1 error handling', () => { 
+describe('Testing channelMessagesV1 error handling', () => {
   test.each([
     {
       name: 'General',
@@ -65,7 +64,6 @@ describe('Testing channelMessagesV1 error handling', () => {
       desc: 'Testing an invalid authUserId'
     },
   ])('$desc', ({ name, isPublic, tokenOffset, channelIdOffset, start }) => {
-
     const newId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -85,11 +83,9 @@ describe('Testing channelMessagesV1 error handling', () => {
       start: start,
     });
 
-    console.log(messages);
     expect(messages).toMatchObject({ error: expect.any(String) });
-  
   });
-  
+
   test('Testing a user that isn\'t a member of the channel', () => {
     const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
@@ -117,8 +113,6 @@ describe('Testing channelMessagesV1 error handling', () => {
       start: 0,
     });
 
-    console.log(messages); 
     expect(messages).toMatchObject({ error: expect.any(String) });
   });
-
-}); 
+});

@@ -191,7 +191,7 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   if (isInvalid !== false) {
     return isInvalid;
   }
-  
+
   // If start and number of messages are both 0, return empty message array
   const data = getData();
   const channel = data.channels.find(o => o.channelId === channelId);
@@ -244,7 +244,7 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   if (!(channelIdExists(channelId))) {
     return { error: 'ChannelId is invalid' };
   }
-  
+
   // If start is negative or greater than number of messages return error
   if (start < 0) {
     return { error: 'Starting index can\'t be negative' };
