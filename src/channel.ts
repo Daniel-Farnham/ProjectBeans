@@ -1,6 +1,6 @@
-import { userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other.js';
-import { getData, setData } from './dataStore.js';
-import { userProfileV1 } from './users.js';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other';
+import { getData, setData } from './dataStore';
+import { userProfileV1, getUidFromToken } from './users';
 
 const GLOBAL_OWNER = 1;
 
@@ -22,7 +22,7 @@ type end = { end: number };
   * they are a member of.
   *
   *
-  * @param {number} authUserId - uId of authorised user
+  * @param {string} token - uId of authorised user
   * @param {number} channelId - id of channel to invite to
   * ...
   *
@@ -30,19 +30,22 @@ type end = { end: number };
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-function channelDetailsV1(authUserId: number, channelId: number): channelDetails | error {
+// Need to replace with authUserId to userIdExists
+
+function channelDetailsV1(token: string, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
   // Check if userId and channelId is invalid.
-  if (!userIdExists(authUserId) || !channelIdExists(channelId)) {
+  if (!tokenExists(token) || !channelIdExists(channelId)) {
     return { error: 'userId or channelId is invalid' };
   }
   // Case where authUserId is not a member of the channel
-  if (!isMemberOfChannel(findChannel, authUserId)) {
+  const uId = getUidFromToken(token);
+
+  if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'authUserId is not a member of the channel' };
   }
-
   // Return channel details
   return {
     name: findChannel.name,
@@ -105,31 +108,33 @@ function channelJoinV1(authUserId: number, channelId: number): error | Record<st
 }
 
 /**
-  * Invites a user to a channel with an authorised user and add them to
+  * Invites a user to a channel with an authorised user's token and add them to
   * the allMembers array of the channel
   *
-  * @param {number} authUserId - uId of authorised user
+  * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to invite to
   * @param {number} uId - id of user being invited to channel
   * ...
   *
   * @returns {Object} {} - returns an empty object upon success
 */
-function channelInviteV1(authUserId: number, channelId: number, uId: number): error | boolean | Record<string, never> {
+function channelInviteV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
   // If any ids do not exist, return error
-  if (!userIdExists(authUserId) || !userIdExists(uId) || !channelIdExists(channelId)) {
-    return { error: 'authUserId/uId/channelId not valid' };
+  if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
+    return { error: 'token/uId/channelId not valid' };
   }
   const data = getData();
-  const findChannel = data.channels.find(o => o.channelId === channelId);
+  const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
-  // Check if memberships for authUserId and uId valid. If invalid, return error
+  const authUserId = getUidFromToken(token);
+
+  // Check if memberships for token and uId valid. If invalid, return error
   const invalidMembership = invalidMemberships(findChannel, authUserId, uId);
   if (invalidMembership !== false) {
     return invalidMembership;
   }
-  // Invite new member to channel if authUserId is member of channel
-  const newMember = userProfileV1(authUserId, uId);
+  // Invite new member to channel if token is member of channel
+  const newMember = userProfileV1(token, uId);
   // Loop through channel and add new member
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
