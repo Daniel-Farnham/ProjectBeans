@@ -1,8 +1,6 @@
 import { channelIdExists, tokenExists, getMessageId,
           isMemberOfChannel, error, getUidFromToken} from './other';
 import { getData, setData } from './dataStore';
-import {  } from './other';
-import { MessageOptions } from 'child_process';
 
 
 const MIN_MESSAGE_LEN = 1; 
@@ -34,7 +32,6 @@ export function messageSendV1 (token: string, channelId: number, message: string
   if (!(tokenExists(token))) {
       return { error: 'token is invalid.' };
   }
-
   if (!channelIdExists(channelId)) {
       return { error: 'channelId is invalid' };
   }
@@ -76,13 +73,3 @@ function storeMessageInChannel(message: Message, channelId: number) {
 
   setData(data);
 }
-
-//   const exampleMessages = [
-    // {
-    //   messageId: 0, 
-    //   uId: 0,
-    //   message: 'Something',
-    //   timeSent: timeSent,
-    // }
-//   ]
-
