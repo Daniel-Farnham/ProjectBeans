@@ -84,14 +84,32 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
     return { error: 'length of nameFirst/nameLast is not between 1 and 50' };
   }
 
-  // Update user profile for matching user with new names
   const uId = getUidFromToken(token);
 
+  // Update user profile for matching user with new names
   const data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
       user.nameFirst = nameFirst;
       user.nameLast = nameLast;
+    }
+  }
+
+  // Update user profile within channels that they are a member of
+  for (const channel of data.channels) {
+    // Update for ownerMembers
+    for (const member of channel.ownerMembers) {
+      if (member.uId === uId) {
+        member.nameFirst = nameFirst;
+        member.nameLast = nameLast;
+      }
+    }
+    // Update for allMembers
+    for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        member.nameFirst = nameFirst;
+        member.nameLast = nameLast;
+      }
     }
   }
 
