@@ -64,7 +64,7 @@ describe('Testing channelDetails', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token + 1,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
@@ -85,7 +85,7 @@ describe('Testing channelDetails', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
@@ -113,7 +113,7 @@ describe('Testing channelDetails', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
-      IsPublic: true,
+      isPublic: true,
     });
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
