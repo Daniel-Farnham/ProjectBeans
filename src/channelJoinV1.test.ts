@@ -181,7 +181,6 @@ describe('Testing negative cases for channelJoinV1', () => {
       channelId: channel.channelId + 1,
     });
 
-
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
 
@@ -203,7 +202,6 @@ describe('Testing negative cases for channelJoinV1', () => {
       token: userId.token,
       channelId: channel.channelId,
     });
-
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); // expecting channelJoin to return error if the user is already a member.
   });
@@ -234,7 +232,6 @@ describe('Testing negative cases for channelJoinV1', () => {
       channelId: channel.channelId
     });
 
-    
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
 });
