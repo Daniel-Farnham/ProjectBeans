@@ -5,9 +5,12 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import { clearV1 } from './other';
-import { authLoginV1, authRegisterV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { userProfileSetNameV1 } from './users';
+import { channelDetailsV1 } from './channel';
+import { channelsCreateV1, channelsListAllV1 } from './channels';
+import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
+import { channelInviteV1 } from './channel';
 
 // Set up web app
 const app = express();
@@ -59,6 +62,24 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channels/create/v2', (req: Request, res: Response, next) => {
+  const { token, name, isPublic } = req.body;
+  res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
+app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  res.json(channelsListAllV1(token));
+  save();
+});
+
+app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
+  const { token, channelId, uId } = req.body;
+  res.json(channelInviteV1(token, channelId, uId));
+  save();
+});
+
 // Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
@@ -73,6 +94,18 @@ app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
+  const { token, email } = req.body;
+  res.json(userProfileSetEmailV1(token, email));
+  save();
+});
+
+app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
+  const { token, handleStr } = req.body;
+  res.json(userProfileSetHandleV1(token, handleStr));
+  save();
+});
+
 // users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
@@ -84,6 +117,20 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
   const email = req.body.email as string;
   const password = req.body.password as string;
   res.json(authLoginV1(email, password));
+  save();
+});
+
+app.get('/channel/details/v2', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
+  save();
+});
+
+app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  res.json(authLogoutV1(token));
+
   save();
 });
 

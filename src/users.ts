@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import { userIdExists, tokenExists, User, error } from './other';
+import validator from 'validator';
 
 /**
   * Returns user object if a valid user is found
@@ -10,7 +11,7 @@ import { userIdExists, tokenExists, User, error } from './other';
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
 */
-function userProfileV1 (token: string, uId: number): error | { user: User } {
+function userProfileV1 (token: string, uId: number): error | { user: User } | any {
   // If either uId or token does not exist, then return error
   if (!tokenExists(token) || !userIdExists(uId)) {
     return { error: 'token/uId to search is invalid' };
@@ -68,7 +69,7 @@ export function usersAllV1 (token: string): error | {users: any[]} {
 /**
   * Returns user object if a valid user is found
   *
-  * @param {string} token - token session for user requesting profile
+  * @param {string} token - token session for user requesting change
   * @param {string} nameFirst - user's first name to change to
   * @param {string} nameLast - user's last name to change to
   *
@@ -98,6 +99,80 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   return {};
 }
 
+/**
+  * Returns user object if a valid user is found
+  *
+  * @param {string} token - token session for user requesting change
+  * @param {string} handleStr - new handleStr to change to
+  *
+  * @returns {{}} - Returns empty object upon successful handleStr change
+*/
+export function userProfileSetHandleV1 (token: string, handleStr: string): error | Record<string, never> {
+  if (!tokenExists(token)) {
+    return { error: 'token provided is invalid' };
+  }
+
+  if (handleInUse(handleStr)) {
+    return { error: 'Handle already in use' };
+  }
+
+  // Check if handle is valid, if not, then return error appropriate
+  // error messages
+  const notAlphanumeric = /[^A-Za-z0-9]/;
+  if (notAlphanumeric.test(handleStr)) {
+    return { error: 'Handle is not alphanumeric' };
+  }
+  if (handleStr.length < 3 || handleStr.length > 20) {
+    return { error: 'Handle is not between 3 and 20 characters in length' };
+  }
+
+  // Update user profile for matching user with new handle
+  const uId = getUidFromToken(token);
+
+  const data = getData();
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      user.handleStr = handleStr.toLowerCase();
+    }
+  }
+  setData(data);
+  return {};
+}
+
+/**
+  * Returns user object if a valid user is found
+  *
+  * @param {string} token - token session for user requesting change
+  * @param {string} email - new e-mail address to change to
+  *
+  * @returns {{}} - Returns empty object upon successful email change
+*/
+export function userProfileSetEmailV1 (token: string, email: string): error | Record<string, never> {
+  if (!tokenExists(token)) {
+    return { error: 'token provided is invalid' };
+  }
+
+  if (!(validator.isEmail(email))) {
+    return { error: 'Invalid email address entered' };
+  }
+
+  if (emailInUse(email)) {
+    return { error: 'E-mail already in use' };
+  }
+
+  // Update user profile for matching user with new email address
+  const uId = getUidFromToken(token);
+
+  const data = getData();
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      user.email = email.toLowerCase();
+    }
+  }
+  setData(data);
+  return {};
+}
+
 function validName(name: string): boolean {
   if (name.length >= 1 && name.length <= 50) {
     return true;
@@ -105,7 +180,7 @@ function validName(name: string): boolean {
   return false;
 }
 
-function getUidFromToken (token: string) {
+export function getUidFromToken (token: string) {
   const data = getData();
 
   for (const session of data.sessions) {
@@ -115,4 +190,26 @@ function getUidFromToken (token: string) {
   }
 }
 
-export { userProfileV1 };
+function emailInUse (email: string) {
+  const data = getData();
+
+  for (const user of data.users) {
+    if (user.email.toLowerCase() === email) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function handleInUse (handleStr: string) {
+  const data = getData();
+
+  for (const user of data.users) {
+    if (user.handleStr.toLowerCase() === handleStr.toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export { userProfileV1, getUidFromToken };
