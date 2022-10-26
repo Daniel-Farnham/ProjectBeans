@@ -85,18 +85,18 @@ describe('Testing positive cases for channelJoinV1', () => {
       nameLast: 'Pham',
     });
 
-    // Creates a channel with 
+    // Creates a channel with
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
     });
 
-    const result = postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v2', {
       token: user2.token,
       channelId: channel.channelId,
     });
-    
+
     const channelObj = getRequest(SERVER_URL + '/channel/details/v2', {
       token: user1.token,
       channelId: channel.channelId

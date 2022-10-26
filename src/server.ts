@@ -117,7 +117,7 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 app.post('/channel/join/v2', (req: Request, res: Response, next) => {
   const { token, channelId } = req.body;
   res.json(channelJoinV1(token, channelId));
-  save(); 
+  save();
 });
 
 app.get('/channel/details/v2', (req: Request, res: Response, next) => {
@@ -125,7 +125,6 @@ app.get('/channel/details/v2', (req: Request, res: Response, next) => {
   const channelId = parseInt(req.query.channelId as string);
   res.json(channelDetailsV1(token, channelId));
   save();
-
 });
 
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
