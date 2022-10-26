@@ -10,7 +10,7 @@ import { getData, setData } from './dataStore';
 import { channelDetailsV1, channelInviteV1, channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
-import { messageSendV1 } from './message'
+import { messageSendV1 } from './message';
 
 // Set up web app
 const app = express();
@@ -147,11 +147,12 @@ app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/message/send/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string
+  const token = req.body.token as string;
   const channelId = parseInt(req.body.channelId as string);
-  const message = req.body.message as string; 
-  res.json(messageSendV1(token, channelId, message)); 
-})
+  const message = req.body.message as string;
+  res.json(messageSendV1(token, channelId, message));
+  save();
+});
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));

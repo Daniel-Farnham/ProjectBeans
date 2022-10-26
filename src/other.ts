@@ -174,7 +174,7 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
 */
 export function tokenExists (token: string): boolean {
   const data = getData();
-  
+
   // Loop through sessions array to check if token exists
   for (const session of data.sessions) {
     if (session.tokens.includes(token)) {
@@ -187,12 +187,12 @@ export function tokenExists (token: string): boolean {
 /**
   * Generates a new messageId to be used for dms and messages
   * @param {} - no parameters required
-  * @returns {newMessageId} - returns a new messageId 
+  * @returns {newMessageId} - returns a new messageId
 */
 export function getMessageId(): number {
-  let data = getData();
+  const data = getData();
   const newMessageId = data.messageCount;
-  
+
   data.messageCount += 1;
 
   setData(data);

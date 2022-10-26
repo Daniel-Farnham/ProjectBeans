@@ -55,13 +55,13 @@ describe('Testing positive cases for messageSendV1', () => {
       channelId: channel1.channelId,
       message: 'Hello this is a random test message'
     });
-    
+
     const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
       channelId: channel2.channelId,
       message: 'Hello this is a random test message'
     });
-    
+
     expect(messageId1.messageId).not.toBe(messageId2.messageId);
   });
 });
@@ -147,7 +147,7 @@ describe('Testing negative cases for messageSendV1', () => {
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 
-describe('Message is an invalid length', () => {
+  describe('Message is an invalid length', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -185,15 +185,6 @@ describe('Message is an invalid length', () => {
       });
 
       expect(newMessage).toMatchObject({ error: expect.any(String) });
-    });
-
-    test('Testing MessageId Uniqueness', () => {
-      const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-        email: 'daniel.farnham@student.unsw.edu.au',
-        password: 'AVeryPoorPassword',
-        nameFirst: 'Daniel',
-        nameLast: 'Farnham',
-      });
     });
   });
 });
