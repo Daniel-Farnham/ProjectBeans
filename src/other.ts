@@ -198,3 +198,13 @@ export function getMessageId(): number {
 
   return newMessageId;
 }
+
+export function getUidFromToken (token: string) {
+  const data = getData();
+
+  for (const session of data.sessions) {
+    if (session.tokens.includes(token)) {
+      return session.uId;
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error } from './other';
+import { userIdExists, tokenExists, User, error, getUidFromToken } from './other';
 import validator from 'validator';
 
 /**
@@ -228,16 +228,6 @@ function validName(name: string): boolean {
   return false;
 }
 
-export function getUidFromToken (token: string) {
-  const data = getData();
-
-  for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
-      return session.uId;
-    }
-  }
-}
-
 function emailInUse (email: string) {
   const data = getData();
 
@@ -260,4 +250,4 @@ function handleInUse (handleStr: string) {
   return false;
 }
 
-export { userProfileV1, getUidFromToken };
+export { userProfileV1 };
