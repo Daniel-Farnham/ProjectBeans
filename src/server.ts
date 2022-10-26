@@ -7,11 +7,10 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelJoinV1 } from './channel';
-import { channelsCreateV1, channelsListAllV1 } from './channels';
-import { channelDetailsV1, channelMessagesV1 } from './channel';
+import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1 } from './channel';
+import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
-import { channelInviteV1 } from './channel';
+import { messageSendV1 } from './message';
 
 // Set up web app
 const app = express();
@@ -69,6 +68,12 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.get('/channels/list/v2', (req:Request, res: Response, next) => {
+  const token = req.query.token as string;
+  res.json(channelsListV1(token));
+  save();
+});
+
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   res.json(channelsListAllV1(token));
@@ -117,6 +122,7 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
 // users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
+
   res.json(usersAllV1(token));
   save();
 });
@@ -144,6 +150,14 @@ app.get('/channel/details/v2', (req: Request, res: Response, next) => {
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
   const token = req.body.token as string;
   res.json(authLogoutV1(token));
+  save();
+});
+
+app.post('/message/send/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  const channelId = parseInt(req.body.channelId as string);
+  const message = req.body.message as string;
+  res.json(messageSendV1(token, channelId, message));
   save();
 });
 

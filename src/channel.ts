@@ -1,6 +1,6 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
-import { userProfileV1, getUidFromToken } from './users';
+import { userProfileV1 } from './users';
 
 const GLOBAL_OWNER = 1;
 
