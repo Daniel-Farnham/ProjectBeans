@@ -10,7 +10,7 @@ import { getData, setData } from './dataStore';
 import { channelDetailsV1, channelInviteV1, channelJoinV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
-import { dmCreateV1 } from './dm';
+import { dmCreateV1, dmListV1 } from './dm';
 
 // Set up web app
 const app = express();
@@ -149,6 +149,12 @@ app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
 app.post('/dm/create/v1', (req: Request, res: Response, next) => {
   const { token, uIds } = req.body;
   res.json(dmCreateV1(token, uIds));
+  save();
+});
+
+app.get('/dm/list/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  res.json(dmListV1(token));
   save();
 });
 

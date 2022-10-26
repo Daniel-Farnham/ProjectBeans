@@ -9,6 +9,15 @@ type dmInfo = {
   members: Array<number>
 };
 
+type dmListInfo = {
+  dmId: number,
+  name: string
+};
+
+type dmList = {
+  dms: Array<dmListInfo>
+};
+
 /**
   * Creates a new dm by generating the dm name from the included user's
   * handlestrings and returns an object including the dmId.
@@ -33,6 +42,33 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   setData(data);
 
   return { dmId: dm.dmId };
+}
+
+/**
+  * Returns the list of dms that the user is a member of
+  *
+  * @param {string} token - The session token of the user creating the dm
+  *
+  * @returns {{dms: dmList}} - An array of dms the user is a member of
+  */
+function dmListV1(token: string): dmList | error {
+  // Check if the given token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const data = getData();
+  const uId = getUidFromToken(token);
+
+  // Add the dmId and name of each dm the user is a member of to a list
+  const list = [];
+  for (const dm of data.dms) {
+    if (dm.members.includes(uId)) {
+      list.push({ dmId: dm.dmId, name: dm.name});
+    }
+  }
+
+  return { dms: list };
 }
 
 /**
@@ -135,4 +171,4 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   return dm;
 }
 
-export { dmCreateV1 };
+export { dmCreateV1, dmListV1 };

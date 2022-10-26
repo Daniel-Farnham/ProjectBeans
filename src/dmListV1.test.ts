@@ -19,7 +19,7 @@ describe('Testing basic dmListV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const lists = postRequest(SERVER_URL + '/dm/list/v1', {
+    const lists = getRequest(SERVER_URL + '/dm/list/v1', {
       token: regId.token
     });
     
@@ -56,7 +56,7 @@ describe('Testing basic dmListV1 functionality', () => {
       uIds: [firstId.authUserId]
     });
 
-    const list = postRequest(SERVER_URL + '/dm/list/v1', {
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {
       token: firstId.token
     });
 
@@ -100,7 +100,7 @@ describe('Testing basic dmListV1 functionality', () => {
       uIds: [secondId.authUserId]
     });
 
-    const list = postRequest(SERVER_URL + '/dm/list/v1', {
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {
       token: firstId.token
     });
 
@@ -121,7 +121,7 @@ describe('Testing basic dmListV1 functionality', () => {
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
-    const list = postRequest(SERVER_URL + '/dm/list/v1', {
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {
       token: 'NotAToken'
     });
 
