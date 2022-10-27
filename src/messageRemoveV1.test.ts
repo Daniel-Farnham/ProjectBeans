@@ -87,7 +87,6 @@ describe('Testing messageDeleteV1 error handling', () => {
           const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
             token: userId.token,
             messageId: message.messageId + 1,
-            message: 'This is an edited message'
           });
           console.log(deletedMessage);
           expect(deletedMessage).toMatchObject({ error: expect.any(String) });
@@ -128,7 +127,6 @@ describe('Testing messageDeleteV1 error handling', () => {
         const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
             token: user1.token,
             messageId: message.messageId,
-            message: 'This is an edited message'
         });
         console.log(deletedMessage); 
         expect(deletedMessage).toMatchObject({ error: expect.any(String) });
@@ -176,7 +174,6 @@ describe('Testing messageDeleteV1 error handling', () => {
         const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
             token: user2.token,
             messageId: message.messageId,
-            message: 'This is an edited message'
         });
         console.log(deletedMessage); 
         expect(deletedMessage).toMatchObject({ error: expect.any(String) });

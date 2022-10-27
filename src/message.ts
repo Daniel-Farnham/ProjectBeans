@@ -87,37 +87,65 @@ function storeMessageInChannel(message: Message, channelId: number) {
 */
 
 export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
+  // need to add editMessageFromChannel(messageId: number): any {}
   const data = getData(); 
-  const uId = getUidFromToken(token);
-  for (const channel of data.channels) {
-    let findMessage = channel.messages.find(message => message.messageId === messageId);
-    /* let findChannelOwner = channel.ownerMembers.find(channel => channel.uId === uId);  */
-  };
 
-  console.log(findMessage); 
-/*   console.log(findChannelOwner); 
- */  
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
-  }
-
-  if (!messageIdExists(messageId)) {
-    return { error: 'messageId is invalid.' }; 
   }
 
   if (message.length > MAX_MESSAGE_LEN) {
     return { error: 'length of message is over 1000 characters.' };
   }
 
+  const messageContainer = getMessageContainer(messageId);
+  if (!messageContainer) {
+    return { error: 'message does not exist in either channels or dms' }
+  }
+  
+  const uId = getUidFromToken(token);
+
+  // Case where message is in a channel
+  if (messageContainer.type === 'channel') {
+    const messageEditResult = messageFromChannelValid(messageContainer.channel, messageId, uId);
+  }
+  
+  if (messageEditResult === true) {
+    editMessageFromChannel(messageId);
+  }
+
+  else {
+    return messageEditResult;
+  }
+
+  function editMessageFromChannel(messageId: number) {
+    return console.log('dummy variable'); 
+  }
+
+  return {}; 
+
+}
+  /*
+  const uId = getUidFromToken(token);
+  for (const channel of data.channels) {
+    let findMessage = channel.messages.find(message => message.messageId === messageId);
+     let findChannelOwner = channel.ownerMembers.find(channel => channel.uId === uId);  
+  };
+
+  
+  
+
+
+  if (!messageIdExists(messageId)) {
+    return { error: 'messageId is invalid.' }; 
+  }
+
+  
   const uId = getUidFromToken(token);
   
-  /*
-  if (isOwnerOfChannel(findChannel, uId)) {
-    console.log('hello'); 
-  } 
-  */
+  
  
-  if (!isOwnerOfMessage(findMessage, uId) /*&& !isOwnerOfChannel(findChannel, uId)*/ ) {
+  if (!isOwnerOfMessage(findMessage, uId) /*&& ! ) {
     return { error: 'user is not the sender of the message and is not the owner of the channel.'}; 
   }  
 
@@ -127,10 +155,10 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
       findMessage.message = message;
   }
   
+  
   setData(data);  
-  return {}; 
-
-}
+  */
+  
 
 export function messageRemoveV1(token: string, messageId: number) {
   const data = getData(); 
