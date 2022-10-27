@@ -79,27 +79,85 @@ describe('Testing messageSendDmV1 success case handling', () => {
 
 });
 
-// describe('Testing messageSendDmV1 error handling', () => {
-//   test.each([
-//     { token: '', uId: 100, desc: 'uID to search does not exist' },
-//     { token: 'InvalidToken', uId: 0, desc: 'token is invalid' },
-//   ])('$desc', ({ token, uId }) => {
-//     const user = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'jane.doe@student.unsw.edu.au',
-//       password: 'AP@ssW0rd!',
-//       nameFirst: 'Jane',
-//       nameLast: 'Doe',
-//     });
+describe('Testing messageSendDmV1 error handling', () => {
+  const messageGreaterThan1000Char = 'a'.repeat(1001);
+  const messageLessThan1Char = '';
+  test.each([
+    { token: 'InvalidToken', dmId: 0, message: 'This is a message',desc: 'token is invalid' },
+    { token: '', dmId: 100, message: 'This is a message',desc: 'dmId does not refer to a valid DM' },
+    { token: '', dmId: 0, message: messageLessThan1Char, desc: 'Length of message < 1 character' },
+    { token: '', dmId: 0, message: messageGreaterThan1000Char, desc: 'Length of message > 1000 characters' },
+  ])('$desc', ({ token, dmId, message }) => {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    email: 'hang.pham@student.unsw.edu.au',
+    password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+      
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user1.token,
+      uIds: [user2.uId],
+    });
+    
+    const sendDmResult = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: user1.token + token,
+      dmId: dm.dmId + dmId,
+      message: message,
+    });
 
-//     const result = getRequest(SERVER_URL + '/user/profile/v2', {
-//       token: user.token + token,
-//       uId: user.authUserId + uId,
-//     });
 
-//     expect(result).toStrictEqual(
-//       {
-//         error: expect.any(String),
-//       }
-//     );
-//   });
-// });
+    expect(sendDmResult).toStrictEqual(
+      {
+        error: expect.any(String),
+      }
+    );
+  });
+  
+  test('dmId is valid and the authorised user is not a member of the DM', () => {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    email: 'hang.pham@student.unsw.edu.au',
+    password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+      
+    const user3 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+      
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user1.token,
+      uIds: [user2.uId],
+    });
+    
+    const sendDmResult = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: user3.token,
+      dmId: dm.dmId,
+      message: 'JUST A MESSAGE',
+    });
+  
+  
+    expect(sendDmResult).toStrictEqual(
+      {
+        error: expect.any(String),
+      }
+    );
+    
+  });
+});
