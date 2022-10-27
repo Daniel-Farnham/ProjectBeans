@@ -1,4 +1,4 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User, getUidFromToken } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 
@@ -225,6 +225,53 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
 }
 
 /**
+  * Allows a user to add an owner to a channel that they have
+  * owner permissions in.
+  *
+  *
+  * @param {string} token - uId of authorised user
+  * @param {number} channelId - id of channel to give owner permissions to
+  * @param {number} uId - uId of the user to be given owner permissions
+  *
+  * @returns {Object} {} - returns an empty object upon success
+*/
+function channelAddOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
+  if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
+    return { error: 'token/uId/channelId not valid' };
+  }
+
+  const data = getData();
+  const findChannel = data.channels.find(channel => channel.channelId === channelId);
+
+  // Check if user is not a member of channel
+  if (isMemberOfChannel(findChannel, uId) !== true) {
+    return { error: 'User is not a member of the channel' };
+  }
+
+  // Check if member is not an owner already
+  const ownerCheck = isOwnerOfChannel(findChannel, uId);
+  if (ownerCheck !== false) {
+    return { error: 'User is already an owner of the channel' };
+  }
+
+  // Checkif channelId is valid and user has owner permissions
+  if (!channelIdExists(channelId) && ownerCheck === false) {
+    return { error: 'User does not have owner permissions in this channel' };
+  }
+
+  // Add new owner to array if token is member of channel
+  const newOwner = userProfileV1(token, uId);
+  // Loop through channel and add new owner
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.ownerMembers.push(newOwner.user);
+      setData(data);
+      return {};
+    }
+  }
+}
+
+/**
   * Checks if the channel information given is invalid
   *
   * @param {number} authUserId - The authoirsed user trying to view messages
@@ -267,4 +314,4 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   return false;
 }
 
-export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1 };
+export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1 };
