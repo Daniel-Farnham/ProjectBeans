@@ -54,6 +54,14 @@ export interface Channel {
   allMembers: Array<User>;
 }
 
+export type Messages = {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number
+};
+
+
 /**
   * Parses the JSON response body into a string
 */
