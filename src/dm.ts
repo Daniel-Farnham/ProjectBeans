@@ -1,3 +1,4 @@
+import { isMemberName } from 'typescript';
 import { getData, setData } from './dataStore';
 import { error, tokenExists, userIdExists, getUidFromToken } from './other';
 
@@ -32,6 +33,68 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   setData(data);
 
   return { dmId: dm.dmId };
+}
+
+/**
+  * Removes a user from a dm
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - The id of the dm being left
+  *
+  * @returns {{error: string}} - An error message if the given info is invalid
+  * @returns {Object: EmptyObject} {} - An empty object
+  */
+function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
+  // Check if the dmId is invalid
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // Check if the token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const uId = getUidFromToken(token);
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      // Check if the user is a member of the dm
+      if (!isMemberOfChannel(dm, uId)) {
+        return { error: 'User is not a member of the dm' };
+      }
+
+      // If they are remove them from the members list
+      dmRemoveUser(uId, dmId);
+    }
+  }
+
+  return {};
+}
+
+/**
+  * Removes a user from a the members list of a dm
+  *
+  * @param {number} uId - The id of the user being removed
+  * @param {number} dmId - The id of the dm the user is being removed from
+  */
+function dmRemoveUser(uId: number, dmId: number) {
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      // Once the correct dm has been found search its' members
+      let removed = false;
+      for (let i = 0; i < dm.members.length && !removed; i++) {
+        // Find the member and remove them from the members list
+        if (dm.members[i].uId === uId) {
+          dm.members.splice(i, 1);
+          removed = true;
+        }
+      }
+    }
+  }
+  // Update the dataStore
+  setData(data);
 }
 
 /**
@@ -157,4 +220,4 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   return dm;
 }
 
-export { dmCreateV1 };
+export { dmCreateV1, dmLeaveV1 };
