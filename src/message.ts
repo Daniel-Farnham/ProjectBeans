@@ -1,6 +1,6 @@
 import {
   channelIdExists, tokenExists, getMessageId,
-  isMemberOfChannel, error, getUidFromToken, messageIdExists
+  isMemberOfChannel, error, getUidFromToken, messageIdExists, isOwnerOfMessage
 } from './other';
 import { getData, setData } from './dataStore';
 
@@ -89,8 +89,6 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
     };
   };
 
-  
-  console.log(findMessage); 
 
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
@@ -104,6 +102,12 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
   if (message.length > MAX_MESSAGE_LEN) {
     return { error: 'length of message is over 1000 characters' };
   }
+
+  const uId = getUidFromToken(token);
+  
+  if (!isOwnerOfMessage(findMessage, uId)) {
+    console.log('hello'); 
+  }  
 
   // Create helper function 'isOwnerofMessage'(findMessage, authUserId)
   // Check if the message was sent by the authorised user and the user does not have owner permissions. 

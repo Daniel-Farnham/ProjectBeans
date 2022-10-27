@@ -54,6 +54,13 @@ export interface Channel {
   allMembers: Array<User>;
 }
 
+export interface Message {
+  messageId: number;
+  uId: number;
+  message: string; 
+  timeSent: number;
+}
+
 /**
   * Parses the JSON response body into a string
 */
@@ -181,6 +188,18 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
     }
   }
   return false;
+}
+
+
+export function isOwnerOfMessage(message: Message, uId: number): boolean {
+  const user = message.uId 
+  console.log(user); 
+  console.log(uId); 
+  if (user === uId ) {
+    return true;
+  }
+  return false; 
+  // feed in uId, check to see if the uId provided matches the uId stored in messages. 
 }
 
 /**
