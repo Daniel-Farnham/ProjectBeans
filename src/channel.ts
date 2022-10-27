@@ -241,7 +241,7 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
   const uId = getUidFromToken(token);
-  const memberCheck = isMemberOfChannel(findChannel, uId)
+  const memberCheck = isMemberOfChannel(findChannel, uId);
 
   // Check if user is not a member of valid channel
   if (!(channelIdExists(channelId)) && memberCheck !== true) {
@@ -347,4 +347,4 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   return false;
 }
 
-export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1, channelLeaveV1};
+export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1, channelLeaveV1 };

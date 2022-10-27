@@ -37,10 +37,10 @@ describe('Testing channelLeaveV1', () => {
     const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
       token: userId2.token,
       channelId: channel.channelId
-    })
+    });
 
     expect(expectedResult).toStrictEqual({});
-  })
+  });
 
   test('Testing successful leaving of channel', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -112,8 +112,8 @@ describe('Testing channelLeaveV1', () => {
 
     expect(membersBefore).toStrictEqual(new Set(detailsBefore.ownerMembers));
     expect(membersAfter).toStrictEqual(new Set(detailsAfter.ownerMembers));
-  })
-  
+  });
+
   test('Testing invalid channelId', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
@@ -146,7 +146,7 @@ describe('Testing channelLeaveV1', () => {
     });
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
-  })
+  });
 
   test('Testing invalid token', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -180,7 +180,7 @@ describe('Testing channelLeaveV1', () => {
     });
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
-  })
+  });
 
   test('Testing valid channelId, but user is not a member', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -205,9 +205,9 @@ describe('Testing channelLeaveV1', () => {
 
     const expectedResult = postRequest(SERVER_URL + 'channel/leave/v1', {
       token: userId2.token,
-      channelId: channel.channelId,
+      channelId: channel.channelId
     });
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
-  })
+  });
 });
