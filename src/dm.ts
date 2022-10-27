@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
-import { error, tokenExists, userIdExists, getUidFromToken, dmIdExists, isMemberOfDm, getMessageId } from './other';
+import { error, tokenExists, userIdExists, getUidFromToken, dmIdExists, 
+  isMemberOfDm, getMessageId, User, isMemberOfChannel } from './other';
 
 type dmInfo = { 
   dmId: number,
@@ -17,9 +18,13 @@ interface Message {
 
 type messageId = { messageId: number }
 
+type dmDetails = {
+  name: string,
+  members: Array<User>
+};
+
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
-
 /**
   * Creates a new dm by generating the dm name from the included user's
   * handlestrings and returns an object including the dmId.
@@ -44,6 +49,52 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   setData(data);
 
   return { dmId: dm.dmId };
+}
+
+/**
+  * Provides basic details of a dm given the authorised user is a member
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - The unique id of the dm
+  *
+  * @returns {{error: string}} - An error message if the given info is invalid
+  * @returns {{name: string}} - The name of the dm
+  * @returns {{members: Array<User>}} - The members list of users in the dm
+  */
+function dmDetailsV1(token: string, dmId: number): dmDetails | error {
+  // Check if the dmId is invalid
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // Check if the token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const uId = getUidFromToken(token);
+
+  /*
+  if (!isMemberOfDm(uId, dmId)) {
+    return { error: 'User is not a member of the dm' };
+  }
+  */
+
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      // Check if the user is a member of the dm
+      if (!isMemberOfChannel(dm, uId)) {
+        return { error: 'User is not a member of the dm' };
+      }
+
+      // If they are return the dm details
+      return {
+        name: dm.name,
+        members: dm.members
+      };
+    }
+  }
 }
 
 /**
@@ -228,5 +279,4 @@ function storeMessageInDm(message: Message, dmId: number) {
   setData(data);
 }
 
-export { dmCreateV1 };
-
+export { dmCreateV1, dmDetailsV1 };
