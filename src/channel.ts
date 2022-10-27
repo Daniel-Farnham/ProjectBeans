@@ -1,4 +1,4 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, error, User, Channel, getUidFromToken } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 
@@ -184,9 +184,10 @@ function invalidMemberships (channel, authUserId: number, uId: number): error | 
   * @returns {{start: number}} - The starting index of the returned messages
   * @returns {{end: number}} - The final index of the returned messages
   */
-function channelMessagesV1(authUserId: number, channelId: number, start: number): boolean | error | messages | start | end {
+function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messages | start | end {
   // Check if the given information is valid
-  const isInvalid = messagesInfoInvalid(authUserId, channelId, start);
+
+  const isInvalid = messagesInfoInvalid(token, channelId, start);
   if (isInvalid !== false) {
     return isInvalid;
   }
@@ -269,13 +270,15 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {boolean} - False if the information isn't invalid
   */
-function messagesInfoInvalid(authUserId: number, channelId: number, start: number): error | boolean {
+function messagesInfoInvalid(token: string, channelId: number, start: number): error | boolean {
   // If channelId or authUserId doesn't exist return error
+
+  if (!(tokenExists(token))) {
+    return { error: 'authUserId is invalid' };
+  }
+
   if (!(channelIdExists(channelId))) {
     return { error: 'ChannelId is invalid' };
-  }
-  if (!(userIdExists(authUserId))) {
-    return { error: 'authUserId is invalid' };
   }
 
   // If start is negative or greater than number of messages return error
@@ -290,29 +293,13 @@ function messagesInfoInvalid(authUserId: number, channelId: number, start: numbe
   }
 
   // If channelId is valid but user isn't a member of the channel return error
-  let isMember = false;
-  for (const user of channel.allMembers) {
-    if (user.uId === authUserId) {
-      isMember = true;
-    }
-  }
-  if (isMember === false) {
-    return { error: 'Authorised user is not a member of the channel' };
+  const uId = getUidFromToken(token);
+
+  if (!isMemberOfChannel(channel, uId)) {
+    return { error: 'authUserId is not a member of channel' };
   }
 
   // If no error by now, the info isn't invalid
-  return false;
-}
-
-export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
-  // Loop through owner members of channel
-  // if user is found, then return true
-  const ownerMembers = channel.ownerMembers;
-  for (const member of ownerMembers) {
-    if (member.uId === uId) {
-      return true;
-    }
-  }
   return false;
 }
 

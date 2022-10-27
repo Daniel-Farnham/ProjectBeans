@@ -11,6 +11,7 @@ export function clearV1 (): Record<string, never> {
     users: [],
     channels: [],
     sessions: [],
+    messageCount: 0,
   };
   setData(data);
   return {};
@@ -166,6 +167,18 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   return false;
 }
 
+export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+  // Loop through owner members of channel
+  // if user is found, then return true
+  const ownerMembers = channel.ownerMembers;
+  for (const member of ownerMembers) {
+    if (member.uId === uId) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
   * Checks if the user id is registered in the database.
   * @param {string} token - userId to check
@@ -181,6 +194,22 @@ export function tokenExists (token: string): boolean {
     }
   }
   return false;
+}
+
+/**
+  * Generates a new messageId to be used for dms and messages
+  * @param {} - no parameters required
+  * @returns {newMessageId} - returns a new messageId
+*/
+export function getMessageId(): number {
+  const data = getData();
+  const newMessageId = data.messageCount;
+
+  data.messageCount += 1;
+
+  setData(data);
+
+  return newMessageId;
 }
 
 export function getUidFromToken (token: string) {
