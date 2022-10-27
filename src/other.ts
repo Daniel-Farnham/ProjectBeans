@@ -55,6 +55,16 @@ export interface Channel {
 }
 
 /**
+  * Specifies the message interface (used for return types)
+*/
+export interface Message {
+  messageId: number;
+  uId: number;
+  message: string; 
+  timeSent: number;
+}
+
+/**
   * Parses the JSON response body into a string
 */
 export const parseBody = (res: any) => {
@@ -148,6 +158,26 @@ export function channelIdExists(channelId: number): boolean {
   }
   return false;
 }
+
+/**
+  * Checks if the messageId exists.
+  * @param {number} messageId - messageId to check
+  * @returns {boolean} - true if message exists, false otherwise
+*/
+export function messageIdExists(messageId: number): boolean {
+  const data = getData(); 
+  // Loop through channels array to check if channel exists
+  for (const channel of data.channels) {
+    // Loop through messages array to check is messageId exists
+    for (const targetmessage of channel.messages) {
+      if (targetmessage.messageId === messageId) {
+        return true; 
+      };   
+    };  
+  }
+  return false; 
+}
+
 /**
   *  Check if a user is a member of a channel
   * @param {number} uId - uId to check
@@ -165,6 +195,43 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
     }
   }
   return false;
+}
+
+/**
+  *  Check if a user is a member of a channel
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
+  * @returns {boolean} - true if user is member, false otherwise
+*/
+export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+  // Loop through all members of channel
+  // if user is found, then return true
+  const ownerMembers = channel.ownerMembers;
+  console.log(ownerMembers);
+  for (const member of ownerMembers) {
+    if (member.uId === uId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+  *  Check if a user is an owner of a message
+  * @param {number} uId - uId to check
+  * @param {object} message - message object
+  *
+  * @returns {boolean} - true if user ownns message, false otherwise
+*/
+export function isOwnerOfMessage(message: Message, uId: number): boolean {
+  // check to see if the uId provided matches the uId stored in messages. 
+  const user = message.uId 
+  if (user === uId ) {
+    return true;
+  }
+  return false; 
+  
 }
 
 /**

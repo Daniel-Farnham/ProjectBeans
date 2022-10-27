@@ -1,6 +1,6 @@
 import {
   channelIdExists, tokenExists, getMessageId,
-  isMemberOfChannel, error, getUidFromToken
+  isMemberOfChannel, error, getUidFromToken, messageIdExists, isOwnerOfMessage, isOwnerOfChannel
 } from './other';
 import { getData, setData } from './dataStore';
 
@@ -71,6 +71,59 @@ function storeMessageInChannel(message: Message, channelId: number) {
       channel.messages.push(message);
     }
   }
-
   setData(data);
+}
+
+/**
+  * Changes a message in the messages array which exists in a channel
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} message - edited message 
+  * ...
+  *
+  * @returns {messageId} returns an object containing the messageId
+*/
+
+export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
+  const data = getData(); 
+  const uId = getUidFromToken(token);
+  for (const channel of data.channels) {
+    let findMessage = channel.messages.find(message => message.messageId === messageId);
+    /* let findChannelOwner = channel.ownerMembers.find(channel => channel.uId === uId);  */
+  };
+/*   console.log(findChannelOwner); 
+ */  
+  if (!(tokenExists(token))) {
+    return { error: 'token is invalid.' };
+  }
+
+  if (!messageIdExists(messageId)) {
+    return { error: 'messageId is invalid.' }; 
+  }
+
+  if (message.length > MAX_MESSAGE_LEN) {
+    return { error: 'length of message is over 1000 characters.' };
+  }
+
+  const uId = getUidFromToken(token);
+  
+  /*
+  if (isOwnerOfChannel(findChannel, uId)) {
+    console.log('hello'); 
+  } 
+  */
+ 
+  if (!isOwnerOfMessage(findMessage, uId) /*&& !isOwnerOfChannel(findChannel, uId)*/ ) {
+    return { error: 'user is not the sender of the message and is not the owner of the channel.'}; 
+  }  
+
+  // No errors found, update message with edited message. 
+  if (findMessage.messageId === messageId) {
+      findMessage.message = message;
+  }
+  
+  setData(data);  
+  return {}; 
+
 }
