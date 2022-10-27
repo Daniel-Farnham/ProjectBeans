@@ -122,6 +122,89 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
     expect(resultUser).toMatchObject(expectedUser);
   });
+  test('Testing dm members contain user with updated name', () => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user.token,
+      uIds: [],
+    });
+
+    putRequest(SERVER_URL + '/user/profile/setname/v1', {
+      token: user.token,
+      nameFirst: 'John',
+      nameLast: 'Darcy',
+    });
+
+    const result = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: user.token,
+      dmId: dm.dmId,
+    });
+
+    const expectedDmObj = {
+      name: 'janedoe',
+      members:
+      [
+        {
+          uId: user.authUserId,
+          email: 'jane.doe@student.unsw.edu.au',
+          nameFirst: 'John',
+          nameLast: 'Darcy',
+          handleStr: 'janedoe',
+        }
+      ],
+    };
+
+    expect(result).toMatchObject(expectedDmObj);
+  });
+
+  test.each([
+    { nameFirst: 'John', nameLast: 'Doe', desc: 'Successful return of empty object' },
+    { nameFirst: 'John', nameLast: 'Doe', desc: 'Successfully updated first name' },
+    { nameFirst: 'Jane', nameLast: 'Silly', desc: 'Successfully updated last name' },
+    { nameFirst: 'Jabba', nameLast: 'The Hutt', desc: 'Successfully updated both names' },
+    { nameFirst: 'J', nameLast: 'D', desc: 'Both names 1 letter long' },
+    {
+      nameFirst: 'ThisIsARealNameThatIsFiftyCharactersLongForSureHa',
+      nameLast: 'ThisIsARealNameThatIsFiftyCharactersLongForSureHa',
+      desc: 'Both names 50 letters long'
+    },
+  ])('$desc', ({ nameFirst, nameLast }) => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    putRequest(SERVER_URL + '/user/profile/setname/v1', {
+      token: user.token,
+      nameFirst: nameFirst,
+      nameLast: nameLast,
+    });
+
+    const expectedUser = {
+      user: {
+        uId: user.authUserId,
+        email: 'jane.doe@student.unsw.edu.au',
+        nameFirst: nameFirst,
+        nameLast: nameLast,
+        handleStr: 'janedoe'
+      }
+    };
+
+    const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
+      token: user.token,
+      uId: user.authUserId,
+    });
+
+    expect(resultUser).toMatchObject(expectedUser);
+  });
 
   test('Testing successful return of users array with multiple users with names renamed', () => {
     // Create multiple users
