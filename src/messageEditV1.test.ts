@@ -153,7 +153,7 @@ describe('Testing messageEditV1 error handling', () => {
             message: 'Hello this is a random test message'
         });
 
-        // user 2 tries to edit the message. They neither have owner permissions of the channel or are the authorised sender of the message dm. 
+        // user 2 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm. 
         const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
             token: user2.token,
             messageId: message.messageId,

@@ -204,12 +204,12 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+export function isOwnerOfChannel(uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
-  const ownerMembers = channel.ownerMembers;
-  console.log(ownerMembers); 
-  for (const member of ownerMembers) {
+ /*  const ownerMembers = channel.ownerMembers;
+  console.log(ownerMembers); */ 
+  for (const channel of data.channels) {
     if (member.uId === uId) {
       return true;
     }
