@@ -7,7 +7,7 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelDetailsV1, channelInviteV1, channelJoinV1 } from './channel';
+import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1 } from './message';
@@ -84,6 +84,13 @@ app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelInviteV1(token, channelId, uId));
   save();
+});
+
+app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const channelId = parseInt(req.query.channelId as string);
+  const start = parseInt(req.query.start as string);
+  res.json(channelMessagesV1(token, channelId, start));
 });
 
 // Get userProfileV2
