@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 describe('Testing channelAddOwnerV1', () => {
-  test('Testing successful return of empty object after executing',  () => {
+  test('Testing successful return of empty object after executing', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
@@ -42,7 +42,7 @@ describe('Testing channelAddOwnerV1', () => {
 
     expect(newOwner).toStrictEqual({});
   });
-  
+
   test('Testing successful adding of owner', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
