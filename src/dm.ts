@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { error, tokenExists, userIdExists, getUidFromToken } from './other';
+import { error, tokenExists, userIdExists, getUidFromToken, dmIdExists, isMemberOfDm, getMessageId } from './other';
 
 type dmInfo = { 
   dmId: number,
@@ -7,6 +7,18 @@ type dmInfo = {
   creator: number,
   members: Array<number>
 };
+
+interface Message {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number,
+}
+
+type messageId = { messageId: number }
+
+const MIN_MESSAGE_LEN = 1;
+const MAX_MESSAGE_LEN = 1000;
 
 /**
   * Creates a new dm by generating the dm name from the included user's
@@ -157,4 +169,64 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   return dm;
 }
 
+/**
+  * Creates a message and stores it in the messages array in a dm
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} dmId - id of dm to send message to
+  * @param {string} message - message to send
+  * ...
+  *
+  * @returns {messageId} returns an object containing the messageId
+*/
+export function messageSendDmV1 (token: string, dmId: number, message: string): messageId | error {
+  const data = getData();
+  const findDm = data.dms.find(dm => dm.dmId === dmId);
+
+  if (!(tokenExists(token))) {
+    return { error: 'token is invalid.' };
+  }
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // Check if length of the message is between 1-1000 characters long.
+  // Create message if true, return error if false.
+  if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
+    return { error: 'length of message is less than 1 or over 1000 characters' };
+  }
+
+  const uId = getUidFromToken(token);
+  if (!isMemberOfDm(findDm, uId)) {
+    return { error: 'user is not a member of the dm' };
+  }
+
+  // Create message
+  const messageId = getMessageId();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const messageObj = {
+    messageId: messageId,
+    uId: uId,
+    message: message,
+    timeSent: timeSent,
+  };
+
+  storeMessageInDm(messageObj, dmId);
+
+  return { messageId: messageId };
+}
+
+function storeMessageInDm(message: Message, dmId: number) {
+  const data = getData();
+
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      dm.messages.push(message);
+    }
+  }
+
+  setData(data);
+}
+
 export { dmCreateV1 };
+
