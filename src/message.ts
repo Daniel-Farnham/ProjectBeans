@@ -80,29 +80,29 @@ function storeMessageInChannel(message: Message, channelId: number) {
   *
   * @param {string} token - token of authorised user
   * @param {number} messageId - id of the message to be edited
-  * @param {string} message - edited message 
+  * @param {string} message - edited message
   * ...
   *
   * @returns {messageId} returns an object containing the messageId
 */
 
 export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
-  const data = getData(); 
+  const data = getData();
   const uId = getUidFromToken(token);
   for (const channel of data.channels) {
-    let findMessage = channel.messages.find(message => message.messageId === messageId);
+    const findMessage = channel.messages.find(message => message.messageId === messageId);
     /* let findChannelOwner = channel.ownerMembers.find(channel => channel.uId === uId);  */
-  };
+  }
 
-  console.log(findMessage); 
-/*   console.log(findChannelOwner); 
- */  
+  console.log(findMessage);
+  /*   console.log(findChannelOwner);
+ */
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
 
   if (!messageIdExists(messageId)) {
-    return { error: 'messageId is invalid.' }; 
+    return { error: 'messageId is invalid.' };
   }
 
   if (message.length > MAX_MESSAGE_LEN) {
@@ -110,58 +110,55 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
   }
 
   const uId = getUidFromToken(token);
-  
+
   /*
   if (isOwnerOfChannel(findChannel, uId)) {
-    console.log('hello'); 
-  } 
-  */
- 
-  if (!isOwnerOfMessage(findMessage, uId) /*&& !isOwnerOfChannel(findChannel, uId)*/ ) {
-    return { error: 'user is not the sender of the message and is not the owner of the channel.'}; 
-  }  
-
-  
-  // No errors found, update message with edited message. 
-  if (findMessage.messageId === messageId) {
-      findMessage.message = message;
+    console.log('hello');
   }
-  
-  setData(data);  
-  return {}; 
+  */
 
+  if (!isOwnerOfMessage(findMessage, uId) /* && !isOwnerOfChannel(findChannel, uId) */) {
+    return { error: 'user is not the sender of the message and is not the owner of the channel.' };
+  }
+
+  // No errors found, update message with edited message.
+  if (findMessage.messageId === messageId) {
+    findMessage.message = message;
+  }
+
+  setData(data);
+  return {};
 }
 
 export function messageRemoveV1(token: string, messageId: number) {
-  const data = getData(); 
-  console.log('Test: ')
+  const data = getData();
+
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
-  
+
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
-    return { error: 'message does not exist in either channels or dms' }
+    return { error: 'message does not exist in either channels or dms' };
   }
-  
+
   const uId = getUidFromToken(token);
 
   // Case where message is in a channel
   if (messageContainer.type === 'channel') {
     const messageRemoveResult = messageFromChannelValid(messageContainer.channel, messageId, uId);
-    /* return messageRemoveResult; 
+    /* return messageRemoveResult;
     if (!messageRemoveResult) {
       return messageRemoveResult;
     } */
-    
+
     if (messageRemoveResult === true) {
-       removeMessageFromChannel(messageId);
+      removeMessageFromChannel(messageId);
+    } else {
+      return messageRemoveResult;
     }
-    else {
-      return messageRemoveResult; 
-    }
-  }  
-  
+  }
+
   // Case where message is in a dm
   /*
   if (messageContainer.type === 'dm') {
@@ -169,14 +166,11 @@ export function messageRemoveV1(token: string, messageId: number) {
       return {error: 'User atttempting remove message is not the owner of the dm'}
     }
       removeMessageFromDm(messageId);
-  } 
+  }
   */
 
   return {};
-
 }
-
-
 
 function messageFromChannelValid(channel, messageId: number, uId: number): any {
   const data = getData();
@@ -198,36 +192,34 @@ function messageFromChannelValid(channel, messageId: number, uId: number): any {
   }
   // Find user object
   const findUser = data.users.find(user => user.uId === uId);
-  console.log(isMemberOfChannel(channel, uId)); 
   if (!isMemberOfChannel(channel, uId)) {
-    return {error: 'User is not a member of channel'};
+    return { error: 'User is not a member of channel' };
   }
-  
-  
+
   // If user is a member and now a channel owner and not a global owner
   if (!ownerMember && !isOwnerOfMessage(messageObj, uId) && findUser.permissionId !== GLOBAL_OWNER) {
-    return {error: 'Channel member does not have permissions to remove message'};
-
+    return { error: 'Channel member does not have permissions to remove message' };
   }
   return true;
 }
 
-// function messageFromDmValid(dm, messageId: number, uId: number): any {
-//   if (dm.creator === uId) {
+/* function messageFromDmValid(dm, messageId: number, uId: number): any {
 
-//   }
-// }
+  if (dm.creator === uId) {
+
+  }
+} */
 
 function removeMessageFromChannel(messageId: number): any {
-  let data = getData();
+  const data = getData();
 
   // Remove message
   for (const channel of data.channels) {
     for (const message of channel.messages) {
       if (message.messageId === messageId) {
         channel.messages = channel.messages.filter(message => message.messageId !== messageId);
-      };   
-    };  
+      }
+    }
   }
   setData(data);
 }
@@ -239,57 +231,53 @@ function removeMessageFromDm( messageId: number):any {
     for (const message of dm.messages) {
       if (message.messageId === messageId) {
         dm.messages = dm.messages.filter(message => message.messageId !== messageId);
-      };   
-    };  
+      };
+    };
   }
   setData(data);
 }
 */
 
-
 /*
 
+  const uId = getUidFromToken(token);
 
-  const uId = getUidFromToken(token);  
-  
   if (messageErrorChecking(messageId, uId)) {
-    return { error: 'messageId is invalid for channels or dms user is a member of.' }; 
+    return { error: 'messageId is invalid for channels or dms user is a member of.' };
   };
 
-  let findMessage; 
-  let findChannelorDM; 
-  // findMessage for channel 
+  let findMessage;
+  let findChannelorDM;
+  // findMessage for channel
   for (const channel of data.channels) {
     if (channel.messages.find(message => message.messageId === messageId) !== undefined ) {
-      findMessage = channel.messages.find(message => message.messageId === messageId); 
-      findChannelorDM = channel; 
-    } 
+      findMessage = channel.messages.find(message => message.messageId === messageId);
+      findChannelorDM = channel;
+    }
   };
 
   for (const dm of data.dms) {
     if (dm.messages.find(message => message.messageId === messageId) !== undefined ) {
-      findMessage = dm.messages.find(message => message.messageId === messageId); 
-      findChannelorDM = dm; 
-    } 
+      findMessage = dm.messages.find(message => message.messageId === messageId);
+      findChannelorDM = dm;
+    }
   };
-   
+
   const findUser = data.users.find(user => user.uId === uId);
-  
+
   // user is not sender of message and is not the global owner
   if (!isOwnerOfMessage(findMessage, uId)) {
     if ( findUser.permissionId === GLOBAL_OWNER ){
-      return { error: 'User is global owner but not a member of channel'}; 
-    }; 
+      return { error: 'User is global owner but not a member of channel'};
+    };
     if ( findUser.permissionId !== GLOBAL_OWNER ) {
       return { error: 'User is a member of the channel but not global owner'}
     };
     if (!isOwnerOfChannel(findChannelorDM, uId) || findChannelorDM.creator === uId  ) {
       return { error: 'User is not the owner of the channel'}
-    
+
     };
 };
-  
-
 
   for (const channel of data.channels) {
     for (const message of channel.messages) {
@@ -298,17 +286,17 @@ function removeMessageFromDm( messageId: number):any {
       }
     }
   }
-  
-  setData(data); 
 
-  return {}; 
-}; 
+  setData(data);
+
+  return {};
+};
 */
 
 /* function messageErrorChecking(messageId: number, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
-  const data = getData(); 
+  const data = getData();
   for (const channel of data.channels) {
     for (const message of channel.messages) {
       if (message.messageId === messageId && isMemberOfChannel(channel, uId)) {
@@ -326,4 +314,3 @@ function removeMessageFromDm( messageId: number):any {
   return false;
 };
  */
-

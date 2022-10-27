@@ -61,7 +61,7 @@ export interface Channel {
 export interface Message {
   messageId: number;
   uId: number;
-  message: string; 
+  message: string;
   timeSent: number;
 }
 
@@ -166,20 +166,19 @@ export function channelIdExists(channelId: number): boolean {
   * @returns {boolean} - true if message exists, false otherwise
 */
 export function messageIdExists(messageId: number): boolean {
-  const data = getData(); 
+  const data = getData();
   // Loop through channels array to check if channel exists
   for (const channel of data.channels) {
     // Loop through messages array to check is messageId exists
     for (const targetmessage of channel.messages) {
       if (targetmessage.messageId === messageId) {
-        return true; 
-      };   
-    };  
+        return true;
+      }
+    }
   }
 
-  return false; 
+  return false;
 }
-
 
 /**
   *  Check if a user is a member of a channel
@@ -200,7 +199,6 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   return false;
 }
 
-
 /**
   *  Check if a user is an owner of a message
   * @param {number} uId - uId to check
@@ -209,17 +207,16 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   * @returns {boolean} - true if user ownns message, false otherwise
 */
 export function isOwnerOfMessage(message: Message, uId: number): boolean {
-  // check to see if the uId provided matches the uId stored in messages. 
-  const user = message.uId 
-  if (user === uId ) {
+  // check to see if the uId provided matches the uId stored in messages.
+  const user = message.uId;
+  if (user === uId) {
     return true;
   }
-  return false; 
-  
+  return false;
 }
 
 export function getMessageContainer(messageId: number): boolean | any {
-  const data = getData(); 
+  const data = getData();
 
   // Loop through channel messages to check if messageId exists
   for (const channel of data.channels) {
@@ -229,10 +226,10 @@ export function getMessageContainer(messageId: number): boolean | any {
           type: 'channel',
           channel: channel
         };
-      };   
-    };  
+      }
+    }
   }
-  
+
   /*
   // Loop through dm messages to check if messageId exists
   for (const dm of data.dms) {
@@ -242,11 +239,11 @@ export function getMessageContainer(messageId: number): boolean | any {
           type: 'dm',
           dm: dm
         };
-      };   
-    };  
+      };
+    };
   }
   */
-  return false; 
+  return false;
 }
 
 /**

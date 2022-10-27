@@ -167,13 +167,13 @@ app.put('/message/edit/v1', (req: Request, res: Response, next) => {
   const message = req.body.message as string;
   res.json(messageEditV1(token, messageId, message));
   save();
-}); 
+});
 
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const messageId = parseInt(req.query.messageId as string);
-  res.json(messageRemoveV1(token, messageId)); 
-})
+  res.json(messageRemoveV1(token, messageId));
+});
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
