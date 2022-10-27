@@ -127,7 +127,6 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       token: user1.token,
       messageId: message.messageId,
-      message: 'This is an edited message'
     });
     console.log(deletedMessage); 
     expect(deletedMessage).toMatchObject({ error: expect.any(String) });
@@ -175,7 +174,6 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       token: user2.token,
       messageId: message.messageId,
-      message: 'This is an edited message'
     });
     console.log(deletedMessage); 
     expect(deletedMessage).toMatchObject({ error: expect.any(String) });
@@ -268,4 +266,44 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
 
 
 });
+
+test('Message not sent by authorised user and the user does not have global owner permissions', () => {
+  // user1 = the userId with global owner permissions 
+  const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    email: 'daniel.farnham@student.unsw.edu.au',
+    password: 'AVeryPoorPassword',
+    nameFirst: 'Daniel',
+    nameLast: 'Farnham',
+  });
+
+  // user2 = the userId without owner permissions 
+  const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    email: 'fake.mcfake@student.unsw.edu.au',
+    password: 'AnEvenWorsePassword',
+    nameFirst: 'Fake',
+    nameLast: 'McFake',
+  });
+
+  // if user1 creates this dm, they have dm owner permissions && are global owners. 
+  const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    token: user1.token,
+    uIds: [], 
+  });
+
+  // a valid message is created by user 1 who is also the creator of the dm. 
+  const message = postRequest(SERVER_URL + 'message/senddm/v1', {
+    token: user1.token,
+    dmId: dm.dmId,
+    message: 'Hello this is a random test message'
+  });
+
+  // user 2 tries to delete. They are neither global owners or are the authorised sender of the message dm. 
+  const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    token: user2.token,
+    messageId: message.messageId,
+  });
+  console.log(deletedMessage); 
+  expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+});  
+
 */
