@@ -55,6 +55,14 @@ export interface Channel {
   allMembers: Array<User>;
 }
 
+export type Messages = {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number
+};
+
+
 /**
   * Parses the JSON response body into a string
 */
@@ -195,6 +203,25 @@ export function isMemberOfDm(dm, uId: number): boolean {
   // Loop through all members of dm
   // if user is found, then return true
   for (const member of dm.members) {
+    if (member.uId === uId) {
+      return true;
+    }
+    }
+    return false;
+}
+
+/*
+  *  Check if a user is an owner of a channel
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
+  * @returns {boolean} - true if user is owner, false otherwise
+*/
+export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+  // Loop through owner members of channel
+  // if user is found, then return true
+  const ownerMembers = channel.ownerMembers;
+  for (const member of ownerMembers) {
     if (member.uId === uId) {
       return true;
     }

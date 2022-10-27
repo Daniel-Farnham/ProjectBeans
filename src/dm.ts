@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { error, tokenExists, userIdExists, getUidFromToken, dmIdExists, 
-  isMemberOfDm, getMessageId, User, isMemberOfChannel } from './other';
+  isMemberOfDm, getMessageId, User, isMemberOfChannel, Messages } from './other';
 
 type dmInfo = { 
   dmId: number,
@@ -23,8 +23,14 @@ type dmDetails = {
   members: Array<User>
 };
 
+type dmMessages = {
+  messages: Array<Messages>,
+  start: number,
+  end: number
+};
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
+
 /**
   * Creates a new dm by generating the dm name from the included user's
   * handlestrings and returns an object including the dmId.
@@ -96,6 +102,101 @@ function dmDetailsV1(token: string, dmId: number): dmDetails | error {
     }
   }
 }
+
+/**
+  * Returns up to 50 of the most recent messages in a dm, starting from a given index
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - The id of the dm where the messages are
+  * @param {number} start - The starting index of the messages being viewed
+  *
+  * @returns {{error: string}} - An error message if token/uIds is invalid
+  * @returns {{messages: Array<Messages>}} - The array of returned messages
+  * @returns {{start: number}} - The given starting index of the messages
+  * @returns {{end: number}} - The end index of the returned messages
+  */
+function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | error | boolean {
+  // Check if the given information is invalid
+  const isInvalid = dmMessagesInfoInvalid(token, dmId, start);
+  if (isInvalid !== false) {
+    return isInvalid;
+  }
+
+  // If start and number of messages are both 0, return empty message array
+  const data = getData();
+  const dm = data.dms.find(dm => dm.dmId === dmId);
+  const numMessages = dm.messages.length;
+
+  const messages = [];
+  let end;
+  if (start === 0 && numMessages === 0) {
+    end = -1;
+  } else {
+    // If start and number of messages aren't both 0, add up to 50 messages
+    let index = 0;
+    while (index < numMessages && index < start + 50) {
+      messages.push(dm.messages[index]);
+      index++;
+    }
+
+    // Now determine if index is the least recent message or not
+    if (index === numMessages) {
+      end = -1;
+    } else {
+      end = index;
+    }
+  }
+
+  return {
+    messages: messages,
+    start: start,
+    end: end,
+  };
+}
+
+/**
+  * Checks if the dm information given is invalid
+  *
+  * @param {number} token - The token of the user trying to view the messages
+  * @param {number} dmId - The id of the dml that has the messages
+  * @param {number} start - The starting index of the messages being viewed
+  *
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {boolean} - False if the information isn't invalid
+  */
+ function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
+  // Check if the token is invalid
+  if (!(tokenExists(token))) {
+    return { error: 'Token is invalid' };
+  }
+
+  // Check if the dmId is invalid
+  if (!(dmIdExists(dmId))) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // If start is negative or greater than number of messages return error
+  if (start < 0) {
+    return { error: 'Starting index can\'t be negative' };
+  }
+  const data = getData();
+  const dm = data.dms.find(dm => dm.dmId === dmId);
+  const numMessages = dm.messages.length;
+  if (start > numMessages) {
+    return { error: 'Start index is greater than number of messages in dm' };
+  }
+
+  // If channelId is valid but user isn't a member of the channel return error
+  const uId = getUidFromToken(token);
+
+  if (!isMemberOfChannel(dm, uId)) {
+    return { error: 'User is not a member of channel' };
+  }
+
+  // If no error by now, the info isn't invalid
+  return false;
+}
+
 
 /**
   * Checks if the information used to create a new dm is valid
@@ -279,4 +380,4 @@ function storeMessageInDm(message: Message, dmId: number) {
   setData(data);
 }
 
-export { dmCreateV1, dmDetailsV1 };
+export { dmCreateV1, dmDetailsV1, dmMessagesV1  };
