@@ -122,8 +122,8 @@ describe('Testing messageEditV1 error handling', () => {
           expect(editedMessage).toMatchObject({ error: expect.any(String) })
     });
 
-    test('Message not sent by authorised user and the user does not have owner permission', () => {
-        // the userId with owner permissions 
+    test('Message not sent by authorised user and the user does not have the channel owner permission', () => {
+        // user1 = the userId with owner permissions 
         const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
             email: 'daniel.farnham@student.unsw.edu.au',
             password: 'AVeryPoorPassword',
@@ -131,7 +131,7 @@ describe('Testing messageEditV1 error handling', () => {
             nameLast: 'Farnham',
         });
 
-        // the userId without owner permissions 
+        // user2 = the userId without owner permissions 
         const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
             email: 'fake.mcfake@student.unsw.edu.au',
             password: 'AnEvenWorsePassword',
@@ -139,7 +139,7 @@ describe('Testing messageEditV1 error handling', () => {
             nameLast: 'McFake',
         });
 
-        // if the user creates this channel, they have owner permissions, if user2 doesn't join - they won't have owner status. 
+        // if user1 creates this channel, they have owner permissions. user2 won't have owner status. 
         const channel = postRequest(SERVER_URL + '/channels/create/v2', {
             token: user1.token,
             name: 'ChannelBoost',
@@ -160,9 +160,6 @@ describe('Testing messageEditV1 error handling', () => {
             message: 'This is an edited message'
         });
         expect(editedMessage).toMatchObject({ error: expect.any(String) });
-    });
-
-        
-     
+    });        
 });
 

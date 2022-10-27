@@ -198,6 +198,26 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
 }
 
 /**
+  *  Check if a user is a member of a channel
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
+  * @returns {boolean} - true if user is member, false otherwise
+*/
+export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+  // Loop through all members of channel
+  // if user is found, then return true
+  const ownerMembers = channel.ownerMembers;
+  console.log(ownerMembers); 
+  for (const member of ownerMembers) {
+    if (member.uId === uId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
   *  Check if a user is an owner of a message
   * @param {number} uId - uId to check
   * @param {object} message - message object

@@ -1,6 +1,6 @@
 import {
   channelIdExists, tokenExists, getMessageId,
-  isMemberOfChannel, error, getUidFromToken, messageIdExists, isOwnerOfMessage
+  isMemberOfChannel, error, getUidFromToken, messageIdExists, isOwnerOfMessage, isOwnerOfChannel
 } from './other';
 import { getData, setData } from './dataStore';
 
@@ -87,11 +87,13 @@ function storeMessageInChannel(message: Message, channelId: number) {
 
 export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
   const data = getData(); 
-  
+  const uId = getUidFromToken(token);
   for (const channel of data.channels) {
-    const findMessage = channel.messages.find(message => message.messageId === messageId);
+    let findMessage = channel.messages.find(message => message.messageId === messageId);
+    /* let findChannelOwner = channel.ownerMembers.find(channel => channel.uId === uId);  */
   };
-  
+/*   console.log(findChannelOwner); 
+ */  
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
@@ -106,8 +108,14 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
 
   const uId = getUidFromToken(token);
   
-  if (!isOwnerOfMessage(findMessage, uId)) {
-    return { error: 'user is not the sender of the message.'}; 
+  /*
+  if (isOwnerOfChannel(findChannel, uId)) {
+    console.log('hello'); 
+  } 
+  */
+ 
+  if (!isOwnerOfMessage(findMessage, uId) /*&& !isOwnerOfChannel(findChannel, uId)*/ ) {
+    return { error: 'user is not the sender of the message and is not the owner of the channel.'}; 
   }  
 
   // No errors found, update message with edited message. 
