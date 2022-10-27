@@ -111,20 +111,34 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
   }
   
   if (messageEditResult === true) {
-    editMessageFromChannel(messageId);
+    editMessageFromChannel(messageId, message);
   }
-
   else {
     return messageEditResult;
   }
 
-  function editMessageFromChannel(messageId: number) {
-    return console.log('dummy variable'); 
+  // Testing that data.channels was edited
+  for (const channel of data.channels) {
+    console.log(channel.messages); 
   }
 
   return {}; 
 
 }
+
+function editMessageFromChannel(messageId: number, editedMessage: Message) {
+  const data = getData();
+  for (const channel of data.channels) {
+    for (const targetmessage of channel.messages) {
+      if (targetmessage.messageId === messageId) {
+        targetmessage.message = editedMessage
+        
+      };   
+    };  
+  }
+  setData(data); 
+}
+
   /*
   const uId = getUidFromToken(token);
   for (const channel of data.channels) {
@@ -162,7 +176,6 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
 
 export function messageRemoveV1(token: string, messageId: number) {
   const data = getData(); 
-  console.log('Test: ')
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
@@ -172,6 +185,8 @@ export function messageRemoveV1(token: string, messageId: number) {
     return { error: 'message does not exist in either channels or dms' }
   }
   
+  
+
   const uId = getUidFromToken(token);
 
   // Case where message is in a channel
@@ -183,13 +198,14 @@ export function messageRemoveV1(token: string, messageId: number) {
     } */
     
     if (messageRemoveResult === true) {
+      for (const channel of data.channels) {
+      }
        removeMessageFromChannel(messageId);
     }
     else {
       return messageRemoveResult; 
     }
   }  
-  
   // Case where message is in a dm
   /*
   if (messageContainer.type === 'dm') {
@@ -226,7 +242,6 @@ function messageFromChannelValid(channel, messageId: number, uId: number): any {
   }
   // Find user object
   const findUser = data.users.find(user => user.uId === uId);
-  console.log(isMemberOfChannel(channel, uId)); 
   if (!isMemberOfChannel(channel, uId)) {
     return {error: 'User is not a member of channel'};
   }
