@@ -54,6 +54,7 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     const message = postRequest(SERVER_URL + '/message/send/v1', {
       token: userId.token,
       channelId: channel.channelId,
+      message: 'Hello this is a random test message'
     });
 
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
@@ -126,6 +127,7 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       token: user1.token,
       messageId: message.messageId,
+      message: 'This is an edited message'
     });
     console.log(deletedMessage); 
     expect(deletedMessage).toMatchObject({ error: expect.any(String) });
@@ -173,6 +175,7 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       token: user2.token,
       messageId: message.messageId,
+      message: 'This is an edited message'
     });
     console.log(deletedMessage); 
     expect(deletedMessage).toMatchObject({ error: expect.any(String) });
@@ -180,6 +183,7 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
 
 });
 
+/*
 describe('Testing messageDeleteV1 success for dms', () => {
   test('Successfully remove message', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -256,13 +260,12 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
 
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       token: userId.token, 
-      messageId: message.messageId + 1,
+      messageId: message.messageId,
     });
     
     expect(deletedMessage).toMatchObject({ error: expect.any(String) })
   });
 
-  
-
 
 });
+*/
