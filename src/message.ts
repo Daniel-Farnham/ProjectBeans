@@ -92,6 +92,8 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
     let findMessage = channel.messages.find(message => message.messageId === messageId);
     /* let findChannelOwner = channel.ownerMembers.find(channel => channel.uId === uId);  */
   };
+
+  console.log(findMessage); 
 /*   console.log(findChannelOwner); 
  */  
   if (!(tokenExists(token))) {
@@ -136,6 +138,8 @@ export function messageRemoveV1(token: string, messageId: number) {
 
   };
 
+ 
+
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   };
@@ -144,5 +148,15 @@ export function messageRemoveV1(token: string, messageId: number) {
     return { error: 'messageId is invalid.' }; 
   };
 
-    return 101; 
+  if (!isOwnerOfMessage(findMessage, uId) /*&& !isOwnerOfChannel(findChannel, uId)*/ ) {
+    return { error: 'user is not the sender of the message and is not the owner of the channel.'}; 
+  }  
+
+  if (findMessage.messageId === messageId) {
+    delete findMessage.message; 
+  }; 
+
+  setData(data); 
+
+  return {}; 
 }; 

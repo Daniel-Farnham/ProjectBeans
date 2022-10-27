@@ -31,6 +31,7 @@ describe('Testing messageDeleteV1 success', () => {
             token: userId.token, 
             messageId: message.messageId,
           });
+          console.log(deletedMessage); 
           expect(deletedMessage).toStrictEqual({});
     });
 });
@@ -128,6 +129,7 @@ describe('Testing messageDeleteV1 error handling', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
         });
+        console.log(deletedMessage); 
         expect(deletedMessage).toMatchObject({ error: expect.any(String) });
     });  
 });
