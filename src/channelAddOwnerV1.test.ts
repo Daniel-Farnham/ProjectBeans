@@ -8,6 +8,41 @@ beforeEach(() => {
 });
 
 describe('Testing channelAddOwnerV1', () => {
+  test('Testing successful return of empty object after executing',  () => {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'edwin.ngo@ad.unsw.edu.au',
+      password: 'ANicePassword',
+      nameFirst: 'Edwin',
+      nameLast: 'Ngo'
+    });
+
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'john.smith@ad.unsw.edu.au',
+      password: 'ANicePassword',
+      nameFirst: 'John',
+      nameLast: 'Smith'
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId1.token,
+      name: 'General',
+      isPublic: true
+    });
+
+    postRequest(SERVER_URL + '/channel/join/v2', {
+      token: userId2.token,
+      channelId: channel.channelId
+    });
+
+    const newOwner = postRequest(SERVER_URL + '/channel/addowner/v1', {
+      token: userId1.token,
+      channelId: channel.channelId,
+      uId: userId2.authUserId
+    });
+
+    expect(newOwner).toStrictEqual({});
+  });
+  
   test('Testing successful adding of owner', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
