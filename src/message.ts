@@ -80,7 +80,17 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
   // this springs up an error. 
   // const findMessage = data.messages.find(chan => chan.messagelId === messageId); 
 
-  console.log(findChannel); 
+  for (const channel of data.channels) {
+    // Loop through messages array to check is messageId exists
+    for (const targetmessage of channel.messages) {
+      if (targetmessage.messageId === messageId) {
+        const findMessage = targetmessage; 
+      };   
+    };
+  };
+
+  
+  console.log(findMessage); 
 
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
