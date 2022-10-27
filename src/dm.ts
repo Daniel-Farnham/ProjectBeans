@@ -1,6 +1,5 @@
 import { getData, setData } from './dataStore';
-import { error, tokenExists, userIdExists } from './other';
-import { getUidFromToken } from './users';
+import { error, tokenExists, userIdExists, getUidFromToken } from './other';
 
 type dmInfo = { 
   dmId: number,
@@ -116,10 +115,33 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
     }
   }
 
-  // Add all the members to the members list
-  const members = [creatorId];
+  // Add the creator to the members list
+  const members = [];
+  for (const user of data.users) {
+    if (user.uId === creatorId) {
+      members.push({
+        uId: creatorId,
+        email: user.email,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+        handleStr: user.handleStr
+      });
+    }
+  }
+
+  // Add the other users in the dm to the members list
   for (const uId of uIds) {
-    members.push(uId);
+    for (const user of data.users) {
+      if (user.uId === uId) {
+        members.push({
+          uId: uId,
+          email: user.email,
+          nameFirst: user.nameFirst,
+          nameLast: user.nameLast,
+          handleStr: user.handleStr
+        });
+      }
+    }
   }
 
   // Construct the dm object
