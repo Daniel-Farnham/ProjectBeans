@@ -210,5 +210,4 @@ describe('Testing channelLeaveV1', () => {
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   })
-
 });
