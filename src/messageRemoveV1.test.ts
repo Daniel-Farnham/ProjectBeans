@@ -92,7 +92,50 @@ describe('Testing messageDeleteV1 error handling', () => {
           console.log(deletedMessage);
           expect(deletedMessage).toMatchObject({ error: expect.any(String) });
     });
-    test('Message not sent by authorised user and the user does not have the channel owner permission', () => {
+
+    test('Message not sent by authorised user, user does have global owner permission but is not a member of the channel', () => {
+        // user1 = the userId with global owner permissions 
+        const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+            email: 'daniel.farnham@student.unsw.edu.au',
+            password: 'AVeryPoorPassword',
+            nameFirst: 'Daniel',
+            nameLast: 'Farnham',
+        });
+
+        // user2 = the userId without owner permissions 
+        const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+            email: 'fake.mcfake@student.unsw.edu.au',
+            password: 'AnEvenWorsePassword',
+            nameFirst: 'Fake',
+            nameLast: 'McFake',
+        });
+
+        // if user2 creates this channel, they have owner permissions. 
+        const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+            token: user2.token,
+            name: 'ChannelBoost',
+            isPublic: true,
+        });
+
+        // a valid message is created by user 2 who is also the owner of the channel. 
+        const message = postRequest(SERVER_URL + '/message/send/v1', {
+            token: user2.token,
+            channelId: channel.channelId,
+            message: 'Hello this is a random test message'
+        });
+
+        // user 1 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm. 
+        const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+            token: user1.token,
+            messageId: message.messageId,
+            message: 'This is an edited message'
+        });
+        console.log(deletedMessage); 
+        expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+    });  
+
+    // needs to add user to global owner. 
+    test('Message not sent by authorised user and the user does not have the global owner permission but they are a member of the channel', () => {
         // user1 = the userId with owner permissions 
         const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
             email: 'daniel.farnham@student.unsw.edu.au',
@@ -116,6 +159,12 @@ describe('Testing messageDeleteV1 error handling', () => {
             isPublic: true,
         });
 
+        // user2 is now becoming a member of the channel but won't be an owner. 
+        const joinChannel = postRequest(SERVER_URL + '/channel/join/v2', {
+            token: user2.token,
+            channelId: channel.channelId 
+        }); 
+
         // a valid message is created by user 1 who is also the owner of the channel. 
         const message = postRequest(SERVER_URL + '/message/send/v1', {
             token: user1.token,
@@ -132,4 +181,6 @@ describe('Testing messageDeleteV1 error handling', () => {
         console.log(deletedMessage); 
         expect(deletedMessage).toMatchObject({ error: expect.any(String) });
     });  
+
+    
 });

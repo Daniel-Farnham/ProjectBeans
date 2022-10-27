@@ -12,6 +12,7 @@ export function clearV1 (): Record<string, never> {
     channels: [],
     sessions: [],
     messageCount: 0,
+    dms: [],
   };
   setData(data);
   return {};
@@ -175,8 +176,10 @@ export function messageIdExists(messageId: number): boolean {
       };   
     };  
   }
+
   return false; 
 }
+
 
 /**
   *  Check if a user is a member of a channel
@@ -197,25 +200,6 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   return false;
 }
 
-/**
-  *  Check if a user is a member of a channel
-  * @param {number} uId - uId to check
-  * @param {number} channel - channel object
-  *
-  * @returns {boolean} - true if user is member, false otherwise
-*/
-export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
-  // Loop through all members of channel
-  // if user is found, then return true
-  const ownerMembers = channel.ownerMembers;
-  console.log(ownerMembers);
-  for (const member of ownerMembers) {
-    if (member.uId === uId) {
-      return true;
-    }
-  }
-  return false;
-}
 
 /**
   *  Check if a user is an owner of a message
@@ -232,6 +216,37 @@ export function isOwnerOfMessage(message: Message, uId: number): boolean {
   }
   return false; 
   
+}
+
+export function getMessageContainer(messageId: number): boolean | any {
+  const data = getData(); 
+
+  // Loop through channel messages to check if messageId exists
+  for (const channel of data.channels) {
+    for (const message of channel.messages) {
+      if (message.messageId === messageId) {
+        return {
+          type: 'channel',
+          channel: channel
+        };
+      };   
+    };  
+  }
+  
+  /*
+  // Loop through dm messages to check if messageId exists
+  for (const dm of data.dms) {
+    for (const message of dm.messages) {
+      if (message.messageId === messageId) {
+        return {
+          type: 'dm',
+          dm: dm
+        };
+      };   
+    };  
+  }
+  */
+  return false; 
 }
 
 /**
