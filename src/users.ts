@@ -107,14 +107,13 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
     // Update for allMembers
     for (const member of channel.allMembers) {
       if (member.uId === uId) {
-        console.log(member); 
         member.nameFirst = nameFirst;
         member.nameLast = nameLast;
       }
     }
   }
 
-  /*
+  
   // Update user profile with dms that they are a member of
   for (const dm of data.dms) {
     for (const member of dm.members) {
@@ -124,8 +123,6 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
       }
     }
   }
-  */
-  
 
   setData(data);
   return {};
