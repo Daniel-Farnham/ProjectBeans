@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { error, tokenExists, userIdExists, getUidFromToken, User } from './other';
+import { error, tokenExists, userIdExists, getUidFromToken, User, isMemberOfChannel } from './other';
 
 type dmInfo = { 
   dmId: number,
@@ -50,22 +50,33 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   * @returns {{members: Array<User>}} - The members list of users in the dm
   */
 function dmDetailsV1(token: string, dmId: number): dmDetails | error {
+  // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
     return { error: 'dmId is invalid' };
   }
 
+  // Check if the token is invalid
   if (!tokenExists(token)) {
     return { error: 'Token is invalid' };
   }
 
   const uId = getUidFromToken(token);
+
+  /*
   if (!isMemberOfDm(uId, dmId)) {
     return { error: 'User is not a member of the dm' };
   }
+  */
 
   const data = getData();
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
+      // Check if the user is a member of the dm
+      if (!isMemberOfChannel(dm, uId)) {
+        return { error: 'User is not a member of the dm' };
+      }
+
+      // If they are return the dm details
       return {
         name: dm.name,
         members: dm.members
