@@ -272,6 +272,51 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
 }
 
 /**
+  * Allows a user to remove an owner to a channel that they have
+  * owner permissions in.
+  *
+  *
+  * @param {string} token - uId of authorised user
+  * @param {number} channelId - id of channel to remove owner permissions from
+  * @param {number} uId - uId of the user to have owner permissions removed
+  *
+  * @returns {Object} {} - returns an empty object upon success
+*/
+function channelRemoveOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
+  // Check if token, channelId, uId are valid
+  if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
+    return { error: 'token/uId/channelId not valid' };
+  }
+
+  const data = getData();
+  const findChannel = data.channels.find(channel => channel.channelId === channelId);
+
+  // Check if uId refers to a user who is not an owner of the channel
+  const ownerCheck = isOwnerOfChannel(findChannel, uId);
+  if (ownerCheck !== true) {
+    return { error: 'User is not an owner of the channel' };
+  }
+
+  // Check if uId refers to a user who is the only owner
+  if (findChannel.ownerMembers.length === 1) {
+    return { error: 'User is the only owner of the channel' };
+  }
+
+  // Check if channelId is valid, but authorised user is not an owner
+  if (channelIdExists(channelId) && ownerCheck !== true) {
+    return { error: 'User does not have owner permissions in this channel' };
+  }
+
+  for (const channel of data.channels) {
+    for (const ownerMembers of channel.ownerMembers) {
+      if (ownerMembers.uId === uId) {
+        channel.ownerMembers = channel.ownerMembers.filter(ownerMembers => ownerMembers.uId !== uId);
+      }
+    }
+  }
+}
+
+/**
   * Checks if the channel information given is invalid
   *
   * @param {number} authUserId - The authoirsed user trying to view messages
@@ -314,4 +359,4 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   return false;
 }
 
-export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1 };
+export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1, channelRemoveOwnerV1 };

@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 describe('Testing channelAddOwnerV1', () => {
-  test('Testing successful return of empty object after executing',  () => {
+  test('Testing successful return of empty object after executing', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
@@ -171,7 +171,7 @@ describe('Testing channelAddOwnerV1', () => {
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
-  
+
   test('Testing channelRemoveOwnerV1 removes the owner successfully', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
@@ -203,7 +203,7 @@ describe('Testing channelAddOwnerV1', () => {
       channelId: channel.channelId,
       uId: userId2.authUserId
     });
-    
+
     const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
       token: userId1.token,
       channelId: channel.channelId
@@ -226,7 +226,7 @@ describe('Testing channelAddOwnerV1', () => {
       }
     ]);
 
-    const removeOwner = postRequest(SERVER_URL + 'channel/removeowner/v1', {
+    postRequest(SERVER_URL + 'channel/removeowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
