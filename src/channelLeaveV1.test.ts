@@ -140,7 +140,7 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     });
 
-    const expectedResult = postRequest(SERVER_URL + 'channel/leave/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
       token: userId2.token,
       channelId: channel.channelId + 10
     });
@@ -174,7 +174,7 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     });
 
-    const expectedResult = postRequest(SERVER_URL + 'channel/leave/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
       token: userId2.token + 10,
       channelId: channel.channelId
     });
@@ -203,7 +203,7 @@ describe('Testing channelLeaveV1', () => {
       isPublic: true
     });
 
-    const expectedResult = postRequest(SERVER_URL + 'channel/leave/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
       token: userId2.token,
       channelId: channel.channelId
     });
