@@ -96,7 +96,7 @@ app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelRemoveOwnerV1(token, channelId, uId));
   save();
-})
+});
 
 app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;

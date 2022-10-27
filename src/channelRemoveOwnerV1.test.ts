@@ -40,7 +40,7 @@ describe('Testing channelAddOwnerV1', () => {
       uId: userId2.authUserId
     });
 
-    const removeOwner = postRequest(SERVER_URL + 'channel/removeowner/v1', {
+    const removeOwner = postRequest(SERVER_URL + '/channel/removeowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
@@ -81,7 +81,7 @@ describe('Testing channelAddOwnerV1', () => {
       uId: userId2.authUserId
     });
 
-    const expectedResult = postRequest(SERVER_URL + 'channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
       token: userId1.token,
       channelId: channel.channelId + 10,
       uId: userId2.authUserId
@@ -122,7 +122,7 @@ describe('Testing channelAddOwnerV1', () => {
       uId: userId2.authUserId
     });
 
-    const expectedResult = postRequest(SERVER_URL + 'channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId + 10
@@ -163,7 +163,7 @@ describe('Testing channelAddOwnerV1', () => {
       uId: userId2.authUserId
     });
 
-    const expectedResult = postRequest(SERVER_URL + 'channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
       token: userId1.token + 10,
       channelId: channel.channelId,
       uId: userId2.authUserId
@@ -226,7 +226,7 @@ describe('Testing channelAddOwnerV1', () => {
       }
     ]);
 
-    postRequest(SERVER_URL + 'channel/removeowner/v1', {
+    postRequest(SERVER_URL + '/channel/removeowner/v1', {
       token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
