@@ -1,6 +1,8 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 
 import { port, url } from './config.json';
+import { sensitiveHeaders } from 'http2';
+import { send } from 'process';
 const SERVER_URL = `${url}:${port}`;
 
 // Before each test, clear dataStore
@@ -29,7 +31,7 @@ describe('Testing messageSendDmV1 success case handling', () => {
   
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
       token: user1.token,
-      uIds: [user2.uId],
+      uIds: [user2.authUserId],
     });
     
     const sendDm = postRequest(SERVER_URL + '/message/senddm/v1', {
@@ -37,11 +39,12 @@ describe('Testing messageSendDmV1 success case handling', () => {
       dmId: dm.dmId,
       message: 'This is my first message',
     });
+
     
     expect(sendDm).toMatchObject({messageId: expect.any(Number) });
   });
 
-  test('Testing successful viewing of DM after one message sent', () => {
+  test('Testing successful viewing of DM after one message sent - NOT checking timestamp', () => {
     const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -59,7 +62,7 @@ describe('Testing messageSendDmV1 success case handling', () => {
   
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
       token: user1.token,
-      uIds: [user2.uId],
+      uIds: [user2.authUserId],
     });
     
     postRequest(SERVER_URL + '/message/senddm/v1', {
@@ -68,13 +71,59 @@ describe('Testing messageSendDmV1 success case handling', () => {
       message: 'This is my first message'
     });
     
-    const sendDm = getRequest(SERVER_URL + '/dm/messages/v1', {
+    const messagesResult = getRequest(SERVER_URL + '/dm/messages/v1', {
       token: user1.token,
+      dmId: dm.dmId,
+      start: 0
+    });
+    const expectedMessages = {
+      messages: [
+        {
+          "message": "This is my first message",
+          "messageId": 1,
+          "timeSent": messagesResult.messages[0].timeSent,
+          "uId": 1,
+        }
+      ],
+      start: 0,
+      end: -1,
+    };
+    expect(messagesResult).toMatchObject(expectedMessages);
+  });
+  test('Testing successful viewing of DM after one message sent - checking timestamp', () => {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hang.pham1@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+    });
+  
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+    
+  
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user1.token,
+      uIds: [user2.authUserId],
+    });
+    
+    postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: user2.token,
       dmId: dm.dmId,
       message: 'This is my first message'
     });
+    const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     
-    expect(sendDm).toMatchObject({messageId: expect.any(Number) });
+    const messagesResult = getRequest(SERVER_URL + '/dm/messages/v1', {
+      token: user1.token,
+      dmId: dm.dmId,
+      start: 0
+    });
+    expect(messagesResult.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
   });
 
 });
@@ -103,7 +152,7 @@ describe('Testing messageSendDmV1 error handling', () => {
       
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
       token: user1.token,
-      uIds: [user2.uId],
+      uIds: [user2.authUserId],
     });
     
     const sendDmResult = postRequest(SERVER_URL + '/message/senddm/v1', {
@@ -143,7 +192,7 @@ describe('Testing messageSendDmV1 error handling', () => {
       
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
       token: user1.token,
-      uIds: [user2.uId],
+      uIds: [user2.authUserId],
     });
     
     const sendDmResult = postRequest(SERVER_URL + '/message/senddm/v1', {

@@ -187,21 +187,21 @@ app.get('/dm/details/v1', (req: Request, res: Response, next) => {
   const dmId = parseInt(req.query.dmId as string);
   res.json(dmDetailsV1(token, dmId));
   save();
-  });
-  
-  app.post('/dm/create/v1', (req: Request, res: Response, next) => {
-    const { token, uIds } = req.body;
-    res.json(dmCreateV1(token, uIds));
-    save();
-  });
+});
 
-  app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
-    const token = req.body.token as string;
-    const dmId = parseInt(req.body.dmId as string);
-    const message = req.body.message as string;
-    res.json(messageSendDmV1(token, dmId, message));
-    save();
-    });
+app.post('/dm/create/v1', (req: Request, res: Response, next) => {
+  const { token, uIds } = req.body;
+  res.json(dmCreateV1(token, uIds));
+  save();
+});
+
+app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  const dmId = parseInt(req.body.dmId as string);
+  const message = req.body.message as string;
+  res.json(messageSendDmV1(token, dmId, message));
+  save();
+  });
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));

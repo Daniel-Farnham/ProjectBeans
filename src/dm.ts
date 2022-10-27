@@ -53,7 +53,6 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
   setData(data);
-
   return { dmId: dm.dmId };
 }
 
@@ -79,11 +78,6 @@ function dmDetailsV1(token: string, dmId: number): dmDetails | error {
   }
 
   const uId = getUidFromToken(token);
-
-  if (!isMemberOfDm(uId, dmId)) {
-    return { error: 'User is not a member of the dm' };
-  }
-  
 
   const data = getData();
   for (const dm of data.dms) {
@@ -208,34 +202,14 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   */
 function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
   // Check if any of the given uId's are invalid
-  const data = getData();
   for (const uId of uIds) {
     if (!userIdExists(uId)) {
       return { error: 'One or more given uId\'s doesn\'t exist' };
     }
   }
-
-  // Create an array that stores the number of times each uId occurs in uIds
-  const idCount = [];
-  for (let i = 0; i < uIds.length; i++) {
-    idCount[i] = 0;
-  }
-
-  // For each uId, loop through uIds to count how many times it occurs
-  for (const uId of uIds) {
-    for (let i = 0; i < uIds.length; i++) {
-      if (uIds[i] === uId) {
-        uIds[i]++;
-      }
-    }
-  }
-
-  // Check if there are any duplicate uId's
-  for (const count of idCount) {
-    if (count > 1) {
+    if (containsDuplicates(uIds)) {
       return { error: 'A duplicate uId has been given' };
     }
-  }
 
   // Check if the given token is invalid
   if (!tokenExists(token)) {
@@ -261,6 +235,7 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   const data = getData();
   const handles = [];
   const creatorId = getUidFromToken(token);
+  uIds.push(creatorId);
   for (const user of data.users) {
     if (uIds.includes(user.uId) || user.uId === creatorId) {
       handles.push(user.handleStr);
@@ -377,6 +352,13 @@ function storeMessageInDm(message: Message, dmId: number) {
   }
 
   setData(data);
+}
+
+function containsDuplicates(array) {
+  if (array.length !== new Set(array).size) {
+    return true;
+  }
+  return false;
 }
 
 export { dmCreateV1, dmDetailsV1, dmMessagesV1  };
