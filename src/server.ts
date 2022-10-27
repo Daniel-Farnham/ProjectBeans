@@ -10,7 +10,7 @@ import { getData, setData } from './dataStore';
 import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
-import { messageSendV1, messageEditV1 } from './message';
+import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
 
 // Set up web app
 const app = express();
@@ -168,6 +168,12 @@ app.put('/message/edit/v1', (req: Request, res: Response, next) => {
   res.json(messageEditV1(token, messageId, message));
   save();
 }); 
+
+app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const messageId = parseInt(req.query.messageId as string);
+  res.json(messageRemoveV1(token, messageId)); 
+})
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));

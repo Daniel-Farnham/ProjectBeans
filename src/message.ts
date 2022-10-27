@@ -127,3 +127,22 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
   return {}; 
 
 }
+
+export function messageRemoveV1(token: string, messageId: number) {
+  const data = getData(); 
+  const uId = getUidFromToken(token);
+  for (const channel of data.channels) {
+    let findMessage = channel.messages.find(message => message.messageId === messageId);
+
+  };
+
+  if (!(tokenExists(token))) {
+    return { error: 'token is invalid.' };
+  };
+
+  if (!messageIdExists(messageId)) {
+    return { error: 'messageId is invalid.' }; 
+  };
+
+    return 101; 
+}; 
