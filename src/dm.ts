@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { error, tokenExists, userIdExists, getUidFromToken, dmIdExists, 
-  isMemberOfDm, getMessageId, User, isMemberOfChannel, Messages } from './other';
+  isMemberOfDm, getMessageId, User, Messages } from './other';
 
 type dmInfo = { 
   dmId: number,
@@ -80,17 +80,16 @@ function dmDetailsV1(token: string, dmId: number): dmDetails | error {
 
   const uId = getUidFromToken(token);
 
-  /*
   if (!isMemberOfDm(uId, dmId)) {
     return { error: 'User is not a member of the dm' };
   }
-  */
+  
 
   const data = getData();
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       // Check if the user is a member of the dm
-      if (!isMemberOfChannel(dm, uId)) {
+      if (!isMemberOfDm(dm, uId)) {
         return { error: 'User is not a member of the dm' };
       }
 
@@ -189,7 +188,7 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   // If channelId is valid but user isn't a member of the channel return error
   const uId = getUidFromToken(token);
 
-  if (!isMemberOfChannel(dm, uId)) {
+  if (!isMemberOfDm(dm, uId)) {
     return { error: 'User is not a member of channel' };
   }
 

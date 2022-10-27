@@ -68,7 +68,7 @@ describe('Testing messageSendDmV1 success case handling', () => {
       message: 'This is my first message'
     });
     
-    const sendDm = postRequest(SERVER_URL + '/dm/messages/v1', {
+    const sendDm = getRequest(SERVER_URL + '/dm/messages/v1', {
       token: user1.token,
       dmId: dm.dmId,
       message: 'This is my first message'
