@@ -167,6 +167,13 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   return false;
 }
 
+/**
+  *  Check if a user is an owner of a channel
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
+  * @returns {boolean} - true if user is owner, false otherwise
+*/
 export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
   // Loop through owner members of channel
   // if user is found, then return true

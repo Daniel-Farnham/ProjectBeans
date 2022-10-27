@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest } from './other';
+import { postRequest, deleteRequest, getRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 describe('Testing channelAddOwnerV1', () => {
-  test('Testing succesful adding of owner', () => {
+  test('Testing successful adding of owner', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
@@ -40,6 +40,11 @@ describe('Testing channelAddOwnerV1', () => {
       uId: userId2.authUserId
     });
 
+    const channelDetails = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: userId1.token,
+      channelId: channel.channelId
+    });
+
     const expectedOwners = new Set([
       {
         uId: userId1.authUserId,
@@ -57,7 +62,7 @@ describe('Testing channelAddOwnerV1', () => {
       }
     ]);
 
-    expect(expectedOwners).toStrictEqual(new Set(channel.ownerMembers));
+    expect(expectedOwners).toStrictEqual(new Set(channelDetails.ownerMembers));
   });
 
   test('Testing invalid channelId', () => {

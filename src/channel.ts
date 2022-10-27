@@ -224,6 +224,17 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   };
 }
 
+/**
+  * Allows a user to add an owner to a channel that they have
+  * owner permissions in.
+  *
+  *
+  * @param {string} token - uId of authorised user
+  * @param {number} channelId - id of channel to give owner permissions to
+  * @param {number} uId - uId of the user to be given owner permissions
+  *
+  * @returns {Object} {} - returns an empty object upon success
+*/
 function channelAddOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
   if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
     return { error: 'token/uId/channelId not valid' };
