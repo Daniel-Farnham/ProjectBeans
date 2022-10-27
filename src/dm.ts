@@ -1,11 +1,16 @@
 import { getData, setData } from './dataStore';
-import { error, tokenExists, userIdExists, getUidFromToken } from './other';
+import { error, tokenExists, userIdExists, getUidFromToken, User } from './other';
 
 type dmInfo = { 
   dmId: number,
   name: string,
   creator: number,
   members: Array<number>
+};
+
+type dmDetails = {
+  name: string,
+  members: Array<User>
 };
 
 /**
@@ -32,6 +37,41 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   setData(data);
 
   return { dmId: dm.dmId };
+}
+
+/**
+  * Provides basic details of a dm given the authorised user is a member
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - The unique id of the dm
+  *
+  * @returns {{error: string}} - An error message if the given info is invalid
+  * @returns {{name: string}} - The name of the dm
+  * @returns {{members: Array<User>}} - The members list of users in the dm
+  */
+function dmDetailsV1(token: string, dmId: number): dmDetails | error {
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const uId = getUidFromToken(token);
+  if (!isMemberOfDm(uId, dmId)) {
+    return { error: 'User is not a member of the dm' };
+  }
+
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      return {
+        name: dm.name,
+        members: dm.members
+      };
+    }
+  }
 }
 
 /**
@@ -157,4 +197,4 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   return dm;
 }
 
-export { dmCreateV1 };
+export { dmCreateV1, dmDetailsV1 };
