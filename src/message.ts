@@ -74,46 +74,48 @@ function storeMessageInChannel(message: Message, channelId: number) {
   setData(data);
 }
 
+/**
+  * Changes a message in the messages array which exists in a channel
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} message - edited message 
+  * ...
+  *
+  * @returns {messageId} returns an object containing the messageId
+*/
 
 export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
   const data = getData(); 
-  // this springs up an error. 
-  // const findMessage = data.messages.find(chan => chan.messagelId === messageId); 
-
+  
   for (const channel of data.channels) {
-    // Loop through messages array to check is messageId exists
-    for (const targetmessage of channel.messages) {
-      if (targetmessage.messageId === messageId) {
-        const findMessage = targetmessage; 
-      };   
-    };
+    const findMessage = channel.messages.find(message => message.messageId === messageId);
   };
-
-
+  
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
 
-  
   if (!messageIdExists(messageId)) {
     return { error: 'messageId is invalid.' }; 
   }
 
   if (message.length > MAX_MESSAGE_LEN) {
-    return { error: 'length of message is over 1000 characters' };
+    return { error: 'length of message is over 1000 characters.' };
   }
 
   const uId = getUidFromToken(token);
   
   if (!isOwnerOfMessage(findMessage, uId)) {
-    console.log('hello'); 
+    return { error: 'user is not the sender of the message.'}; 
   }  
 
-  // Create helper function 'isOwnerofMessage'(findMessage, authUserId)
-  // Check if the message was sent by the authorised user and the user does not have owner permissions. 
-
-
-  return 101; 
-
+  // No errors found, update message with edited message. 
+  if (findMessage.messageId === messageId) {
+      findMessage.message = message;
+  }
+  
+  setData(data);  
+  return {}; 
 
 }

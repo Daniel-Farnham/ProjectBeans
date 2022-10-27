@@ -54,6 +54,9 @@ export interface Channel {
   allMembers: Array<User>;
 }
 
+/**
+  * Specifies the message interface (used for return types)
+*/
 export interface Message {
   messageId: number;
   uId: number;
@@ -156,6 +159,11 @@ export function channelIdExists(channelId: number): boolean {
   return false;
 }
 
+/**
+  * Checks if the messageId exists.
+  * @param {number} messageId - messageId to check
+  * @returns {boolean} - true if message exists, false otherwise
+*/
 export function messageIdExists(messageId: number): boolean {
   const data = getData(); 
   // Loop through channels array to check if channel exists
@@ -165,8 +173,7 @@ export function messageIdExists(messageId: number): boolean {
       if (targetmessage.messageId === messageId) {
         return true; 
       };   
-    };
-       
+    };  
   }
   return false; 
 }
@@ -190,16 +197,21 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   return false;
 }
 
-
+/**
+  *  Check if a user is an owner of a message
+  * @param {number} uId - uId to check
+  * @param {object} message - message object
+  *
+  * @returns {boolean} - true if user ownns message, false otherwise
+*/
 export function isOwnerOfMessage(message: Message, uId: number): boolean {
+  // check to see if the uId provided matches the uId stored in messages. 
   const user = message.uId 
-  console.log(user); 
-  console.log(uId); 
   if (user === uId ) {
     return true;
   }
   return false; 
-  // feed in uId, check to see if the uId provided matches the uId stored in messages. 
+  
 }
 
 /**

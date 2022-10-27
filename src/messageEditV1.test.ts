@@ -2,19 +2,6 @@ import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-
-/*
-
-PARAMETERS {token, messageId, message}
-
-RETURN Error if: 
-
-    length > 1000 characters 
-    token is invalid
-    messageId does not refer to a valid message with a channel/DM
-    the message was not sent by the authoriesd user making this request and the user does not have owner permissions in the channel/DM. 
-
-*/
 beforeEach(() => {
     deleteRequest(SERVER_URL + '/clear/v1', {});
 });
@@ -45,7 +32,6 @@ describe('Testing messageEditV1 success', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
           });
-          console.log(editedMessage);
           expect(editedMessage).toStrictEqual({});
     })
 })
@@ -76,7 +62,6 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
           });
-          console.log(editedMessage);
           expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
@@ -105,7 +90,6 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId + 1,
             message: 'This is an edited message'
           });
-          console.log(editedMessage);
           expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
@@ -135,7 +119,6 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId,
             message: messageGreaterThan1000Char,
           });
-          console.log(editedMessage);
           expect(editedMessage).toMatchObject({ error: expect.any(String) })
     });
 
@@ -176,7 +159,6 @@ describe('Testing messageEditV1 error handling', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
         });
-        console.log(editedMessage);
         expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
