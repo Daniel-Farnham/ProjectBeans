@@ -217,6 +217,15 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
     }
   }
 
+  // Update user profile with dms that they are a member of
+  for (const dm of data.dms) {
+    for (const member of dm.members) {
+      if (member.uId === uId) {
+        member.email = email;
+      }
+    }
+  }
+  
   setData(data);
   return {};
 }
