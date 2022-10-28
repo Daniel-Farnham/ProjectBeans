@@ -225,7 +225,7 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
       }
     }
   }
-  
+
   setData(data);
   return {};
 }
