@@ -11,6 +11,8 @@ export function clearV1 (): Record<string, never> {
     users: [],
     channels: [],
     sessions: [],
+    messageCount: 0,
+    dms: [],
   };
   setData(data);
   return {};
@@ -52,6 +54,13 @@ export interface Channel {
   ownerMembers: Array<User>;
   allMembers: Array<User>;
 }
+
+export type Messages = {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number
+};
 
 /**
   * Parses the JSON response body into a string
@@ -148,6 +157,22 @@ export function channelIdExists(channelId: number): boolean {
   return false;
 }
 /**
+  * Checks if the dmid exists in the database.
+  * @param {number} dmId - dmId to check
+  * @returns {boolean} - true if dm exists, false otherwise
+*/
+export function dmIdExists(dmId: number): boolean {
+  const data = getData();
+  // Loop through dms array to check if dm exists
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
   *  Check if a user is a member of a channel
   * @param {number} uId - uId to check
   * @param {number} channel - channel object
@@ -159,6 +184,43 @@ export function isMemberOfChannel(channel: Channel, uId: number): boolean {
   // if user is found, then return true
   const allMembers = channel.allMembers;
   for (const member of allMembers) {
+    if (member.uId === uId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+  *  Check if a user is a member of a dm
+  * @param {number} uId - uId to check
+  * @param {number} dm - dm object
+  *
+  * @returns {boolean} - true if user is member, false otherwise
+*/
+export function isMemberOfDm(dm, uId: number): boolean {
+  // Loop through all members of dm
+  // if user is found, then return true
+  for (const member of dm.members) {
+    if (member.uId === uId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/*
+  *  Check if a user is an owner of a channel
+  * @param {number} uId - uId to check
+  * @param {number} channel - channel object
+  *
+  * @returns {boolean} - true if user is owner, false otherwise
+*/
+export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+  // Loop through owner members of channel
+  // if user is found, then return true
+  const ownerMembers = channel.ownerMembers;
+  for (const member of ownerMembers) {
     if (member.uId === uId) {
       return true;
     }
@@ -181,6 +243,22 @@ export function tokenExists (token: string): boolean {
     }
   }
   return false;
+}
+
+/**
+  * Generates a new messageId to be used for dms and messages
+  * @param {} - no parameters required
+  * @returns {newMessageId} - returns a new messageId
+*/
+export function getMessageId(): number {
+  const data = getData();
+  const newMessageId = data.messageCount;
+
+  data.messageCount += 1;
+
+  setData(data);
+
+  return newMessageId;
 }
 
 export function getUidFromToken (token: string) {
