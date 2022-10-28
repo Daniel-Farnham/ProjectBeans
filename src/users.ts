@@ -113,12 +113,11 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
     }
   }
 
-  
   // Update user profile with dms that they are a member of
   for (const dm of data.dms) {
     for (const member of dm.members) {
       if (member.uId === uId) {
-        member.nameFirst = nameFirst; 
+        member.nameFirst = nameFirst;
         member.nameLast = nameLast;
       }
     }
