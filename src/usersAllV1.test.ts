@@ -3,12 +3,10 @@ import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-// Before each test, clear dataStore
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-// Working cases
 describe('Testing usersAllV1 successful case handling', () => {
   test('Testing successful return of users array with multiple users', () => {
     // Create multiple users

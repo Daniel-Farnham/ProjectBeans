@@ -91,7 +91,6 @@ describe('Testing negative cases for messageSendV1', () => {
       message: 'Hello this is a random test message'
     });
 
-    // expect(returnedMessageObject.status).toStrictEqual(OK);
     expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
   });
   test('Test invalid channelId', () => {
@@ -114,7 +113,6 @@ describe('Testing negative cases for messageSendV1', () => {
       message: 'Hello this is a random test message'
     });
 
-    // expect(returnedMessageObject.status).toStrictEqual(OK);
     expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
   });
 

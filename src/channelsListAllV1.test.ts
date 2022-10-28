@@ -6,7 +6,6 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-// Working cases
 describe('Testing successful cases for channels/listAll/v2', () => {
   test('Testing successful return of empty channels array', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {

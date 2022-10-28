@@ -4,7 +4,6 @@ import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
-  // clearV1();
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 

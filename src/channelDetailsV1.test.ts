@@ -49,7 +49,7 @@ describe('Testing channelDetails', () => {
         }
       ],
     };
-    // checking that we have a match
+
     expect(ReturnedChannelObj).toMatchObject(ExpectedChannelObj);
   });
 

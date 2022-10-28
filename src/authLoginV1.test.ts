@@ -3,19 +3,12 @@ import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-// const OK = 200;
-
 beforeEach(() => {
-  // clearV1();
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 describe('Testing basic authLoginV1 functionality', () => {
   test('Test that authLoginV1 successfully logs in and returns an integer Id', () => {
-    // authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    // const authId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
-    // expect(authId).toStrictEqual({ authUserId: expect.any(Number) });
-
     postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -28,17 +21,10 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: 'password'
     });
 
-    // expect(authId.statusCode).toBe(OK);
     expect(authId).toStrictEqual({ token: expect.any(String), authUserId: expect.any(Number) });
   });
 
   test('Test uniqueness of token and Id when logging into registered accounts', () => {
-    // authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    // const firstId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
-    // authRegisterV1('hayden.smith@unsw.edu.au', '123456', 'Hayden', 'Smith');
-    // const secondId = authLoginV1('hayden.smith@unsw.edu.au', '123456');
-    // expect(firstId.authUserId).not.toBe(secondId.authUserId);
-
     postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -63,16 +49,11 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: '123456'
     });
 
-    // expect(firstId.statusCode).toBe(OK);
     expect(firstId.token).not.toBe(secondId.token);
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
 
   test('Test authRegisterV1 and authLoginV1 return the same Id but different tokens for the same account', () => {
-    // const regId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    // const loginId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
-    // expect(regId.authUserId).toBe(loginId.authUserId);
-
     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -85,17 +66,11 @@ describe('Testing basic authLoginV1 functionality', () => {
       password: 'password'
     });
 
-    // expect(loginId.statusCode).toBe(OK);
     expect(regId.token).not.toBe(loginId.token);
     expect(regId.authUserId).toBe(loginId.authUserId);
   });
 
   test('Test authLoginV1 and userProfileV1 return the same Id for the same account', () => {
-    // authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    // const loginId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
-    // const user = userProfileV1(loginId.authUserId, loginId.authUserId);
-    // expect(loginId.authUserId).toBe(user.user.uId);
-
     postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -113,7 +88,6 @@ describe('Testing basic authLoginV1 functionality', () => {
       uId: loginId.authUserId
     });
 
-    // expect(loginId.statusCode).toBe(OK);
     expect(loginId.authUserId).toBe(user.user.uId);
   });
 });
@@ -136,10 +110,6 @@ describe('Testing authLoginV1 error handling', () => {
       desc: 'Testing an email and password that both don\'t belong to a user'
     },
   ])('$desc', ({ email, password }) => {
-    // authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-    // const authId = authLoginV1(email, password);
-    // expect(authId).toMatchObject({ error: expect.any(String) });
-
     postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -152,7 +122,6 @@ describe('Testing authLoginV1 error handling', () => {
       password: password
     });
 
-    // expect(authId.statusCode).toBe(OK);
     expect(authId).toMatchObject({ error: expect.any(String) });
   });
 });
