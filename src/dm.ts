@@ -135,7 +135,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
   }
 
   if (!isMember) {
-    return { error: 'Authorised user is not a member of the dm'}
+    return { error: 'Authorised user is not a member of the dm' };
   }
 
   return false;

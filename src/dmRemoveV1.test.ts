@@ -28,7 +28,7 @@ describe('Testing basic dmRemoveV1 functionality', () => {
       token: regId.token,
       dmId: dmId.dmId
     });
-    
+
     expect(removeDm).toStrictEqual({});
   });
 
@@ -49,12 +49,12 @@ describe('Testing basic dmRemoveV1 functionality', () => {
       token: regId.token,
       dmId: dmId.dmId
     });
-    
+
     deleteRequest(SERVER_URL + '/dm/remove/v1', {
       token: regId.token,
       dmId: dmId.dmId
     });
-    
+
     const secondDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       token: regId.token,
       dmId: dmId.dmId
