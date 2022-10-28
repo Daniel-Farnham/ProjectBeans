@@ -7,7 +7,10 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1, channelAddOwnerV1, channelRemoveOwnerV1 } from './channel';
+import {
+  channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1,
+  channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
+} from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
@@ -84,6 +87,12 @@ app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
 app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelInviteV1(token, channelId, uId));
+  save();
+});
+
+app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
+  const { token, channelId } = req.body;
+  res.json(channelLeaveV1(token, channelId));
   save();
 });
 

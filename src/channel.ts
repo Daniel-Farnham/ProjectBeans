@@ -225,6 +225,48 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
 }
 
 /**
+  * Allows a user to leave a channel they are a member of
+  *
+  *
+  * @param {string} token - uId of authorised user
+  * @param {number} channelId - id of channel to leave
+  *
+  * @returns {Object} {} - returns an empty object upon success
+*/
+function channelLeaveV1 (token: string, channelId: number): error | boolean | Record<string, never> {
+  if (!tokenExists(token) || !channelIdExists(channelId)) {
+    return { error: 'token/uId/channelId not valid' };
+  }
+
+  const data = getData();
+  const findChannel = data.channels.find(channel => channel.channelId === channelId);
+  const authUserId = getUidFromToken(token);
+
+  // Check if user is not a member of valid channel
+  if (!isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'User is not a member of the channel' };
+  }
+
+  for (const channel of data.channels) {
+    // Loop through owner members and filter out user
+    for (const member of channel.ownerMembers) {
+      if (member.uId === authUserId) {
+        channel.ownerMembers = channel.ownerMembers.filter(member => member.uId !== authUserId);
+      }
+    }
+    // Loop through all members and filter out user
+    for (const member of channel.allMembers) {
+      if (member.uId === authUserId) {
+        channel.allMembers = channel.allMembers.filter(member => member.uId !== authUserId);
+      }
+    }
+  }
+
+  setData(data);
+  return {};
+}
+
+/**
   * Allows a user to add an owner to a channel that they have
   * owner permissions in.
   *
@@ -371,4 +413,7 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   return false;
 }
 
-export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1, channelRemoveOwnerV1 };
+export {
+  channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1,
+  channelRemoveOwnerV1, channelAddOwnerV1, channelLeaveV1
+};
