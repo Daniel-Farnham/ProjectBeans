@@ -79,6 +79,46 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     expect(result).toMatchObject(expectedChannelObj);
   });
 
+  test('Testing dm members contain user with updated email', () => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user.token,
+      uIds: [],
+    });
+
+    putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+      token: user.token,
+      email: 'janed@gmail.com',
+    });
+
+    const result = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: user.token,
+      dmId: dm.dmId,
+    });
+
+    const expectedDmObj = {
+      name: 'janedoe',
+      members:
+      [
+        {
+          uId: user.authUserId,
+          email: 'janed@gmail.com',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          handleStr: 'janedoe',
+        }
+      ],
+    };
+
+    expect(result).toMatchObject(expectedDmObj);
+  });
+
   test.each([
     { email: 'jdoe@gmail.com', desc: 'Email updated correctly in user profile' },
   ])('$desc', ({ email }) => {
