@@ -7,7 +7,7 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing channelAddOwnerV1', () => {
+describe('Testing channelRemoveOwnerV1', () => {
   test('Testing successful return of empty object after executing', () => {
     const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@ad.unsw.edu.au',

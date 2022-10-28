@@ -297,22 +297,27 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
-  // Check if uId refers to a user who is not an owner of the channel
-  const ownerCheck = isOwnerOfChannel(findChannel, uId);
-  if (ownerCheck !== true) {
-    return { error: 'User is not an owner of the channel' };
+  if (!isOwnerOfChannel(findChannel, uId)) {
+    return { error: 'User to remove is not the owner of a channel' };
   }
 
-  // Check if uId refers to a user who is the only owner
   if (findChannel.ownerMembers.length === 1) {
-    return { error: 'User is the only owner of the channel' };
+    return { error: 'The user to remove is the only owner of the channel' };
   }
 
-  // Check if channelId is valid, but authorised user is not an owner
-  if (channelIdExists(channelId) && ownerCheck !== true) {
-    return { error: 'User does not have owner permissions in this channel' };
+  // Check authorised user has owner permissions
+  const authUserId = getUidFromToken(token);
+  const authUser = data.users.find(user => user.uId === authUserId);
+
+  if (!isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'Auth user is not a member of the channel' };
   }
 
+  if (!isOwnerOfChannel(findChannel, authUserId) && authUser.permissionId !== GLOBAL_OWNER) {
+    return { error: 'Authorising user does not have owner permissions in this channel' };
+  }
+
+  // Remove the member from owner list
   for (const channel of data.channels) {
     for (const ownerMembers of channel.ownerMembers) {
       if (ownerMembers.uId === uId) {
