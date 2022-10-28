@@ -203,9 +203,9 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
     end = -1;
   } else {
     // If start and number of messages aren't both 0, add up to 50 messages
-    let index = 0;
+    let index = start;
     while (index < numMessages && index < start + 50) {
-      messages.push(channel.messages[index]);
+      messages.unshift(channel.messages[index]);
       index++;
     }
 
@@ -213,7 +213,7 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
     if (index === numMessages) {
       end = -1;
     } else {
-      end = index;
+      end = index - 1;
     }
   }
 

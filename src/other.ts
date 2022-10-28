@@ -45,24 +45,6 @@ export interface UserPrivate {
 }
 
 /**
-  * Specifies the channel interface (used for return types)
-*/
-export interface Channel {
-  channelId: number;
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-}
-
-export type Messages = {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number
-};
-
-/**
   * Specifies the message interface (used for return types)
 */
 export interface Message {
@@ -71,6 +53,25 @@ export interface Message {
   message: string;
   timeSent: number;
 }
+
+/**
+  * Specifies the channel interface (used for return types)
+*/
+export interface Channel {
+  channelId: number;
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
+  messages: Array<Message>;
+}
+
+export type Messages = {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number
+};
 
 /**
   * Parses the JSON response body into a string
