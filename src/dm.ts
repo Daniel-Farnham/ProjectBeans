@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages
+  isMemberOfDm, getMessageId, User, Messages,
 } from './other';
 
 type dmInfo = {
@@ -86,8 +86,8 @@ function dmListV1(token: string): dmList | error {
   // Add the dmId and name of each dm the user is a member of to a list
   const list = [];
   for (const dm of data.dms) {
-    if (dm.members.includes(uId)) {
-      list.push({ dmId: dm.dmId, name: dm.name});
+    if (isMemberOfDm(dm, uId)) {
+      list.push({ dmId: dm.dmId, name: dm.name });
     }
   }
 

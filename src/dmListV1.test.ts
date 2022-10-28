@@ -22,7 +22,7 @@ describe('Testing basic dmListV1 functionality', () => {
     const lists = getRequest(SERVER_URL + '/dm/list/v1', {
       token: regId.token
     });
-    
+
     expect(lists).toStrictEqual({ dms: [] });
   });
 
@@ -63,7 +63,7 @@ describe('Testing basic dmListV1 functionality', () => {
     const expectedList = [
       {
         dmId: dmId.dmId,
-        name: dmId.name
+        name: 'curtisscully, haydensmith'
       }
     ];
 
@@ -104,14 +104,14 @@ describe('Testing basic dmListV1 functionality', () => {
       token: firstId.token
     });
 
-    const expectedList = new Set ([
+    const expectedList = new Set([
       {
         dmId: firstDm.dmId,
-        name: firstDm.name
+        name: 'curtisscully'
       },
       {
         dmId: secondDm.dmId,
-        name: secondDm.name
+        name: 'curtisscully, haydensmith'
       }
     ]);
 
