@@ -110,6 +110,8 @@ describe('Testing channelLeaveV1', () => {
       }
     ]);
 
+    console.log(membersBefore);
+    console.log(membersAfter);
     expect(membersBefore).toStrictEqual(new Set(detailsBefore.ownerMembers));
     expect(membersAfter).toStrictEqual(new Set(detailsAfter.ownerMembers));
   });

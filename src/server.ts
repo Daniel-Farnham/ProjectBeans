@@ -7,8 +7,10 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1, 
-  channelAddOwnerV1, channelLeaveV1,  channelRemoveOwnerV1 } from './channel';
+import {
+  channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1,
+  channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
+} from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1 } from './message';
