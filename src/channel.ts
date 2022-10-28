@@ -261,6 +261,8 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
       }
     }
   }
+
+  setData(data);
   return {};
 }
 

@@ -110,10 +110,86 @@ describe('Testing channelLeaveV1', () => {
       }
     ]);
 
-    console.log(membersBefore);
-    console.log(membersAfter);
-    expect(membersBefore).toStrictEqual(new Set(detailsBefore.ownerMembers));
-    expect(membersAfter).toStrictEqual(new Set(detailsAfter.ownerMembers));
+    expect(membersBefore).toStrictEqual(new Set(detailsBefore.allMembers));
+    expect(membersAfter).toStrictEqual(new Set(detailsAfter.allMembers));
+  });
+
+  test('Testing successful leaving of channel as owner', () => {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'edwin.ngo@ad.unsw.edu.au',
+      password: 'ANicePassword',
+      nameFirst: 'Edwin',
+      nameLast: 'Ngo'
+    });
+
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'john.smith@ad.unsw.edu.au',
+      password: 'ANicePassword',
+      nameFirst: 'John',
+      nameLast: 'Smith'
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      token: userId1.token,
+      name: 'General',
+      isPublic: true
+    });
+
+    postRequest(SERVER_URL + '/channel/join/v2', {
+      token: userId2.token,
+      channelId: channel.channelId
+    });
+
+    postRequest(SERVER_URL + '/channel/addowner/v1', {
+      token: userId1.token,
+      channelId: channel.channelId,
+      uId: userId2.authUserId
+    });
+
+    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: userId1.token,
+      channelId: channel.channelId
+    });
+
+    const ownersBefore = new Set([
+      {
+        uId: userId1.authUserId,
+        email: 'edwin.ngo@ad.unsw.edu.au',
+        nameFirst: 'Edwin',
+        nameLast: 'Ngo',
+        handleStr: 'edwinngo'
+      },
+      {
+        uId: userId2.authUserId,
+        email: 'john.smith@ad.unsw.edu.au',
+        nameFirst: 'John',
+        nameLast: 'Smith',
+        handleStr: 'johnsmith'
+      }
+    ]);
+
+    postRequest(SERVER_URL + '/channel/leave/v1', {
+      token: userId2.token,
+      channelId: channel.channelId
+    });
+
+    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v2', {
+      token: userId1.token,
+      channelId: channel.channelId
+    });
+
+    const ownersAfter = new Set([
+      {
+        uId: userId1.authUserId,
+        email: 'edwin.ngo@ad.unsw.edu.au',
+        nameFirst: 'Edwin',
+        nameLast: 'Ngo',
+        handleStr: 'edwinngo'
+      }
+    ]);
+
+    expect(ownersBefore).toStrictEqual(new Set(detailsBefore.ownerMembers));
+    expect(ownersAfter).toStrictEqual(new Set(detailsAfter.ownerMembers));
   });
 
   test('Testing invalid channelId', () => {
