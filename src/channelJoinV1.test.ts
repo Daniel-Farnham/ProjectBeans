@@ -32,12 +32,6 @@ describe('Testing positive cases for channelJoinV1', () => {
       channelId: channel.channelId
     });
 
-    /*
-    const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
-    const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
-    */
     expect(returnedChannelObject).toMatchObject({});
   });
 

@@ -76,7 +76,7 @@ export function messageSendV1 (token: string, channelId: number, message: string
   *
   * @returns - nothing to return
 */
-function storeMessageInChannel(message: Message, channelId: number) {
+function storeMessageInChannel(message: string, channelId: number) {
   const data = getData();
 
   for (const channel of data.channels) {
