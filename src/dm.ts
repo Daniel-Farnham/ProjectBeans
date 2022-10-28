@@ -68,6 +68,81 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
 }
 
 /**
+  * Remove a dm so all members are no longer in the dm, only if the authorised user
+  * is the creator.
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - Unique id of the dm being deleted
+  *
+  * @returns {Object: EmptyObject} {} - An empty object if successful
+  * @returns {{error: string}} - An error message if token is invalid
+  */
+function dmRemoveV1(token: string, dmId: number): Record<string, never> | error | boolean {
+  // Check if the given information is valid
+  const data = getData();
+  const isInvalid = removeInfoInvalid(token, dmId);
+  if (isInvalid !== false) {
+    return isInvalid;
+  }
+
+  // Remove all the members of the dm
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      while (dm.members.length !== 0) {
+        dm.members.pop();
+      }
+    }
+  }
+
+  setData(data);
+  return {};
+}
+
+/**
+  * Checks if the information used to remove a new dm is valid
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - Unique id of the dm being deleted
+  *
+  * @returns {{error: string}} - An error message if any info is invalid
+  * @returns {boolean} - False if the given info isn't invalid
+  */
+function removeInfoInvalid(token: string, dmId: number): error | boolean {
+  const data = getData();
+
+  // Check if the dmId is invalid
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // Check if the token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  // Check if the authorised user is the dm creator
+  // If they are, check if they're still a member of the dm
+  const uId = getUidFromToken(token);
+  let isMember = false;
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      if (dm.creator !== uId) {
+        return { error: 'Authorised user isn\'t the dm creator' };
+      } else if (isMemberOfDm(dm, uId)) {
+        isMember = true;
+      }
+    }
+  }
+
+  if (!isMember) {
+    return { error: 'Authorised user is not a member of the dm' };
+  }
+
+  return false;
+}
+
+/**
+  * Checks if the information used to create a new dm is valid
   * Returns the list of dms that the user is a member of
   *
   * @param {string} token - The session token of the user creating the dm
@@ -462,4 +537,4 @@ function containsDuplicates(array) {
   return false;
 }
 
-export { dmCreateV1, dmDetailsV1, dmMessagesV1, dmListV1, dmLeaveV1 };
+export { dmCreateV1, dmDetailsV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 };
