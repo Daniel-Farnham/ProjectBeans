@@ -9,6 +9,9 @@ const MAX_MESSAGE_LEN = 1000;
 
 type messageId = { messageId: number }
 
+/**
+  * Interface for message object
+*/
 interface Message {
   messageId: number,
   uId: number,
@@ -63,6 +66,15 @@ export function messageSendV1 (token: string, channelId: number, message: string
   return { messageId: messageId };
 }
 
+/**
+  * Stores message in channel object and saves it to datastore
+  *
+  * @param {string} message - message to store
+  * @param {number} channelId - id of channel to store
+  * ...
+  *
+  * @returns - nothing to return
+*/
 function storeMessageInChannel(message: Message, channelId: number) {
   const data = getData();
 
