@@ -70,13 +70,13 @@ export function messageSendV1 (token: string, channelId: number, message: string
 /**
   * Stores message in channel object and saves it to datastore
   *
-  * @param {string} message - message to store
+  * @param {Message} message - message to store
   * @param {number} channelId - id of channel to store
   * ...
   *
   * @returns - nothing to return
 */
-function storeMessageInChannel(message: string, channelId: number) {
+function storeMessageInChannel(message: Message, channelId: number) {
   const data = getData();
 
   for (const channel of data.channels) {
