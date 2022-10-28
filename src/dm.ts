@@ -301,9 +301,9 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
     end = -1;
   } else {
     // If start and number of messages aren't both 0, add up to 50 messages
-    let index = 0;
+    let index = start;
     while (index < numMessages && index < start + 50) {
-      messages.push(dm.messages[index]);
+      messages.unshift(dm.messages[index]);
       index++;
     }
 
@@ -311,7 +311,7 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
     if (index === numMessages) {
       end = -1;
     } else {
-      end = index;
+      end = index - 1;
     }
   }
 
