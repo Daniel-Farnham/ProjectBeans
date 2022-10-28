@@ -7,11 +7,14 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1, channelAddOwnerV1, channelRemoveOwnerV1 } from './channel';
+import {
+  channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1,
+  channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
+} from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
-import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmRemoveV1 } from './dm';
+import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 
 // Set up web app
 const app = express();
@@ -84,6 +87,12 @@ app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
 app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelInviteV1(token, channelId, uId));
+  save();
+});
+
+app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
+  const { token, channelId } = req.body;
+  res.json(channelLeaveV1(token, channelId));
   save();
 });
 
@@ -181,6 +190,11 @@ app.put('/message/edit/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
+  const { token, dmId } = req.body;
+  res.json(dmLeaveV1(token, dmId));
+});
+
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const messageId = parseInt(req.query.messageId as string);
@@ -219,12 +233,11 @@ app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);
   res.json(dmMessagesV1(token, dmId, start));
+});
 
-  app.get('/dm/list/v1', (req: Request, res: Response, next) => {
-    const token = req.query.token as string;
-    res.json(dmListV1(token));
-  });
-
+app.get('/dm/list/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  res.json(dmListV1(token));
   save();
 });
 
