@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages
+  isMemberOfDm, getMessageId, User, Messages,
 } from './other';
 
 type dmInfo = {
@@ -9,6 +9,15 @@ type dmInfo = {
   name: string,
   creator: number,
   members: Array<number>
+};
+
+type dmListInfo = {
+  dmId: number,
+  name: string
+};
+
+type dmList = {
+  dms: Array<dmListInfo>
 };
 
 interface Message {
@@ -56,6 +65,33 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   data.dms.push(dm);
   setData(data);
   return { dmId: dm.dmId };
+}
+
+/**
+  * Returns the list of dms that the user is a member of
+  *
+  * @param {string} token - The session token of the user creating the dm
+  *
+  * @returns {{dms: dmList}} - An array of dms the user is a member of
+  */
+function dmListV1(token: string): dmList | error {
+  // Check if the given token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const data = getData();
+  const uId = getUidFromToken(token);
+
+  // Add the dmId and name of each dm the user is a member of to a list
+  const list = [];
+  for (const dm of data.dms) {
+    if (isMemberOfDm(dm, uId)) {
+      list.push({ dmId: dm.dmId, name: dm.name });
+    }
+  }
+
+  return { dms: list };
 }
 
 /**
@@ -364,4 +400,4 @@ function containsDuplicates(array) {
   return false;
 }
 
-export { dmCreateV1, dmDetailsV1, dmMessagesV1 };
+export { dmCreateV1, dmDetailsV1, dmMessagesV1, dmListV1 };
