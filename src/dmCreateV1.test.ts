@@ -145,7 +145,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       dmId: dmId.dmId
     });
 
-    const expectedMembers = new Set ([
+    const expectedMembers = new Set([
       {
         uId: firstId.authUserId,
         email: 'z5361935@ad.unsw.edu.au',

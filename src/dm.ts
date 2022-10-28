@@ -1,8 +1,10 @@
 import { getData, setData } from './dataStore';
-import { error, tokenExists, userIdExists, getUidFromToken, dmIdExists, 
-  isMemberOfDm, getMessageId, User, Messages } from './other';
+import {
+  error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
+  isMemberOfDm, getMessageId, User, Messages
+} from './other';
 
-type dmInfo = { 
+type dmInfo = {
   dmId: number,
   name: string,
   creator: number,
@@ -48,7 +50,7 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   if (isInvalid !== false) {
     return isInvalid;
   }
-  
+
   // Create the new dm and store it in the datastore
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
@@ -157,7 +159,7 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {boolean} - False if the information isn't invalid
   */
- function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
+function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
   // Check if the token is invalid
   if (!(tokenExists(token))) {
     return { error: 'Token is invalid' };
@@ -190,7 +192,6 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   return false;
 }
 
-
 /**
   * Checks if the information used to create a new dm is valid
   *
@@ -207,9 +208,9 @@ function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
       return { error: 'One or more given uId\'s doesn\'t exist' };
     }
   }
-    if (containsDuplicates(uIds)) {
-      return { error: 'A duplicate uId has been given' };
-    }
+  if (containsDuplicates(uIds)) {
+    return { error: 'A duplicate uId has been given' };
+  }
 
   // Check if the given token is invalid
   if (!tokenExists(token)) {
@@ -230,7 +231,6 @@ function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
   * @returns {boolean} - False if the given info isn't invalid
   */
 function constructDm(token: string, uIds: Array<number>): dmInfo {
-
   // Find the handle strings of all users in the dm and sort them alphabetically
   const data = getData();
   const handles = [];
@@ -254,7 +254,7 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   }
 
   // Add the creator to the members list
-  
+
   const members = [];
   /*
   for (const user of data.users) {
@@ -364,4 +364,4 @@ function containsDuplicates(array) {
   return false;
 }
 
-export { dmCreateV1, dmDetailsV1, dmMessagesV1  };
+export { dmCreateV1, dmDetailsV1, dmMessagesV1 };

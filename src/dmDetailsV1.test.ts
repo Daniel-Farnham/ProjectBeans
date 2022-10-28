@@ -18,7 +18,7 @@ describe('Testing basic dmDetailsV1 functionality', () => {
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
-  
+
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: regId.token,
       uIds: []
@@ -31,7 +31,7 @@ describe('Testing basic dmDetailsV1 functionality', () => {
 
     expect(dmDetails).toStrictEqual({ name: expect.any(String), members: expect.any(Array) });
   });
-  
+
   test('Testing dmDetailsV1 returns the correct name', () => {
     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
@@ -39,7 +39,7 @@ describe('Testing basic dmDetailsV1 functionality', () => {
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
-  
+
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: regId.token,
       uIds: []
@@ -60,7 +60,7 @@ describe('Testing basic dmDetailsV1 functionality', () => {
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
-  
+
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: regId.token,
       uIds: []
@@ -105,7 +105,7 @@ describe('Testing basic dmDetailsV1 functionality', () => {
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-  
+
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
@@ -185,7 +185,7 @@ describe('Testing dmDetailsV1 error handling', () => {
       token: secondId.token,
       dmId: dmId.dmId
     });
-    
+
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
 

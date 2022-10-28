@@ -62,7 +62,6 @@ export type Messages = {
   timeSent: number
 };
 
-
 /**
   * Parses the JSON response body into a string
 */
@@ -206,8 +205,8 @@ export function isMemberOfDm(dm, uId: number): boolean {
     if (member.uId === uId) {
       return true;
     }
-    }
-    return false;
+  }
+  return false;
 }
 
 /*

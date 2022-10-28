@@ -11,8 +11,7 @@ import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1, ch
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1 } from './message';
-import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1} from './dm';
-
+import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1 } from './dm';
 
 // Set up web app
 const app = express();
@@ -201,7 +200,7 @@ app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
   const message = req.body.message as string;
   res.json(messageSendDmV1(token, dmId, message));
   save();
-  });
+});
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
