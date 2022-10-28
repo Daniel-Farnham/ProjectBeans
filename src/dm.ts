@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages
+  isMemberOfDm, getMessageId, User, Messages,
 } from './other';
 
 type dmInfo = {
@@ -9,6 +9,15 @@ type dmInfo = {
   name: string,
   creator: number,
   members: Array<number>
+};
+
+type dmListInfo = {
+  dmId: number,
+  name: string
+};
+
+type dmList = {
+  dms: Array<dmListInfo>
 };
 
 interface Message {
@@ -56,6 +65,170 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   data.dms.push(dm);
   setData(data);
   return { dmId: dm.dmId };
+}
+
+/**
+  * Remove a dm so all members are no longer in the dm, only if the authorised user
+  * is the creator.
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - Unique id of the dm being deleted
+  *
+  * @returns {Object: EmptyObject} {} - An empty object if successful
+  * @returns {{error: string}} - An error message if token is invalid
+  */
+function dmRemoveV1(token: string, dmId: number): Record<string, never> | error | boolean {
+  // Check if the given information is valid
+  const data = getData();
+  const isInvalid = removeInfoInvalid(token, dmId);
+  if (isInvalid !== false) {
+    return isInvalid;
+  }
+
+  // Remove all the members of the dm
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      while (dm.members.length !== 0) {
+        dm.members.pop();
+      }
+    }
+  }
+
+  setData(data);
+  return {};
+}
+
+/**
+  * Checks if the information used to remove a new dm is valid
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - Unique id of the dm being deleted
+  *
+  * @returns {{error: string}} - An error message if any info is invalid
+  * @returns {boolean} - False if the given info isn't invalid
+  */
+function removeInfoInvalid(token: string, dmId: number): error | boolean {
+  const data = getData();
+
+  // Check if the dmId is invalid
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // Check if the token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  // Check if the authorised user is the dm creator
+  // If they are, check if they're still a member of the dm
+  const uId = getUidFromToken(token);
+  let isMember = false;
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      if (dm.creator !== uId) {
+        return { error: 'Authorised user isn\'t the dm creator' };
+      } else if (isMemberOfDm(dm, uId)) {
+        isMember = true;
+      }
+    }
+  }
+
+  if (!isMember) {
+    return { error: 'Authorised user is not a member of the dm' };
+  }
+
+  return false;
+}
+
+/**
+  * Checks if the information used to create a new dm is valid
+  * Returns the list of dms that the user is a member of
+  *
+  * @param {string} token - The session token of the user creating the dm
+  *
+  * @returns {{dms: dmList}} - An array of dms the user is a member of
+  */
+function dmListV1(token: string): dmList | error {
+  // Check if the given token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const data = getData();
+  const uId = getUidFromToken(token);
+
+  // Add the dmId and name of each dm the user is a member of to a list
+  const list = [];
+  for (const dm of data.dms) {
+    if (isMemberOfDm(dm, uId)) {
+      list.push({ dmId: dm.dmId, name: dm.name });
+    }
+  }
+
+  return { dms: list };
+}
+
+/**
+  * Removes a user from a dm
+  *
+  * @param {string} token - The session token of the user creating the dm
+  * @param {number} dmId - The id of the dm being left
+  *
+  * @returns {{error: string}} - An error message if the given info is invalid
+  * @returns {Object: EmptyObject} {} - An empty object
+  */
+function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
+  // Check if the dmId is invalid
+  if (!dmIdExists(dmId)) {
+    return { error: 'dmId is invalid' };
+  }
+
+  // Check if the token is invalid
+  if (!tokenExists(token)) {
+    return { error: 'Token is invalid' };
+  }
+
+  const uId = getUidFromToken(token);
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      // Check if the user is a member of the dm
+      if (!isMemberOfDm(dm, uId)) {
+        return { error: 'User is not a member of the dm' };
+      }
+
+      // If they are remove them from the members list
+      dmRemoveUser(uId, dmId);
+    }
+  }
+
+  return {};
+}
+
+/**
+  * Removes a user from a the members list of a dm
+  *
+  * @param {number} uId - The id of the user being removed
+  * @param {number} dmId - The id of the dm the user is being removed from
+  */
+function dmRemoveUser(uId: number, dmId: number) {
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      // Once the correct dm has been found search its' members
+      let removed = false;
+      for (let i = 0; i < dm.members.length && !removed; i++) {
+        // Find the member and remove them from the members list
+        if (dm.members[i].uId === uId) {
+          dm.members.splice(i, 1);
+          removed = true;
+        }
+      }
+    }
+  }
+  // Update the dataStore
+  setData(data);
 }
 
 /**
@@ -364,4 +537,4 @@ function containsDuplicates(array) {
   return false;
 }
 
-export { dmCreateV1, dmDetailsV1, dmMessagesV1 };
+export { dmCreateV1, dmDetailsV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 };

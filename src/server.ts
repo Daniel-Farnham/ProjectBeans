@@ -7,11 +7,14 @@ import cors from 'cors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
-import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1, channelAddOwnerV1, channelRemoveOwnerV1 } from './channel';
+import {
+  channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1,
+  channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
+} from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
-import { messageSendV1 } from './message';
-import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1 } from './dm';
+import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
+import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 
 // Set up web app
 const app = express();
@@ -84,6 +87,12 @@ app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
 app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelInviteV1(token, channelId, uId));
+  save();
+});
+
+app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
+  const { token, channelId } = req.body;
+  res.json(channelLeaveV1(token, channelId));
   save();
 });
 
@@ -173,18 +182,43 @@ app.post('/message/send/v1', (req: Request, res: Response, next) => {
   res.json(messageSendV1(token, channelId, message));
 });
 
+app.put('/message/edit/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  const messageId = parseInt(req.body.messageId as string);
+  const message = req.body.message as string;
+  res.json(messageEditV1(token, messageId, message));
+  save();
+});
+
+app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
+  const { token, dmId } = req.body;
+  res.json(dmLeaveV1(token, dmId));
+});
+
+app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const messageId = parseInt(req.query.messageId as string);
+  res.json(messageRemoveV1(token, messageId));
+});
+
+app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
+  const token = req.body.token as string;
+  const dmId = parseInt(req.body.dmId as string);
+  const message = req.body.message as string;
+  res.json(messageSendDmV1(token, dmId, message));
+  save();
+});
+
 app.post('/dm/create/v1', (req: Request, res: Response, next) => {
   const { token, uIds } = req.body;
   res.json(dmCreateV1(token, uIds));
   save();
 });
 
-app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
+app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const dmId = parseInt(req.query.dmId as string);
-  const start = parseInt(req.query.start as string);
-  res.json(dmMessagesV1(token, dmId, start));
-  save();
+  res.json(dmRemoveV1(token, dmId));
 });
 
 app.get('/dm/details/v1', (req: Request, res: Response, next) => {
@@ -194,17 +228,16 @@ app.get('/dm/details/v1', (req: Request, res: Response, next) => {
   save();
 });
 
-app.post('/dm/create/v1', (req: Request, res: Response, next) => {
-  const { token, uIds } = req.body;
-  res.json(dmCreateV1(token, uIds));
-  save();
+app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  const dmId = parseInt(req.query.dmId as string);
+  const start = parseInt(req.query.start as string);
+  res.json(dmMessagesV1(token, dmId, start));
 });
 
-app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
-  const dmId = parseInt(req.body.dmId as string);
-  const message = req.body.message as string;
-  res.json(messageSendDmV1(token, dmId, message));
+app.get('/dm/list/v1', (req: Request, res: Response, next) => {
+  const token = req.query.token as string;
+  res.json(dmListV1(token));
   save();
 });
 
