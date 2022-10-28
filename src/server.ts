@@ -11,7 +11,7 @@ import { channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1, ch
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
-import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1 } from './dm';
+import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1 } from './dm';
 
 // Set up web app
 const app = express();
@@ -213,6 +213,12 @@ app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);
   res.json(dmMessagesV1(token, dmId, start));
+
+  app.get('/dm/list/v1', (req: Request, res: Response, next) => {
+    const token = req.query.token as string;
+    res.json(dmListV1(token));
+  });
+
   save();
 });
 
