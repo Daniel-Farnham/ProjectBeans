@@ -3,10 +3,11 @@ import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
-    deleteRequest(SERVER_URL + '/clear/v1', {});
+  deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing messageEditV1 success', () => {
+describe('Testing messageEditV1 success for channels', () => {
+
     test('Successfully edit message', () => {
         const userId = postRequest(SERVER_URL + '/auth/register/v2', {
             email: 'daniel.farnham@student.unsw.edu.au',
@@ -32,12 +33,12 @@ describe('Testing messageEditV1 success', () => {
             messageId: message.messageId,
             message: 'This is an edited message'
           });
-          console.log(editedMessage); 
+   
           expect(editedMessage).toStrictEqual({});
     })
 })
 
-describe('Testing messageEditV1 error handling', () => {
+describe('Testing messageEditV1 error handling for channels', () => {
   test('Testing invalid token', () => {
       const userId = postRequest(SERVER_URL + '/auth/register/v2', {
           email: 'daniel.farnham@student.unsw.edu.au',
@@ -63,7 +64,7 @@ describe('Testing messageEditV1 error handling', () => {
           messageId: message.messageId,
           message: 'This is an edited message'
         });
-        console.log(editedMessage); 
+
         expect(editedMessage).toMatchObject({ error: expect.any(String) });
     });
 
@@ -92,11 +93,10 @@ describe('Testing messageEditV1 error handling', () => {
         messageId: message.messageId + 1,
         message: 'This is an edited message'
       });
-      console.log(editedMessage); 
+
       expect(editedMessage).toMatchObject({ error: expect.any(String) });
   });
 
-  // Might want to add in a test each to check invalid length. 
   test('Message is an invalid length', () => {
     const messageGreaterThan1000Char = 'a'.repeat(1001);
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -105,6 +105,7 @@ describe('Testing messageEditV1 error handling', () => {
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
+
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: userId.token,
@@ -123,7 +124,7 @@ describe('Testing messageEditV1 error handling', () => {
       messageId: message.messageId,
       message: messageGreaterThan1000Char,
     });
-    
+
     expect(editedMessage).toMatchObject({ error: expect.any(String) })
   });
 
@@ -216,4 +217,163 @@ describe('Testing messageEditV1 error handling', () => {
   });  
      
 });
+
+describe('Testing messageEditV1 success for dms', () => {
+  test('Successfully remove message', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+      });
+  
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: userId.token,
+      uIds: [], 
+    });
+
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: userId.token,
+      dmId: dm.dmId,
+      message: 'Hello this is a random test message'
+    });
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+      token: userId.token, 
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    });
+
+    expect(editedMessage).toStrictEqual({});
+  });
+});
+
+describe('Testing messageEditV1 error handling for dms', () => {
+  
+  test('Testing invalid token', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: userId.token,
+      uIds: [], 
+    });
+
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: userId.token,
+      dmId: dm.dmId,
+      message: 'Hello this is a random test message'
+    });
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+      token: userId.token + 'Invalid Token', 
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    });
+
+    expect(editedMessage).toStrictEqual({ error: expect.any(String) })
+  });
+
+  test('Testing messageId is invalid', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: userId.token,
+      uIds: [], 
+    });
+
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: userId.token,
+      dmId: dm.dmId,
+      message: 'Hello this is a random test message'
+    });
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+      token: userId.token, 
+      messageId: message.messageId + 1,
+      message: 'This is an edited message'
+    });
+
+    expect(editedMessage).toStrictEqual({ error: expect.any(String) })
+  });
+
+  test('Message is an invalid length', () => {
+    const messageGreaterThan1000Char = 'a'.repeat(1001);
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: userId.token,
+      uIds: [], 
+    });
+
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: userId.token,
+      dmId: dm.dmId,
+      message: 'Hello this is a random test message'
+    });
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+      token: userId.token, 
+      messageId: message.messageId,
+      message: messageGreaterThan1000Char
+    });
+
+    expect(editedMessage).toStrictEqual({ error: expect.any(String) })
+  });
+  
+  test('Message not sent by authorised user and the user does not have global owner permissions', () => {
+    // user1 = the userId with global owner permissions 
+    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+  
+    // user2 = the userId without owner permissions 
+    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'fake.mcfake@student.unsw.edu.au',
+      password: 'AnEvenWorsePassword',
+      nameFirst: 'Fake',
+      nameLast: 'McFake',
+    });
+  
+    // if user1 creates this dm, they have dm owner permissions && are global owners. 
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user1.token,
+      uIds: [], 
+    });
+  
+    // a valid message is created by user 1 who is also the creator of the dm. 
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+      token: user1.token,
+      dmId: dm.dmId,
+      message: 'Hello this is a random test message'
+    });
+  
+    // user 2 tries to edit. They are neither global owners or are the authorised sender of the message dm. 
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+      token: user2.token,
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    });
+   
+    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+  });  
+  
+
+});
+
+
 
