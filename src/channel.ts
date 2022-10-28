@@ -1,4 +1,4 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 
@@ -158,7 +158,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   * @returns {Object} {} - returns error object if fail, false otherwise
 */
 
-function invalidMemberships (channel, authUserId: number, uId: number): error | boolean {
+function invalidMemberships (channel: Channel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
     return { error: 'User to invite already a member of channel' };

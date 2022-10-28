@@ -332,7 +332,7 @@ export function getMessageId(): number {
   * @param {string} token - token to check for userId
   * @returns {uId} - returns uId
 */
-export function getUidFromToken (token: string) {
+export function getUidFromToken (token: string): number {
   const data = getData();
 
   for (const session of data.sessions) {
