@@ -429,19 +429,6 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   // Add the creator to the members list
 
   const members = [];
-  /*
-  for (const user of data.users) {
-    if (user.uId === creatorId) {
-      members.push({
-        uId: creatorId,
-        email: user.email,
-        nameFirst: user.nameFirst,
-        nameLast: user.nameLast,
-        handleStr: user.handleStr
-      });
-    }
-  }
-  */
 
   // Add the other users in the dm to the members list
   for (const uId of uIds) {
