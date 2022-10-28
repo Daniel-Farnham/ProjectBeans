@@ -325,6 +325,7 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
       }
     }
   }
+  return {};
 }
 
 /**
