@@ -244,19 +244,25 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
   // Check if user is not a member of channel
-  if (isMemberOfChannel(findChannel, uId) !== true) {
+  if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'User is not a member of the channel' };
   }
 
   // Check if member is not an owner already
-  const ownerCheck = isOwnerOfChannel(findChannel, uId);
-  if (ownerCheck !== false) {
+  if (isOwnerOfChannel(findChannel, uId)) {
     return { error: 'User is already an owner of the channel' };
   }
 
-  // Checkif channelId is valid and user has owner permissions
-  if (!channelIdExists(channelId) && ownerCheck === false) {
-    return { error: 'User does not have owner permissions in this channel' };
+  // Check authorised user has owner permissions
+  const authUserId = getUidFromToken(token);
+  const authUser = data.users.find(user => user.uId === authUserId);
+
+  if (!isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'Auth user is not a member of the channel' };
+  }
+
+  if (!isOwnerOfChannel(findChannel, authUserId) && authUser.permissionId !== GLOBAL_OWNER) {
+    return { error: 'Authorising user does not have owner permissions in this channel' };
   }
 
   // Add new owner to array if token is member of channel
@@ -269,6 +275,57 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
       return {};
     }
   }
+}
+
+/**
+  * Allows a user to remove an owner to a channel that they have
+  * owner permissions in.
+  *
+  *
+  * @param {string} token - uId of authorised user
+  * @param {number} channelId - id of channel to remove owner permissions from
+  * @param {number} uId - uId of the user to have owner permissions removed
+  *
+  * @returns {Object} {} - returns an empty object upon success
+*/
+function channelRemoveOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
+  // Check if token, channelId, uId are valid
+  if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
+    return { error: 'token/uId/channelId not valid' };
+  }
+
+  const data = getData();
+  const findChannel = data.channels.find(channel => channel.channelId === channelId);
+
+  if (!isOwnerOfChannel(findChannel, uId)) {
+    return { error: 'User to remove is not the owner of a channel' };
+  }
+
+  if (findChannel.ownerMembers.length === 1) {
+    return { error: 'The user to remove is the only owner of the channel' };
+  }
+
+  // Check authorised user has owner permissions
+  const authUserId = getUidFromToken(token);
+  const authUser = data.users.find(user => user.uId === authUserId);
+
+  if (!isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'Auth user is not a member of the channel' };
+  }
+
+  if (!isOwnerOfChannel(findChannel, authUserId) && authUser.permissionId !== GLOBAL_OWNER) {
+    return { error: 'Authorising user does not have owner permissions in this channel' };
+  }
+
+  // Remove the member from owner list
+  for (const channel of data.channels) {
+    for (const ownerMembers of channel.ownerMembers) {
+      if (ownerMembers.uId === uId) {
+        channel.ownerMembers = channel.ownerMembers.filter(ownerMembers => ownerMembers.uId !== uId);
+      }
+    }
+  }
+  return {};
 }
 
 /**
@@ -314,4 +371,4 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   return false;
 }
 
-export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1 };
+export { channelInviteV1, channelJoinV1, channelDetailsV1, channelMessagesV1, channelAddOwnerV1, channelRemoveOwnerV1 };
