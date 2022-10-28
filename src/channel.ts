@@ -252,7 +252,7 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   if (isOwnerOfChannel(findChannel, uId)) {
     return { error: 'User is already an owner of the channel' };
   }
-  
+
   // Check authorised user has owner permissions
   const authUserId = getUidFromToken(token);
   const authUser = data.users.find(user => user.uId === authUserId);
