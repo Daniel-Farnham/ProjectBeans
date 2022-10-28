@@ -10,6 +10,9 @@ const GLOBAL_OWNER = 1;
 
 type messageId = { messageId: number }
 
+/**
+  * Interface for message object
+*/
 interface Message {
   messageId: number,
   uId: number,
@@ -64,6 +67,15 @@ export function messageSendV1 (token: string, channelId: number, message: string
   return { messageId: messageId };
 }
 
+/**
+  * Stores message in channel object and saves it to datastore
+  *
+  * @param {string} message - message to store
+  * @param {number} channelId - id of channel to store
+  * ...
+  *
+  * @returns - nothing to return
+*/
 function storeMessageInChannel(message: Message, channelId: number) {
   const data = getData();
 
@@ -86,7 +98,7 @@ function storeMessageInChannel(message: Message, channelId: number) {
   * @returns {messageId} returns an object containing the messageId
 */
 
-export function messageEditV1 (token: string, messageId: number, message: Message): error | Record<string, never> {
+export function messageEditV1 (token: string, messageId: number, message: string): error | Record<string, never> {
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
@@ -103,7 +115,7 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
 
   const uId = getUidFromToken(token);
 
-  // Case where message is in a channel
+  // Case where message is in a channel.
   if (messageContainer.type === 'channel') {
     const messageEditResult = messageFromChannelValid(messageContainer.channel, messageId, uId);
     if (messageEditResult === true) {
@@ -113,6 +125,7 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
     }
   }
 
+  // Case where message is in a dm.
   if (messageContainer.type === 'dm') {
     // If no errors, remove dm from channel.
     if (messageContainer.dm.creator !== uId) {
@@ -125,10 +138,21 @@ export function messageEditV1 (token: string, messageId: number, message: Messag
   return {};
 }
 
-function editMessageFromChannel(messageId: number, editedMessage: Message) {
+/**
+  * Edits the message that exists in the channel
+  *
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} editedMessage - edited message
+  * ...
+  *
+  * @returns nothing
+*/
+
+function editMessageFromChannel(messageId: number, editedMessage: string) {
   const data = getData();
   for (const channel of data.channels) {
     for (const targetmessage of channel.messages) {
+      // If there is a message with the correct messageId, edit the message.
       if (targetmessage.messageId === messageId) {
         targetmessage.message = editedMessage;
       }
@@ -138,7 +162,16 @@ function editMessageFromChannel(messageId: number, editedMessage: Message) {
   setData(data);
 }
 
-function editMessageFromDM(messageId: number, editedMessage: Message):any {
+/**
+  * Edits the message that exists in the dm
+  *
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} editedMessage - edited message
+  * ...
+  *
+  * @returns nothing
+*/
+function editMessageFromDM(messageId: number, editedMessage: string) {
   const data = getData();
   for (const dm of data.dms) {
     for (const targetmessage of dm.messages) {
@@ -185,8 +218,8 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
       return messageRemoveResult;
     }
   }
-  // Error handling where message is in a dm
 
+  // Error handling where message is in a dm
   if (messageContainer.type === 'dm') {
     // If no errors, remove dm from channel.
     if (messageContainer.dm.creator !== uId) {
@@ -239,10 +272,18 @@ function messageFromChannelValid(channel: Channel, messageId: number, uId: numbe
   return true;
 }
 
+/**
+  * Removes the message that exists in the channel
+  *
+  * @param {number} messageId - id of the message to be edited
+  * ...
+  *
+  * @returns nothing
+*/
 function removeMessageFromChannel(messageId: number): any {
   const data = getData();
 
-  // Remove message
+  // Removes the message from channel.
   for (const channel of data.channels) {
     for (const message of channel.messages) {
       if (message.messageId === messageId) {
@@ -253,8 +294,18 @@ function removeMessageFromChannel(messageId: number): any {
   setData(data);
 }
 
+/**
+  * Removes the message that exists in the dms
+  *
+  * @param {number} messageId - id of the message to be edited
+  * ...
+  *
+  * @returns nothing
+*/
 function removeMessageFromDM(messageId: number):any {
   const data = getData();
+
+  // Removes the message from dms.
   for (const dm of data.dms) {
     for (const message of dm.messages) {
       if (message.messageId === messageId) {
