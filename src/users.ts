@@ -113,6 +113,16 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
     }
   }
 
+  // Update user profile with dms that they are a member of
+  for (const dm of data.dms) {
+    for (const member of dm.members) {
+      if (member.uId === uId) {
+        member.nameFirst = nameFirst;
+        member.nameLast = nameLast;
+      }
+    }
+  }
+
   setData(data);
   return {};
 }
@@ -167,6 +177,16 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
       }
     }
   }
+
+  // Update user profile with dms that they are a member of
+  for (const dm of data.dms) {
+    for (const member of dm.members) {
+      if (member.uId === uId) {
+        member.handleStr = handleStr;
+      }
+    }
+  }
+
   setData(data);
   return {};
 }
@@ -211,6 +231,15 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
     }
     // Update for allMembers
     for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        member.email = email;
+      }
+    }
+  }
+
+  // Update user profile with dms that they are a member of
+  for (const dm of data.dms) {
+    for (const member of dm.members) {
       if (member.uId === uId) {
         member.email = email;
       }
