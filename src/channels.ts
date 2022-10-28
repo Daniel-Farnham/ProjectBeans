@@ -22,7 +22,6 @@ type channels = { channels: Array<channelSummary> };
  * @returns {{channels: channels}} - array of channel objects containing channelId and name
 */
 function channelsListV1(token: string): channels | error {
-  // Check if token exists
   if (!(tokenExists(token))) {
     return { error: 'token is invalid' };
   }
@@ -55,7 +54,6 @@ function channelsListV1(token: string): channels | error {
   * @returns {{channels}} - array of channel objects containing channelId and name
 */
 function channelsListAllV1(token: string): channels | error {
-  // Case where token is not valid
   if (!tokenExists(token)) {
     return { error: 'token is invalid' };
   }
@@ -75,12 +73,12 @@ function channelsListAllV1(token: string): channels | error {
 }
 
 /**
-  * Will attempt to create a new chanel, returning an object
+  * Will attempt to create a new channel, returning an object
   * containing the channels unique id.
   *
   * @param {string} token - token making the request
   * @param {string} name - name of the new channel
-  * @param {boolean} isPublic - Whether or not the channel is public
+  * @param {boolean} isPublic - whether or not the channel is public
   *
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {{channelId: channelId}} - The channel id of the new channel
@@ -88,7 +86,6 @@ function channelsListAllV1(token: string): channels | error {
 function channelsCreateV1 (token: string, name: string, isPublic: boolean): channelId | error {
   const data = getData();
 
-  // Check token exists
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
@@ -131,7 +128,6 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
     isPublic: isPublic,
   };
 
-  // Push the user to the channel
   data.channels.push(channelObj);
   setData(data);
 

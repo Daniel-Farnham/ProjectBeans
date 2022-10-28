@@ -115,7 +115,6 @@ app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
   res.json(channelMessagesV1(token, channelId, start));
 });
 
-// Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   const uId = parseInt(req.query.uId as string);
@@ -141,7 +140,6 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
   save();
 });
 
-// users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
 

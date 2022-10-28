@@ -1,6 +1,6 @@
 import {
   channelIdExists, tokenExists, getMessageId,
-  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
+  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel, Message
 } from './other';
 import { getData, setData } from './dataStore';
 
@@ -11,16 +11,6 @@ const GLOBAL_OWNER = 1;
 type messageId = { messageId: number }
 
 /**
-  * Interface for message object
-*/
-interface Message {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number,
-}
-
-/**
   * Creates a message and stores it in the messages array in a channel
   *
   * @param {string} token - token of authorised user
@@ -28,7 +18,8 @@ interface Message {
   * @param {string} message - message to send
   * ...
   *
-  * @returns {messageId} returns an object containing the messageId
+  * @returns {{messageId: messageId}} - returns an object containing the messageId
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 export function messageSendV1 (token: string, channelId: number, message: string): messageId | error {
   const data = getData();
@@ -73,8 +64,6 @@ export function messageSendV1 (token: string, channelId: number, message: string
   * @param {Message} message - message to store
   * @param {number} channelId - id of channel to store
   * ...
-  *
-  * @returns - nothing to return
 */
 function storeMessageInChannel(message: Message, channelId: number) {
   const data = getData();
@@ -95,10 +84,11 @@ function storeMessageInChannel(message: Message, channelId: number) {
   * @param {string} message - edited message
   * ...
   *
-  * @returns {messageId} returns an object containing the messageId
+  * @returns {Object} {} - returns an empty object
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-export function messageEditV1 (token: string, messageId: number, message: string): error | Record<string, never> {
+export function messageEditV1 (token: string, messageId: number, message: string): error | boolean | Record<string, never> {
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
@@ -144,8 +134,6 @@ export function messageEditV1 (token: string, messageId: number, message: string
   * @param {number} messageId - id of the message to be edited
   * @param {string} editedMessage - edited message
   * ...
-  *
-  * @returns nothing
 */
 
 function editMessageFromChannel(messageId: number, editedMessage: string) {
@@ -168,8 +156,6 @@ function editMessageFromChannel(messageId: number, editedMessage: string) {
   * @param {number} messageId - id of the message to be edited
   * @param {string} editedMessage - edited message
   * ...
-  *
-  * @returns nothing
 */
 function editMessageFromDM(messageId: number, editedMessage: string) {
   const data = getData();
@@ -191,10 +177,10 @@ function editMessageFromDM(messageId: number, editedMessage: string) {
   * @param {number} messageId - id of the message to be deleted.
   * ...
   *
-  * @returns {} returns an empty object (Record<string, never>)
-  * @returns {error} returns an error object
+  * @returns {Object} {} - returns an empty object (Record<string, never>)
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
-export function messageRemoveV1(token: string, messageId: number): error | Record<string, never> {
+export function messageRemoveV1(token: string, messageId: number): error | boolean | Record<string, never> {
   if (!(tokenExists(token))) {
     return { error: 'token is invalid.' };
   }
@@ -210,7 +196,6 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   // Error handling where message is in a channel
   if (messageContainer.type === 'channel') {
     const messageRemoveResult = messageFromChannelValid(messageContainer.channel, messageId, uId);
-
     // If no errors, remove message from channel.
     if (messageRemoveResult === true) {
       removeMessageFromChannel(messageId);
@@ -239,10 +224,10 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   * @param {number} messageId - id of the message to be deleted.
   * @param {number} uId - id of the user.
   *
-  * @returns {error} returns an error object.
-  * @returns {boolean} returns a boolean value.
+  * @returns {{error: string}} - An error message if any parameter is invalid
+  * @returns {boolean} - returns a boolean value.
 */
-function messageFromChannelValid(channel: Channel, messageId: number, uId: number): any {
+function messageFromChannelValid(channel: Channel, messageId: number, uId: number): error | boolean {
   const data = getData();
 
   let ownerMember = false;
@@ -277,10 +262,8 @@ function messageFromChannelValid(channel: Channel, messageId: number, uId: numbe
   *
   * @param {number} messageId - id of the message to be edited
   * ...
-  *
-  * @returns nothing
 */
-function removeMessageFromChannel(messageId: number): any {
+function removeMessageFromChannel(messageId: number) {
   const data = getData();
 
   // Removes the message from channel.
@@ -299,10 +282,8 @@ function removeMessageFromChannel(messageId: number): any {
   *
   * @param {number} messageId - id of the message to be edited
   * ...
-  *
-  * @returns nothing
 */
-function removeMessageFromDM(messageId: number):any {
+function removeMessageFromDM(messageId: number) {
   const data = getData();
 
   // Removes the message from dms.

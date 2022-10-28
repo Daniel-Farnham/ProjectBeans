@@ -10,6 +10,7 @@ import validator from 'validator';
   *
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 export function userProfileV1 (token: string, uId: number): error | { user: User } | any {
   // If either uId or token does not exist, then return error
@@ -41,9 +42,9 @@ export function userProfileV1 (token: string, uId: number): error | { user: User
   *
   * @returns { users } - Returns array of objects with valid user ID, email,
   *                      first name, last name, and handle string and handle
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 export function usersAllV1 (token: string): error | {users: any[]} {
-  // If token invalid, return error
   if (!tokenExists(token)) {
     return { error: 'token provided is invalid' };
   }
@@ -73,7 +74,8 @@ export function usersAllV1 (token: string): error | {users: any[]} {
   * @param {string} nameFirst - new firstName to change to
   * @param {string} nameLast - new lastName to change to
   *
-  * @returns {{}} - Returns empty object upon successful handleStr change
+  * @returns {object} {} - Returns empty object upon successful handleStr change
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string): error | Record<string, never> {
   if (!tokenExists(token)) {
@@ -134,7 +136,8 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   * @param {string} token - token session for user requesting change
   * @param {string} handleStr - new handleStr to change to
   *
-  * @returns {{}} - Returns empty object upon successful handleStr change
+  * @returns {object} {} - Returns empty object upon successful handleStr change
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 export function userProfileSetHandleV1 (token: string, handleStr: string): error | Record<string, never> {
   if (!tokenExists(token)) {
@@ -198,7 +201,8 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
   * @param {string} token - token session for user requesting change
   * @param {string} email - new e-mail address to change to
   *
-  * @returns {{}} - Returns empty object upon successful email change
+  * @returns {object} {} - Returns empty object upon successful email change
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 export function userProfileSetEmailV1 (token: string, email: string): error | Record<string, never> {
   if (!tokenExists(token)) {

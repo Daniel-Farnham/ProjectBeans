@@ -150,7 +150,6 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
   * @returns {{dms: dmList}} - An array of dms the user is a member of
   */
 function dmListV1(token: string): dmList | error {
-  // Check if the given token is invalid
   if (!tokenExists(token)) {
     return { error: 'Token is invalid' };
   }
@@ -176,15 +175,13 @@ function dmListV1(token: string): dmList | error {
   * @param {number} dmId - The id of the dm being left
   *
   * @returns {{error: string}} - An error message if the given info is invalid
-  * @returns {Object: EmptyObject} {} - An empty object
+  * @returns {Object} {} - An empty object
   */
 function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
-  // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
     return { error: 'dmId is invalid' };
   }
 
-  // Check if the token is invalid
   if (!tokenExists(token)) {
     return { error: 'Token is invalid' };
   }
@@ -227,7 +224,6 @@ function dmRemoveUser(uId: number, dmId: number) {
       }
     }
   }
-  // Update the dataStore
   setData(data);
 }
 
@@ -242,12 +238,10 @@ function dmRemoveUser(uId: number, dmId: number) {
   * @returns {{members: Array<User>}} - The members list of users in the dm
   */
 function dmDetailsV1(token: string, dmId: number): dmDetails | error {
-  // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
     return { error: 'dmId is invalid' };
   }
 
-  // Check if the token is invalid
   if (!tokenExists(token)) {
     return { error: 'Token is invalid' };
   }
@@ -333,12 +327,10 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   * @returns {boolean} - False if the information isn't invalid
   */
 function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
-  // Check if the token is invalid
   if (!(tokenExists(token))) {
     return { error: 'Token is invalid' };
   }
 
-  // Check if the dmId is invalid
   if (!(dmIdExists(dmId))) {
     return { error: 'dmId is invalid' };
   }
@@ -361,7 +353,6 @@ function dmMessagesInfoInvalid(token: string, dmId: number, start: number): erro
     return { error: 'User is not a member of channel' };
   }
 
-  // If no error by now, the info isn't invalid
   return false;
 }
 
@@ -375,7 +366,6 @@ function dmMessagesInfoInvalid(token: string, dmId: number, start: number): erro
   * @returns {boolean} - False if the given info isn't invalid
   */
 function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
-  // Check if any of the given uId's are invalid
   for (const uId of uIds) {
     if (!userIdExists(uId)) {
       return { error: 'One or more given uId\'s doesn\'t exist' };
@@ -385,7 +375,6 @@ function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
     return { error: 'A duplicate uId has been given' };
   }
 
-  // Check if the given token is invalid
   if (!tokenExists(token)) {
     return { error: 'Token is invalid' };
   }
@@ -429,19 +418,6 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   // Add the creator to the members list
 
   const members = [];
-  /*
-  for (const user of data.users) {
-    if (user.uId === creatorId) {
-      members.push({
-        uId: creatorId,
-        email: user.email,
-        nameFirst: user.nameFirst,
-        nameLast: user.nameLast,
-        handleStr: user.handleStr
-      });
-    }
-  }
-  */
 
   // Add the other users in the dm to the members list
   for (const uId of uIds) {

@@ -21,8 +21,7 @@ type end = { end: number };
   * Allows a user to return the channelDetails of a channel that
   * they are a member of.
   *
-  *
-  * @param {string} token - uId of authorised user
+  * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to invite to
   * ...
   *
@@ -36,15 +35,14 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
-  // Check if token is invalid.
   if (!tokenExists(token) ) {
     return { error: 'token is invalid ' };
   }
-  // Check if channelId is invalid
+
   if (!channelIdExists(channelId) ) {
     return { error: 'channelId is invalid '}
   }
-  // Case where authUserId is not a member of the channel
+
   const uId = getUidFromToken(token);
 
   if (!isMemberOfChannel(findChannel, uId)) {
@@ -63,7 +61,7 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   * Allows a user to join a channel with an authorised userId
   * and add them to the allMembers array of the channel
   *
-  * @param {number} authUserId - uId of authorised user
+  * @param {number} authUserId - token of authorised user
   * @param {number} channelId - id of channel to invite to
   * ...
   *
@@ -77,14 +75,14 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   if (!(tokenExists(token))) {
     return { error: 'userId is invalid' };
   }
-  // Check if userId or channelId are invalid
+
   if (!channelIdExists(channelId)) {
     return { error: 'channelId is invalid' };
   }
   const userId = getUidFromToken(token);
   const findUser = data.users.find(user => user.uId === userId);
 
-  // Check if user is already member of channel
+
   if (isMemberOfChannel(findChannel, userId)) {
     return { error: 'User is already a member of the public channel' };
   }
@@ -119,13 +117,13 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   *
   * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to invite to
-  * @param {number} uId - id of user being invited to channel
+  * @param {number} uId - uId of user being invited to channel
   * ...
   *
   * @returns {Object} {} - returns an empty object upon success
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 function channelInviteV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
-  // If any ids do not exist, return error
   if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
     return { error: 'token/uId/channelId not valid' };
   }
@@ -163,12 +161,11 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
 */
 
 function invalidMemberships (channel, authUserId: number, uId: number): error | boolean {
-  // If user already exists as member, return error
+
   if (isMemberOfChannel(channel, uId)) {
     return { error: 'User to invite already a member of channel' };
   }
 
-  // If authUserId not found in channel members, return error
   if (!isMemberOfChannel(channel, authUserId)) {
     return { error: 'authUserId is not a member of channel' };
   }
@@ -179,7 +176,7 @@ function invalidMemberships (channel, authUserId: number, uId: number): error | 
   * Returns up to 50 messages from a channel between index start and start + 50,
   * given that the authorised user is a member of the channel.
   *
-  * @param {number} authUserId - The authoirsed user trying to view messages
+  * @param {number} authUserId - The authorised user trying to view messages
   * @param {number} channelId - The id of the channel that has the messages
   * @param {number} start - The starting index of the messages being viewed
   *
@@ -190,7 +187,6 @@ function invalidMemberships (channel, authUserId: number, uId: number): error | 
   */
 function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messages | start | end {
   // Check if the given information is valid
-
   const isInvalid = messagesInfoInvalid(token, channelId, start);
   if (isInvalid !== false) {
     return isInvalid;
@@ -232,10 +228,11 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   * Allows a user to leave a channel they are a member of
   *
   *
-  * @param {string} token - uId of authorised user
+  * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to leave
   *
   * @returns {Object} {} - returns an empty object upon success
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 function channelLeaveV1 (token: string, channelId: number): error | boolean | Record<string, never> {
   if (!tokenExists(token) || !channelIdExists(channelId)) {
@@ -246,7 +243,6 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
   const authUserId = getUidFromToken(token);
 
-  // Check if user is not a member of valid channel
   if (!isMemberOfChannel(findChannel, authUserId)) {
     return { error: 'User is not a member of the channel' };
   }
@@ -275,10 +271,11 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
   * owner permissions in.
   *
   *
-  * @param {string} token - uId of authorised user
+  * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to give owner permissions to
   * @param {number} uId - uId of the user to be given owner permissions
   *
+  * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {Object} {} - returns an empty object upon success
 */
 function channelAddOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
@@ -289,12 +286,10 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
-  // Check if user is not a member of channel
   if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'User is not a member of the channel' };
   }
 
-  // Check if member is not an owner already
   if (isOwnerOfChannel(findChannel, uId)) {
     return { error: 'User is already an owner of the channel' };
   }
@@ -328,14 +323,14 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   * owner permissions in.
   *
   *
-  * @param {string} token - uId of authorised user
+  * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to remove owner permissions from
   * @param {number} uId - uId of the user to have owner permissions removed
   *
   * @returns {Object} {} - returns an empty object upon success
+  * @returns {{error: string}} - An error message if any parameter is invalid
 */
 function channelRemoveOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
-  // Check if token, channelId, uId are valid
   if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
     return { error: 'token/uId/channelId not valid' };
   }
@@ -363,7 +358,7 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
     return { error: 'Authorising user does not have owner permissions in this channel' };
   }
 
-  // Remove the member from owner list
+  // Remove the member from owner array
   for (const channel of data.channels) {
     for (const ownerMembers of channel.ownerMembers) {
       if (ownerMembers.uId === uId) {
@@ -377,7 +372,7 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
 /**
   * Checks if the channel information given is invalid
   *
-  * @param {number} authUserId - The authoirsed user trying to view messages
+  * @param {number} authUserId - The authorised user trying to view messages
   * @param {number} channelId - The id of the channel that has the messages
   * @param {number} start - The starting index of the messages being viewed
   *
@@ -385,8 +380,6 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
   * @returns {boolean} - False if the information isn't invalid
   */
 function messagesInfoInvalid(token: string, channelId: number, start: number): error | boolean {
-  // If channelId or authUserId doesn't exist return error
-
   if (!(tokenExists(token))) {
     return { error: 'authUserId is invalid' };
   }
@@ -413,7 +406,6 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
     return { error: 'authUserId is not a member of channel' };
   }
 
-  // If no error by now, the info isn't invalid
   return false;
 }
 

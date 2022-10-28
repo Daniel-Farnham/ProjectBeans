@@ -20,6 +20,7 @@ type authInfo = { token: string, authUserId: number };
   *
   * @returns {{error: string}} - An error message if email/password is invalid
   * @returns {{authUserId: number}} - The user id of the logged in account
+  * @returns {{token: string}} - The token of the logged in account
   */
 function authLoginV1(email: string, password: string): authInfo | error {
   // If a user exists with matching email and password, return authUserId
@@ -115,7 +116,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   *
   * @param {string} token - token of user to be logged out
   *
-  * @returns {{}} - empty object upon successful logout
+  * @returns {object} {} - empty object upon successful logout
   */
 export function authLogoutV1 (token: string): Record<string, never> | error {
   if (!tokenExists(token)) {
@@ -168,7 +169,6 @@ function registerInfoInvalid(email: string, password: string, nameFirst: string,
     }
   }
 
-  // If no errors then return false
   return false;
 }
 

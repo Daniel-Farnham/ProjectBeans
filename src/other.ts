@@ -137,7 +137,8 @@ export const getRequest = (url: string, data: any) => {
 /**
   * Checks if the user id is registered in the database.
   * @param {number} userId - userId to check
-  * @returns {Boolean} - returns true if exists, false otherwise
+  * 
+  * @returns {boolean} - returns true if exists, false otherwise
 */
 export function userIdExists(userId: number): boolean {
   const data = getData();
@@ -154,6 +155,7 @@ export function userIdExists(userId: number): boolean {
 /**
   * Checks if the channel id exists in the database.
   * @param {number} channelId - channelId to check
+  * 
   * @returns {boolean} - true if channel exists, false otherwise
 */
 export function channelIdExists(channelId: number): boolean {
@@ -170,6 +172,7 @@ export function channelIdExists(channelId: number): boolean {
 /**
   * Checks if the dmid exists in the database.
   * @param {number} dmId - dmId to check
+  * 
   * @returns {boolean} - true if dm exists, false otherwise
 */
 export function dmIdExists(dmId: number): boolean {
@@ -185,8 +188,7 @@ export function dmIdExists(dmId: number): boolean {
 
 /**
   *  Check if a user is a member of a channel
-  * @param {number} channel - channel object
-  * @param {number} uId - uId to check
+  * @param {number} channel - channel object  // Check if user is owner member
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
@@ -278,6 +280,7 @@ export function isMemberOfDm(dm, uId: number): boolean {
   *
   * @param {number} channel - channel object
   * @param {number} uId - uId to check
+  * 
   * @returns {boolean} - true if user is owner, false otherwise
 */
 export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
@@ -296,6 +299,7 @@ export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
 /**
   * Checks if the token is registered in the database.
   * @param {string} token - token to check
+  * 
   * @returns {Boolean} - returns true if exists, false otherwise
 */
 export function tokenExists (token: string): boolean {
@@ -313,6 +317,7 @@ export function tokenExists (token: string): boolean {
 /**
   * Generates a new messageId to be used for dms and messages
   * @param {} - no parameters required
+  * 
   * @returns {newMessageId} - returns a new messageId
 */
 export function getMessageId(): number {
@@ -329,6 +334,7 @@ export function getMessageId(): number {
 /**
   * Get a uId from a token
   * @param {string} token - token to check for userId
+  * 
   * @returns {uId} - returns uId
 */
 export function getUidFromToken (token: string) {
