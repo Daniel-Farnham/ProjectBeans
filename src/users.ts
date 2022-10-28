@@ -176,7 +176,7 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
       }
     }
   }
-  
+
   setData(data);
   return {};
 }

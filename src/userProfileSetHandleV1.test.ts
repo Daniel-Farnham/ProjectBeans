@@ -200,7 +200,6 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
 
     expect(result).toMatchObject(expectedDmObj);
   });
-
 });
 
 describe('Testing user/profile/sethandle/v1 error handling', () => {
