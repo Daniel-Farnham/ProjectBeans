@@ -1,12 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
-
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-// const OK = 200;
-
 beforeEach(() => {
-  // clearV1();
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
@@ -143,7 +139,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       uIds: []
     });
 
-    const firstMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
+    postRequest(SERVER_URL + '/message/senddm/v1', {
       token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 1'
@@ -155,7 +151,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       message: 'Testing 2'
     });
 
-    postRequest(SERVER_URL + '/message/senddm/v1', {
+    const thirdMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
       token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 3'
@@ -170,15 +166,15 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     const messagesObj = {
       messages: [
         {
-          messageId: secondMsg.messageId,
+          messageId: thirdMsg.messageId,
           uId: newId.authUserId,
-          message: 'Testing 2',
+          message: 'Testing 3',
           timeSent: expect.any(Number)
         },
         {
-          messageId: firstMsg.messageId,
+          messageId: secondMsg.messageId,
           uId: newId.authUserId,
-          message: 'Testing 1',
+          message: 'Testing 2',
           timeSent: expect.any(Number)
         }
       ],
@@ -189,7 +185,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     expect(messages).toMatchObject(messagesObj);
   });
 
-  test('Testing end isn\'t -1 when start is 0 and 50 messages exist', () => {
+  test('Testing end isn\'t -1 when start is 0 and 51 messages exist', () => {
     const newId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -202,7 +198,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       uIds: []
     });
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 51; i++) {
       postRequest(SERVER_URL + '/message/senddm/v1', {
         token: newId.token,
         dmId: dmId.dmId,

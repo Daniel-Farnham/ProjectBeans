@@ -45,24 +45,6 @@ export interface UserPrivate {
 }
 
 /**
-  * Specifies the channel interface (used for return types)
-*/
-export interface Channel {
-  channelId: number;
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-}
-
-export type Messages = {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number
-};
-
-/**
   * Specifies the message interface (used for return types)
 */
 export interface Message {
@@ -71,6 +53,25 @@ export interface Message {
   message: string;
   timeSent: number;
 }
+
+/**
+  * Specifies the channel interface (used for return types)
+*/
+export interface Channel {
+  channelId: number;
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
+  messages: Array<Message>;
+}
+
+export type Messages = {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number
+};
 
 /**
   * Parses the JSON response body into a string
@@ -168,26 +169,6 @@ export function channelIdExists(channelId: number): boolean {
 }
 
 /**
-  * Checks if the messageId exists.
-  * @param {number} messageId - messageId to check
-  * @returns {boolean} - true if message exists, false otherwise
-*/
-export function messageIdExists(messageId: number): boolean {
-  const data = getData();
-  // Loop through channels array to check if channel exists
-  for (const channel of data.channels) {
-    // Loop through messages array to check is messageId exists
-    for (const targetmessage of channel.messages) {
-      if (targetmessage.messageId === messageId) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-/**
   * Checks if the dmid exists in the database.
   * @param {number} dmId - dmId to check
   * @returns {boolean} - true if dm exists, false otherwise
@@ -205,8 +186,8 @@ export function dmIdExists(dmId: number): boolean {
 
 /**
   *  Check if a user is a member of a channel
-  * @param {number} uId - uId to check
   * @param {number} channel - channel object
+  * @param {number} uId - uId to check
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
@@ -239,6 +220,14 @@ export function isOwnerOfMessage(message: Message, uId: number): boolean {
   return false;
 }
 
+/**
+
+  *  Check if a user is an owner of a message
+  * @param {number} uId - uId to check
+  *
+  * @returns {boolean} - true if user ownns message, false otherwise
+  * @returns {object} - returns object containing information about whether the message exists in a channel or dm.
+*/
 export function getMessageContainer(messageId: number): boolean | any {
   const data = getData();
 
@@ -264,12 +253,13 @@ export function getMessageContainer(messageId: number): boolean | any {
       }
     }
   }
+  return false;
 }
 
-/*
+/**
   *  Check if a user is a member of a dm
-  * @param {number} uId - uId to check
   * @param {number} dm - dm object
+  * @param {number} uId - uId to check
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
@@ -284,11 +274,11 @@ export function isMemberOfDm(dm, uId: number): boolean {
   return false;
 }
 
-/*
-  *  Check if a user is an owner of a channel
-  * @param {number} uId - uId to check
-  * @param {number} channel - channel object
+/**
+  * Check if a user is an owner of a channel
   *
+  * @param {number} channel - channel object
+  * @param {number} uId - uId to check
   * @returns {boolean} - true if user is owner, false otherwise
 */
 export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
@@ -305,8 +295,8 @@ export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
 }
 
 /**
-  * Checks if the user id is registered in the database.
-  * @param {string} token - userId to check
+  * Checks if the token is registered in the database.
+  * @param {string} token - token to check
   * @returns {Boolean} - returns true if exists, false otherwise
 */
 export function tokenExists (token: string): boolean {
@@ -337,7 +327,12 @@ export function getMessageId(): number {
   return newMessageId;
 }
 
-export function getUidFromToken (token: string) {
+/**
+  * Get a uId from a token
+  * @param {string} token - token to check for userId
+  * @returns {uId} - returns uId
+*/
+export function getUidFromToken (token: string): number {
   const data = getData();
 
   for (const session of data.sessions) {

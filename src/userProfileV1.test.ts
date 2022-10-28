@@ -1,14 +1,11 @@
 import { postRequest, deleteRequest, getRequest } from './other';
-
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-// Before each test, clear dataStore
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-// Working cases
 test('Testing successful return of user profile', () => {
   const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
     email: 'hang.pham1@student.unsw.edu.au',

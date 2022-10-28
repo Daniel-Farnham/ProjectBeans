@@ -11,7 +11,7 @@ import validator from 'validator';
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
 */
-function userProfileV1 (token: string, uId: number): error | { user: User } | any {
+export function userProfileV1 (token: string, uId: number): error | { user: User } | any {
   // If either uId or token does not exist, then return error
   if (!tokenExists(token) || !userIdExists(uId)) {
     return { error: 'token/uId to search is invalid' };
@@ -40,8 +40,7 @@ function userProfileV1 (token: string, uId: number): error | { user: User } | an
   * @param {string} token - token session for user requesting all users
   *
   * @returns { users } - Returns array of objects with valid user ID, email,
-  *                      first name, last name, and handle string
-  * and handle
+  *                      first name, last name, and handle string and handle
 */
 export function usersAllV1 (token: string): error | {users: any[]} {
   // If token invalid, return error
@@ -67,13 +66,14 @@ export function usersAllV1 (token: string): error | {users: any[]} {
 }
 
 /**
-  * Returns user object if a valid user is found
+  * Set first and last name within a user's name properties and returns empty object
+  * upon success
   *
   * @param {string} token - token session for user requesting change
-  * @param {string} nameFirst - user's first name to change to
-  * @param {string} nameLast - user's last name to change to
+  * @param {string} nameFirst - new firstName to change to
+  * @param {string} nameLast - new lastName to change to
   *
-  * @returns {{}} - Returns empty object upon successful name change
+  * @returns {{}} - Returns empty object upon successful handleStr change
 */
 export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string): error | Record<string, never> {
   if (!tokenExists(token)) {
@@ -128,7 +128,8 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
 }
 
 /**
-  * Returns user object if a valid user is found
+  * Set handelStr within a user's handleStr property and returns empty object
+  * upon success
   *
   * @param {string} token - token session for user requesting change
   * @param {string} handleStr - new handleStr to change to
@@ -192,7 +193,7 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
 }
 
 /**
-  * Returns user object if a valid user is found
+  * Set e-mail within a user's e-mail property
   *
   * @param {string} token - token session for user requesting change
   * @param {string} email - new e-mail address to change to
@@ -250,6 +251,13 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
   return {};
 }
 
+/**
+  * Checks if name is within 1 and 50 characters
+  *
+  * @param {string} name - token session for user requesting change
+  *
+  * @returns {boolean} - returns true if email in use
+*/
 function validName(name: string): boolean {
   if (name.length >= 1 && name.length <= 50) {
     return true;
@@ -257,7 +265,14 @@ function validName(name: string): boolean {
   return false;
 }
 
-function emailInUse (email: string) {
+/**
+  * Checks if email is in use already
+  *
+  * @param {string} email - token session for user requesting change
+  *
+  * @returns {boolean} - returns true if email in use
+*/
+function emailInUse (email: string): boolean {
   const data = getData();
 
   for (const user of data.users) {
@@ -268,7 +283,13 @@ function emailInUse (email: string) {
   return false;
 }
 
-function handleInUse (handleStr: string) {
+/**
+  * Checks if handleStr is in use already
+  * @param {string} handleStr - token session for user requesting change
+  *
+  * @returns {boolean} - returns true if handle in use
+*/
+function handleInUse (handleStr: string): boolean {
   const data = getData();
 
   for (const user of data.users) {
@@ -278,5 +299,3 @@ function handleInUse (handleStr: string) {
   }
   return false;
 }
-
-export { userProfileV1 };

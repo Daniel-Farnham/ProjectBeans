@@ -301,9 +301,9 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
     end = -1;
   } else {
     // If start and number of messages aren't both 0, add up to 50 messages
-    let index = 0;
+    let index = start;
     while (index < numMessages && index < start + 50) {
-      messages.push(dm.messages[index]);
+      messages.unshift(dm.messages[index]);
       index++;
     }
 
@@ -311,7 +311,7 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
     if (index === numMessages) {
       end = -1;
     } else {
-      end = index;
+      end = index - 1;
     }
   }
 
@@ -429,19 +429,6 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   // Add the creator to the members list
 
   const members = [];
-  /*
-  for (const user of data.users) {
-    if (user.uId === creatorId) {
-      members.push({
-        uId: creatorId,
-        email: user.email,
-        nameFirst: user.nameFirst,
-        nameLast: user.nameLast,
-        handleStr: user.handleStr
-      });
-    }
-  }
-  */
 
   // Add the other users in the dm to the members list
   for (const uId of uIds) {

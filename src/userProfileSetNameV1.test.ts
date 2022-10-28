@@ -4,12 +4,10 @@ import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
-// Before each test, clear dataStore
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-// Working cases
 describe('Testing userProfileSetNameV1 successful case handling', () => {
   test('Testing successful return of empty object', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {

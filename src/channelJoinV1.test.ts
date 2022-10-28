@@ -32,12 +32,6 @@ describe('Testing positive cases for channelJoinV1', () => {
       channelId: channel.channelId
     });
 
-    /*
-    const user1 = authRegisterV1('daniel.farnham@student.unsw.edu.au', 'AVeryPoorPassword', 'Daniel', 'Farnham');
-    const user2 = authRegisterV1('hang.pham@student.unsw.edu.au', 'AVeryPoorPassword', 'Hang', 'Pham');
-    const channel = channelsCreateV1(user1.authUserId, 'ChannelBoost', true);
-    const returnedChannelObject = channelJoinV1(user2.authUserId, channel.channelId);
-    */
     expect(returnedChannelObject).toMatchObject({});
   });
 
@@ -85,7 +79,6 @@ describe('Testing positive cases for channelJoinV1', () => {
       nameLast: 'Pham',
     });
 
-    // Creates a channel with
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       token: user1.token,
       name: 'ChannelBoost',
@@ -203,7 +196,7 @@ describe('Testing negative cases for channelJoinV1', () => {
       channelId: channel.channelId,
     });
 
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) }); // expecting channelJoin to return error if the user is already a member.
+    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
 
   test('Testing if user is trying to join private channel assuming they are not global owner', () => {

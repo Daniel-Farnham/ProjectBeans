@@ -1,4 +1,4 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 
@@ -158,7 +158,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   * @returns {Object} {} - returns error object if fail, false otherwise
 */
 
-function invalidMemberships (channel, authUserId: number, uId: number): error | boolean {
+function invalidMemberships (channel: Channel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
     return { error: 'User to invite already a member of channel' };
@@ -203,9 +203,9 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
     end = -1;
   } else {
     // If start and number of messages aren't both 0, add up to 50 messages
-    let index = 0;
+    let index = start;
     while (index < numMessages && index < start + 50) {
-      messages.push(channel.messages[index]);
+      messages.unshift(channel.messages[index]);
       index++;
     }
 
@@ -213,7 +213,7 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
     if (index === numMessages) {
       end = -1;
     } else {
-      end = index;
+      end = index - 1;
     }
   }
 
