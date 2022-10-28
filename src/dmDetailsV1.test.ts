@@ -116,8 +116,6 @@ describe('Testing basic dmDetailsV1 functionality', () => {
       dmId: dmId.dmId
     });
 
-    console.log(dmDetails.members);
-
     const expectedMembers = new Set([
       {
         uId: firstId.authUserId,
