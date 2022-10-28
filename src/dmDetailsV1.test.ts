@@ -1,212 +1,212 @@
-// import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest } from './other';
 
-// import { port, url } from './config.json';
-// const SERVER_URL = `${url}:${port}`;
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
-// // const OK = 200;
+// const OK = 200;
 
-// beforeEach(() => {
-//   // clearV1();
-//   deleteRequest(SERVER_URL + '/clear/v1', {});
-// });
+beforeEach(() => {
+  // clearV1();
+  deleteRequest(SERVER_URL + '/clear/v1', {});
+});
 
-// describe('Testing basic dmDetailsV1 functionality', () => {
-//   test('Testing dmDetailsV1 returns the correct datatypes', () => {
-//     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
-  
-//     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-//       token: regId.token,
-//       uIds: []
-//     });
+describe('Testing basic dmDetailsV1 functionality', () => {
+  test('Testing dmDetailsV1 returns the correct datatypes', () => {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: regId.token,
-//       dmId: dmId.dmId
-//     });
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: regId.token,
+      uIds: []
+    });
 
-//     expect(dmDetails).toStrictEqual({ name: expect.any(String), members: expect.any(Array) });
-//   });
-  
-//   test('Testing dmDetailsV1 returns the correct name', () => {
-//     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
-  
-//     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-//       token: regId.token,
-//       uIds: []
-//     });
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: regId.token,
+      dmId: dmId.dmId
+    });
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: regId.token,
-//       dmId: dmId.dmId
-//     });
+    expect(dmDetails).toStrictEqual({ name: expect.any(String), members: expect.any(Array) });
+  });
 
-//     expect(dmDetails.name).toStrictEqual('curtisscully');
-//   });
+  test('Testing dmDetailsV1 returns the correct name', () => {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
 
-//   test('Testing dmDetailsV1 returns the correct members list when there\'s one member', () => {
-//     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
-  
-//     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-//       token: regId.token,
-//       uIds: []
-//     });
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: regId.token,
+      uIds: []
+    });
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: regId.token,
-//       dmId: dmId.dmId
-//     });
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: regId.token,
+      dmId: dmId.dmId
+    });
 
-//     const expectedMembers = [
-//       {
-//         uId: regId.authUserId,
-//         email: 'z5361935@ad.unsw.edu.au',
-//         nameFirst: 'Curtis',
-//         nameLast: 'Scully',
-//         handleStr: 'curtisscully'
-//       }
-//     ];
+    expect(dmDetails.name).toStrictEqual('curtisscully');
+  });
 
-//     expect(dmDetails.members).toStrictEqual(expectedMembers);
-//   });
+  test('Testing dmDetailsV1 returns the correct members list when there\'s one member', () => {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
 
-//   test('Testing dmDetailsV1 returns the correct members list when there\'s multiple members', () => {
-//     const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: regId.token,
+      uIds: []
+    });
 
-//     const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'hayden.smith@unsw.edu.au',
-//       password: '123456',
-//       nameFirst: 'Hayden',
-//       nameLast: 'Smith'
-//     });
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: regId.token,
+      dmId: dmId.dmId
+    });
 
-//     const thirdId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'edwin.ngo@student.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Edwin',
-//       nameLast: 'Ngo'
-//     });
-  
-//     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-//       token: firstId.token,
-//       uIds: [secondId.uId, thirdId.uId]
-//     });
+    const expectedMembers = [
+      {
+        uId: regId.authUserId,
+        email: 'z5361935@ad.unsw.edu.au',
+        nameFirst: 'Curtis',
+        nameLast: 'Scully',
+        handleStr: 'curtisscully'
+      }
+    ];
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: firstId.token,
-//       dmId: dmId.dmId
-//     });
+    expect(dmDetails.members).toStrictEqual(expectedMembers);
+  });
 
-//     const expectedMembers = new Set([
-//       {
-//         uId: firstId.authUserId,
-//         email: 'z5361935@ad.unsw.edu.au',
-//         nameFirst: 'Curtis',
-//         nameLast: 'Scully',
-//         handleStr: 'curtisscully'
-//       },
-//       {
-//         uId: secondId.authUserId,
-//         email: 'hayden.smith@unsw.edu.au',
-//         nameFirst: 'Hayden',
-//         nameLast: 'Smith',
-//         handleStr: 'haydensmith'
-//       },
-//       {
-//         uId: thirdId.authUserId,
-//         email: 'edwin.ngo@student.unsw.edu.au',
-//         nameFirst: 'Edwin',
-//         nameLast: 'Ngo',
-//         handleStr: 'edwinngo'
-//       }
-//     ]);
+  test('Testing dmDetailsV1 returns the correct members list when there\'s multiple members', () => {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
 
-//     expect(new Set(dmDetails.members)).toStrictEqual(expectedMembers);
-//   });
-// });
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hayden.smith@unsw.edu.au',
+      password: '123456',
+      nameFirst: 'Hayden',
+      nameLast: 'Smith'
+    });
 
-// describe('Testing dmDetailsV1 error handling', () => {
-//   test('Testing dmDetailsV1 returns error when dmId is invalid', () => {
-//     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
+    const thirdId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'edwin.ngo@student.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Edwin',
+      nameLast: 'Ngo'
+    });
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: regId.token,
-//       dmId: 0
-//     });
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: firstId.token,
+      uIds: [secondId.authUserId, thirdId.authUserId]
+    });
 
-//     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
-//   });
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: firstId.token,
+      dmId: dmId.dmId
+    });
 
-//   test('Testing dmDetailsV1 returns error when authorised user is not a member of the dm', () => {
-//     const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
+    const expectedMembers = new Set([
+      {
+        uId: firstId.authUserId,
+        email: 'z5361935@ad.unsw.edu.au',
+        nameFirst: 'Curtis',
+        nameLast: 'Scully',
+        handleStr: 'curtisscully'
+      },
+      {
+        uId: secondId.authUserId,
+        email: 'hayden.smith@unsw.edu.au',
+        nameFirst: 'Hayden',
+        nameLast: 'Smith',
+        handleStr: 'haydensmith'
+      },
+      {
+        uId: thirdId.authUserId,
+        email: 'edwin.ngo@student.unsw.edu.au',
+        nameFirst: 'Edwin',
+        nameLast: 'Ngo',
+        handleStr: 'edwinngo'
+      }
+    ]);
 
-//     const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'hayden.smith@unsw.edu.au',
-//       password: '123456',
-//       nameFirst: 'Hayden',
-//       nameLast: 'Smith'
-//     });
+    expect(new Set(dmDetails.members)).toStrictEqual(expectedMembers);
+  });
+});
 
-//     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-//       token: firstId.token,
-//       uIds: []
-//     });
+describe('Testing dmDetailsV1 error handling', () => {
+  test('Testing dmDetailsV1 returns error when dmId is invalid', () => {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: secondId.token,
-//       dmId: dmId.dmId
-//     });
-    
-//     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
-//   });
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: regId.token,
+      dmId: 0
+    });
 
-//   test('Testing dmDetailsV1 returns error when token is invalid', () => {
-//     const regId = postRequest(SERVER_URL + '/auth/register/v2', {
-//       email: 'z5361935@ad.unsw.edu.au',
-//       password: 'password',
-//       nameFirst: 'Curtis',
-//       nameLast: 'Scully'
-//     });
+    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+  });
 
-//     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-//       token: regId.token,
-//       uIds: []
-//     });
+  test('Testing dmDetailsV1 returns error when authorised user is not a member of the dm', () => {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
 
-//     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-//       token: regId.token + 'NotAToken',
-//       dmId: dmId.dmId
-//     });
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'hayden.smith@unsw.edu.au',
+      password: '123456',
+      nameFirst: 'Hayden',
+      nameLast: 'Smith'
+    });
 
-//     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
-//   });
-// });
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: firstId.token,
+      uIds: []
+    });
+
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: secondId.token,
+      dmId: dmId.dmId
+    });
+
+    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+  });
+
+  test('Testing dmDetailsV1 returns error when token is invalid', () => {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'z5361935@ad.unsw.edu.au',
+      password: 'password',
+      nameFirst: 'Curtis',
+      nameLast: 'Scully'
+    });
+
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: regId.token,
+      uIds: []
+    });
+
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: regId.token + 'NotAToken',
+      dmId: dmId.dmId
+    });
+
+    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+  });
+});

@@ -1,5 +1,4 @@
 import { getRequest, postRequest, deleteRequest } from './other';
-
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -146,7 +145,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       dmId: dmId.dmId
     });
 
-    const expectedMembers = new Set ([
+    const expectedMembers = new Set([
       {
         uId: firstId.authUserId,
         email: 'z5361935@ad.unsw.edu.au',
@@ -159,7 +158,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
         email: 'hayden.smith@unsw.edu.au',
         nameFirst: 'Hayden',
         nameLast: 'Smith',
-        handleStr: 'curtisscully'
+        handleStr: 'haydensmith'
       },
       {
         uId: thirdId.authUserId,
@@ -173,11 +172,6 @@ describe('Testing basic dmCreateV1 functionality', () => {
     expect(new Set(dmDetails.members)).toStrictEqual(expectedMembers);
   });
 });
-
-// Errors
-// uId doesnt exist
-// duplicate uId's in array
-// token is invalid
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Testing dmCreateV1 returns error when a given uId is invalid', () => {

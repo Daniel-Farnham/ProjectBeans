@@ -155,7 +155,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       message: 'Testing 2'
     });
 
-    const thirdMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
+    postRequest(SERVER_URL + '/message/senddm/v1', {
       token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 3'
@@ -209,7 +209,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
         message: i.toString()
       });
     }
-    
+
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
       token: newId.token,
       dmId: dmId.dmId,
@@ -240,7 +240,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
         message: i.toString()
       });
     }
-    
+
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
       token: newId.token,
       dmId: dmId.dmId,

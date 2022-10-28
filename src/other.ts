@@ -62,7 +62,6 @@ export type Messages = {
   timeSent: number
 };
 
-
 /**
   * Specifies the message interface (used for return types)
 */
@@ -262,8 +261,8 @@ export function getMessageContainer(messageId: number): boolean | any {
           type: 'dm',
           dm: dm
         };
-      };
-    };
+      }
+    }
   }
 }
 
@@ -281,8 +280,8 @@ export function isMemberOfDm(dm, uId: number): boolean {
     if (member.uId === uId) {
       return true;
     }
-    }
-    return false;
+  }
+  return false;
 }
 
 /*
