@@ -35,12 +35,12 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
-  if (!tokenExists(token) ) {
+  if (!tokenExists(token)) {
     return { error: 'token is invalid ' };
   }
 
-  if (!channelIdExists(channelId) ) {
-    return { error: 'channelId is invalid '}
+  if (!channelIdExists(channelId)) {
+    return { error: 'channelId is invalid ' };
   }
 
   const uId = getUidFromToken(token);
@@ -81,7 +81,6 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   }
   const userId = getUidFromToken(token);
   const findUser = data.users.find(user => user.uId === userId);
-
 
   if (isMemberOfChannel(findChannel, userId)) {
     return { error: 'User is already a member of the public channel' };
@@ -161,7 +160,6 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
 */
 
 function invalidMemberships (channel, authUserId: number, uId: number): error | boolean {
-
   if (isMemberOfChannel(channel, uId)) {
     return { error: 'User to invite already a member of channel' };
   }
