@@ -1,4 +1,3 @@
-import { isMemberName } from 'typescript';
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
@@ -75,7 +74,7 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error 
   *
   * @returns {{dms: dmList}} - An array of dms the user is a member of
   */
- function dmListV1(token: string): dmList | error {
+function dmListV1(token: string): dmList | error {
   // Check if the given token is invalid
   if (!tokenExists(token)) {
     return { error: 'Token is invalid' };
@@ -156,8 +155,6 @@ function dmRemoveUser(uId: number, dmId: number) {
   // Update the dataStore
   setData(data);
 }
-
-
 
 /**
   * Provides basic details of a dm given the authorised user is a member

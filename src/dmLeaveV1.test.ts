@@ -1,7 +1,6 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
-import { StringDecoder } from 'string_decoder';
 const SERVER_URL = `${url}:${port}`;
 
 // const OK = 200;
@@ -76,7 +75,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: firstId.token,
-      uIds: [secondId.uId]
+      uIds: [secondId.authUserId]
     });
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
@@ -101,7 +100,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
 
     expect(dmDetails.members).toStrictEqual(expectedMembers);
   });
-  
+
   test('Testing dmLeaveV1 successfully removes the creator', () => {
     const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
@@ -119,7 +118,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: firstId.token,
-      uIds: [secondId.uId]
+      uIds: [secondId.authUserId]
     });
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
@@ -137,7 +136,8 @@ describe('Testing basic dmLeaveV1 functionality', () => {
         uId: secondId.authUserId,
         email: 'hayden.smith@unsw.edu.au',
         nameFirst: 'Hayden',
-        nameLast: 'Smith'
+        nameLast: 'Smith',
+        handleStr: 'haydensmith'
       }
     ];
 
