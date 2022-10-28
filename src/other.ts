@@ -210,7 +210,7 @@ export function isMemberOfDm(dm, uId: number): boolean {
   return false;
 }
 
-/** 
+/**
   * Check if a user is an owner of a channel
   *
   * @param {number} channel - channel object
@@ -254,18 +254,18 @@ export function tokenExists (token: string): boolean {
 export function getMessageId(): number {
   const data = getData();
   const newMessageId = data.messageCount;
-  
+
   data.messageCount += 1;
-  
+
   setData(data);
-  
+
   return newMessageId;
 }
 
 /**
   * Get a uId from a token
   * @param {string} token - token to check for userId
-  * @returns {uId} - returns uId 
+  * @returns {uId} - returns uId
 */
 export function getUidFromToken (token: string) {
   const data = getData();
