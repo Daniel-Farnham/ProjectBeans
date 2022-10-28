@@ -272,7 +272,7 @@ function validName(name: string): boolean {
   *
   * @returns {boolean} - returns true if email in use
 */
-function emailInUse (email: string) {
+function emailInUse (email: string): boolean {
   const data = getData();
 
   for (const user of data.users) {
@@ -289,7 +289,7 @@ function emailInUse (email: string) {
   *
   * @returns {boolean} - returns true if handle in use
 */
-function handleInUse (handleStr: string) {
+function handleInUse (handleStr: string): boolean {
   const data = getData();
 
   for (const user of data.users) {
