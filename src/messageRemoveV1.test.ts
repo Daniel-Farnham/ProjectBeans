@@ -61,8 +61,8 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       token: userId.token + 'Invalid Token',
       messageId: message.messageId,
     });
-    console.log(deletedMessage);
-    expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+    
+    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
   });
   test('MessageId is invalid', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -88,8 +88,8 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       token: userId.token,
       messageId: message.messageId + 1,
     });
-    console.log(deletedMessage);
-    expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+    
+    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Message not sent by authorised user, user does have global owner permission but is not a member of the channel', () => {
@@ -128,8 +128,8 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       token: user1.token,
       messageId: message.messageId,
     });
-    console.log(deletedMessage); 
-    expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+    
+    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
   });  
 
     // needs to add user to global owner. 
@@ -175,13 +175,13 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       token: user2.token,
       messageId: message.messageId,
     });
-    console.log(deletedMessage); 
-    expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+    
+    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
   });  
 
 });
 
-/*
+
 describe('Testing messageDeleteV1 success for dms', () => {
   test('Successfully remove message', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -196,7 +196,7 @@ describe('Testing messageDeleteV1 success for dms', () => {
       uIds: [], 
     });
 
-    const message = postRequest(SERVER_URL + 'message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
       token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
@@ -206,7 +206,7 @@ describe('Testing messageDeleteV1 success for dms', () => {
       token: userId.token, 
       messageId: message.messageId,
     });
-    
+
     expect(deletedMessage).toStrictEqual({});
   });
 });
@@ -224,7 +224,7 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
       uIds: [], 
     });
 
-    const message = postRequest(SERVER_URL + 'message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
       token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
@@ -234,8 +234,8 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
       token: userId.token + 'Invalid Token', 
       messageId: message.messageId,
     });
-    
-    expect(deletedMessage).toMatchObject({ error: expect.any(String) })
+
+    expect(deletedMessage).toStrictEqual({ error: expect.any(String) })
   });
 
   test('Testing messageId is invalid', () => {
@@ -250,7 +250,7 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
       uIds: [], 
     });
 
-    const message = postRequest(SERVER_URL + 'message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
       token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
@@ -258,10 +258,10 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
 
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       token: userId.token, 
-      messageId: message.messageId,
+      messageId: message.messageId + 1,
     });
-    
-    expect(deletedMessage).toMatchObject({ error: expect.any(String) })
+
+    expect(deletedMessage).toStrictEqual({ error: expect.any(String) })
   });
 
 
@@ -291,7 +291,7 @@ test('Message not sent by authorised user and the user does not have global owne
   });
 
   // a valid message is created by user 1 who is also the creator of the dm. 
-  const message = postRequest(SERVER_URL + 'message/senddm/v1', {
+  const message = postRequest(SERVER_URL + '/message/senddm/v1', {
     token: user1.token,
     dmId: dm.dmId,
     message: 'Hello this is a random test message'
@@ -302,8 +302,8 @@ test('Message not sent by authorised user and the user does not have global owne
     token: user2.token,
     messageId: message.messageId,
   });
-  console.log(deletedMessage); 
+ 
   expect(deletedMessage).toMatchObject({ error: expect.any(String) });
 });  
 
-*/
+

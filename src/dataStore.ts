@@ -10,6 +10,7 @@ let data = {
   channels: [],
   sessions: [],
   messageCount: 0,
+  dms: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
