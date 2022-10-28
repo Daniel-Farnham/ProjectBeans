@@ -59,7 +59,7 @@ describe('Testing basic dmRemoveV1 functionality', () => {
       token: regId.token,
       dmId: dmId.dmId
     });
-    
+
     const expectedMembers = [
       {
         uId: regId.authUserId,

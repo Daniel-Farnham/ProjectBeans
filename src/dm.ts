@@ -128,7 +128,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
     if (dm.dmId === dmId) {
       if (dm.creator !== uId) {
         return { error: 'Authorised user isn\'t the dm creator' };
-      } else if (dm.members.includes(uId)) {
+      } else if (isMemberOfDm(dm, uId)) {
         isMember = true;
       }
     }
