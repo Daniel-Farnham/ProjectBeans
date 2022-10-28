@@ -244,19 +244,25 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
   // Check if user is not a member of channel
-  if (isMemberOfChannel(findChannel, uId) !== true) {
+  if (!isMemberOfChannel(findChannel, uId)) {
     return { error: 'User is not a member of the channel' };
   }
 
   // Check if member is not an owner already
-  const ownerCheck = isOwnerOfChannel(findChannel, uId);
-  if (ownerCheck !== false) {
+  if (isOwnerOfChannel(findChannel, uId)) {
     return { error: 'User is already an owner of the channel' };
   }
+  
+  // Check authorised user has owner permissions
+  const authUserId = getUidFromToken(token);
+  const authUser = data.users.find(user => user.uId === authUserId);
 
-  // Checkif channelId is valid and user has owner permissions
-  if (!channelIdExists(channelId) && ownerCheck === false) {
-    return { error: 'User does not have owner permissions in this channel' };
+  if (!isMemberOfChannel(findChannel, authUserId)) {
+    return { error: 'Auth user is not a member of the channel' };
+  }
+
+  if (!isOwnerOfChannel(findChannel, authUserId) && authUser.permissionId !== GLOBAL_OWNER) {
+    return { error: 'Authorising user does not have owner permissions in this channel' };
   }
 
   // Add new owner to array if token is member of channel
