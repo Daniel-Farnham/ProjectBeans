@@ -160,6 +160,46 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       );
     }
   });
+
+  test('Testing dm members contain user with updated handleStr', () => {
+    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'jane.doe@student.unsw.edu.au',
+      password: 'AP@ssW0rd!',
+      nameFirst: 'Jane',
+      nameLast: 'Doe',
+    });
+
+    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+      token: user.token,
+      uIds: [],
+    });
+
+    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+      token: user.token,
+      handleStr: 'janeiscool',
+    });
+
+    const result = getRequest(SERVER_URL + '/dm/details/v1', {
+      token: user.token,
+      dmId: dm.dmId,
+    });
+
+    const expectedDmObj = {
+      name: 'janedoe',
+      members:
+      [
+        {
+          uId: user.authUserId,
+          email: 'jane.doe@student.unsw.edu.au',
+          nameFirst: 'Jane',
+          nameLast: 'Doe',
+          handleStr: 'janeiscool',
+        }
+      ],
+    };
+
+    expect(result).toMatchObject(expectedDmObj);
+  });
 });
 
 describe('Testing user/profile/sethandle/v1 error handling', () => {
