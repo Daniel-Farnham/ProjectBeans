@@ -4,6 +4,7 @@ import fs from 'fs';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+import errorHandler from 'middleware-http-errors';
 import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
@@ -54,6 +55,8 @@ app.get('/echo', (req: Request, res: Response, next) => {
   }
 });
 
+// handles errors nicely
+app.use(errorHandler());
 // Delete request for /clear/v1
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
