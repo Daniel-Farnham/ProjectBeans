@@ -124,7 +124,7 @@ describe('Testing authRegisterV1 error handling', () => {
   ])('$desc', ({ email, password, nameFirst, nameLast }) => {
     const newId = authRegisterV1(email, password, nameFirst, nameLast);
 
-    expect(newId).toMatchObject(400);
+    expect(newId).toEqual(400);
   });
 
   test('Testing registration with in use email', () => {
