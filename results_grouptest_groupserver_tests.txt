@@ -1,0 +1,79 @@
+npm verb cli /import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/bin/node /import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/bin/npm
+npm info using npm@8.19.2
+npm info using node@v18.10.0
+npm timing npm:load:whichnode Completed in 0ms
+npm timing config:load:defaults Completed in 1ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/lib/node_modules/npm/npmrc Completed in 1ms
+npm timing config:load:builtin Completed in 1ms
+npm timing config:load:cli Completed in 2ms
+npm timing config:load:env Completed in 1ms
+npm timing config:load:file:/import/kamen/3/cs1531/project-automarking/tempstore/.npmrc Completed in 0ms
+npm timing config:load:project Completed in 15ms
+npm timing config:load:file:/import/kamen/3/cs1531/.npmrc Completed in 1ms
+npm timing config:load:user Completed in 1ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v18.10.0/etc/npmrc Completed in 0ms
+npm timing config:load:global Completed in 0ms
+npm timing config:load:validate Completed in 0ms
+npm timing config:load:credentials Completed in 1ms
+npm timing config:load:setEnvs Completed in 1ms
+npm timing config:load Completed in 23ms
+npm timing npm:load:configload Completed in 24ms
+npm timing npm:load:mkdirpcache Completed in 1ms
+npm timing npm:load:mkdirplogs Completed in 0ms
+npm verb title npm run test **/?(*.)+(test).ts
+npm verb argv "run" "test" "--loglevel" "verbose" "--testMatch" "**/?(*.)+(test).ts"
+npm timing npm:load:setTitle Completed in 2ms
+npm timing config:load:flatten Completed in 2ms
+npm timing npm:load:display Completed in 5ms
+npm verb logfile logs-max:10 dir:/import/kamen/3/cs1531/.npm/_logs
+npm verb logfile /import/kamen/3/cs1531/.npm/_logs/2022-10-29T12_51_54_340Z-debug-0.log
+npm timing npm:load:logFile Completed in 4ms
+npm timing npm:load:timers Completed in 1ms
+npm timing npm:load:configScope Completed in 0ms
+npm timing npm:load Completed in 37ms
+
+> test
+> jest **/?(*.)+(test).ts
+
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+PASS src/messageEditV1.test.ts (7.407 s)
+PASS src/messageRemoveV1.test.ts
+PASS src/channelRemoveOwnerV1.test.ts
+PASS src/channelMessagesV1.test.ts (11.517 s)
+PASS src/userProfileSetNameV1.test.ts (6.558 s)
+PASS src/channelAddOwnerV1.test.ts
+PASS src/dmMessagesV1.test.ts (11.207 s)
+PASS src/channelLeaveV1.test.ts
+PASS src/channelInviteV1.test.ts
+PASS src/channelJoinV1.test.ts
+PASS src/userProfileSetHandleV1.test.ts
+PASS src/dmLeaveV1.test.ts
+PASS src/dmCreateV1.test.ts
+PASS src/userProfileSetEmailV1.test.ts
+PASS src/messageSendDmV1.test.ts
+PASS src/dmDetailsV1.test.ts
+PASS src/messageSendV1.test.ts
+PASS src/authRegisterV1.test.ts
+PASS src/dmRemoveV1.test.ts
+PASS src/channelsListV1.test.ts
+PASS src/authLoginV1.test.ts
+PASS src/channelDetailsV1.test.ts
+PASS src/dmListV1.test.ts
+PASS src/usersAllV1.test.ts
+PASS src/authLogoutV1.test.ts
+PASS src/channelsCreateV1.test.ts
+PASS src/channelsListAllV1.test.ts
+PASS src/clear.test.ts
+PASS src/echo.test.ts
+PASS src/userProfileV1.test.ts
+
+Test Suites: 30 passed, 30 total
+Tests:       214 passed, 214 total
+Snapshots:   0 total
+Time:        110.041 s
+Ran all test suites.
+npm timing command:run Completed in 111134ms
+npm verb exit 0
+npm timing npm Completed in 111177ms
+npm info ok 
