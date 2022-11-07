@@ -179,12 +179,19 @@ describe('Testing dmCreateV1 error handling', () => {
       nameLast: 'Scully'
     });
 
+    /*
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: regId.token,
       uIds: [regId.authUserId + 1]
     });
 
     expect(dmId).toStrictEqual({ error: expect.any(String) });
+    */
+
+    expect(() => postRequest(SERVER_URL + '/dm/create/v1', {
+      token: regId.token,
+      uIds: [regId.authUserId + 1]
+    })).toThrow(Error);
   });
 
   test('Testing dmCreateV1 returns error when uIds contains a duplicate', () => {
@@ -202,20 +209,34 @@ describe('Testing dmCreateV1 error handling', () => {
       nameLast: 'Smith'
     });
 
+    /*
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: firstId.token,
       uIds: [secondId.authUserId, secondId.authUserId]
     });
 
     expect(dmId).toStrictEqual({ error: expect.any(String) });
+    */
+
+    expect(() => postRequest(SERVER_URL + '/dm/create/v1', {
+      token: firstId.token,
+      uIds: [secondId.authUserId, secondId.authUserId]
+    })).toThrow(Error);
   });
 
   test('Testing dmCreateV1 returns error when token is invalid', () => {
+    /*
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       token: 'NotAToken',
       uIds: []
     });
 
     expect(dmId).toStrictEqual({ error: expect.any(String) });
+    */
+
+    expect(() => postRequest(SERVER_URL + '/dm/create/v1', {
+      token: 'NotAToken',
+      uIds: []
+    })).toThrow(Error);
   });
 });
