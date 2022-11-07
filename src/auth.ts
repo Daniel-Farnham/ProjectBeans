@@ -1,6 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
+const stringHash = require("string-hash");
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -8,6 +9,7 @@ const GLOBAL_MEMBER = 2;
 const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
+const GLOBAL_SECRET = "YouAren'tGettingIn!";
 
 type authInfo = { token: string, authUserId: number };
 
@@ -227,18 +229,12 @@ function generateHandle(nameFirst: string, nameLast: string): string {
 function generateToken(): string {
   const data = getData();
 
-  // Find the token with the greatest value then add 1 so our new token is unique
-  let newToken = 0;
-  for (const user of data.sessions) {
-    for (const token of user.tokens) {
-      if (parseInt(token) > newToken) {
-        newToken = parseInt(token);
-      }
-    }
-  }
-  newToken++;
+  const newToken = data.tokenCount;
 
-  return newToken.toString();
+  data.tokenCount += 1;
+  setData(data);
+  
+  return stringHash(newToken.toString() + GLOBAL_SECRET).toString();
 }
 
 export { authLoginV1, authRegisterV1 };
