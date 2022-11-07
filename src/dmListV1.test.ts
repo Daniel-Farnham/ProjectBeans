@@ -8,14 +8,14 @@ beforeEach(() => {
 
 describe('Testing basic dmListV1 functionality', () => {
   test('Test dmListV1 returns an empty list when the user is in no dms', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const lists = getRequest(SERVER_URL + '/dm/list/v1', {
+    const lists = getRequest(SERVER_URL + '/dm/list/v2', {
       token: regId.token
     });
 
@@ -23,36 +23,36 @@ describe('Testing basic dmListV1 functionality', () => {
   });
 
   test('Test dmListV1 only returns dms the user is apart of, when they aren\'t a creator of any', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    postRequest(SERVER_URL + '/dm/create/v1', {
+    postRequest(SERVER_URL + '/dm/create/v2', {
       token: secondId.token,
       uIds: []
     });
 
-    postRequest(SERVER_URL + '/dm/create/v1', {
+    postRequest(SERVER_URL + '/dm/create/v2', {
       token: secondId.token,
       uIds: []
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       token: secondId.token,
       uIds: [firstId.authUserId]
     });
 
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {
+    const list = getRequest(SERVER_URL + '/dm/list/v2', {
       token: firstId.token
     });
 
@@ -67,36 +67,36 @@ describe('Testing basic dmListV1 functionality', () => {
   });
 
   test('Test dmListV1 only returns dms the user is apart of, when they are a creator of all', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    postRequest(SERVER_URL + '/dm/create/v1', {
+    postRequest(SERVER_URL + '/dm/create/v2', {
       token: secondId.token,
       uIds: []
     });
 
-    const firstDm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const firstDm = postRequest(SERVER_URL + '/dm/create/v2', {
       token: firstId.token,
       uIds: []
     });
 
-    const secondDm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const secondDm = postRequest(SERVER_URL + '/dm/create/v2', {
       token: firstId.token,
       uIds: [secondId.authUserId]
     });
 
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {
+    const list = getRequest(SERVER_URL + '/dm/list/v2', {
       token: firstId.token
     });
 
@@ -117,10 +117,15 @@ describe('Testing basic dmListV1 functionality', () => {
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
+    /*
     const list = getRequest(SERVER_URL + '/dm/list/v1', {
       token: 'NotAToken'
     });
 
     expect(list).toStrictEqual({ error: expect.any(String) });
+    */
+    expect(getRequest(SERVER_URL + '/dm/list/v1', {
+      token: 'NotAToken'
+    })).toThrow(Error);
   });
 });
