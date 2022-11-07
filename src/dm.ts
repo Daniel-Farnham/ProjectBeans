@@ -3,6 +3,7 @@ import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
   isMemberOfDm, getMessageId, User, Messages,
 } from './other';
+import HTTPError from 'http-errors';
 
 type dmInfo = {
   dmId: number,
@@ -152,7 +153,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
 function dmListV1(token: string): dmList | error {
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    throw new Error('Token is invalid');
+    throw HTTPError(403, 'Token is invalid');
   }
 
   const data = getData();
