@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
-const stringHash = require("string-hash");
+const stringHash = require('string-hash');
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -233,7 +233,7 @@ function generateToken(): string {
 
   data.tokenCount += 1;
   setData(data);
-  
+
   return stringHash(newToken.toString() + GLOBAL_SECRET).toString();
 }
 
