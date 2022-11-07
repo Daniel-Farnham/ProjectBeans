@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
-const stringHash = require('string-hash');
+import crypto from 'crypto';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -234,7 +234,18 @@ function generateToken(): string {
   data.tokenCount += 1;
   setData(data);
 
-  return stringHash(newToken.toString() + GLOBAL_SECRET).toString();
+  return getHashOf(newToken.toString() + GLOBAL_SECRET);
 }
 
 export { authLoginV1, authRegisterV1 };
+
+/**
+  * Return hash of plaintext string
+  *
+  *  @param {string} plaintext - plaintext string
+  *
+  * @returns {string} - A unique hash
+  */
+function getHashOf(plaintext: string) {
+  return crypto.createHash('sha256').update(plaintext).digest('hex');
+}
