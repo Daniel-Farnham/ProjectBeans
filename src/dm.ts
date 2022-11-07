@@ -3,6 +3,7 @@ import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
   isMemberOfDm, getMessageId, User, Messages,
 } from './other';
+import HTTPError from 'http-errors';
 
 type dmInfo = {
   dmId: number,
@@ -287,7 +288,8 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   // Check if the given information is invalid
   const isInvalid = dmMessagesInfoInvalid(token, dmId, start);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
   // If start and number of messages are both 0, return empty message array
@@ -335,30 +337,30 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
 function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
   // Check if the token is invalid
   if (!(tokenExists(token))) {
-    return { error: 'Token is invalid' };
+    return { code: 403, error: 'Token is invalid' };
   }
 
   // Check if the dmId is invalid
   if (!(dmIdExists(dmId))) {
-    return { error: 'dmId is invalid' };
+    return { code: 400, error: 'dmId is invalid' };
   }
 
   // If start is negative or greater than number of messages return error
   if (start < 0) {
-    return { error: 'Starting index can\'t be negative' };
+    return { code: 400, error: 'Starting index can\'t be negative' };
   }
   const data = getData();
   const dm = data.dms.find(dm => dm.dmId === dmId);
   const numMessages = dm.messages.length;
   if (start > numMessages) {
-    return { error: 'Start index is greater than number of messages in dm' };
+    return { code: 400, error: 'Start index is greater than number of messages in dm' };
   }
 
   // If channelId is valid but user isn't a member of the channel return error
   const uId = getUidFromToken(token);
 
   if (!isMemberOfDm(dm, uId)) {
-    return { error: 'User is not a member of channel' };
+    return { code: 403, error: 'User is not a member of dm' };
   }
 
   // If no error by now, the info isn't invalid
