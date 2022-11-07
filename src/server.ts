@@ -193,8 +193,9 @@ app.put('/message/edit/v1', (req: Request, res: Response, next) => {
   save();
 });
 
-app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
-  const { token, dmId } = req.body;
+app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
+  const { dmId } = req.body;
+  const token = req.header('token');
   res.json(dmLeaveV1(token, dmId));
 });
 
