@@ -124,7 +124,7 @@ describe('Testing dmCreateV1 error handling', () => {
 
     expect(list).toStrictEqual({ error: expect.any(String) });
     */
-    expect(getRequest(SERVER_URL + '/dm/list/v1', {
+    expect(getRequest(SERVER_URL + '/dm/list/v2', {
       token: 'NotAToken'
     })).toThrow(Error);
   });

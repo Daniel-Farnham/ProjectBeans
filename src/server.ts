@@ -238,8 +238,8 @@ app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
   res.json(dmMessagesV1(token, dmId, start));
 });
 
-app.get('/dm/list/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+app.get('/dm/list/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   res.json(dmListV1(token));
   save();
 });
