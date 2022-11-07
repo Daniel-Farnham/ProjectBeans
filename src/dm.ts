@@ -52,12 +52,13 @@ const MAX_MESSAGE_LEN = 1000;
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {{dmId: number}} - The dm id of the new dm
   */
-function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error | boolean {
+function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error | boolean {
   // Check if the given information is valid
   const data = getData();
   const isInvalid = dmInfoInvalid(token, uIds);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw new Error(errorMsg.error);
   }
 
   // Create the new dm and store it in the datastore

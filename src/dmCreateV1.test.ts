@@ -15,7 +15,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       token: regId.token,
       uIds: []
     });
@@ -31,7 +31,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       token: regId.token,
       uIds: []
     });
@@ -66,7 +66,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Ngo'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
     });
@@ -87,7 +87,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       token: regId.token,
       uIds: []
     });
@@ -132,7 +132,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Ngo'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
     });
@@ -188,7 +188,7 @@ describe('Testing dmCreateV1 error handling', () => {
     expect(dmId).toStrictEqual({ error: expect.any(String) });
     */
 
-    expect(() => postRequest(SERVER_URL + '/dm/create/v1', {
+    expect(() => postRequest(SERVER_URL + '/dm/create/v2', {
       token: regId.token,
       uIds: [regId.authUserId + 1]
     })).toThrow(Error);
@@ -218,7 +218,7 @@ describe('Testing dmCreateV1 error handling', () => {
     expect(dmId).toStrictEqual({ error: expect.any(String) });
     */
 
-    expect(() => postRequest(SERVER_URL + '/dm/create/v1', {
+    expect(() => postRequest(SERVER_URL + '/dm/create/v2', {
       token: firstId.token,
       uIds: [secondId.authUserId, secondId.authUserId]
     })).toThrow(Error);
@@ -234,7 +234,7 @@ describe('Testing dmCreateV1 error handling', () => {
     expect(dmId).toStrictEqual({ error: expect.any(String) });
     */
 
-    expect(() => postRequest(SERVER_URL + '/dm/create/v1', {
+    expect(() => postRequest(SERVER_URL + '/dm/create/v2', {
       token: 'NotAToken',
       uIds: []
     })).toThrow(Error);
