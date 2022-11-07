@@ -224,8 +224,8 @@ app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
   res.json(dmRemoveV1(token, dmId));
 });
 
-app.get('/dm/details/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+app.get('/dm/details/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   res.json(dmDetailsV1(token, dmId));
   save();
