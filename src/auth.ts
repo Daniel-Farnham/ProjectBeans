@@ -28,8 +28,9 @@ function authLoginV1(email: string, password: string): authInfo | error {
   // If email matches, but password is wrong return an error
   const data = getData();
   const caseInsensitiveEmail = email.toLowerCase();
+  const hashedPassword = getHashOf(password);
   for (const user of data.users) {
-    if (user.email === caseInsensitiveEmail && user.password === password) {
+    if (user.email === caseInsensitiveEmail && user.password === hashedPassword) {
       const userId = user.uId;
       const token = generateToken();
 
@@ -42,7 +43,7 @@ function authLoginV1(email: string, password: string): authInfo | error {
       }
 
       return { token: token, authUserId: userId };
-    } else if (user.email === caseInsensitiveEmail && user.password !== password) {
+    } else if (user.email === caseInsensitiveEmail && user.password !== hashedPassword) {
       return { error: 'Incorrect password.' };
     }
   }
@@ -89,7 +90,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
-    password: password,
+    password: getHashOf(password),
     permissionId: permissionId
   };
 
