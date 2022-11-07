@@ -218,8 +218,8 @@ app.post('/dm/create/v1', (req: Request, res: Response, next) => {
   save();
 });
 
-app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+app.delete('/dm/remove/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   res.json(dmRemoveV1(token, dmId));
 });

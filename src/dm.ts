@@ -3,6 +3,7 @@ import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
   isMemberOfDm, getMessageId, User, Messages,
 } from './other';
+import HTTPError from 'http-errors';
 
 type dmInfo = {
   dmId: number,
@@ -82,7 +83,8 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
   const data = getData();
   const isInvalid = removeInfoInvalid(token, dmId);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
   // Remove all the members of the dm
@@ -112,12 +114,12 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
 
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    return { code: 400, error: 'dmId is invalid' };
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    return { code: 403, error: 'Token is invalid' };
   }
 
   // Check if the authorised user is the dm creator
@@ -127,7 +129,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       if (dm.creator !== uId) {
-        return { error: 'Authorised user isn\'t the dm creator' };
+        return { code: 403, error: 'Authorised user isn\'t the dm creator' };
       } else if (isMemberOfDm(dm, uId)) {
         isMember = true;
       }
@@ -135,7 +137,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
   }
 
   if (!isMember) {
-    return { error: 'Authorised user is not a member of the dm' };
+    return { code: 403, error: 'Authorised user is not a member of the dm' };
   }
 
   return false;

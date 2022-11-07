@@ -113,7 +113,7 @@ describe('Testing dmRemoveV1 error handling', () => {
       dmId: dmId.dmId
     });
 
-    expect(removeDm).toEqual(400);
+    expect(removeDm).toEqual(403);
   });
 
   test('Testing dmRemoveV1 returns error when authorised user isn\'t a member', () => {
@@ -141,7 +141,7 @@ describe('Testing dmRemoveV1 error handling', () => {
       dmId: dmId.dmId
     });
 
-    expect(removeDm).toEqual(400);
+    expect(removeDm).toEqual(403);
   });
 
   test('Testing dmRemoveV1 returns error when token is invalid', () => {
