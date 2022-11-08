@@ -16,10 +16,9 @@ describe('Testing channelsCreateV1', () => {
     });
 
     const newchannelId = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId.token);
 
     expect(newchannelId).toStrictEqual({ channelId: expect.any(Number) });
   });
@@ -32,15 +31,13 @@ describe('Testing channelsCreateV1', () => {
       nameLast: 'Ngo'
     });
     const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId.token);
     const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'Boost',
       isPublic: false
-    });
+    }, userId.token);
 
     expect(channelId1.channelId).not.toBe(channelId2.channelId);
   });
@@ -54,10 +51,9 @@ describe('Testing channelsCreateV1', () => {
     });
 
     const returnedChannelId = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token + 1,
       name: 'General',
       isPublic: true
-    });
+    }, userId.token + 1);
     expect(returnedChannelId).toStrictEqual({ error: expect.any(String) });
   });
 
@@ -79,10 +75,9 @@ describe('Testing channelsCreateV1', () => {
       },
     ])('$desc', ({ token, channelName, isPublic }) => {
       const newChannelId = postRequest(SERVER_URL + '/channels/create/v2', {
-        token: token,
         name: channelName,
         isPublic: isPublic
-      });
+      }, token);
       expect(newChannelId).toMatchObject({ error: expect.any(String) });
     });
   });
