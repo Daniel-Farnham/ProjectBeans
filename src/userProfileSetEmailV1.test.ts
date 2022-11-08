@@ -18,9 +18,8 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     });
 
     const result = putRequest(SERVER_URL + '/user/profile/setemail/v1', {
-      token: user.token,
       email: 'janed@gmail.com',
-    });
+    }, user.token);
 
     expect(result).toMatchObject({});
   });
@@ -34,20 +33,17 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Boost',
       isPublic: true,
-    });
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/setemail/v1', {
-      token: user.token,
       email: 'janed@gmail.com',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user.token,
       channelId: channel.channelId,
-    });
+    }, user.token);
 
     const expectedChannelObj = {
       name: 'Boost',
@@ -85,19 +81,16 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user.token,
       uIds: [],
-    });
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/setemail/v1', {
-      token: user.token,
       email: 'janed@gmail.com',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: user.token,
       dmId: dm.dmId,
-    });
+    }, user.token);
 
     const expectedDmObj = {
       name: 'janedoe',
@@ -127,9 +120,8 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     });
 
     putRequest(SERVER_URL + '/user/profile/setemail/v1', {
-      token: user.token,
       email: email,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -142,9 +134,8 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -166,15 +157,12 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
 
       // Rename email by changing e-mail domain
       putRequest(SERVER_URL + '/user/profile/setemail/v1', {
-        token: user.token,
         email: `${firstNames[i]}.${lastNames[i]}@gmail.com`,
-      });
+      }, user.token);
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: users[0].token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
 
     // Loop through each user and check the user object has the e-mail domain
     // name changed
@@ -210,9 +198,8 @@ describe('Testing user/profile/setemail/v1 error handling', () => {
     });
 
     const result = putRequest(SERVER_URL + '/user/profile/setemail/v1', {
-      token: user.token + token,
       email: email,
-    });
+    }, user.token + token);
 
     expect(result).toStrictEqual(
       {

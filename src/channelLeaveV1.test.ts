@@ -24,20 +24,17 @@ describe('Testing channelLeaveV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     expect(expectedResult).toStrictEqual({});
   });
@@ -58,20 +55,17 @@ describe('Testing channelLeaveV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId1.token,
       channelId: channel.channelId
-    });
+    }, userId1.token);
 
     const membersBefore = new Set([
       {
@@ -91,14 +85,12 @@ describe('Testing channelLeaveV1', () => {
     ]);
 
     postRequest(SERVER_URL + '/channel/leave/v1', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const detailsAfter = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId1.token,
       channelId: channel.channelId
-    });
+    }, userId1.token);
 
     const membersAfter = new Set([
       {
@@ -130,26 +122,22 @@ describe('Testing channelLeaveV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
-    });
+    }, userId1.token);
 
     const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId1.token,
       channelId: channel.channelId
-    });
+    }, userId1.token);
 
     const ownersBefore = new Set([
       {
@@ -169,14 +157,12 @@ describe('Testing channelLeaveV1', () => {
     ]);
 
     postRequest(SERVER_URL + '/channel/leave/v1', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const detailsAfter = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId1.token,
       channelId: channel.channelId
-    });
+    }, userId1.token);
 
     const ownersAfter = new Set([
       {
@@ -208,20 +194,17 @@ describe('Testing channelLeaveV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
-      token: userId2.token,
       channelId: channel.channelId + 10
-    });
+    }, userId2.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -242,20 +225,17 @@ describe('Testing channelLeaveV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
-      token: userId2.token + 10,
       channelId: channel.channelId
-    });
+    }, userId2.token + 10);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -276,15 +256,13 @@ describe('Testing channelLeaveV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });

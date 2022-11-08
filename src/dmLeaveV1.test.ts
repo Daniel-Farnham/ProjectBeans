@@ -16,14 +16,12 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmLeave).toStrictEqual({});
   });
@@ -37,19 +35,16 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
@@ -70,19 +65,16 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const expectedMembers = [
       {
@@ -113,19 +105,16 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     const expectedMembers = [
       {
@@ -156,19 +145,16 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.uId]
-    });
+    }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
@@ -184,9 +170,8 @@ describe('Testing dmLeaveV1 error handling', () => {
     });
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: regId.token,
       dmId: 0
-    });
+    }, regId.token);
 
     expect(dmLeave).toStrictEqual({ error: expect.any(String) });
   });
@@ -207,14 +192,12 @@ describe('Testing dmLeaveV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: []
-    });
+    }, firstId.token);
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     expect(dmLeave).toStrictEqual({ error: expect.any(String) });
   });
@@ -228,14 +211,12 @@ describe('Testing dmLeaveV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
-      token: regId.token + 'NotAToken',
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
     expect(dmLeave).toStrictEqual({ error: expect.any(String) });
   });

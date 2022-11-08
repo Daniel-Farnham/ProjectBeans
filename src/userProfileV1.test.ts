@@ -34,9 +34,8 @@ test('Testing successful return of user profile', () => {
   };
 
   const resultUser = getRequest(SERVER_URL + '/user/profile/v3', {
-    token: user2.token,
     uId: user1.authUserId,
-  });
+  }, user2.token);
 
   expect(resultUser).toMatchObject(expectedUser);
 });
@@ -54,9 +53,8 @@ describe('Testing userProfileV2 error handling', () => {
     });
 
     const result = getRequest(SERVER_URL + '/user/profile/v3', {
-      token: user.token + token,
       uId: user.authUserId + uId,
-    });
+    }, user.token + token);
 
     expect(result.statusCode).toBe(statusCode);
     const bodyObj = JSON.parse(result.body as string);

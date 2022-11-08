@@ -47,9 +47,8 @@ describe('Testing basic authRegisterV1 functionality', () => {
     });
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: newId.token,
       uId: newId.authUserId
-    });
+    }, newId.token);
 
     const expectedUser = {
       user: {
@@ -94,9 +93,8 @@ describe('Testing basic authRegisterV1 functionality', () => {
     });
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: newId.token,
       uId: newId.authUserId
-    });
+    }, newId.token);
 
     const expectedUser = {
       user: {

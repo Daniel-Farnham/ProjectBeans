@@ -16,15 +16,13 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId.token,
       channelId: channel.channelId
-    });
+    }, userId.token);
 
     const ExpectedChannelObj = {
       name: 'ChannelBoost',
@@ -62,15 +60,13 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token + 1,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token + 1);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId.token,
       channelId: channel.channelId
-    });
+    }, userId.token);
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 
@@ -83,15 +79,13 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId.token,
       channelId: channel.channelId + 1
-    });
+    }, userId.token);
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 
@@ -111,15 +105,13 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user2.token,
       channelId: channel.channelId
-    });
+    }, user2.token);
 
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });

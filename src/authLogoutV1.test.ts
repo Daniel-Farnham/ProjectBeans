@@ -17,9 +17,7 @@ describe('Testing successful cases for authLogoutV1', () => {
       nameLast: 'Pham'
     });
 
-    const result = postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    const result = postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
     expect(result).toStrictEqual({});
   });
@@ -32,14 +30,9 @@ describe('Testing successful cases for authLogoutV1', () => {
       nameLast: 'Pham'
     });
 
-    postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
-      uId: user.authUserId,
-    });
+    const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId }, user.token);
 
     expect(result.statusCode).toBe(INVALID_TOKEN);
     const bodyObj = JSON.parse(result.body as string);
@@ -59,14 +52,9 @@ describe('Testing successful cases for authLogoutV1', () => {
       password: 'password'
     });
 
-    postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: loggedInSession.token,
-      uId: user.authUserId,
-    });
+    const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId }, loggedInSession.token);
 
     const expectedResult = {
       user: {
@@ -93,8 +81,7 @@ describe('Testing authLogoutV1 error handling', () => {
     });
 
     const result = postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token + token,
-    });
+    }, user.token + token);
 
     expect(result).toMatchObject({ error: expect.any(String) });
   });
