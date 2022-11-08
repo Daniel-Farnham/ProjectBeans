@@ -23,9 +23,7 @@ describe('Testing usersAllV1 successful case handling', () => {
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: users[0].token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {},  users[0].token);
 
     // Loop through each user and check the user object exists within the
     // returned users object that was called by /users/all/v1
@@ -53,9 +51,7 @@ describe('Testing usersAllV1 successful case handling', () => {
       nameLast: 'Doe',
     });
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: user.token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, user.token);
 
     const expectedUsers = {
       users: [
@@ -84,9 +80,7 @@ describe('Testing usersAllV1 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = getRequest(SERVER_URL + '/users/all/v1', {
-      token: user.token + token,
-    });
+    const result = getRequest(SERVER_URL + '/users/all/v1', {}, user.token + token,);
 
     expect(result).toStrictEqual(
       {
