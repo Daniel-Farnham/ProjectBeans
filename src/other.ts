@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
 
 /**
@@ -302,10 +303,11 @@ export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
 */
 export function tokenExists (token: string): boolean {
   const data = getData();
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
 
   // Loop through sessions array to check if token exists
   for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
+    if (session.tokens.includes(hashedToken)) {
       return true;
     }
   }
@@ -335,9 +337,9 @@ export function getMessageId(): number {
 */
 export function getUidFromToken (token: string): number {
   const data = getData();
-
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
+    if (session.tokens.includes(hashedToken)) {
       return session.uId;
     }
   }

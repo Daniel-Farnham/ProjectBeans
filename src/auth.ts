@@ -9,7 +9,7 @@ const GLOBAL_MEMBER = 2;
 const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
-const GLOBAL_SECRET = "YouAren'tGettingIn!";
+export const GLOBAL_SECRET = "YouAren'tGettingIn!";
 
 type authInfo = { token: string, authUserId: number };
 
@@ -38,11 +38,11 @@ function authLoginV1(email: string, password: string): authInfo | error {
       // and add a new token for this login
       for (const user of data.sessions) {
         if (user.uId === userId) {
-          user.tokens.push(token);
+          user.tokens.push(token.hash);
         }
       }
 
-      return { token: token, authUserId: userId };
+      return { token: token.token, authUserId: userId };
     } else if (user.email === caseInsensitiveEmail && user.password !== hashedPassword) {
       return { error: 'Incorrect password.' };
     }
@@ -101,7 +101,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
   const sessionInfo = {
     uId: userId,
-    tokens: [token]
+    tokens: [token.hash]
   };
 
   data.sessions.push(sessionInfo);
@@ -109,7 +109,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   setData(data);
 
   return {
-    token: token,
+    token: token.token,
     authUserId: userId
   };
 }
@@ -128,8 +128,9 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
   const data = getData();
 
   // Filter out the token from the user's sessions
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    session.tokens = session.tokens.filter(activeToken => activeToken !== token);
+    session.tokens = session.tokens.filter(activeToken => activeToken !== hashedToken);
   }
 
   setData(data);
@@ -227,7 +228,7 @@ function generateHandle(nameFirst: string, nameLast: string): string {
   *
   * @returns {string} - A unique token
   */
-function generateToken(): string {
+function generateToken(): any {
   const data = getData();
 
   const newToken = data.tokenCount;
@@ -235,18 +236,22 @@ function generateToken(): string {
   data.tokenCount += 1;
   setData(data);
 
-  return getHashOf(newToken.toString() + GLOBAL_SECRET);
+  const msg = newToken.toString() + GLOBAL_SECRET;
+  return {
+    token: newToken.toString(),
+    hash: getHashOf(msg),
+  };
+}
+
+/**
+ * Return hash of plaintext string
+ *
+ *  @param {string} plaintext - plaintext string
+ *
+ * @returns {string} - A unique hash
+ */
+export function getHashOf(plaintext: string) {
+  return crypto.createHash('sha256').update(plaintext).digest('hex');
 }
 
 export { authLoginV1, authRegisterV1 };
-
-/**
-  * Return hash of plaintext string
-  *
-  *  @param {string} plaintext - plaintext string
-  *
-  * @returns {string} - A unique hash
-  */
-function getHashOf(plaintext: string) {
-  return crypto.createHash('sha256').update(plaintext).digest('hex');
-}
