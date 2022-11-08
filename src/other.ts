@@ -85,12 +85,13 @@ export const parseBody = (res: any) => {
 /**
   * Function used to create a post request
 */
-export const postRequest = (url: string, data: any) => {
+export const postRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'POST',
     url,
     {
       json: data,
+      headers: {'token': token,}
     }
   );
   return parseBody(res);
@@ -98,12 +99,13 @@ export const postRequest = (url: string, data: any) => {
 /**
   * Function used to create a put request
 */
-export const putRequest = (url: string, data: any) => {
+export const putRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'PUT',
     url,
     {
       json: data,
+      headers: {'token': token,}
     }
   );
   return parseBody(res);
@@ -112,12 +114,13 @@ export const putRequest = (url: string, data: any) => {
 /**
   * Function used to create a delete request
 */
-export const deleteRequest = (url: string, data: any) => {
+export const deleteRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'DELETE',
     url,
     {
       qs: data,
+      headers: {'token': token,}
     }
   );
   return parseBody(res);
@@ -126,12 +129,13 @@ export const deleteRequest = (url: string, data: any) => {
 /**
   * Function used to create a get request
 */
-export const getRequest = (url: string, data: any) => {
+export const getRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'GET',
     url,
     {
       qs: data,
+      headers: {'token': token,}
     }
   );
   return parseBody(res);
