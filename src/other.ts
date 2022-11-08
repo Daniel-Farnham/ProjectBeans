@@ -94,6 +94,9 @@ export const postRequest = (url: string, data: any, token?: string) => {
       headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 /**
@@ -108,6 +111,10 @@ export const putRequest = (url: string, data: any, token?: string) => {
       headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
+
   return parseBody(res);
 };
 
@@ -123,6 +130,9 @@ export const deleteRequest = (url: string, data: any, token?: string) => {
       headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 
@@ -138,6 +148,9 @@ export const getRequest = (url: string, data: any, token?: string) => {
       headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 

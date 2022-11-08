@@ -55,8 +55,6 @@ app.get('/echo', (req: Request, res: Response, next) => {
   }
 });
 
-// handles errors nicely
-app.use(errorHandler());
 // Delete request for /clear/v1
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
@@ -123,8 +121,14 @@ app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
   res.json(channelMessagesV1(token, channelId, start));
 });
 
-// Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const uId = parseInt(req.query.uId as string);
+  res.json(userProfileV1(token, uId));
+  save();
+});
+
+app.get('/user/profile/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
   res.json(userProfileV1(token, uId));
@@ -253,6 +257,9 @@ app.get('/dm/list/v1', (req: Request, res: Response, next) => {
   res.json(dmListV1(token));
   save();
 });
+
+// handles errors nicely
+app.use(errorHandler());
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));

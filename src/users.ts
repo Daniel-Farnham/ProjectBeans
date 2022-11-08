@@ -1,6 +1,7 @@
 import { getData, setData } from './dataStore';
 import { userIdExists, tokenExists, User, error, getUidFromToken } from './other';
 import validator from 'validator';
+import HTTPError from 'http-errors';
 
 /**
   * Returns user object if a valid user is found
@@ -13,8 +14,12 @@ import validator from 'validator';
 */
 export function userProfileV1 (token: string, uId: number): error | { user: User } | any {
   // If either uId or token does not exist, then return error
-  if (!tokenExists(token) || !userIdExists(uId)) {
-    return { error: 'token/uId to search is invalid' };
+  if (!tokenExists(token)) {
+    throw HTTPError(403, 'token is invalid');
+  }
+
+  if (!userIdExists(uId)) {
+    throw HTTPError(400, 'uId to search is invalid');
   }
 
   // Retrieve user profile for matching user

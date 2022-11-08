@@ -2,6 +2,7 @@ import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -33,7 +34,9 @@ describe('Testing successful cases for authLogoutV1', () => {
 
     const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId }, user.token);
 
-    expect(result).toMatchObject({ error: expect.any(String) });
+    expect(result.statusCode).toBe(INVALID_TOKEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing ability to login with another token if logged out of one token', () => {
