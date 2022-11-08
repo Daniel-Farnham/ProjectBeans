@@ -18,10 +18,9 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     const result = putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
       nameFirst: 'John',
       nameLast: 'Doe',
-    });
+    }, user.token);
 
     expect(result).toMatchObject({});
   });
@@ -35,21 +34,18 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Boost',
       isPublic: true,
-    });
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
       nameFirst: 'John',
       nameLast: 'Darcy',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user.token,
       channelId: channel.channelId,
-    });
+    }, user.token);
 
     const expectedChannelObj = {
       name: 'Boost',
@@ -98,10 +94,9 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
       nameFirst: nameFirst,
       nameLast: nameLast,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -114,9 +109,8 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -129,20 +123,17 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user.token,
       uIds: [],
-    });
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
       nameFirst: 'John',
       nameLast: 'Darcy',
-    });
+    },  user.token);
 
     const result = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: user.token,
       dmId: dm.dmId,
-    });
+    }, user.token);
 
     const expectedDmObj = {
       name: 'janedoe',
@@ -181,10 +172,9 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
       nameFirst: nameFirst,
       nameLast: nameLast,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -197,9 +187,8 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    },  user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -221,16 +210,13 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
       // Rename user by swapping first and last names
       putRequest(SERVER_URL + '/user/profile/setname/v1', {
-        token: user.token,
         nameFirst: lastNames[i],
         nameLast: firstNames[i],
-      });
+      }, user.token);
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: users[0].token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
 
     // Loop through each user and check the user object has their first
     // and last names swapped
@@ -270,10 +256,9 @@ describe('Testing user/profile/setname/v1 error handling', () => {
     });
 
     const result = putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token + token,
       nameFirst: nameFirst,
       nameLast: nameLast,
-    });
+    }, user.token + token);
 
     expect(result).toStrictEqual(
       {
