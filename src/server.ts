@@ -89,7 +89,8 @@ app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
-  const { token, channelId, uId } = req.body;
+  const token = req.header('token');
+  const { channelId, uId } = req.body;
   res.json(channelInviteV1(token, channelId, uId));
   save();
 });
@@ -193,7 +194,7 @@ app.post('/message/send/v1', (req: Request, res: Response, next) => {
 });
 
 app.put('/message/edit/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
+  const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
   const message = req.body.message as string;
   res.json(messageEditV1(token, messageId, message));
