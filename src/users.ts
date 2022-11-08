@@ -17,7 +17,7 @@ export function userProfileV1 (token: string, uId: number): error | { user: User
   if (!tokenExists(token)) {
     throw HTTPError(403, 'token is invalid');
   }
-  
+
   if (!userIdExists(uId)) {
     throw HTTPError(400, 'uId to search is invalid');
   }

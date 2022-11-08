@@ -43,7 +43,7 @@ test('Testing successful return of user profile', () => {
 
 describe('Testing userProfileV2 error handling', () => {
   test.each([
-    { token: '', uId: 100, desc: 'uID to search does not exist', statusCode: INPUT_ERROR},
+    { token: '', uId: 100, desc: 'uID to search does not exist', statusCode: INPUT_ERROR },
     { token: 'InvalidToken', uId: 0, desc: 'token is invalid', statusCode: INVALID_TOKEN },
   ])('$desc', ({ token, uId, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -57,7 +57,7 @@ describe('Testing userProfileV2 error handling', () => {
       token: user.token + token,
       uId: user.authUserId + uId,
     });
-    
+
     expect(result.statusCode).toBe(statusCode);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });

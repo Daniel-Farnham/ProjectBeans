@@ -44,7 +44,6 @@ describe('Testing successful cases for authLogoutV1', () => {
     expect(result.statusCode).toBe(INVALID_TOKEN);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-
   });
 
   test('Testing ability to login with another token if logged out of one token', () => {

@@ -55,7 +55,6 @@ app.get('/echo', (req: Request, res: Response, next) => {
   }
 });
 
-
 // Delete request for /clear/v1
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());

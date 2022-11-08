@@ -78,7 +78,6 @@ export type Messages = {
 */
 export const parseBody = (res: any) => {
   return JSON.parse(res.getBody() as string);
-  
 };
 
 /**
