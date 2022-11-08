@@ -31,7 +31,7 @@ test('Testing successful return of user profile', () => {
     }
   };
 
-  const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
+  const resultUser = getRequest(SERVER_URL + '/user/profile/v3', {
     token: user2.token,
     uId: user1.authUserId,
   });
@@ -51,15 +51,16 @@ describe('Testing userProfileV2 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
+    expect(() => getRequest(SERVER_URL + '/user/profile/v3', {
       token: user.token + token,
       uId: user.authUserId + uId,
-    });
+      })).toThrow(Error);
 
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+
+    // expect(result).toStrictEqual(
+    //   {
+    //     error: expect.any(String),
+    //   }
+    // );
   });
 });
