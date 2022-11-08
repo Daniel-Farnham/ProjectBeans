@@ -16,14 +16,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails).toStrictEqual({ name: expect.any(String), members: expect.any(Array) });
   });
@@ -37,14 +35,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails.name).toStrictEqual('curtisscully');
   });
@@ -58,14 +54,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const expectedMembers = [
       {
@@ -103,14 +97,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const expectedMembers = new Set([
       {
@@ -150,9 +142,8 @@ describe('Testing dmDetailsV1 error handling', () => {
     });
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: 0
-    });
+    },  regId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
@@ -173,14 +164,12 @@ describe('Testing dmDetailsV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: []
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
@@ -194,14 +183,12 @@ describe('Testing dmDetailsV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token + 'NotAToken',
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
