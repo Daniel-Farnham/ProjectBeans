@@ -1,5 +1,8 @@
 import { getData, setData } from './dataStore';
-import request from 'sync-request';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
+import request, { HttpVerb } from 'sync-request';
+
 
 /**
   * Function to clear the data store object
@@ -134,6 +137,28 @@ export const getRequest = (url: string, data: any) => {
   );
   return parseBody(res);
 };
+/**
+  * Function used to create a HTTP request
+*/
+export function requestHelper(method: HttpVerb, path: string, payload: object) {
+  let qs = {};
+  let json = {};
+  if (['GET', 'DELETE'].includes(method)) {
+    qs = payload;
+  } else {
+    // PUT/POST
+    json = payload;
+  }
+  const res = request(method, SERVER_URL + path, { qs, json });
+
+  if (res.statusCode !== 200) {
+    // Return error code number instead of object in case of error.
+    // (just for convenience)
+    return res.statusCode;
+  }
+  return JSON.parse(res.getBody() as string);
+}
+
 
 /**
   * Checks if the user id is registered in the database.
