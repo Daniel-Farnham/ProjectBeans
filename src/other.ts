@@ -154,7 +154,6 @@ export const getRequest = (url: string, data: any) => {
   return parseBody(res);
 };
 
-
 /**
   * Checks if the user id is registered in the database.
   * @param {number} userId - userId to check
