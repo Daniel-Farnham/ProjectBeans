@@ -15,9 +15,7 @@ describe('Testing basic dmListV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const lists = getRequest(SERVER_URL + '/dm/list/v1', {
-      token: regId.token
-    });
+    const lists = getRequest(SERVER_URL + '/dm/list/v1', {}, regId.token);
 
     expect(lists).toStrictEqual({ dms: [] });
   });
@@ -38,23 +36,18 @@ describe('Testing basic dmListV1 functionality', () => {
     });
 
     postRequest(SERVER_URL + '/dm/create/v1', {
-      token: secondId.token,
       uIds: []
-    });
+    }, secondId.token);
 
     postRequest(SERVER_URL + '/dm/create/v1', {
-      token: secondId.token,
       uIds: []
-    });
+    }, secondId.token);
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: secondId.token,
       uIds: [firstId.authUserId]
-    });
+    }, secondId.token);
 
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {
-      token: firstId.token
-    });
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {}, firstId.token);
 
     const expectedList = [
       {
@@ -82,23 +75,18 @@ describe('Testing basic dmListV1 functionality', () => {
     });
 
     postRequest(SERVER_URL + '/dm/create/v1', {
-      token: secondId.token,
       uIds: []
-    });
+    }, secondId.token);
 
     const firstDm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: []
-    });
+    }, firstId.token);
 
     const secondDm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {
-      token: firstId.token
-    });
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {}, firstId.token);
 
     const expectedList = new Set([
       {
@@ -117,9 +105,7 @@ describe('Testing basic dmListV1 functionality', () => {
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {
-      token: 'NotAToken'
-    });
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {},'NotAToken');
 
     expect(list).toStrictEqual({ error: expect.any(String) });
   });
