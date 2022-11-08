@@ -16,7 +16,7 @@ describe('Testing successful cases for authLogoutV1', () => {
       nameLast: 'Pham'
     });
 
-    const result = postRequest(SERVER_URL + '/auth/logout/v1', {},user.token);
+    const result = postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
     expect(result).toStrictEqual({});
   });
@@ -51,7 +51,7 @@ describe('Testing successful cases for authLogoutV1', () => {
 
     postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId, }, loggedInSession.token);
+    const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId }, loggedInSession.token);
 
     const expectedResult = {
       user: {

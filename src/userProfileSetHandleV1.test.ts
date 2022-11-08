@@ -41,11 +41,11 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
 
     putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
       handleStr: 'janeiscool123',
-    },  user.token);
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
       channelId: channel.channelId,
-    },  user.token);
+    }, user.token);
 
     const expectedChannelObj = {
       name: 'Boost',

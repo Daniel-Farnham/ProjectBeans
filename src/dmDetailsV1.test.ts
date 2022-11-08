@@ -143,7 +143,7 @@ describe('Testing dmDetailsV1 error handling', () => {
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: 0
-    },  regId.token);
+    }, regId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });

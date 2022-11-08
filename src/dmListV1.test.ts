@@ -105,7 +105,7 @@ describe('Testing basic dmListV1 functionality', () => {
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {},'NotAToken');
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {}, 'NotAToken');
 
     expect(list).toStrictEqual({ error: expect.any(String) });
   });

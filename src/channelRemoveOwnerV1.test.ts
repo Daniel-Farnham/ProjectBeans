@@ -63,7 +63,7 @@ describe('Testing channelRemoveOwnerV1', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
-    },  userId1.token);
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
       channelId: channel.channelId
@@ -72,7 +72,7 @@ describe('Testing channelRemoveOwnerV1', () => {
     postRequest(SERVER_URL + '/channel/addowner/v1', {
       channelId: channel.channelId,
       uId: userId2.authUserId
-    },  userId1.token);
+    }, userId1.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
       channelId: channel.channelId + 10,

@@ -91,7 +91,7 @@ export const postRequest = (url: string, data: any, token?: string) => {
     url,
     {
       json: data,
-      headers: {'token': token,}
+      headers: { token: token }
     }
   );
   return parseBody(res);
@@ -105,7 +105,7 @@ export const putRequest = (url: string, data: any, token?: string) => {
     url,
     {
       json: data,
-      headers: {'token': token,}
+      headers: { token: token }
     }
   );
   return parseBody(res);
@@ -120,7 +120,7 @@ export const deleteRequest = (url: string, data: any, token?: string) => {
     url,
     {
       qs: data,
-      headers: {'token': token,}
+      headers: { token: token }
     }
   );
   return parseBody(res);
@@ -135,7 +135,7 @@ export const getRequest = (url: string, data: any, token?: string) => {
     url,
     {
       qs: data,
-      headers: {'token': token,}
+      headers: { token: token }
     }
   );
   return parseBody(res);

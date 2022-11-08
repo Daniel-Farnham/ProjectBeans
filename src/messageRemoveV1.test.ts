@@ -115,7 +115,7 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     // user 1 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
     const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
       messageId: message.messageId,
-    },  user1.token);
+    }, user1.token);
 
     expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
   });

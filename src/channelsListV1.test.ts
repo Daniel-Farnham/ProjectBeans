@@ -18,7 +18,7 @@ describe('Testing channelsListV1', () => {
     const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
-    },  userId.token);
+    }, userId.token);
     const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Boost',
       isPublic: false

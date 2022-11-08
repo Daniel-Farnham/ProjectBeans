@@ -19,7 +19,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
 
     const result = putRequest(SERVER_URL + '/user/profile/setemail/v1', {
       email: 'janed@gmail.com',
-    },  user.token);
+    }, user.token);
 
     expect(result).toMatchObject({});
   });
@@ -35,7 +35,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Boost',
       isPublic: true,
-    },  user.token);
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/setemail/v1', {
       email: 'janed@gmail.com',

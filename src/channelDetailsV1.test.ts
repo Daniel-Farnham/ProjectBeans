@@ -107,7 +107,7 @@ describe('Testing channelDetails', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
       isPublic: true,
-    }, user1.token,);
+    }, user1.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
       channelId: channel.channelId

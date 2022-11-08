@@ -81,7 +81,7 @@ describe('Testing negative cases for messageSendV1', () => {
     const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    },  userId.token + 1);
+    }, userId.token + 1);
 
     expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
   });

@@ -56,7 +56,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
     const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    },  userId.token + 'Invalid Token');
+    }, userId.token + 'Invalid Token');
 
     expect(editedMessage).toMatchObject({ error: expect.any(String) });
   });
@@ -147,7 +147,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
     const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    }, user1.token );
+    }, user1.token);
 
     expect(editedMessage).toMatchObject({ error: expect.any(String) });
   });

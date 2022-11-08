@@ -129,7 +129,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     putRequest(SERVER_URL + '/user/profile/setname/v1', {
       nameFirst: 'John',
       nameLast: 'Darcy',
-    },  user.token);
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dm.dmId,
@@ -188,7 +188,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
       uId: user.authUserId,
-    },  user.token);
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
