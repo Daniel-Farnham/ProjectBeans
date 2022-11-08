@@ -78,6 +78,7 @@ export type Messages = {
 */
 export const parseBody = (res: any) => {
   return JSON.parse(res.getBody() as string);
+  
 };
 
 /**
@@ -91,6 +92,9 @@ export const postRequest = (url: string, data: any) => {
       json: data,
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 /**
@@ -105,10 +109,7 @@ export const putRequest = (url: string, data: any) => {
     }
   );
   if (res.statusCode !== 200) {
-    return {
-      statusCode: res.statusCode,
-      body: parseBody(res),
-    };
+    return res;
   }
 
   return parseBody(res);
@@ -126,10 +127,7 @@ export const deleteRequest = (url: string, data: any) => {
     }
   );
   if (res.statusCode !== 200) {
-    return {
-      statusCode: res.statusCode,
-      body: parseBody(res),
-    };
+    return res;
   }
   return parseBody(res);
 };
@@ -146,10 +144,7 @@ export const getRequest = (url: string, data: any) => {
     }
   );
   if (res.statusCode !== 200) {
-    return {
-      statusCode: res.statusCode,
-      body: parseBody(res),
-    };
+    return res;
   }
   return parseBody(res);
 };
