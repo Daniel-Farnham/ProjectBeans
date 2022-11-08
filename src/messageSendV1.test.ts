@@ -16,16 +16,14 @@ describe('Testing positive cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const newMessageId = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
     expect(newMessageId).toStrictEqual({ messageId: expect.any(Number) });
   });
@@ -39,28 +37,24 @@ describe('Testing positive cases for messageSendV1', () => {
     });
 
     const channel1 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId.token);
 
     const channel2 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'Boost',
       isPublic: true
-    });
+    }, userId.token);
 
     const messageId1 = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel1.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
     const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel2.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
     expect(messageId1.messageId).not.toBe(messageId2.messageId);
   });
@@ -80,16 +74,14 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token + 1,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    },  userId.token + 1);
 
     expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
   });
@@ -102,16 +94,14 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel.channelId + 1,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
     expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
   });
@@ -132,10 +122,9 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
       token: user2.token,
@@ -154,10 +143,9 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const messageGreaterThan1000Char = 'a'.repeat(1001);
     const messageLessThan1Char = '';
@@ -177,10 +165,9 @@ describe('Testing negative cases for messageSendV1', () => {
       },
     ])('$desc', ({ token, channelId, message }) => {
       const newMessage = postRequest(SERVER_URL + '/message/send/v1', {
-        token: userId.token,
-        channelId: channel.channelId,
+        channelId: channelId,
         message: message,
-      });
+      }, token);
 
       expect(newMessage).toMatchObject({ error: expect.any(String) });
     });
