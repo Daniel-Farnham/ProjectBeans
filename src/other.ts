@@ -1,8 +1,5 @@
 import { getData, setData } from './dataStore';
-import { port, url } from './config.json';
-const SERVER_URL = `${url}:${port}`;
-import request, { HttpVerb } from 'sync-request';
-
+import request from 'sync-request';
 
 /**
   * Function to clear the data store object
@@ -107,6 +104,13 @@ export const putRequest = (url: string, data: any) => {
       json: data,
     }
   );
+  if (res.statusCode !== 200) {
+    return {
+      statusCode: res.statusCode,
+      body: parseBody(res),
+    };
+  }
+
   return parseBody(res);
 };
 
@@ -121,6 +125,12 @@ export const deleteRequest = (url: string, data: any) => {
       qs: data,
     }
   );
+  if (res.statusCode !== 200) {
+    return {
+      statusCode: res.statusCode,
+      body: parseBody(res),
+    };
+  }
   return parseBody(res);
 };
 
@@ -135,29 +145,14 @@ export const getRequest = (url: string, data: any) => {
       qs: data,
     }
   );
+  if (res.statusCode !== 200) {
+    return {
+      statusCode: res.statusCode,
+      body: parseBody(res),
+    };
+  }
   return parseBody(res);
 };
-/**
-  * Function used to create a HTTP request
-*/
-export function requestHelper(method: HttpVerb, path: string, payload: object) {
-  let qs = {};
-  let json = {};
-  if (['GET', 'DELETE'].includes(method)) {
-    qs = payload;
-  } else {
-    // PUT/POST
-    json = payload;
-  }
-  const res = request(method, SERVER_URL + path, { qs, json });
-
-  if (res.statusCode !== 200) {
-    // Return error code number instead of object in case of error.
-    // (just for convenience)
-    return res.statusCode;
-  }
-  return JSON.parse(res.getBody() as string);
-}
 
 
 /**
