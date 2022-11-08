@@ -446,7 +446,7 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   }
 
   // Construct the dm object
-  data.messageCount++;
+  data.messageCount += 1;
   const dm = {
     dmId: data.messageCount,
     name: name,

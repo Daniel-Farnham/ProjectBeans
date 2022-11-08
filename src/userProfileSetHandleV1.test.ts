@@ -20,9 +20,8 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     });
 
     const result = putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
       handleStr: 'coolestperson',
-    });
+    }, user.token);
 
     expect(result).toMatchObject({});
   });
@@ -36,20 +35,17 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Boost',
       isPublic: true,
-    });
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
       handleStr: 'janeiscool123',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user.token,
       channelId: channel.channelId,
-    });
+    }, user.token);
 
     const expectedChannelObj = {
       name: 'Boost',
@@ -93,9 +89,8 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     });
 
     putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
       handleStr: handleStr,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -108,9 +103,8 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -132,15 +126,12 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
 
       // Update handleStr for user
       putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-        token: user.token,
         handleStr: `${firstNames[i]}iscool`,
-      });
+      }, user.token);
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: users[0].token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
 
     // Loop through each user and check the user object has the handleStr changed
     for (let i = 0; i <= 4; i++) {
@@ -169,19 +160,16 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user.token,
       uIds: [],
-    });
+    }, user.token);
 
     putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
       handleStr: 'janeiscool',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: user.token,
       dmId: dm.dmId,
-    });
+    }, user.token);
 
     const expectedDmObj = {
       name: 'janedoe',
@@ -217,9 +205,8 @@ describe('Testing user/profile/sethandle/v1 error handling', () => {
     });
 
     const result = putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token + token,
       handleStr: handleStr,
-    });
+    }, user.token + token);
 
     expect(result).toStrictEqual(
       {

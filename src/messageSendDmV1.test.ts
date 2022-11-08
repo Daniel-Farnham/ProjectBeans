@@ -23,15 +23,13 @@ describe('Testing messageSendDmV1 success case handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user1.token,
       uIds: [user2.authUserId],
-    });
+    }, user1.token);
 
     const sendDm = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: user1.token,
       dmId: dm.dmId,
       message: 'This is my first message',
-    });
+    }, user1.token);
 
     expect(sendDm).toMatchObject({ messageId: expect.any(Number) });
   });
@@ -52,21 +50,18 @@ describe('Testing messageSendDmV1 success case handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user1.token,
       uIds: [user2.authUserId],
-    });
+    }, user1.token);
 
     postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: user2.token,
       dmId: dm.dmId,
       message: 'This is my first message'
-    });
+    }, user2.token);
 
     const messagesResult = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: user1.token,
       dmId: dm.dmId,
       start: 0
-    });
+    }, user1.token);
     const expectedMessages = {
       messages: [
         {
@@ -97,22 +92,19 @@ describe('Testing messageSendDmV1 success case handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user1.token,
       uIds: [user2.authUserId],
-    });
+    }, user1.token);
 
     postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: user2.token,
       dmId: dm.dmId,
       message: 'This is my first message'
-    });
+    }, user2.token);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
 
     const messagesResult = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: user1.token,
       dmId: dm.dmId,
       start: 0
-    });
+    }, user1.token);
     expect(messagesResult.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
   });
 });
@@ -140,15 +132,13 @@ describe('Testing messageSendDmV1 error handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user1.token,
       uIds: [user2.authUserId],
-    });
+    }, user1.token);
 
     const sendDmResult = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: user1.token + token,
       dmId: dm.dmId + dmId,
       message: message,
-    });
+    }, user1.token + token);
 
     expect(sendDmResult).toStrictEqual(
       {
@@ -179,15 +169,13 @@ describe('Testing messageSendDmV1 error handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user1.token,
       uIds: [user2.authUserId],
-    });
+    }, user1.token);
 
     const sendDmResult = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: user3.token,
       dmId: dm.dmId,
       message: 'JUST A MESSAGE',
-    });
+    }, user3.token);
 
     expect(sendDmResult).toStrictEqual(
       {
