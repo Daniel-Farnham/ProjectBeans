@@ -4,7 +4,7 @@ import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 const INVALID_TOKEN = 403;
-const INPUT_ERROR = 400
+const INPUT_ERROR = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -241,10 +241,20 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
 describe('Testing user/profile/setname/v2 error handling', () => {
   test.each([
-    { token: 'InvalidToken', nameFirst: 'John', nameLast: 'Doe',
-      desc: 'token is invalid', statusCode: INVALID_TOKEN},
-    { token: '', nameFirst: '', nameLast: '',
-      desc: 'Both names are not longer than 1 character', statusCode: INPUT_ERROR},
+    {
+      token: 'InvalidToken',
+      nameFirst: 'John',
+      nameLast: 'Doe',
+      desc: 'token is invalid',
+      statusCode: INVALID_TOKEN
+    },
+    {
+      token: '',
+      nameFirst: '',
+      nameLast: '',
+      desc: 'Both names are not longer than 1 character',
+      statusCode: INPUT_ERROR
+    },
     {
       token: '',
       nameFirst: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa',
@@ -268,6 +278,6 @@ describe('Testing user/profile/setname/v2 error handling', () => {
     expect(result.statusCode).toBe(statusCode);
 
     const bodyObj = JSON.parse(result.body as string);
-      expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    });
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+  });
 });
