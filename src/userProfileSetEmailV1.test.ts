@@ -3,12 +3,13 @@ import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-
+const INPUT_ERROR = 400;
+const INVALID_TOKEN = 403;
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing user/profile/setemail/v1 success handling', () => {
+describe('Testing user/profile/setemail/v2 success handling', () => {
   test('Testing successful return of empty object', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
@@ -17,7 +18,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+    const result = putRequest(SERVER_URL + '/user/profile/setemail/v2', {
       email: 'janed@gmail.com',
     }, user.token);
 
@@ -37,7 +38,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       isPublic: true,
     }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+    putRequest(SERVER_URL + '/user/profile/setemail/v2', {
       email: 'janed@gmail.com',
     }, user.token);
 
@@ -84,7 +85,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       uIds: [],
     }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+    putRequest(SERVER_URL + '/user/profile/setemail/v2', {
       email: 'janed@gmail.com',
     }, user.token);
 
@@ -119,7 +120,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+    putRequest(SERVER_URL + '/user/profile/setemail/v2', {
       email: email,
     }, user.token);
 
@@ -156,7 +157,7 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
       });
 
       // Rename email by changing e-mail domain
-      putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+      putRequest(SERVER_URL + '/user/profile/setemail/v2', {
         email: `${firstNames[i]}.${lastNames[i]}@gmail.com`,
       }, user.token);
       users.push(user);
@@ -184,12 +185,15 @@ describe('Testing user/profile/setemail/v1 success handling', () => {
   });
 });
 
-describe('Testing user/profile/setemail/v1 error handling', () => {
+describe('Testing user/profile/setemail/v2 error handling', () => {
   test.each([
-    { token: 'InvalidToken', email: 'jdoe@gmail.com', desc: 'token is invalid' },
-    { token: '', email: 'jane.doe@student.unsw.edu.au', desc: 'email address is already being used by another user' },
-    { token: '', email: 'jdoe@gmail', desc: 'email entered is not a valid email' },
-  ])('$desc', ({ token, email }) => {
+    { token: 'InvalidToken', email: 'jdoe@gmail.com', 
+      desc: 'token is invalid', statusCode: INVALID_TOKEN},
+    { token: '', email: 'jane.doe@student.unsw.edu.au', 
+      desc: 'email address is already being used by another user', statusCode: INPUT_ERROR },
+    { token: '', email: 'jdoe@gmail',desc: 'email entered is not a valid email',
+      statusCode: INPUT_ERROR },
+  ])('$desc', ({ token, email, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -197,14 +201,12 @@ describe('Testing user/profile/setemail/v1 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/setemail/v1', {
+    const result = putRequest(SERVER_URL + '/user/profile/setemail/v2', {
       email: email,
     }, user.token + token);
 
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+    expect(result.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

@@ -149,6 +149,13 @@ app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/setemail/v2', (req: Request, res: Response, next) => {
+  const { email } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetEmailV1(token, email));
+  save();
+});
+
 app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
   const { handleStr } = req.body;
   const token = req.header('token');
