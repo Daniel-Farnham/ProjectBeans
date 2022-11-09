@@ -86,7 +86,12 @@ describe('Testing channelDetails', () => {
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
       channelId: channel.channelId + 1
     }, userId.token);
-    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+
+    expect(result.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+
+    // expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 
   test('Authorised user is not a member of the channel', () => {
@@ -113,6 +118,7 @@ describe('Testing channelDetails', () => {
       channelId: channel.channelId
     }, user2.token);
 
+    
     expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
   });
 });
