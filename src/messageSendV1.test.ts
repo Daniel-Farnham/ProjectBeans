@@ -83,8 +83,11 @@ describe('Testing negative cases for messageSendV1', () => {
       message: 'Hello this is a random test message'
     }, userId.token + 1);
 
-    expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject.statusCode).toBe(403);
+    const bodyObj = JSON.parse(returnedMessageObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
+
   test('Test invalid channelId', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
@@ -139,40 +142,32 @@ describe('Testing negative cases for messageSendV1', () => {
   });
 
   describe('Message is an invalid length', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'daniel.farnham@student.unsw.edu.au',
-      password: 'AVeryPoorPassword',
-      nameFirst: 'Daniel',
-      nameLast: 'Farnham',
-    });
-
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      name: 'ChannelBoost',
-      isPublic: true,
-    }, userId.token);
-
-    const messageGreaterThan1000Char = 'a'.repeat(1001);
-    const messageLessThan1Char = '';
-
     test.each([
       {
-        token: userId.token,
-        channelId: channel.channelId,
-        message: messageGreaterThan1000Char,
+        message: 'a'.repeat(1001),
         desc: 'Testing message too long'
       },
       {
-        token: userId.token,
-        channelId: channel.channelId,
-        message: messageLessThan1Char,
-        desc: 'Testing message too short '
+        message: '',
+        desc: 'Testing message too short'
       },
-    ])('$desc', ({ token, channelId, message }) => {
-      const newMessage = postRequest(SERVER_URL + '/message/send/v2', {
-        channelId: channelId,
-        message: message,
-      }, token);
+    ])('$desc', ({ message }) => {
+      const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+        email: 'daniel.farnham@student.unsw.edu.au',
+        password: 'AVeryPoorPassword',
+        nameFirst: 'Daniel',
+        nameLast: 'Farnham',
+      });
 
+      const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+        name: 'ChannelBoost',
+        isPublic: true,
+      }, userId.token);
+
+      const newMessage = postRequest(SERVER_URL + '/message/send/v2', {
+        channelId: channel.channelId,
+        message: message,
+      }, userId.token);
       expect(newMessage.statusCode).toBe(400);
       const bodyObj = JSON.parse(newMessage.body as string);
       expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
