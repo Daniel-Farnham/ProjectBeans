@@ -86,6 +86,5 @@ describe('Testing usersAllV1 error handling', () => {
 
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-
   });
 });
