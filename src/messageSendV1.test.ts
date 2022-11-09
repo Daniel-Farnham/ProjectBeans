@@ -20,7 +20,7 @@ describe('Testing positive cases for messageSendV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const newMessageId = postRequest(SERVER_URL + '/message/send/v1', {
+    const newMessageId = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -46,12 +46,12 @@ describe('Testing positive cases for messageSendV1', () => {
       isPublic: true
     }, userId.token);
 
-    const messageId1 = postRequest(SERVER_URL + '/message/send/v1', {
+    const messageId1 = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel1.channelId,
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
+    const messageId2 = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel2.channelId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -78,7 +78,7 @@ describe('Testing negative cases for messageSendV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, userId.token + 1);
@@ -98,12 +98,14 @@ describe('Testing negative cases for messageSendV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId + 1,
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject.statusCode).toBe(400);
+    const bodyObj = JSON.parse(returnedMessageObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Authorised user is not a member of the channel', () => {
@@ -126,12 +128,14 @@ describe('Testing negative cases for messageSendV1', () => {
       isPublic: true,
     }, user1.token);
 
-    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user2.token,
-      channelId: channel.channelId
-    });
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v2', {
+      channelId: channel.channelId,
+      message: 'Hello this is a random test message'
+    }, user2.token);
 
-    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject.statusCode).toBe(403);
+    const bodyObj = JSON.parse(returnedMessageObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   describe('Message is an invalid length', () => {
@@ -164,12 +168,14 @@ describe('Testing negative cases for messageSendV1', () => {
         desc: 'Testing message too short '
       },
     ])('$desc', ({ token, channelId, message }) => {
-      const newMessage = postRequest(SERVER_URL + '/message/send/v1', {
+      const newMessage = postRequest(SERVER_URL + '/message/send/v2', {
         channelId: channelId,
         message: message,
       }, token);
 
-      expect(newMessage).toMatchObject({ error: expect.any(String) });
+      expect(newMessage.statusCode).toBe(400);
+      const bodyObj = JSON.parse(newMessage.body as string);
+      expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
     });
   });
 });

@@ -197,6 +197,13 @@ app.post('/message/send/v1', (req: Request, res: Response, next) => {
   res.json(messageSendV1(token, channelId, message));
 });
 
+app.post('/message/send/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.body.channelId as string);
+  const message = req.body.message as string;
+  res.json(messageSendV1(token, channelId, message));
+});
+
 app.put('/message/edit/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
