@@ -143,21 +143,21 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
 */
 export function userProfileSetHandleV1 (token: string, handleStr: string): error | Record<string, never> {
   if (!tokenExists(token)) {
-    return { error: 'token provided is invalid' };
+    throw HTTPError(403, 'token is invalid');
   }
 
   if (handleInUse(handleStr)) {
-    return { error: 'Handle already in use' };
+    throw HTTPError(400, 'handle already in use');
   }
 
   // Check if handle is valid, if not, then return error appropriate
   // error messages
   const notAlphanumeric = /[^A-Za-z0-9]/;
   if (notAlphanumeric.test(handleStr)) {
-    return { error: 'Handle is not alphanumeric' };
+    throw HTTPError(400, 'handle is not alphanumeric');
   }
   if (handleStr.length < 3 || handleStr.length > 20) {
-    return { error: 'Handle is not between 3 and 20 characters in length' };
+    throw HTTPError(400, 'Handle is not between 3 and 20 characters in length');
   }
 
   const data = getData();
