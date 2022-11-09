@@ -156,6 +156,13 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/sethandle/v2', (req: Request, res: Response, next) => {
+  const { handleStr } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetHandleV1(token, handleStr));
+  save();
+});
+
 // users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');

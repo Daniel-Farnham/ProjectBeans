@@ -4,13 +4,15 @@ import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 import { port, url } from './config.json';
 
 const SERVER_URL = `${url}:${port}`;
+const INPUT_ERROR = 400;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 // Working cases
-describe('Testing user/profile/sethandle/v1 success handling', () => {
+describe('Testing user/profile/sethandle/v2 success handling', () => {
   test('Testing successful return of empty object', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
@@ -19,7 +21,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: 'coolestperson',
     }, user.token);
 
@@ -39,7 +41,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       isPublic: true,
     }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+    putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: 'janeiscool123',
     }, user.token);
 
@@ -88,7 +90,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+    putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: handleStr,
     }, user.token);
 
@@ -125,7 +127,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       });
 
       // Update handleStr for user
-      putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+      putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
         handleStr: `${firstNames[i]}iscool`,
       }, user.token);
       users.push(user);
@@ -163,7 +165,7 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       uIds: [],
     }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+    putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: 'janeiscool',
     }, user.token);
 
@@ -189,14 +191,19 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
   });
 });
 
-describe('Testing user/profile/sethandle/v1 error handling', () => {
+describe('Testing user/profile/sethandle/v2 error handling', () => {
   test.each([
-    { token: '', handleStr: 'jd', desc: 'length of handleStr <3 characters' },
-    { token: '', handleStr: 'janedoeshasaverylonghandlestring12345', desc: 'length of handleStr >20 characters' },
-    { token: '', handleStr: 'ThisIsNot!ALPHANUMERIC!!!>:(', desc: 'handleStr contains non alphanumeric characters' },
-    { token: '', handleStr: 'janedoe', desc: 'handleStr is already being used by another user' },
-    { token: 'InvalidToken', handleStr: 'jdoe@gmail.com', desc: 'token is invalid' },
-  ])('$desc', ({ token, handleStr }) => {
+    { token: '', handleStr: 'jd', desc: 'length of handleStr <3 characters',
+      statusCode: INPUT_ERROR },
+    { token: '', handleStr: 'janedoeshasaverylonghandlestring12345', 
+      desc: 'length of handleStr >20 characters', statusCode: INPUT_ERROR},
+    { token: '', handleStr: 'ThisIsNot!ALPHANUMERIC!!!>:(', 
+      desc: 'handleStr contains non alphanumeric characters', statusCode: INPUT_ERROR },
+    { token: '', handleStr: 'janedoe', desc: 'handleStr is already being used by another user',
+      statusCode: INPUT_ERROR },
+    { token: 'InvalidToken', handleStr: 'jdoe@gmail.com', desc: 'token is invalid',
+    statusCode: INPUT_ERROR },
+  ])('$desc', ({ token, handleStr, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -204,14 +211,11 @@ describe('Testing user/profile/sethandle/v1 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
+    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: handleStr,
     }, user.token + token);
-
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+    expect(result.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
