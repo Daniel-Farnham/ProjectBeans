@@ -142,6 +142,13 @@ app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/setname/v2', (req: Request, res: Response, next) => {
+  const { nameFirst, nameLast } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  save();
+});
+
 app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
   const { email } = req.body;
   const token = req.header('token');
@@ -163,8 +170,21 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/sethandle/v2', (req: Request, res: Response, next) => {
+  const { handleStr } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetHandleV1(token, handleStr));
+  save();
+});
+
 // users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(usersAllV1(token));
+  save();
+});
+
+app.get('/users/all/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
   save();
@@ -198,6 +218,13 @@ app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/message/send/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.body.channelId as string);
+  const message = req.body.message as string;
+  res.json(messageSendV1(token, channelId, message));
+});
+
+app.post('/message/send/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.body.channelId as string);
   const message = req.body.message as string;
