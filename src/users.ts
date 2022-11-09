@@ -145,11 +145,11 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
   if (!tokenExists(token)) {
     throw HTTPError(403, 'token is invalid');
   }
-  
+
   if (handleInUse(handleStr)) {
     throw HTTPError(400, 'handle already in use');
   }
-  
+
   // Check if handle is valid, if not, then return error appropriate
   // error messages
   const notAlphanumeric = /[^A-Za-z0-9]/;

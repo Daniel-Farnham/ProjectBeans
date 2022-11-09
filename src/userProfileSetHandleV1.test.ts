@@ -193,16 +193,36 @@ describe('Testing user/profile/sethandle/v2 success handling', () => {
 
 describe('Testing user/profile/sethandle/v2 error handling', () => {
   test.each([
-    { token: '', handleStr: 'jd', desc: 'length of handleStr <3 characters',
-      statusCode: INPUT_ERROR },
-    { token: '', handleStr: 'janedoeshasaverylonghandlestring12345', 
-      desc: 'length of handleStr >20 characters', statusCode: INPUT_ERROR},
-    { token: '', handleStr: 'ThisIsNot!ALPHANUMERIC!!!>:(', 
-      desc: 'handleStr contains non alphanumeric characters', statusCode: INPUT_ERROR },
-    { token: '', handleStr: 'janedoe', desc: 'handleStr is already being used by another user',
-      statusCode: INPUT_ERROR },
-    { token: 'InvalidToken', handleStr: 'jdoe@gmail.com', desc: 'token is invalid',
-    statusCode: INPUT_ERROR },
+    {
+      token: '',
+      handleStr: 'jd',
+      desc: 'length of handleStr <3 characters',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      handleStr: 'janedoeshasaverylonghandlestring12345',
+      desc: 'length of handleStr >20 characters',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      handleStr: 'ThisIsNot!ALPHANUMERIC!!!>:(',
+      desc: 'handleStr contains non alphanumeric characters',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      handleStr: 'janedoe',
+      desc: 'handleStr is already being used by another user',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: 'InvalidToken',
+      handleStr: 'jdoe@gmail.com',
+      desc: 'token is invalid',
+      statusCode: INVALID_TOKEN
+    },
   ])('$desc', ({ token, handleStr, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
