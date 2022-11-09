@@ -207,15 +207,15 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
 */
 export function userProfileSetEmailV1 (token: string, email: string): error | Record<string, never> {
   if (!tokenExists(token)) {
-    return { error: 'token provided is invalid' };
+    throw HTTPError(403, 'token is invalid');
   }
 
   if (!(validator.isEmail(email))) {
-    return { error: 'Invalid email address entered' };
+    throw HTTPError(400, 'Invalid email address entered');
   }
 
   if (emailInUse(email)) {
-    return { error: 'E-mail already in use' };
+    throw HTTPError(400, 'E-mail already in use');
   }
 
   // Update user profile for matching user with new email address
