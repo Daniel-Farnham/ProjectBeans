@@ -2,6 +2,7 @@ import { postRequest, deleteRequest, getRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -23,10 +24,10 @@ describe('Testing usersAllV1 successful case handling', () => {
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v2', {}, users[0].token);
 
     // Loop through each user and check the user object exists within the
-    // returned users object that was called by /users/all/v1
+    // returned users object that was called by /users/all/v2
     for (let i = 0; i <= 4; i++) {
       const expectedUser = {
         uId: users[i].authUserId,
@@ -51,7 +52,7 @@ describe('Testing usersAllV1 successful case handling', () => {
       nameLast: 'Doe',
     });
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, user.token);
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v2', {}, user.token);
 
     const expectedUsers = {
       users: [
@@ -80,12 +81,11 @@ describe('Testing usersAllV1 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = getRequest(SERVER_URL + '/users/all/v1', {}, user.token + token);
+    const result = getRequest(SERVER_URL + '/users/all/v2', {}, user.token + token);
+    expect(result.statusCode).toBe(INVALID_TOKEN);
 
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+
   });
 });
