@@ -142,6 +142,13 @@ app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/setname/v2', (req: Request, res: Response, next) => {
+  const { nameFirst, nameLast } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  save();
+});
+
 app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
   const { email } = req.body;
   const token = req.header('token');
