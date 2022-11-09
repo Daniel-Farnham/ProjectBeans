@@ -50,7 +50,7 @@ export function userProfileV1 (token: string, uId: number): error | { user: User
 export function usersAllV1 (token: string): error | {users: any[]} {
   // If token invalid, return error
   if (!tokenExists(token)) {
-    return { error: 'token provided is invalid' };
+    throw HTTPError(403, 'token is invalid');
   }
   const data = getData();
 
@@ -82,11 +82,11 @@ export function usersAllV1 (token: string): error | {users: any[]} {
 */
 export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string): error | Record<string, never> {
   if (!tokenExists(token)) {
-    return { error: 'token provided is invalid' };
+    throw HTTPError(403, 'token is invalid');
   }
 
   if (!validName(nameFirst) || !validName(nameLast)) {
-    return { error: 'length of nameFirst/nameLast is not between 1 and 50' };
+    throw HTTPError(400, 'length of nameFirst/nameLast is not between 1 and 50');
   }
 
   const uId = getUidFromToken(token);

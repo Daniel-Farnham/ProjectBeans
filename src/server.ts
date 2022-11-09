@@ -142,6 +142,13 @@ app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/user/profile/setname/v2', (req: Request, res: Response, next) => {
+  const { nameFirst, nameLast } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  save();
+});
+
 app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
   const { email } = req.body;
   const token = req.header('token');
@@ -156,8 +163,13 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
   save();
 });
 
-// users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(usersAllV1(token));
+  save();
+});
+
+app.get('/users/all/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
   save();
