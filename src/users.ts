@@ -84,7 +84,7 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
   if (!tokenExists(token)) {
     throw HTTPError(403, 'token is invalid');
   }
-  
+
   if (!validName(nameFirst) || !validName(nameLast)) {
     throw HTTPError(400, 'length of nameFirst/nameLast is not between 1 and 50');
   }
