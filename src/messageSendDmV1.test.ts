@@ -115,14 +115,34 @@ describe('Testing messagesenddmv2 error handling', () => {
   const messageGreaterThan1000Char = 'a'.repeat(1001);
   const messageLessThan1Char = '';
   test.each([
-    { token: 'InvalidToken', dmId: 0, message: 'This is a message', 
-      statusCode: INVALID_TOKEN, desc: 'token is invalid' },
-    { token: '', dmId: 100, message: 'This is a message', statusCode: INPUT_ERROR,
-      desc: 'dmId does not refer to a valid DM' },
-    { token: '', dmId: 0, message: messageLessThan1Char, statusCode: INPUT_ERROR, 
-      desc: 'Length of message < 1 character' },
-    { token: '', dmId: 0, message: messageGreaterThan1000Char, statusCode: INPUT_ERROR,
-      desc: 'Length of message > 1000 characters' },
+    {
+      token: 'InvalidToken',
+      dmId: 0,
+      message: 'This is a message',
+      statusCode: INVALID_TOKEN,
+      desc: 'token is invalid'
+    },
+    {
+      token: '',
+      dmId: 100,
+      message: 'This is a message',
+      statusCode: INPUT_ERROR,
+      desc: 'dmId does not refer to a valid DM'
+    },
+    {
+      token: '',
+      dmId: 0,
+      message: messageLessThan1Char,
+      statusCode: INPUT_ERROR,
+      desc: 'Length of message < 1 character'
+    },
+    {
+      token: '',
+      dmId: 0,
+      message: messageGreaterThan1000Char,
+      statusCode: INPUT_ERROR,
+      desc: 'Length of message > 1000 characters'
+    },
   ])('$desc', ({ statusCode, token, dmId, message }) => {
     const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hang.pham@student.unsw.edu.au',
@@ -145,7 +165,6 @@ describe('Testing messagesenddmv2 error handling', () => {
       dmId: dm.dmId + dmId,
       message: message,
     }, user1.token + token);
-
 
     expect(sendDmResult.statusCode).toBe(statusCode);
     const bodyObj = JSON.parse(sendDmResult.body as string);

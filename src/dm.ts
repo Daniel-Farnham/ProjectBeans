@@ -479,7 +479,7 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   if (!dmIdExists(dmId)) {
     throw HTTPError(400, 'dmId is invalid');
   }
-  
+
   // Check if length of the message is between 1-1000 characters long.
   // Create message if true, return error if false.
   if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
