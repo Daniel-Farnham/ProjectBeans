@@ -50,7 +50,7 @@ export function userProfileV1 (token: string, uId: number): error | { user: User
 export function usersAllV1 (token: string): error | {users: any[]} {
   // If token invalid, return error
   if (!tokenExists(token)) {
-    return { error: 'token provided is invalid' };
+    throw HTTPError(403, 'token is invalid');
   }
   const data = getData();
 
