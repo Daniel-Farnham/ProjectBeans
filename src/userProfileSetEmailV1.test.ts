@@ -187,12 +187,24 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
 
 describe('Testing user/profile/setemail/v2 error handling', () => {
   test.each([
-    { token: 'InvalidToken', email: 'jdoe@gmail.com', 
-      desc: 'token is invalid', statusCode: INVALID_TOKEN},
-    { token: '', email: 'jane.doe@student.unsw.edu.au', 
-      desc: 'email address is already being used by another user', statusCode: INPUT_ERROR },
-    { token: '', email: 'jdoe@gmail',desc: 'email entered is not a valid email',
-      statusCode: INPUT_ERROR },
+    {
+      token: 'InvalidToken',
+      email: 'jdoe@gmail.com',
+      desc: 'token is invalid',
+      statusCode: INVALID_TOKEN
+    },
+    {
+      token: '',
+      email: 'jane.doe@student.unsw.edu.au',
+      desc: 'email address is already being used by another user',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      email: 'jdoe@gmail',
+      desc: 'email entered is not a valid email',
+      statusCode: INPUT_ERROR
+    },
   ])('$desc', ({ token, email, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
