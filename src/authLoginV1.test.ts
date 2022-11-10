@@ -50,10 +50,10 @@ describe('Testing basic authLoginV1 functionality', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const loginId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
 
-    const user = getRequest(SERVER_URL + '/user/profile/v3', {
+    const user = getRequest(SERVER_URL + '/user/profile/v2', {
       token: loginId.token,
       uId: loginId.authUserId
-    });
+    }, loginId.token);
 
     expect(loginId.authUserId).toBe(user.user.uId);
   });

@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -16,16 +16,14 @@ describe('Testing positive cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const newMessageId = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
+    const newMessageId = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
     expect(newMessageId).toStrictEqual({ messageId: expect.any(Number) });
   });
@@ -39,28 +37,24 @@ describe('Testing positive cases for messageSendV1', () => {
     });
 
     const channel1 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId.token);
 
     const channel2 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'Boost',
       isPublic: true
-    });
+    }, userId.token);
 
-    const messageId1 = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
+    const messageId1 = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel1.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const messageId2 = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
+    const messageId2 = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel2.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
     expect(messageId1.messageId).not.toBe(messageId2.messageId);
   });
@@ -80,19 +74,20 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token + 1,
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token + 1);
 
-    expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject.statusCode).toBe(403);
+    const bodyObj = JSON.parse(returnedMessageObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
+
   test('Test invalid channelId', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
@@ -102,18 +97,18 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId + 1,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    expect(returnedMessageObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject.statusCode).toBe(400);
+    const bodyObj = JSON.parse(returnedMessageObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Authorised user is not a member of the channel', () => {
@@ -132,57 +127,50 @@ describe('Testing negative cases for messageSendV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
-    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user2.token,
-      channelId: channel.channelId
-    });
+    const returnedMessageObject = postRequest(SERVER_URL + '/message/send/v2', {
+      channelId: channel.channelId,
+      message: 'Hello this is a random test message'
+    }, user2.token);
 
-    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+    expect(returnedMessageObject.statusCode).toBe(403);
+    const bodyObj = JSON.parse(returnedMessageObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   describe('Message is an invalid length', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'daniel.farnham@student.unsw.edu.au',
-      password: 'AVeryPoorPassword',
-      nameFirst: 'Daniel',
-      nameLast: 'Farnham',
-    });
-
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
-      name: 'ChannelBoost',
-      isPublic: true,
-    });
-
-    const messageGreaterThan1000Char = 'a'.repeat(1001);
-    const messageLessThan1Char = '';
-
     test.each([
       {
-        token: userId.token,
-        channelId: channel.channelId,
-        message: messageGreaterThan1000Char,
+        message: 'a'.repeat(1001),
         desc: 'Testing message too long'
       },
       {
-        token: userId.token,
-        channelId: channel.channelId,
-        message: messageLessThan1Char,
-        desc: 'Testing message too short '
+        message: '',
+        desc: 'Testing message too short'
       },
-    ])('$desc', ({ token, channelId, message }) => {
-      const newMessage = postRequest(SERVER_URL + '/message/send/v1', {
-        token: userId.token,
-        channelId: channel.channelId,
-        message: message,
+    ])('$desc', ({ message }) => {
+      const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+        email: 'daniel.farnham@student.unsw.edu.au',
+        password: 'AVeryPoorPassword',
+        nameFirst: 'Daniel',
+        nameLast: 'Farnham',
       });
 
-      expect(newMessage).toMatchObject({ error: expect.any(String) });
+      const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+        name: 'ChannelBoost',
+        isPublic: true,
+      }, userId.token);
+
+      const newMessage = postRequest(SERVER_URL + '/message/send/v2', {
+        channelId: channel.channelId,
+        message: message,
+      }, userId.token);
+      expect(newMessage.statusCode).toBe(400);
+      const bodyObj = JSON.parse(newMessage.body as string);
+      expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
     });
   });
 });

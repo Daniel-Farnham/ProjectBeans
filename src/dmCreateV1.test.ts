@@ -16,9 +16,8 @@ describe('Testing basic dmCreateV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     expect(dmId).toStrictEqual({ dmId: expect.any(Number) });
   });
@@ -32,14 +31,12 @@ describe('Testing basic dmCreateV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails.name).toBe('curtisscully');
   });
@@ -67,14 +64,12 @@ describe('Testing basic dmCreateV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     expect(dmDetails.name).toBe('curtisscully, edwinngo, haydensmith');
   });
@@ -88,14 +83,12 @@ describe('Testing basic dmCreateV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const expectedMembers = [
       {
@@ -133,14 +126,12 @@ describe('Testing basic dmCreateV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const expectedMembers = new Set([
       {
@@ -180,9 +171,8 @@ describe('Testing dmCreateV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: [regId.authUserId + 1]
-    });
+    }, regId.token);
 
     expect(dmId).toStrictEqual({ error: expect.any(String) });
   });
@@ -203,18 +193,16 @@ describe('Testing dmCreateV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId, secondId.authUserId]
-    });
+    }, firstId.token);
 
     expect(dmId).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing dmCreateV1 returns error when token is invalid', () => {
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: 'NotAToken',
       uIds: []
-    });
+    }, 'NotAToken');
 
     expect(dmId).toStrictEqual({ error: expect.any(String) });
   });
