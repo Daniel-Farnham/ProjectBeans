@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
 
 /**
@@ -12,6 +13,7 @@ export function clearV1 (): Record<string, never> {
     channels: [],
     sessions: [],
     messageCount: 0,
+    tokenCount: 0,
     dms: [],
   };
   setData(data);
@@ -19,6 +21,7 @@ export function clearV1 (): Record<string, never> {
 }
 
 export type error = { error: string };
+export type httpError = { code: number, error: string };
 
 /**
   * Specifies the user interface (used for return types)
@@ -83,55 +86,72 @@ export const parseBody = (res: any) => {
 /**
   * Function used to create a post request
 */
-export const postRequest = (url: string, data: any) => {
+export const postRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'POST',
     url,
     {
       json: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 /**
   * Function used to create a put request
 */
-export const putRequest = (url: string, data: any) => {
+export const putRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'PUT',
     url,
     {
       json: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
+
   return parseBody(res);
 };
 
 /**
   * Function used to create a delete request
 */
-export const deleteRequest = (url: string, data: any) => {
+export const deleteRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'DELETE',
     url,
     {
       qs: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 
 /**
   * Function used to create a get request
 */
-export const getRequest = (url: string, data: any) => {
+export const getRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'GET',
     url,
     {
       qs: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 
@@ -301,10 +321,11 @@ export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
 */
 export function tokenExists (token: string): boolean {
   const data = getData();
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
 
   // Loop through sessions array to check if token exists
   for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
+    if (session.tokens.includes(hashedToken)) {
       return true;
     }
   }
@@ -334,9 +355,9 @@ export function getMessageId(): number {
 */
 export function getUidFromToken (token: string): number {
   const data = getData();
-
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
+    if (session.tokens.includes(hashedToken)) {
       return session.uId;
     }
   }

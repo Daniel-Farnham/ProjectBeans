@@ -8,53 +8,46 @@ beforeEach(() => {
 
 describe('Testing basic dmListV1 functionality', () => {
   test('Test dmListV1 returns an empty list when the user is in no dms', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const lists = getRequest(SERVER_URL + '/dm/list/v2', {
-      token: regId.token
-    });
+    const lists = getRequest(SERVER_URL + '/dm/list/v2', {}, regId.token);
 
     expect(lists).toStrictEqual({ dms: [] });
   });
 
   test('Test dmListV1 only returns dms the user is apart of, when they aren\'t a creator of any', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    postRequest(SERVER_URL + '/dm/create/v2', {
-      token: secondId.token,
+    postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, secondId.token);
 
-    postRequest(SERVER_URL + '/dm/create/v2', {
-      token: secondId.token,
+    postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, secondId.token);
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: secondId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [firstId.authUserId]
-    });
+    }, secondId.token);
 
-    const list = getRequest(SERVER_URL + '/dm/list/v2', {
-      token: firstId.token
-    });
+    const list = getRequest(SERVER_URL + '/dm/list/v2', {}, firstId.token);
 
     const expectedList = [
       {
@@ -67,38 +60,33 @@ describe('Testing basic dmListV1 functionality', () => {
   });
 
   test('Test dmListV1 only returns dms the user is apart of, when they are a creator of all', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    postRequest(SERVER_URL + '/dm/create/v2', {
-      token: secondId.token,
+    postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, secondId.token);
 
-    const firstDm = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const firstDm = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, firstId.token);
 
-    const secondDm = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const secondDm = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
-    const list = getRequest(SERVER_URL + '/dm/list/v2', {
-      token: firstId.token
-    });
+    const list = getRequest(SERVER_URL + '/dm/list/v2', {}, firstId.token);
 
     const expectedList = new Set([
       {
@@ -115,12 +103,12 @@ describe('Testing basic dmListV1 functionality', () => {
   });
 });
 
-describe('Testing dmCreateV1 error handling', () => {
+describe('Testing dmListV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
-    const list = getRequest(SERVER_URL + '/dm/list/v2', {
-      token: 'NotAToken'
-    });
+    const list = getRequest(SERVER_URL + '/dm/list/v1', {}, 'NotAToken');
 
-    expect(list).toEqual(403);
+    expect(list.statusCode).toBe(403);
+    const bodyObj = JSON.parse(list.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

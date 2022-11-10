@@ -1,6 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
+import crypto from 'crypto';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -8,6 +9,7 @@ const GLOBAL_MEMBER = 2;
 const MIN_PASSWORD_LEN = 6;
 const MIN_NAME_LEN = 1;
 const MAX_NAME_LEN = 50;
+export const GLOBAL_SECRET = "YouAren'tGettingIn!";
 
 type authInfo = { token: string, authUserId: number };
 
@@ -26,8 +28,9 @@ function authLoginV1(email: string, password: string): authInfo | error {
   // If email matches, but password is wrong return an error
   const data = getData();
   const caseInsensitiveEmail = email.toLowerCase();
+  const hashedPassword = getHashOf(password);
   for (const user of data.users) {
-    if (user.email === caseInsensitiveEmail && user.password === password) {
+    if (user.email === caseInsensitiveEmail && user.password === hashedPassword) {
       const userId = user.uId;
       const token = generateToken();
 
@@ -35,12 +38,12 @@ function authLoginV1(email: string, password: string): authInfo | error {
       // and add a new token for this login
       for (const user of data.sessions) {
         if (user.uId === userId) {
-          user.tokens.push(token);
+          user.tokens.push(token.hash);
         }
       }
 
-      return { token: token, authUserId: userId };
-    } else if (user.email === caseInsensitiveEmail && user.password !== password) {
+      return { token: token.token, authUserId: userId };
+    } else if (user.email === caseInsensitiveEmail && user.password !== hashedPassword) {
       return { error: 'Incorrect password.' };
     }
   }
@@ -87,7 +90,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
-    password: password,
+    password: getHashOf(password),
     permissionId: permissionId
   };
 
@@ -98,7 +101,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
   const sessionInfo = {
     uId: userId,
-    tokens: [token]
+    tokens: [token.hash]
   };
 
   data.sessions.push(sessionInfo);
@@ -106,7 +109,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   setData(data);
 
   return {
-    token: token,
+    token: token.token,
     authUserId: userId
   };
 }
@@ -125,8 +128,9 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
   const data = getData();
 
   // Filter out the token from the user's sessions
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    session.tokens = session.tokens.filter(activeToken => activeToken !== token);
+    session.tokens = session.tokens.filter(activeToken => activeToken !== hashedToken);
   }
 
   setData(data);
@@ -224,21 +228,30 @@ function generateHandle(nameFirst: string, nameLast: string): string {
   *
   * @returns {string} - A unique token
   */
-function generateToken(): string {
+function generateToken(): any {
   const data = getData();
 
-  // Find the token with the greatest value then add 1 so our new token is unique
-  let newToken = 0;
-  for (const user of data.sessions) {
-    for (const token of user.tokens) {
-      if (parseInt(token) > newToken) {
-        newToken = parseInt(token);
-      }
-    }
-  }
-  newToken++;
+  const newToken = data.tokenCount;
 
-  return newToken.toString();
+  data.tokenCount += 1;
+  setData(data);
+
+  const msg = newToken.toString() + GLOBAL_SECRET;
+  return {
+    token: newToken.toString(),
+    hash: getHashOf(msg),
+  };
+}
+
+/**
+ * Return hash of plaintext string
+ *
+ *  @param {string} plaintext - plaintext string
+ *
+ * @returns {string} - A unique hash
+ */
+export function getHashOf(plaintext: string) {
+  return crypto.createHash('sha256').update(plaintext).digest('hex');
 }
 
 export { authLoginV1, authRegisterV1 };

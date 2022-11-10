@@ -16,16 +16,14 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token,
       channelId: channel.channelId,
       start: 0,
-    });
+    }, newId.token);
 
     expect(messages).toStrictEqual({
       messages: expect.any(Array),
@@ -43,16 +41,14 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token,
       channelId: channel.channelId,
       start: 0,
-    });
+    }, newId.token);
 
     const messagesObj = {
       messages: [],
@@ -72,34 +68,29 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     const firstMsg = postRequest(SERVER_URL + '/message/send/v1', {
-      token: newId.token,
       channelId: channel.channelId,
       message: 'Testing 1'
-    });
+    }, newId.token);
 
     const secondMsg = postRequest(SERVER_URL + '/message/send/v1', {
-      token: newId.token,
       channelId: channel.channelId,
       message: 'Testing 2'
-    });
+    }, newId.token);
 
     const thirdMsg = postRequest(SERVER_URL + '/message/send/v1', {
-      token: newId.token,
       channelId: channel.channelId,
       message: 'Testing 3'
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token,
       channelId: channel.channelId,
       start: 0,
-    });
+    }, newId.token);
 
     const messagesObj = {
       messages: [
@@ -138,34 +129,29 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     postRequest(SERVER_URL + '/message/send/v1', {
-      token: newId.token,
       channelId: channel.channelId,
       message: 'Testing 1'
-    });
+    }, newId.token);
 
     const secondMsg = postRequest(SERVER_URL + '/message/send/v1', {
-      token: newId.token,
       channelId: channel.channelId,
       message: 'Testing 2'
-    });
+    }, newId.token);
 
     const thirdMsg = postRequest(SERVER_URL + '/message/send/v1', {
-      token: newId.token,
       channelId: channel.channelId,
       message: 'Testing 3'
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token,
       channelId: channel.channelId,
       start: 1
-    });
+    }, newId.token);
 
     const messagesObj = {
       messages: [
@@ -198,24 +184,21 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     for (let i = 0; i < 51; i++) {
       postRequest(SERVER_URL + '/message/send/v1', {
-        token: newId.token,
         channelId: channel.channelId,
         message: i.toString()
-      });
+      }, newId.token);
     }
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token,
       channelId: channel.channelId,
       start: 0
-    });
+    }, newId.token);
 
     expect(messages.start).toBe(0);
     expect(messages.end).toBe(49);
@@ -230,24 +213,21 @@ describe('Testing basic functionality for channelMessagesV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     for (let i = 0; i < 50; i++) {
       postRequest(SERVER_URL + '/message/send/v1', {
-        token: newId.token,
         channelId: channel.channelId,
         message: i.toString()
-      });
+      }, newId.token);
     }
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token,
       channelId: channel.channelId,
       start: 1
-    });
+    }, newId.token);
 
     expect(messages.start).toBe(1);
     expect(messages.end).toBe(-1);
@@ -289,16 +269,14 @@ describe('Testing channelMessagesV1 error handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: newId.token,
       name: 'General',
       isPublic: false,
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: newId.token + tokenOffset,
       channelId: channel.channelId + channelIdOffset,
       start: start,
-    });
+    }, newId.token + tokenOffset);
 
     expect(messages).toMatchObject({ error: expect.any(String) });
   });
@@ -319,16 +297,14 @@ describe('Testing channelMessagesV1 error handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: firstId.token,
       name: 'ABD',
       isPublic: true,
-    });
+    }, firstId.token);
 
     const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
-      token: secondId.token,
       channelId: channel.channelId,
       start: 0,
-    });
+    }, secondId.token);
 
     expect(messages).toMatchObject({ error: expect.any(String) });
   });

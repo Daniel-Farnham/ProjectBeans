@@ -4,13 +4,15 @@ import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 import { port, url } from './config.json';
 
 const SERVER_URL = `${url}:${port}`;
+const INPUT_ERROR = 400;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
 // Working cases
-describe('Testing user/profile/sethandle/v1 success handling', () => {
+describe('Testing user/profile/sethandle/v2 success handling', () => {
   test('Testing successful return of empty object', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
@@ -19,10 +21,9 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
+    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: 'coolestperson',
-    });
+    }, user.token);
 
     expect(result).toMatchObject({});
   });
@@ -36,20 +37,17 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Boost',
       isPublic: true,
-    });
+    }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: 'janeiscool123',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user.token,
       channelId: channel.channelId,
-    });
+    }, user.token);
 
     const expectedChannelObj = {
       name: 'Boost',
@@ -92,10 +90,9 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       nameLast: 'Doe',
     });
 
-    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: handleStr,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -108,9 +105,8 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -131,16 +127,13 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
       });
 
       // Update handleStr for user
-      putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-        token: user.token,
+      putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
         handleStr: `${firstNames[i]}iscool`,
-      });
+      }, user.token);
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: users[0].token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
 
     // Loop through each user and check the user object has the handleStr changed
     for (let i = 0; i <= 4; i++) {
@@ -169,19 +162,16 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user.token,
       uIds: [],
-    });
+    }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: 'janeiscool',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: user.token,
       dmId: dm.dmId,
-    });
+    }, user.token);
 
     const expectedDmObj = {
       name: 'janedoe',
@@ -201,14 +191,39 @@ describe('Testing user/profile/sethandle/v1 success handling', () => {
   });
 });
 
-describe('Testing user/profile/sethandle/v1 error handling', () => {
+describe('Testing user/profile/sethandle/v2 error handling', () => {
   test.each([
-    { token: '', handleStr: 'jd', desc: 'length of handleStr <3 characters' },
-    { token: '', handleStr: 'janedoeshasaverylonghandlestring12345', desc: 'length of handleStr >20 characters' },
-    { token: '', handleStr: 'ThisIsNot!ALPHANUMERIC!!!>:(', desc: 'handleStr contains non alphanumeric characters' },
-    { token: '', handleStr: 'janedoe', desc: 'handleStr is already being used by another user' },
-    { token: 'InvalidToken', handleStr: 'jdoe@gmail.com', desc: 'token is invalid' },
-  ])('$desc', ({ token, handleStr }) => {
+    {
+      token: '',
+      handleStr: 'jd',
+      desc: 'length of handleStr <3 characters',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      handleStr: 'janedoeshasaverylonghandlestring12345',
+      desc: 'length of handleStr >20 characters',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      handleStr: 'ThisIsNot!ALPHANUMERIC!!!>:(',
+      desc: 'handleStr contains non alphanumeric characters',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: '',
+      handleStr: 'janedoe',
+      desc: 'handleStr is already being used by another user',
+      statusCode: INPUT_ERROR
+    },
+    {
+      token: 'InvalidToken',
+      handleStr: 'jdoe@gmail.com',
+      desc: 'token is invalid',
+      statusCode: INVALID_TOKEN
+    },
+  ])('$desc', ({ token, handleStr, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -216,15 +231,11 @@ describe('Testing user/profile/sethandle/v1 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v1', {
-      token: user.token + token,
+    const result = putRequest(SERVER_URL + '/user/profile/sethandle/v2', {
       handleStr: handleStr,
-    });
-
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+    }, user.token + token);
+    expect(result.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
