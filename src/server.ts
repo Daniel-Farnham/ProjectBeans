@@ -204,6 +204,13 @@ app.post('/channel/join/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channel/join/v3', (req: Request, res: Response, next) => {
+  const { channelId } = req.body;
+  const token = req.header('token');
+  res.json(channelJoinV1(token, channelId));
+  save();
+});
+
 app.get('/channel/details/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);

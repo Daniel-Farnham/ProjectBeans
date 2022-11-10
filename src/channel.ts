@@ -73,23 +73,23 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
   if (!(tokenExists(token))) {
-    return { error: 'userId is invalid' };
+    throw HTTPError(403, 'userId is invalid');
   }
   // Check if userId or channelId are invalid
   if (!channelIdExists(channelId)) {
-    return { error: 'channelId is invalid' };
+    throw HTTPError(400, 'channelId is invalid');
   }
   const authUserId = getUidFromToken(token);
   const findUser = data.users.find(user => user.uId === authUserId);
 
   // Check if member is not Global Owner and the channel is private.
   if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
-    return { error: 'Channel is private and user is not global owner or a member of the channel' };
+    throw HTTPError(403, 'Channel is private and user is not global owner or a member of the channel');
   }
 
   // Check if user is already member of channel
   if (isMemberOfChannel(findChannel, authUserId)) {
-    return { error: 'User is already a member of the public channel' };
+    throw HTTPError(400, 'User is already a member of the public channel');
   }
 
   const userObj = {
