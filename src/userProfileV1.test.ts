@@ -1,6 +1,8 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INPUT_ERROR = 400;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -31,19 +33,18 @@ test('Testing successful return of user profile', () => {
     }
   };
 
-  const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-    token: user2.token,
+  const resultUser = getRequest(SERVER_URL + '/user/profile/v3', {
     uId: user1.authUserId,
-  });
+  }, user2.token);
 
   expect(resultUser).toMatchObject(expectedUser);
 });
 
 describe('Testing userProfileV2 error handling', () => {
   test.each([
-    { token: '', uId: 100, desc: 'uID to search does not exist' },
-    { token: 'InvalidToken', uId: 0, desc: 'token is invalid' },
-  ])('$desc', ({ token, uId }) => {
+    { token: '', uId: 100, desc: 'uID to search does not exist', statusCode: INPUT_ERROR },
+    { token: 'InvalidToken', uId: 0, desc: 'token is invalid', statusCode: INVALID_TOKEN },
+  ])('$desc', ({ token, uId, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -51,15 +52,12 @@ describe('Testing userProfileV2 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token + token,
+    const result = getRequest(SERVER_URL + '/user/profile/v3', {
       uId: user.authUserId + uId,
-    });
+    }, user.token + token);
 
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+    expect(result.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

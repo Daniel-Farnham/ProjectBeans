@@ -8,53 +8,47 @@ beforeEach(() => {
 
 describe('Testing basic dmRemoveV1 functionality', () => {
   test('Testing dmRemoveV1 successfully returns an empty object', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(removeDm).toStrictEqual({});
   });
 
   test('Testing dmRemoveV1 removes all dm members by failing to view dm details', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
-    const firstDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
+    const firstDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     deleteRequest(SERVER_URL + '/dm/remove/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
-    const secondDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
+    const secondDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const expectedMembers = [
       {
@@ -73,7 +67,7 @@ describe('Testing basic dmRemoveV1 functionality', () => {
 
 describe('Testing dmRemoveV1 error handling', () => {
   test('Testing dmRemoveV1 returns error when dmId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -81,87 +75,88 @@ describe('Testing dmRemoveV1 error handling', () => {
     });
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v2', {
-      token: regId.token,
       dmId: 0
-    });
+    }, regId.token);
 
-    expect(removeDm).toEqual(400);
+    expect(removeDm.statusCode).toBe(400);
+    const bodyObj = JSON.parse(removeDm.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmRemoveV1 returns error when authorised user isn\'t the dm creator', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v2', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
-    expect(removeDm).toEqual(403);
+    expect(removeDm.statusCode).toBe(403);
+    const bodyObj = JSON.parse(removeDm.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmRemoveV1 returns error when authorised user isn\'t a member', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, firstId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v2', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
-    expect(removeDm).toEqual(403);
+    expect(removeDm.statusCode).toBe(403);
+    const bodyObj = JSON.parse(removeDm.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmRemoveV1 returns error when token is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v2', {
-      token: regId.token + 'NotAToken',
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
-    expect(removeDm).toEqual(403);
+    expect(removeDm.statusCode).toBe(403);
+    const bodyObj = JSON.parse(removeDm.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

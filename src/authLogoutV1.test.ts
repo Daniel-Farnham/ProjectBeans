@@ -2,6 +2,7 @@ import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -16,9 +17,7 @@ describe('Testing successful cases for authLogoutV1', () => {
       nameLast: 'Pham'
     });
 
-    const result = postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    const result = postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
     expect(result).toStrictEqual({});
   });
@@ -31,16 +30,13 @@ describe('Testing successful cases for authLogoutV1', () => {
       nameLast: 'Pham'
     });
 
-    postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
-      uId: user.authUserId,
-    });
+    const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId }, user.token);
 
-    expect(result).toMatchObject({ error: expect.any(String) });
+    expect(result.statusCode).toBe(INVALID_TOKEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing ability to login with another token if logged out of one token', () => {
@@ -56,14 +52,9 @@ describe('Testing successful cases for authLogoutV1', () => {
       password: 'password'
     });
 
-    postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    postRequest(SERVER_URL + '/auth/logout/v1', {}, user.token);
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: loggedInSession.token,
-      uId: user.authUserId,
-    });
+    const result = getRequest(SERVER_URL + '/user/profile/v2', { uId: user.authUserId }, loggedInSession.token);
 
     const expectedResult = {
       user: {
@@ -90,8 +81,7 @@ describe('Testing authLogoutV1 error handling', () => {
     });
 
     const result = postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token + token,
-    });
+    }, user.token + token);
 
     expect(result).toMatchObject({ error: expect.any(String) });
   });
