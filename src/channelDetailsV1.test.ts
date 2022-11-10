@@ -1,8 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-const FORBIDDEN = 403;
-const BAD_REQUEST = 400;
+const FORBIDDEN = 400;
+const BAD_REQUEST = 403;
 
 describe('Testing channelDetails', () => {
   beforeEach(() => {
@@ -64,13 +64,13 @@ describe('Testing channelDetails', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
       isPublic: true,
-    }, userId.token + 1);
+    }, userId.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
-    }, userId.token);
+    }, userId.token + 1);
 
-    expect(ReturnedChannelObj.statusCode).toBe(FORBIDDEN);
+    expect(ReturnedChannelObj.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
