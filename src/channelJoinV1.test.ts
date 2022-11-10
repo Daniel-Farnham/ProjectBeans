@@ -145,7 +145,7 @@ describe('Testing negative cases for channelJoinV1', () => {
       channelId: channel.channelId
     }, userId.token + 1);
 
-    expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
+    expect(returnedChannelObject.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(returnedChannelObject.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });

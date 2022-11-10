@@ -72,7 +72,7 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
   if (!(tokenExists(token))) {
-    throw HTTPError(400, 'userId is invalid');
+    throw HTTPError(403, 'userId is invalid');
   }
   // Check if userId or channelId are invalid
   if (!channelIdExists(channelId)) {
