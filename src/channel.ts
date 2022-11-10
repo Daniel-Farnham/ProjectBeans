@@ -31,7 +31,6 @@ type end = { end: number };
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-
 function channelDetailsV1(token: string, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
@@ -40,7 +39,7 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }
-  
+
   if (!channelIdExists(channelId)) {
     throw HTTPError(400, 'channelId is invalid');
   }

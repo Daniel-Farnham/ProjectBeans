@@ -64,11 +64,11 @@ describe('Testing channelDetails', () => {
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
       isPublic: true,
-    }, userId.token + 1);
+    }, userId.token);
 
     const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
-    }, userId.token);
+    }, userId.token + 1);
 
     expect(ReturnedChannelObj.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
