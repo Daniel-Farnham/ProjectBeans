@@ -1,7 +1,8 @@
 import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
-import HTTPError from 'http-errors'
+import validator from 'validator'; 
+import HTTPError from 'http-errors';
 
 const GLOBAL_OWNER = 1;
 

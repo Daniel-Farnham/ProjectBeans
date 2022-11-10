@@ -1,6 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_TOKEN = 403; 
+const INVALID_CHANNELID = 403; 
 
 describe('Testing channelDetails', () => {
   beforeEach(() => {
@@ -87,8 +89,8 @@ describe('Testing channelDetails', () => {
       channelId: channel.channelId + 1
     }, userId.token);
 
-    expect(result.statusCode).toBe(statusCode);
-    const bodyObj = JSON.parse(result.body as string);
+    expect(ReturnedChannelObj.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 
     // expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
