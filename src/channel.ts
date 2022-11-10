@@ -31,14 +31,13 @@ type end = { end: number };
   * @returns {{error: string}} - An error message if any parameter is invalid
 */
 
-// Need to replace with authUserId to userIdExists
 
 function channelDetailsV1(token: string, channelId: number): channelDetails | error {
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
 
   // Check if userId and channelId is invalid.
-  if (!tokenExists(token)) {
+  if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }
   
