@@ -1,6 +1,7 @@
 import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
+import HTTPError from 'http-errors';
 
 const GLOBAL_OWNER = 1;
 
@@ -123,7 +124,6 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   // If any ids do not exist, return error
   if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
     throw HTTPError(400, 'token/uId/channelId not valid');
-    
   }
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);

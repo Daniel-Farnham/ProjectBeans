@@ -1,8 +1,8 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-const FORBIDDEN = 403; 
-const BAD_REQUEST = 400; 
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -125,7 +125,6 @@ describe('Testing channelInviteV1 error handling', () => {
     expect(result.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    
   });
 
   test('uId does not refer to a valid user', () => {
@@ -152,8 +151,7 @@ describe('Testing channelInviteV1 error handling', () => {
 
     expect(result.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(result.body as string);
-    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) })
-
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('token is invalid', () => {
@@ -183,7 +181,6 @@ describe('Testing channelInviteV1 error handling', () => {
     expect(result.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-  
   });
 
   test('uId refers to a user who is already a member of the channel', () => {
