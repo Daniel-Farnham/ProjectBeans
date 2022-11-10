@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages,
+  isMemberOfDm, getMessageId, User, Messages, httpError
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -334,7 +334,7 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {boolean} - False if the information isn't invalid
   */
-function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
+function dmMessagesInfoInvalid(token: string, dmId: number, start: number): httpError | boolean {
   // Check if the token is invalid
   if (!(tokenExists(token))) {
     return { code: 403, error: 'Token is invalid' };
@@ -448,7 +448,7 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
   }
 
   // Construct the dm object
-  data.messageCount++;
+  data.messageCount += 1;
   const dm = {
     dmId: data.messageCount,
     name: name,
@@ -475,21 +475,21 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   const findDm = data.dms.find(dm => dm.dmId === dmId);
 
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid.' };
+    throw HTTPError(403, 'token is invalid');
   }
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    throw HTTPError(400, 'dmId is invalid');
   }
 
   // Check if length of the message is between 1-1000 characters long.
   // Create message if true, return error if false.
   if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
-    return { error: 'length of message is less than 1 or over 1000 characters' };
+    throw HTTPError(400, 'length of message is less than 1 or over 1000 characters');
   }
 
   const uId = getUidFromToken(token);
   if (!isMemberOfDm(findDm, uId)) {
-    return { error: 'user is not a member of the dm' };
+    throw HTTPError(403, 'user is not a member of the dm');
   }
 
   // Create message

@@ -3,6 +3,8 @@ import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_TOKEN = 403;
+const INPUT_ERROR = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -17,11 +19,10 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
+    const result = putRequest(SERVER_URL + '/user/profile/setname/v2', {
       nameFirst: 'John',
       nameLast: 'Doe',
-    });
+    }, user.token);
 
     expect(result).toMatchObject({});
   });
@@ -35,21 +36,18 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Boost',
       isPublic: true,
-    });
+    }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/setname/v2', {
       nameFirst: 'John',
       nameLast: 'Darcy',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user.token,
       channelId: channel.channelId,
-    });
+    }, user.token);
 
     const expectedChannelObj = {
       name: 'Boost',
@@ -97,11 +95,10 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameLast: 'Doe',
     });
 
-    putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/setname/v2', {
       nameFirst: nameFirst,
       nameLast: nameLast,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -114,9 +111,8 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -129,20 +125,17 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user.token,
       uIds: [],
-    });
+    }, user.token);
 
-    putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/setname/v2', {
       nameFirst: 'John',
       nameLast: 'Darcy',
-    });
+    }, user.token);
 
     const result = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: user.token,
       dmId: dm.dmId,
-    });
+    }, user.token);
 
     const expectedDmObj = {
       name: 'janedoe',
@@ -180,11 +173,10 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameLast: 'Doe',
     });
 
-    putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token,
+    putRequest(SERVER_URL + '/user/profile/setname/v2', {
       nameFirst: nameFirst,
       nameLast: nameLast,
-    });
+    }, user.token);
 
     const expectedUser = {
       user: {
@@ -197,9 +189,8 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
     };
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
       uId: user.authUserId,
-    });
+    }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
@@ -220,17 +211,14 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       });
 
       // Rename user by swapping first and last names
-      putRequest(SERVER_URL + '/user/profile/setname/v1', {
-        token: user.token,
+      putRequest(SERVER_URL + '/user/profile/setname/v2', {
         nameFirst: lastNames[i],
         nameLast: firstNames[i],
-      });
+      }, user.token);
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {
-      token: users[0].token,
-    });
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
 
     // Loop through each user and check the user object has their first
     // and last names swapped
@@ -251,17 +239,30 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
   });
 });
 
-describe('Testing user/profile/setname/v1 error handling', () => {
+describe('Testing user/profile/setname/v2 error handling', () => {
   test.each([
-    { token: 'InvalidToken', nameFirst: 'John', nameLast: 'Doe', desc: 'token is invalid' },
-    { token: '', nameFirst: '', nameLast: '', desc: 'Both names are not longer than 1 character' },
+    {
+      token: 'InvalidToken',
+      nameFirst: 'John',
+      nameLast: 'Doe',
+      desc: 'token is invalid',
+      statusCode: INVALID_TOKEN
+    },
+    {
+      token: '',
+      nameFirst: '',
+      nameLast: '',
+      desc: 'Both names are not longer than 1 character',
+      statusCode: INPUT_ERROR
+    },
     {
       token: '',
       nameFirst: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa',
       nameLast: 'ThisIsARealNameThatIsOverFiftyCharactersLongForSureHa',
-      desc: 'Both names are over 50 letters long'
+      desc: 'Both names are over 50 letters long',
+      statusCode: INPUT_ERROR
     },
-  ])('$desc', ({ token, nameFirst, nameLast }) => {
+  ])('$desc', ({ token, nameFirst, nameLast, statusCode }) => {
     const user = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
@@ -269,16 +270,14 @@ describe('Testing user/profile/setname/v1 error handling', () => {
       nameLast: 'Doe',
     });
 
-    const result = putRequest(SERVER_URL + '/user/profile/setname/v1', {
-      token: user.token + token,
+    const result = putRequest(SERVER_URL + '/user/profile/setname/v2', {
       nameFirst: nameFirst,
       nameLast: nameLast,
-    });
+    }, user.token + token);
 
-    expect(result).toStrictEqual(
-      {
-        error: expect.any(String),
-      }
-    );
+    expect(result.statusCode).toBe(statusCode);
+
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
