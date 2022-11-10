@@ -293,7 +293,7 @@ app.get('/dm/details/v2', (req: Request, res: Response, next) => {
     const dmId = parseInt(req.query.dmId as string);
     res.json(dmDetailsV1(token, dmId));
     save();
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });

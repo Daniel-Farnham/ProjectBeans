@@ -61,7 +61,9 @@ describe('Testing basic dmRemoveV1 functionality', () => {
     ];
 
     expect(firstDetails.members).toStrictEqual(expectedMembers);
-    expect(secondDetails).toStrictEqual({ error: expect.any(String) });
+    expect(secondDetails.statusCode).toBe(403);
+    const bodyObj = JSON.parse(secondDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 

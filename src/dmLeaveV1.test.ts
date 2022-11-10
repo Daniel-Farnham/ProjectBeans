@@ -46,7 +46,9 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, regId.token);
 
-    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+    expect(dmDetails.statusCode).toBe(403);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmLeaveV1 successfully removes a regular member', () => {
@@ -156,7 +158,10 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, firstId.token);
 
-    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+    
+    expect(dmDetails.statusCode).toBe(400);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 
