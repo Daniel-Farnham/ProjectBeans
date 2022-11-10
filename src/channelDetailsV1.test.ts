@@ -1,8 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-const INVALID_TOKEN_OR_CHANNELID = 403; 
-const USER_NON_MEMBER = 400; 
+const INVALID_TOKEN_OR_CHANNELID = 403;
+const USER_NON_MEMBER = 400;
 
 describe('Testing channelDetails', () => {
   beforeEach(() => {
@@ -70,11 +70,9 @@ describe('Testing channelDetails', () => {
       channelId: channel.channelId
     }, userId.token);
 
-  
     expect(ReturnedChannelObj.statusCode).toBe(INVALID_TOKEN_OR_CHANNELID);
     const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-
   });
 
   test('Testing invalid channelId', () => {
@@ -94,11 +92,9 @@ describe('Testing channelDetails', () => {
       channelId: channel.channelId + 1
     }, userId.token);
 
-    
     expect(ReturnedChannelObj.statusCode).toBe(INVALID_TOKEN_OR_CHANNELID);
     const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    
   });
 
   test('Authorised user is not a member of the channel', () => {
@@ -125,10 +121,8 @@ describe('Testing channelDetails', () => {
       channelId: channel.channelId
     }, user2.token);
 
-    
     expect(ReturnedChannelObj.statusCode).toBe(USER_NON_MEMBER);
     const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    
   });
 });

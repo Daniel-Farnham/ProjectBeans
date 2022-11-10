@@ -1,7 +1,6 @@
 import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
-import validator from 'validator'; 
 import HTTPError from 'http-errors';
 
 const GLOBAL_OWNER = 1;
@@ -40,13 +39,13 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
 
   // Check if userId and channelId is invalid.
   if (!tokenExists(token) || !channelIdExists(channelId)) {
-    throw HTTPError(403, 'token or channelId is invalid'); 
+    throw HTTPError(403, 'token or channelId is invalid');
     // return { error: 'userId or channelId is invalid' };
   }
   // Case where authUserId is not a member of the channel
   const uId = getUidFromToken(token);
   if (!isMemberOfChannel(findChannel, uId)) {
-    throw HTTPError(400, 'User is not a member of the channel'); 
+    throw HTTPError(400, 'User is not a member of the channel');
   }
   // Return channel details
   return {
