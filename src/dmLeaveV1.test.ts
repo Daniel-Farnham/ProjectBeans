@@ -158,7 +158,6 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, firstId.token);
 
-    
     expect(dmDetails.statusCode).toBe(400);
     const bodyObj = JSON.parse(dmDetails.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
