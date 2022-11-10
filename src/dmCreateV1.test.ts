@@ -104,21 +104,21 @@ describe('Testing basic dmCreateV1 functionality', () => {
   });
 
   test('Test dmCreateV1 adds everyone to the members list', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const thirdId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const thirdId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@student.unsw.edu.au',
       password: 'password',
       nameFirst: 'Edwin',
@@ -163,7 +163,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Testing dmCreateV1 returns error when a given uId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -180,21 +180,21 @@ describe('Testing dmCreateV1 error handling', () => {
   });
 
   test('Testing dmCreateV1 returns error when uIds contains a duplicate', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId, secondId.authUserId]
     }, firstId.token);
 

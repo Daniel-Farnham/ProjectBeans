@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages,
+  isMemberOfDm, getMessageId, User, Messages, httpError
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -376,7 +376,7 @@ function dmMessagesInfoInvalid(token: string, dmId: number, start: number): erro
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {boolean} - False if the given info isn't invalid
   */
-function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
+function dmInfoInvalid(token: string, uIds: Array<number>): httpError | boolean {
   // Check if any of the given uId's are invalid
   for (const uId of uIds) {
     if (!userIdExists(uId)) {

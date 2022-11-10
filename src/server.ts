@@ -271,10 +271,14 @@ app.post('/dm/create/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/dm/create/v2', (req: Request, res: Response, next) => {
-  const { uIds } = req.body;
-  const token = req.header('token');
-  res.json(dmCreateV1(token, uIds));
-  save();
+  try {
+    const { uIds } = req.body;
+    const token = req.header('token');
+    res.json(dmCreateV1(token, uIds));
+    save();
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {

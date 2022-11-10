@@ -20,7 +20,8 @@ export function clearV1 (): Record<string, never> {
   return {};
 }
 
-export type error = { code:number, error: string };
+export type error = { error: string };
+export type httpError = { code: number, error: string };
 
 /**
   * Specifies the user interface (used for return types)
