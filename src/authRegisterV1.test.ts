@@ -2,7 +2,7 @@ import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-const INVALID_PARAM = 400; 
+const INVALID_PARAM = 400;
 
 function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
