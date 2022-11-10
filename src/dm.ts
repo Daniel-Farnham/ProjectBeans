@@ -183,7 +183,6 @@ function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
     throw HTTPError(400, 'dmId is invalid');
-
   }
 
   // Check if the token is invalid

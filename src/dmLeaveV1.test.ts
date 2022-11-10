@@ -207,7 +207,7 @@ describe('Testing dmLeaveV1 error handling', () => {
   });
 
   test('Testing dmLeaveV1 returns error when token is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
