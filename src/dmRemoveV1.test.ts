@@ -16,14 +16,12 @@ describe('Testing basic dmRemoveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(removeDm).toStrictEqual({});
   });
@@ -37,24 +35,20 @@ describe('Testing basic dmRemoveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const firstDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     deleteRequest(SERVER_URL + '/dm/remove/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const secondDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const expectedMembers = [
       {
@@ -81,9 +75,8 @@ describe('Testing dmRemoveV1 error handling', () => {
     });
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v1', {
-      token: regId.token,
       dmId: 0
-    });
+    }, regId.token);
 
     expect(removeDm).toStrictEqual({ error: expect.any(String) });
   });
@@ -104,14 +97,12 @@ describe('Testing dmRemoveV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v1', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     expect(removeDm).toStrictEqual({ error: expect.any(String) });
   });
@@ -132,14 +123,12 @@ describe('Testing dmRemoveV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: []
-    });
+    }, firstId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v1', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     expect(removeDm).toStrictEqual({ error: expect.any(String) });
   });
@@ -153,14 +142,12 @@ describe('Testing dmRemoveV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
     const removeDm = deleteRequest(SERVER_URL + '/dm/remove/v1', {
-      token: regId.token + 'NotAToken',
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
     expect(removeDm).toStrictEqual({ error: expect.any(String) });
   });

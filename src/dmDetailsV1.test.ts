@@ -8,64 +8,58 @@ beforeEach(() => {
 
 describe('Testing basic dmDetailsV1 functionality', () => {
   test('Testing dmDetailsV1 returns the correct datatypes', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails).toStrictEqual({ name: expect.any(String), members: expect.any(Array) });
   });
 
   test('Testing dmDetailsV1 returns the correct name', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails.name).toStrictEqual('curtisscully');
   });
 
   test('Testing dmDetailsV1 returns the correct members list when there\'s one member', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const expectedMembers = [
       {
@@ -81,36 +75,34 @@ describe('Testing basic dmDetailsV1 functionality', () => {
   });
 
   test('Testing dmDetailsV1 returns the correct members list when there\'s multiple members', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const thirdId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const thirdId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'edwin.ngo@student.unsw.edu.au',
       password: 'password',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [secondId.authUserId, thirdId.authUserId]
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const expectedMembers = new Set([
       {
@@ -142,7 +134,7 @@ describe('Testing basic dmDetailsV1 functionality', () => {
 
 describe('Testing dmDetailsV1 error handling', () => {
   test('Testing dmDetailsV1 returns error when dmId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -150,59 +142,60 @@ describe('Testing dmDetailsV1 error handling', () => {
     });
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
       dmId: 0
-    });
+    }, regId.token);
 
-    expect(dmDetails).toEqual(400);
+    expect(dmDetails.statusCode).toBe(400);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmDetailsV1 returns error when authorised user is not a member of the dm', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, firstId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
-    expect(dmDetails).toEqual(403);
+    expect(dmDetails.statusCode).toBe(403);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmDetailsV1 returns error when token is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token + 'NotAToken',
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
-    expect(dmDetails).toEqual(403);
+    expect(dmDetails.statusCode).toBe(403);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

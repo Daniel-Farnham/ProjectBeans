@@ -14,9 +14,7 @@ describe('Testing successful cases for channels/listAll/v2', () => {
       nameFirst: 'Hang',
       nameLast: 'Pham'
     });
-    const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
-      token: user.token,
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {}, user.token);
 
     expect(resultChannels).toMatchObject({ channels: [] });
   });
@@ -30,22 +28,19 @@ describe('Testing successful cases for channels/listAll/v2', () => {
     });
 
     const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'General',
       isPublic: true
-    });
+    }, user.token);
 
     const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Boost',
       isPublic: false
-    });
+    }, user.token);
 
     const channelId3 = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user.token,
       name: 'Random',
       isPublic: true
-    });
+    }, user.token);
 
     const expectedChannels = {
       channels: [
@@ -64,9 +59,7 @@ describe('Testing successful cases for channels/listAll/v2', () => {
       ],
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
-      token: user.token,
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {}, user.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -81,14 +74,11 @@ test('Testing invalid token', () => {
   });
 
   postRequest(SERVER_URL + '/channels/create/v2', {
-    token: user.token,
     name: 'General',
     isPublic: true
-  });
+  }, user.token);
 
-  const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {
-    token: user.token + 'InvalidToken',
-  });
+  const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v2', {}, user.token + 'InvalidToken');
   expect(resultChannels).toStrictEqual(
     {
       error: expect.any(String),

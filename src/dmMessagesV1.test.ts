@@ -16,15 +16,13 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 0,
-    });
+    }, newId.token);
 
     expect(messages).toStrictEqual({
       messages: expect.any(Array),
@@ -42,15 +40,13 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 0,
-    });
+    }, newId.token);
 
     const messagesObj = {
       messages: [],
@@ -70,33 +66,28 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     const firstMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 1'
-    });
+    }, newId.token);
 
     const secondMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 2'
-    });
+    }, newId.token);
 
     const thirdMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 3'
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 0,
-    });
+    }, newId.token);
 
     const messagesObj = {
       messages: [
@@ -135,33 +126,28 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 1'
-    });
+    }, newId.token);
 
     const secondMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 2'
-    });
+    }, newId.token);
 
     const thirdMsg = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       message: 'Testing 3'
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 1,
-    });
+    }, newId.token);
 
     const messagesObj = {
       messages: [
@@ -194,23 +180,20 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     for (let i = 0; i < 51; i++) {
       postRequest(SERVER_URL + '/message/senddm/v1', {
-        token: newId.token,
         dmId: dmId.dmId,
         message: i.toString()
-      });
+      }, newId.token);
     }
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 0,
-    });
+    }, newId.token);
 
     expect(messages.start).toBe(0);
     expect(messages.end).toBe(49);
@@ -225,23 +208,20 @@ describe('Testing basic functionality for dmMessagesV1', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     for (let i = 0; i < 50; i++) {
       postRequest(SERVER_URL + '/message/senddm/v1', {
-        token: newId.token,
         dmId: dmId.dmId,
         message: i.toString()
-      });
+      }, newId.token);
     }
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 1,
-    });
+    }, newId.token);
 
     expect(messages.start).toBe(1);
     expect(messages.end).toBe(-1);
@@ -258,10 +238,9 @@ describe('Testing dmMessagesV1 error handling', () => {
     });
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: 0,
       start: 0,
-    });
+    }, newId.token);
 
     expect(messages).toStrictEqual({ error: expect.any(String) });
   });
@@ -282,15 +261,13 @@ describe('Testing dmMessagesV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: []
-    });
+    }, firstId.token);
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: secondId.token,
       dmId: dmId.dmId,
       start: 0,
-    });
+    }, secondId.token);
 
     expect(messages).toStrictEqual({ error: expect.any(String) });
   });
@@ -304,15 +281,13 @@ describe('Testing dmMessagesV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: newId.token,
       uIds: []
-    });
+    }, newId.token);
 
     const messages = getRequest(SERVER_URL + '/dm/messages/v1', {
-      token: newId.token,
       dmId: dmId.dmId,
       start: 1,
-    });
+    }, newId.token);
 
     expect(messages).toStrictEqual({ error: expect.any(String) });
   });

@@ -3,6 +3,7 @@ import {
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
 } from './other';
 import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -35,21 +36,21 @@ export function messageSendV1 (token: string, channelId: number, message: string
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
 
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid.' };
+    throw HTTPError(403, 'token is invalid');
   }
   if (!channelIdExists(channelId)) {
-    return { error: 'channelId is invalid' };
+    throw HTTPError(400, 'channelId is invalid');
   }
 
   // Check if length of the message is between 1-1000 characters long.
   // Create message if true, return error if false.
   if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
-    return { error: 'length of message is less than 1 or over 1000 characters' };
+    throw HTTPError(400, 'length of message is less than 1 or over 1000 characters');
   }
 
   const uId = getUidFromToken(token);
   if (!isMemberOfChannel(findChannel, uId)) {
-    return { error: 'user is not a member of the channel' };
+    throw HTTPError(403, 'user is not a member of the channel');
   }
 
   // Create message
