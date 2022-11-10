@@ -8,81 +8,73 @@ beforeEach(() => {
 
 describe('Testing basic dmLeaveV1 functionality', () => {
   test('Testing dmLeaveV1 returns an empty object on success', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmLeave).toStrictEqual({});
   });
 
   test('Testing dmLeaveV1 makes a dm inaccessible if the only member leaves', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: regId.token,
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: regId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Testing dmLeaveV1 successfully removes a regular member', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: firstId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const expectedMembers = [
       {
@@ -98,34 +90,31 @@ describe('Testing basic dmLeaveV1 functionality', () => {
   });
 
   test('Testing dmLeaveV1 successfully removes the creator', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [secondId.authUserId]
-    });
+    }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: secondId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
     const expectedMembers = [
       {
@@ -141,34 +130,31 @@ describe('Testing basic dmLeaveV1 functionality', () => {
   });
 
   test('Testing dmLeaveV1 removes a user and they can no longer access the dm', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: [secondId.uId]
-    });
+    }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: firstId.token,
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
-      token: firstId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     expect(dmDetails).toStrictEqual({ error: expect.any(String) });
   });
@@ -176,47 +162,48 @@ describe('Testing basic dmLeaveV1 functionality', () => {
 
 describe('Testing dmLeaveV1 error handling', () => {
   test('Testing dmLeaveV1 returns error when dmId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: regId.token,
+    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
       dmId: 0
-    });
+    }, regId.token);
 
-    expect(dmLeave).toEqual(400);
+    expect(dmLeave.statusCode).toBe(400);
+    const bodyObj = JSON.parse(dmLeave.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmLeaveV1 returns error when authorised user isn\'t a member', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: firstId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, firstId.token);
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: secondId.token,
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
-    expect(dmLeave).toEqual(403);
+    expect(dmLeave.statusCode).toBe(403);
+    const bodyObj = JSON.parse(dmLeave.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmLeaveV1 returns error when token is invalid', () => {
@@ -227,16 +214,16 @@ describe('Testing dmLeaveV1 error handling', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
-      token: regId.token,
+    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
       uIds: []
-    });
+    }, regId.token);
 
     const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
-      token: regId.token + 'NotAToken',
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
-    expect(dmLeave).toEqual(403);
+    expect(dmLeave.statusCode).toBe(403);
+    const bodyObj = JSON.parse(dmLeave.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

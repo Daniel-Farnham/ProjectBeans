@@ -55,8 +55,6 @@ app.get('/echo', (req: Request, res: Response, next) => {
   }
 });
 
-// handles errors nicely
-app.use(errorHandler());
 // Delete request for /clear/v1
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
@@ -70,84 +68,124 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/channels/create/v2', (req: Request, res: Response, next) => {
-  const { token, name, isPublic } = req.body;
+  const { name, isPublic } = req.body;
+  const token = req.header('token');
   res.json(channelsCreateV1(token, name, isPublic));
   save();
 });
 
 app.get('/channels/list/v2', (req:Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   res.json(channelsListV1(token));
   save();
 });
 
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   res.json(channelsListAllV1(token));
   save();
 });
 
 app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
-  const { token, channelId, uId } = req.body;
+  const token = req.header('token');
+  const { channelId, uId } = req.body;
   res.json(channelInviteV1(token, channelId, uId));
   save();
 });
 
 app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
-  const { token, channelId } = req.body;
+  const { channelId } = req.body;
+  const token = req.header('token');
   res.json(channelLeaveV1(token, channelId));
   save();
 });
 
 app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
-  const { token, channelId, uId } = req.body;
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
   res.json(channelAddOwnerV1(token, channelId, uId));
   save();
 });
 
 app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
-  const { token, channelId, uId } = req.body;
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
   res.json(channelRemoveOwnerV1(token, channelId, uId));
   save();
 });
 
 app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);
   const start = parseInt(req.query.start as string);
   res.json(channelMessagesV1(token, channelId, start));
 });
 
-// Get userProfileV2
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
+  const uId = parseInt(req.query.uId as string);
+  res.json(userProfileV1(token, uId));
+  save();
+});
+
+app.get('/user/profile/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
   res.json(userProfileV1(token, uId));
   save();
 });
 
 app.put('/user/profile/setname/v1', (req: Request, res: Response, next) => {
-  const { token, nameFirst, nameLast } = req.body;
+  const { nameFirst, nameLast } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  save();
+});
+
+app.put('/user/profile/setname/v2', (req: Request, res: Response, next) => {
+  const { nameFirst, nameLast } = req.body;
+  const token = req.header('token');
   res.json(userProfileSetNameV1(token, nameFirst, nameLast));
   save();
 });
 
 app.put('/user/profile/setemail/v1', (req: Request, res: Response, next) => {
-  const { token, email } = req.body;
+  const { email } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetEmailV1(token, email));
+  save();
+});
+
+app.put('/user/profile/setemail/v2', (req: Request, res: Response, next) => {
+  const { email } = req.body;
+  const token = req.header('token');
   res.json(userProfileSetEmailV1(token, email));
   save();
 });
 
 app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next) => {
-  const { token, handleStr } = req.body;
+  const { handleStr } = req.body;
+  const token = req.header('token');
+  res.json(userProfileSetHandleV1(token, handleStr));
+  save();
+});
+
+app.put('/user/profile/sethandle/v2', (req: Request, res: Response, next) => {
+  const { handleStr } = req.body;
+  const token = req.header('token');
   res.json(userProfileSetHandleV1(token, handleStr));
   save();
 });
 
 // users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
+  res.json(usersAllV1(token));
+  save();
+});
 
+app.get('/users/all/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   res.json(usersAllV1(token));
   save();
 });
@@ -160,53 +198,79 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/channel/join/v2', (req: Request, res: Response, next) => {
-  const { token, channelId } = req.body;
+  const { channelId } = req.body;
+  const token = req.header('token');
   res.json(channelJoinV1(token, channelId));
   save();
 });
 
 app.get('/channel/details/v2', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);
   res.json(channelDetailsV1(token, channelId));
   save();
 });
 
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
+  const token = req.header('token');
   res.json(authLogoutV1(token));
   save();
 });
 
 app.post('/message/send/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
+  const token = req.header('token');
+  const channelId = parseInt(req.body.channelId as string);
+  const message = req.body.message as string;
+  res.json(messageSendV1(token, channelId, message));
+});
+
+app.post('/message/send/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   const channelId = parseInt(req.body.channelId as string);
   const message = req.body.message as string;
   res.json(messageSendV1(token, channelId, message));
 });
 
 app.put('/message/edit/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
+  const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
   const message = req.body.message as string;
   res.json(messageEditV1(token, messageId, message));
   save();
 });
 
-app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
+app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
   const { dmId } = req.body;
   const token = req.header('token');
   res.json(dmLeaveV1(token, dmId));
 });
 
+app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
+  try {
+    const { dmId } = req.body;
+    const token = req.header('token');
+    res.json(dmLeaveV1(token, dmId));
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   const messageId = parseInt(req.query.messageId as string);
   res.json(messageRemoveV1(token, messageId));
 });
 
 app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
-  const token = req.body.token as string;
+  const token = req.header('token');
+  const dmId = parseInt(req.body.dmId as string);
+  const message = req.body.message as string;
+  res.json(messageSendDmV1(token, dmId, message));
+  save();
+});
+
+app.post('/message/senddm/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
   const dmId = parseInt(req.body.dmId as string);
   const message = req.body.message as string;
   res.json(messageSendDmV1(token, dmId, message));
@@ -214,36 +278,40 @@ app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/dm/create/v1', (req: Request, res: Response, next) => {
-  const { token, uIds } = req.body;
+  const { uIds } = req.body;
+  const token = req.header('token');
   res.json(dmCreateV1(token, uIds));
   save();
 });
 
 app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   res.json(dmRemoveV1(token, dmId));
 });
 
 app.get('/dm/details/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   res.json(dmDetailsV1(token, dmId));
   save();
 });
 
 app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);
   res.json(dmMessagesV1(token, dmId, start));
 });
 
 app.get('/dm/list/v1', (req: Request, res: Response, next) => {
-  const token = req.query.token as string;
+  const token = req.header('token');
   res.json(dmListV1(token));
   save();
 });
+
+// handles errors nicely
+app.use(errorHandler());
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
