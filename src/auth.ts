@@ -2,6 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
+import HTTPError from 'http-errors';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -151,16 +152,16 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
 function registerInfoInvalid(email: string, password: string, nameFirst: string, nameLast: string): error | boolean {
   // Check whether email, password and first/last name meet the criteria
   if (!(validator.isEmail(email))) {
-    return { error: 'Invalid email.' };
+    throw HTTPError(400, 'Invalid email.');
   }
   if (password.length < MIN_PASSWORD_LEN) {
-    return { error: 'Password is less than 6 characters.' };
+    throw HTTPError(400, 'Password is less than 6 characters.');
   }
   if (nameFirst.length < MIN_NAME_LEN || nameFirst.length > MAX_NAME_LEN) {
-    return { error: 'First name isn\'t between 1 and 50 characters (inclusive)' };
+    throw HTTPError(400, 'First name isn\'t between 1 and 50 characters (inclusive)');
   }
   if (nameLast.length < MIN_NAME_LEN || nameLast.length > MAX_NAME_LEN) {
-    return { error: 'Last name isn\'t between 1 and 50 characters (inclusive)' };
+    throw HTTPError(400, 'Last name isn\'t between 1 and 50 characters (inclusive)');
   }
 
   // Check if the email is in use
@@ -168,7 +169,7 @@ function registerInfoInvalid(email: string, password: string, nameFirst: string,
   const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
     if (caseInsensitiveEmail === user.email) {
-      return { error: 'Email is already in use.' };
+      throw HTTPError(400, 'Email is already in use.');
     }
   }
 
