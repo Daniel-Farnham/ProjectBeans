@@ -266,6 +266,14 @@ app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/message/senddm/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const dmId = parseInt(req.body.dmId as string);
+  const message = req.body.message as string;
+  res.json(messageSendDmV1(token, dmId, message));
+  save();
+});
+
 app.post('/dm/create/v1', (req: Request, res: Response, next) => {
   const { uIds } = req.body;
   const token = req.header('token');
