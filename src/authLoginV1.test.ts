@@ -2,6 +2,7 @@ import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_PARAM = 400; 
 
 function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -79,6 +80,6 @@ describe('Testing authLoginV1 error handling', () => {
   ])('$desc', ({ email, password }) => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
 
-    expect(authLoginV1(email, password)).toEqual(400);
+    expect(authLoginV1(email, password)).toBe(INVALID_PARAM);
   });
 });
