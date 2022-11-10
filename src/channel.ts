@@ -122,7 +122,8 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
 function channelInviteV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
   // If any ids do not exist, return error
   if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
-    return { error: 'token/uId/channelId not valid' };
+    throw HTTPError(400, 'token/uId/channelId not valid');
+    
   }
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
@@ -160,12 +161,12 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
 function invalidMemberships (channel: Channel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
-    return { error: 'User to invite already a member of channel' };
+    throw HTTPError(400, 'User to invite already a member of channel');
   }
 
   // If authUserId not found in channel members, return error
   if (!isMemberOfChannel(channel, authUserId)) {
-    return { error: 'authUserId is not a member of channel' };
+    throw HTTPError(403, 'authUserId is not a member of channel');
   }
   return false;
 }
