@@ -46,7 +46,7 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
   // Case where authUserId is not a member of the channel
   const uId = getUidFromToken(token);
   if (!isMemberOfChannel(findChannel, uId)) {
-    return { error: 'authUserId is not a member of the channel' };
+    throw HTTPError(400, 'User is not a member of the channel'); 
   }
   // Return channel details
   return {
