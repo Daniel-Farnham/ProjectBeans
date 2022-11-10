@@ -283,9 +283,9 @@ app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
 app.delete('/dm/remove/v2', (req: Request, res: Response, next) => {
   try {
     const token = req.header('token');
-  const dmId = parseInt(req.query.dmId as string);
-  res.json(dmRemoveV1(token, dmId));
-  } catch(err) {
+    const dmId = parseInt(req.query.dmId as string);
+    res.json(dmRemoveV1(token, dmId));
+  } catch (err) {
     next(err);
   }
 });
