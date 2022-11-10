@@ -2,6 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
+import HTTPError from 'http-errors';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -44,12 +45,12 @@ function authLoginV1(email: string, password: string): authInfo | error {
 
       return { token: token.token, authUserId: userId };
     } else if (user.email === caseInsensitiveEmail && user.password !== hashedPassword) {
-      return { error: 'Incorrect password.' };
+      throw HTTPError(400, 'Incorrect password.');
     }
   }
 
   // If haven't returned yet, email doesn't belong to a user
-  return { error: 'Email doesn\'t belong to a user.' };
+  throw HTTPError('Email doesn\'t belong to a user.');
 }
 
 /**
