@@ -23,14 +23,12 @@ describe('Testing positive cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
       channelId: channel.channelId
-    });
+    }, user2.token);
 
     expect(returnedChannelObject).toMatchObject({});
   });
@@ -51,15 +49,13 @@ describe('Testing positive cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user2.token,
       name: 'ChannelBoost',
       isPublic: false,
-    });
+    }, user2.token);
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user1.token,
       channelId: channel.channelId
-    });
+    }, user1.token);
 
     expect(returnedChannelObject).toMatchObject({});
   });
@@ -80,20 +76,17 @@ describe('Testing positive cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
       channelId: channel.channelId,
-    });
+    }, user2.token);
 
     const channelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user1.token,
       channelId: channel.channelId
-    });
+    }, user1.token);
 
     const expectedChannelObj = {
       name: 'ChannelBoost',
@@ -142,15 +135,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId.token + 1,
       channelId: channel.channelId
-    });
+    }, userId.token + 1);
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
@@ -164,15 +155,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId.token,
       channelId: channel.channelId + 1,
-    });
+    }, userId.token);
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
@@ -186,15 +175,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId.token,
       channelId: channel.channelId,
-    });
+    }, userId.token);
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });
@@ -215,15 +202,13 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: false,
-    });
+    }, user1.token);
 
     const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
       channelId: channel.channelId
-    });
+    }, user2.token);
 
     expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
   });

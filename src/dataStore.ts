@@ -10,6 +10,7 @@ let data = {
   channels: [],
   sessions: [],
   messageCount: 0,
+  tokenCount: 0,
   dms: [],
 };
 

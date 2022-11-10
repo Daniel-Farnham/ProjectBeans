@@ -84,9 +84,8 @@ describe('Testing basic authLoginV1 functionality', () => {
     });
 
     const user = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: loginId.token,
       uId: loginId.authUserId
-    });
+    }, loginId.token);
 
     expect(loginId.authUserId).toBe(user.user.uId);
   });
