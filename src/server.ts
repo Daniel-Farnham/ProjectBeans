@@ -93,6 +93,13 @@ app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channel/invite/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { channelId, uId } = req.body;
+  res.json(channelInviteV1(token, channelId, uId));
+  save();
+});
+
 app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
   const { channelId } = req.body;
   const token = req.header('token');
