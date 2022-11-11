@@ -178,7 +178,7 @@ describe('Testing channelInviteV1 error handling', () => {
       uId: user2.authUserId
     }, user1.token + user2.token + 'InvalidToken');
 
-    expect(result.statusCode).toBe(BAD_REQUEST);
+    expect(result.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
