@@ -386,29 +386,29 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   // If channelId or authUserId doesn't exist return error
 
   if (!(tokenExists(token))) {
-    return { error: 'authUserId is invalid' };
+    throw HTTPError(403, 'token is invalid');
   }
 
   if (!(channelIdExists(channelId))) {
-    return { error: 'ChannelId is invalid' };
+    throw HTTPError(400, 'channelId is invalid');
   }
 
   // If start is negative or greater than number of messages return error
   if (start < 0) {
-    return { error: 'Starting index can\'t be negative' };
+    throw HTTPError(400, 'Starting index can\'t be negative');
   }
   const data = getData();
   const channel = data.channels.find(o => o.channelId === channelId);
   const numMessages = channel.messages.length;
   if (start > numMessages) {
-    return { error: 'Start index is greater than number of messages in channel' };
+    throw HTTPError(400, 'Start index is greater than number of messages in channel');
   }
 
   // If channelId is valid but user isn't a member of the channel return error
   const uId = getUidFromToken(token);
 
   if (!isMemberOfChannel(channel, uId)) {
-    return { error: 'authUserId is not a member of channel' };
+    throw HTTPError(403, 'User is not a member of the channel');
   }
 
   // If no error by now, the info isn't invalid
