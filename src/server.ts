@@ -15,6 +15,7 @@ import {
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
+import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 
 // Set up web app
@@ -339,6 +340,11 @@ app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
 app.get('/dm/list/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+app.get('/notifications/get/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(notificationsGetV1(token));
   save();
 });
 

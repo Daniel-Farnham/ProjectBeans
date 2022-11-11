@@ -9,6 +9,6 @@ export interface Notification {
 
 export type notifications = Array<Notification>;
 
-export function notificationsGetV1() {
+export function notificationsGetV1(token: string) {
   return {notifications: []};
 }
