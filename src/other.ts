@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
-
+export const FORBIDDEN = 403;
+export const BAD_REQUEST = 400;
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required

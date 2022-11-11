@@ -1,62 +1,154 @@
-import { postRequest, deleteRequest, getRequest } from './other';
-import { port, url } from './config.json';
-const SERVER_URL = `${url}:${port}`;
-const BAD_REQUEST = 400;
-const FORBIDDEN = 403;
-
-// Wrapper functions
-function clearV1() {
-  return deleteRequest(SERVER_URL + '/clear/v1', {});
-}
-function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
-  return postRequest(SERVER_URL + '/auth/register/v2', {
-    email: email,
-    password: password,
-    nameFirst: nameFirst,
-    nameLast: nameLast,
-  });
-}
-function dmCreateV1(token: string, uIds: []) {
-  return postRequest(SERVER_URL + '/dm/create/v1', {
-    uIds: uIds,
-  }, token);
-}
-function messageSendDmV1(dmId: number, message: string, token: string) {
-  return postRequest(SERVER_URL + '/message/senddm/v2', {
-    dmId: dmId,
-    message: message,
-  }, token);
-}
-function messageSendV1(channelId: number, message: string, token: string) {
-  return postRequest(SERVER_URL + '/message/send/v2', {
-    channelId: channelId,
-    message: message,
-  }, token);
-}
-function channelMessagesV1(channelId: number, start: number, token: string) {
-  return getRequest(SERVER_URL + '/channel/messages/v2', {
-    channelId: channelId,
-    start: 0,
-  }, token);
-};
-function dmMessagesV1(token: string, dmId: number, start: number) {
-  return getRequest(SERVER_URL + '/dm/messages/v1', {
-    dmId: dmId,
-    start: 0,
-  }, token);
-};
-function notificationsGetV1(token: string) {
-  return getRequest(SERVER_URL + '/dm/messages/v1', {}, token);
-};
+import { messageSendDmV1 } from './dm';
+import { FORBIDDEN } from './other';
+import { clearV1, authRegisterV1, notificationsGetV1, dmCreateV1, 
+  channelsCreateV1, messageSendV1, messageReactV1, channelJoinV1,
+  channelInviteV1 } from './wrapperFunctions';
 
 beforeEach(() => {
   clearV1();
 });
 
 describe('Testing notificationsGetV1 success handling', () => {
+  
+  test('empty notifications returned', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const result = notificationsGetV1(user1.token);
+    expect(result).toMatchObject({notifications: []});
+  });
+
+  describe('Tagging notifications', () => {
+    test('tagged into a channel', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const channel = channelsCreateV1(user1.token, 'Boost', true);
+      
+      messageSendV1(user2.token, channel.channelId, "hey @hangpham! how are you?");
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: channel.channelId,
+            dmId: -1,
+            notificationMessage: "janedoe tagged you in Boost: hey @hangpham! how a",
+          }
+        ],
+      });
+    });
+    
+    test('tagged into a dm', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const dm = dmCreateV1(user1.token, [user2.authUserId]);
+      messageSendDmV1(user2.token, dm.dmId, "hey @hangpham! had to follow up on something");
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: "janedoe tagged you in Boost: hey @hangpham! had t",
+          }
+        ],
+      });
+    });
+  });
+  
+  describe('Reacting notifications', () => {
+    test('reacted to channel message', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const channel = channelsCreateV1(user1.token, 'Boost', true);
+      channelJoinV1(user2.token, channel.channelId);
+      const channelMsg = messageSendV1(user2.token, channel.channelId, "hey @hangpham! how are you?");
+      messageReactV1(user1.token, channelMsg.messageId, 1);
+      const result = notificationsGetV1(user2.token);
+      
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: channel.channelId,
+            dmId: -1,
+            notificationMessage: "hangpham reacted to your message in Boost",
+          }
+        ],
+      });
+      
+    });
+    test('reacted to dm message', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const dm = dmCreateV1(user1.token, [user2.authUserId]);
+      const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, "hey @hangpham! had to follow up on something");
+      messageReactV1(user1.token, dmMsg.messageId, 1);
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: "janedoe tagged you in hangpham, janedoe: hey @hangpham! had t",
+          },
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: `hangpham added you to hangpham, janedoe`
+          }
+        ],
+      });
+    });
+  });
+
+  describe('Adding to channel/dm', () => {
+    test('add user to channel', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const channel = channelsCreateV1(user1.token, 'Boost', true);
+      channelInviteV1(user1.token, channel.channelId, user2.authUserId);
+      const result = notificationsGetV1(user2.token);
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: channel.channelId,
+            dmId: -1,
+            notificationMessage: `hangpham added you to Boost`}
+        ],
+      });
+    });
+  });
+  test('receive 20 notifications back', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    channelJoinV1(user2.token, channel.channelId);
+
+    for (let i = 0; i <= 25; i++) {
+      const channelMsg = messageSendV1(user1.token, channel.channelId, `msg`);    
+      messageReactV1(user2.token, channelMsg.messageId, 1);
+    }
+    const result = notificationsGetV1(user1.token);
+
+      for (let i = 0; i <= 20; i++) {
+        const expectedNotification = {
+          channelId: channel.channelId,
+          dmId: -1,
+          notificationMessage: `janedoe reacted to your message in Boost`
+        };
+        expect(result.notifications).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(expectedNotification)
+          ])
+        );
+      }
+  });
 
 });
 
 describe('Testing notificationsGetV1 error handling', () => {
-  
+  test('invalid token', () => {
+    const result = notificationsGetV1('InvalidTokenSike!');
+    expect(result.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+  });
 });
