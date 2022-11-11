@@ -77,7 +77,7 @@ export function dmLeaveV1(token: string, dmId: number) {
   }, token);
 }
 export function notificationsGetV1(token: string) {
-  return getRequest(SERVER_URL + '/dm/messages/v1', {}, token);
+  return getRequest(SERVER_URL + '/notifications/getv1', {}, token);
 }
 export function messageReactV1 (token: string, messageId: number, reactId: number) {
   return postRequest(SERVER_URL + '/message/react/v1', { messageId, reactId }, token);
