@@ -147,7 +147,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      uIds: [secondId.uId]
+      uIds: [secondId.authUserId]
     }, firstId.token);
 
     postRequest(SERVER_URL + '/dm/leave/v1', {
@@ -157,8 +157,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
       dmId: dmId.dmId
     }, firstId.token);
-
-    expect(dmDetails.statusCode).toBe(400);
+    expect(dmDetails.statusCode).toBe(403);
     const bodyObj = JSON.parse(dmDetails.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
