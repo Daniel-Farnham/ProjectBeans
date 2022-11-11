@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest, getRequest } from './other';
+import { postRequest, deleteRequest, getRequest, putRequest } from './other';
 const SERVER_URL = `${url}:${port}`;
 
 import { port, url } from './config.json';
@@ -55,10 +55,26 @@ export function channelJoinV1 (token: string, channelId: number) {
     channelId: channelId
   }, token);
 }
+export function channelLeaveV1 (token: string, channelId: number) {
+  return postRequest(SERVER_URL + '/channel/leave/v1', {
+    channelId: channelId
+  }, token);
+}
+export function messageEditV1 (token: string, messageId: number, message: string) {
+  return putRequest(SERVER_URL + '/message/edit/v2', {
+    messageId: messageId,
+    message: message
+  }, token);
+}
 export function dmMessagesV1(token: string, dmId: number, start: number) {
   return getRequest(SERVER_URL + '/dm/messages/v1', {
     dmId: dmId,
     start: 0,
+  }, token);
+};
+export function dmLeaveV1(token: string, dmId: number) {
+  return postRequest(SERVER_URL + '/dm/leave/v1', {
+    dmId: dmId
   }, token);
 };
 export function notificationsGetV1(token: string) {

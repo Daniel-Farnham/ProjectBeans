@@ -2,7 +2,7 @@ import { messageSendDmV1 } from './dm';
 import { FORBIDDEN } from './other';
 import { clearV1, authRegisterV1, notificationsGetV1, dmCreateV1, 
   channelsCreateV1, messageSendV1, messageReactV1, channelJoinV1,
-  channelInviteV1 } from './wrapperFunctions';
+  channelInviteV1, dmLeaveV1, channelLeaveV1, messageEditV1 } from './wrapperFunctions';
 
 beforeEach(() => {
   clearV1();
@@ -12,6 +12,14 @@ describe('Testing notificationsGetV1 success handling', () => {
   
   test('empty notifications returned', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const result = notificationsGetV1(user1.token);
+    expect(result).toMatchObject({notifications: []});
+  });
+
+  test('no notification when tagging self', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    messageSendV1(user1.token, channel.channelId, "hey @hangpham! how are you?");
     const result = notificationsGetV1(user1.token);
     expect(result).toMatchObject({notifications: []});
   });
@@ -35,6 +43,31 @@ describe('Testing notificationsGetV1 success handling', () => {
       });
     });
     
+    test('channel message edit double tagging multiple notifications', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const channel = channelsCreateV1(user1.token, 'Boost', true);
+      
+      const channelMsg = messageSendV1(user2.token, channel.channelId, "hey @hangpham! how are you?");
+      messageEditV1(user2.token, channelMsg.messageId, "hey @hangpham, attention needed @hangpham!");
+
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: channel.channelId,
+            dmId: -1,
+            notificationMessage: "janedoe tagged you in Boost: hey @hangpham, atten",
+          },
+          {
+            channelId: channel.channelId,
+            dmId: -1,
+            notificationMessage: "janedoe tagged you in Boost: hey @hangpham! how a",
+          }
+        ],
+      });
+    });
+    
     test('tagged into a dm', () => {
       const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
       const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
@@ -46,7 +79,30 @@ describe('Testing notificationsGetV1 success handling', () => {
           {
             channelId: -1,
             dmId: dm.dmId,
-            notificationMessage: "janedoe tagged you in Boost: hey @hangpham! had t",
+            notificationMessage: "janedoe tagged you in hangpham, janedoe: hey @hangpham! had t",
+          }
+        ],
+      });
+    });
+
+    test('dm edit double tagging multiple notifications', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const dm = dmCreateV1(user1.token, [user2.authUserId]);
+      const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, "hey @hangpham! had to follow up on something");
+      messageEditV1(user2.token, dmMsg.messageId, "hey @hangpham, attention needed @hangpham!");
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject( {
+        notifications: [ 
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: "janedoe tagged you in hangpham, janedoe: hey @hangpham, atten",
+          },
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: "janedoe tagged you in hangpham, janedoe: hey @hangpham! had t",
           }
         ],
       });
@@ -96,6 +152,40 @@ describe('Testing notificationsGetV1 success handling', () => {
         ],
       });
     });
+
+    describe('No longer receive notifications after leaving dm/channel', () => {
+      test('no notification when message reacted to user who is no longer part of channel', () =>  {
+        const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+        const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+        const channel = channelsCreateV1(user1.token, 'Boost', true);
+        channelJoinV1(user2.token, channel.channelId);
+        const channelMsg = messageSendV1(user2.token, channel.channelId, "hey @hangpham! how are you?");
+        channelLeaveV1(user2.token, channel.channelId);
+        messageReactV1(user1.token, channelMsg.messageId, 1);
+        const result = notificationsGetV1(user2.token);
+        expect(result).toMatchObject({
+          notifications: []
+        });
+      });
+      test('no notification when message reacted to user who is no longer part of dm', () =>  {
+        const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+        const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+        const dm = dmCreateV1(user1.token, [user2.authUserId]);
+        const dmMsg:any  = messageSendDmV1(user2.token, dm.dmId, "hey there");
+        dmLeaveV1(user2.token, dm.dmId);
+        messageReactV1(user1.token, dmMsg.messageId, 1);
+        const result = notificationsGetV1(user2.token);
+        expect(result).toMatchObject({
+          notifications: [
+            {
+              channelId: -1,
+              dmId: dm.dmId,
+              notificationMessage: `hangpham added you to hangpham, janedoe`
+            }
+          ]
+        });
+      });
+    });
   });
 
   describe('Adding to channel/dm', () => {
@@ -119,7 +209,6 @@ describe('Testing notificationsGetV1 success handling', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
     const channel = channelsCreateV1(user1.token, 'Boost', true);
-    const dm = dmCreateV1(user1.token, [user2.authUserId]);
     channelJoinV1(user2.token, channel.channelId);
 
     for (let i = 0; i <= 25; i++) {
