@@ -1,7 +1,6 @@
 import { postRequest, deleteRequest, getRequest, putRequest } from './other';
-const SERVER_URL = `${url}:${port}`;
-
 import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
 export function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -32,7 +31,7 @@ export function channelInviteV1(token: string, channelId: number, uId: number) {
   }, token);
 }
 
-export function messageSendDmV1(token: string, dmId: number, message: string){
+export function messageSendDmV1(token: string, dmId: number, message: string) {
   return postRequest(SERVER_URL + '/message/senddm/v2', {
     dmId: dmId,
     message: message,
@@ -49,7 +48,7 @@ export function channelMessagesV1(token: string, channelId: number, start: numbe
     channelId: channelId,
     start: 0,
   }, token);
-};
+}
 export function channelJoinV1 (token: string, channelId: number) {
   postRequest(SERVER_URL + '/channel/join/v3', {
     channelId: channelId
@@ -71,15 +70,15 @@ export function dmMessagesV1(token: string, dmId: number, start: number) {
     dmId: dmId,
     start: 0,
   }, token);
-};
+}
 export function dmLeaveV1(token: string, dmId: number) {
   return postRequest(SERVER_URL + '/dm/leave/v1', {
     dmId: dmId
   }, token);
-};
+}
 export function notificationsGetV1(token: string) {
   return getRequest(SERVER_URL + '/dm/messages/v1', {}, token);
-};
+}
 export function messageReactV1 (token: string, messageId: number, reactId: number) {
-  return postRequest(SERVER_URL + '/message/react/v1', {messageId, reactId}, token);
-};
+  return postRequest(SERVER_URL + '/message/react/v1', { messageId, reactId }, token);
+}
