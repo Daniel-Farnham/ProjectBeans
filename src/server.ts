@@ -93,6 +93,13 @@ app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channel/invite/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { channelId, uId } = req.body;
+  res.json(channelInviteV1(token, channelId, uId));
+  save();
+});
+
 app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
   const { channelId } = req.body;
   const token = req.header('token');
@@ -115,6 +122,13 @@ app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
 });
 
 app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  const start = parseInt(req.query.start as string);
+  res.json(channelMessagesV1(token, channelId, start));
+});
+
+app.get('/channel/messages/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);
   const start = parseInt(req.query.start as string);
@@ -204,7 +218,21 @@ app.post('/channel/join/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channel/join/v3', (req: Request, res: Response, next) => {
+  const { channelId } = req.body;
+  const token = req.header('token');
+  res.json(channelJoinV1(token, channelId));
+  save();
+});
+
 app.get('/channel/details/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
+  save();
+});
+
+app.get('/channel/details/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);
   res.json(channelDetailsV1(token, channelId));
@@ -239,6 +267,14 @@ app.put('/message/edit/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.put('/message/edit/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  const message = req.body.message as string;
+  res.json(messageEditV1(token, messageId, message));
+  save();
+});
+
 app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
   const { dmId } = req.body;
   const token = req.header('token');
@@ -252,6 +288,12 @@ app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
 });
 
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.query.messageId as string);
+  res.json(messageRemoveV1(token, messageId));
+});
+
+app.delete('/message/remove/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.query.messageId as string);
   res.json(messageRemoveV1(token, messageId));
@@ -294,6 +336,13 @@ app.get('/dm/details/v1', (req: Request, res: Response, next) => {
 });
 
 app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const dmId = parseInt(req.query.dmId as string);
+  const start = parseInt(req.query.start as string);
+  res.json(dmMessagesV1(token, dmId, start));
+});
+
+app.get('/dm/messages/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);

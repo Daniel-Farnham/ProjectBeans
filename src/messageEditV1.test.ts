@@ -1,6 +1,8 @@
 import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -25,7 +27,7 @@ describe('Testing messageEditV1 success for channels', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, userId.token);
@@ -53,12 +55,14 @@ describe('Testing messageEditV1 error handling for channels', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, userId.token + 'Invalid Token');
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('MessageId is invalid', () => {
@@ -79,12 +83,14 @@ describe('Testing messageEditV1 error handling for channels', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId + 1,
       message: 'This is an edited message'
     }, userId.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message is an invalid length', () => {
@@ -106,12 +112,14 @@ describe('Testing messageEditV1 error handling for channels', () => {
       message: 'This is an edited message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: messageGreaterThan1000Char,
     }, userId.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user, user does have global owner permission but is not a member of the channel', () => {
@@ -144,12 +152,14 @@ describe('Testing messageEditV1 error handling for channels', () => {
     }, user2.token);
 
     // user 1 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, user1.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user and the user does not have the global owner permission but they are a member of the channel', () => {
@@ -187,12 +197,14 @@ describe('Testing messageEditV1 error handling for channels', () => {
     }, user1.token);
 
     // user 2 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, user2.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 
@@ -214,7 +226,7 @@ describe('Testing messageEditV1 success for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, userId.token);
@@ -240,12 +252,14 @@ describe('Testing messageEditV1 error handling for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, userId.token + 'Invalid Token');
 
-    expect(editedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing messageId is invalid', () => {
@@ -264,12 +278,14 @@ describe('Testing messageEditV1 error handling for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId + 1,
       message: 'This is an edited message'
     }, userId.token);
 
-    expect(editedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message is an invalid length', () => {
@@ -289,12 +305,14 @@ describe('Testing messageEditV1 error handling for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: messageGreaterThan1000Char
     }, userId.token);
 
-    expect(editedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user and the user does not have global owner permissions', () => {
@@ -326,11 +344,13 @@ describe('Testing messageEditV1 error handling for dms', () => {
     }, user1.token);
 
     // user 2 tries to edit. They are neither global owners or are the authorised sender of the message dm.
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, user2.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
