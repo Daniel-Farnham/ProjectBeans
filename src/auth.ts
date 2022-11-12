@@ -2,6 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
+import HTTPError from 'http-errors';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -122,7 +123,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   */
 export function authLogoutV1 (token: string): Record<string, never> | error {
   if (!tokenExists(token)) {
-    return { error: 'Token provided is invalid' };
+    throw HTTPError (403,'Token provided is invalid' );
   }
 
   const data = getData();
