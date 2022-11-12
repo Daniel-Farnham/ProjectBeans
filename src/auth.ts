@@ -50,7 +50,7 @@ function authLoginV1(email: string, password: string): authInfo | error {
   }
 
   // If haven't returned yet, email doesn't belong to a user
-  throw HTTPError('Email doesn\'t belong to a user.');
+  throw HTTPError(400, 'Email doesn\'t belong to a user.');
 }
 
 /**

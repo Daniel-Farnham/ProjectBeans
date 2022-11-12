@@ -9,7 +9,7 @@ function clearV1() {
 }
 
 function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
-  return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
+  return postRequest(SERVER_URL + '/auth/register/v2', { email, password, nameFirst, nameLast });
 }
 
 function authLoginV1(email: string, password: string) {
@@ -24,7 +24,6 @@ describe('Testing basic authLoginV1 functionality', () => {
   test('Test that authLoginV1 successfully logs in and returns an integer Id', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const authId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
-
     expect(authId).toStrictEqual({ token: expect.any(String), authUserId: expect.any(Number) });
   });
 
@@ -79,7 +78,7 @@ describe('Testing authLoginV1 error handling', () => {
     },
   ])('$desc', ({ email, password }) => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
-
-    expect(authLoginV1(email, password)).toBe(INVALID_PARAM);
+    const authId = authLoginV1(email, password);
+    expect(authId.statusCode).toBe(INVALID_PARAM);
   });
 });
