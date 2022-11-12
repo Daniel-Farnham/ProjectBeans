@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, BAD_REQUEST, FORBIDDEN } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -78,7 +78,7 @@ describe('Testing dmRemoveV1 error handling', () => {
       dmId: 0
     }, regId.token);
 
-    expect(removeDm.statusCode).toBe(400);
+    expect(removeDm.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(removeDm.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -106,7 +106,7 @@ describe('Testing dmRemoveV1 error handling', () => {
       dmId: dmId.dmId
     }, secondId.token);
 
-    expect(removeDm.statusCode).toBe(403);
+    expect(removeDm.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(removeDm.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -134,7 +134,7 @@ describe('Testing dmRemoveV1 error handling', () => {
       dmId: dmId.dmId
     }, secondId.token);
 
-    expect(removeDm.statusCode).toBe(403);
+    expect(removeDm.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(removeDm.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -155,7 +155,7 @@ describe('Testing dmRemoveV1 error handling', () => {
       dmId: dmId.dmId
     }, regId.token + 'NotAToken');
 
-    expect(removeDm.statusCode).toBe(403);
+    expect(removeDm.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(removeDm.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
