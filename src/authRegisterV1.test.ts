@@ -124,6 +124,8 @@ describe('Testing authRegisterV1 error handling', () => {
     const newId = authRegisterV1(email, password, nameFirst, nameLast);
 
     expect(newId.statusCode).toBe(INVALID_PARAM);
+    const bodyObj = JSON.parse(newId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing registration with in use email', () => {
@@ -131,5 +133,7 @@ describe('Testing authRegisterV1 error handling', () => {
     const newId = authRegisterV1('z5361935@ad.unsw.edu.au', '123456', 'Mike', 'Wazowski');
 
     expect(newId.statusCode).toBe(INVALID_PARAM);
+    const bodyObj = JSON.parse(newId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
