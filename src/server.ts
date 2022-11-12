@@ -246,13 +246,9 @@ app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
-  try {
     const { dmId } = req.body;
     const token = req.header('token');
     res.json(dmLeaveV1(token, dmId));
-  } catch (err) {
-    next(err);
-  }
 });
 
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {

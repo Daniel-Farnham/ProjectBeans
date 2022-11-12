@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages,
+  isMemberOfDm, getMessageId, User, Messages, FORBIDDEN, BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -182,12 +182,12 @@ function dmListV1(token: string): dmList | error {
 function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    throw HTTPError(400, 'dmId is invalid');
+    throw HTTPError(BAD_REQUEST, 'dmId is invalid');
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'Token is invalid');
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const uId = getUidFromToken(token);
@@ -196,7 +196,7 @@ function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
     if (dm.dmId === dmId) {
       // Check if the user is a member of the dm
       if (!isMemberOfDm(dm, uId)) {
-        throw HTTPError(403, 'User is not a member of the dm');
+        throw HTTPError(FORBIDDEN, 'User is not a member of the dm');
       }
 
       // If they are remove them from the members list

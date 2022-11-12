@@ -21,6 +21,8 @@ export function clearV1 (): Record<string, never> {
 }
 
 export type error = { error: string };
+export const FORBIDDEN = 403;
+export const BAD_REQUEST = 400;
 
 /**
   * Specifies the user interface (used for return types)
