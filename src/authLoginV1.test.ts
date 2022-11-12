@@ -80,5 +80,7 @@ describe('Testing authLoginV1 error handling', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const authId = authLoginV1(email, password);
     expect(authId.statusCode).toBe(INVALID_PARAM);
+    const bodyObj = JSON.parse(authId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
