@@ -55,7 +55,6 @@ app.get('/echo', (req: Request, res: Response, next) => {
   }
 });
 
-// Delete request for /clear/v1
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
   res.json(clearV1());
   save();
@@ -119,6 +118,7 @@ app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
   const channelId = parseInt(req.query.channelId as string);
   const start = parseInt(req.query.start as string);
   res.json(channelMessagesV1(token, channelId, start));
+  save();
 });
 
 app.get('/user/profile/v2', (req: Request, res: Response, next) => {
@@ -177,7 +177,6 @@ app.put('/user/profile/sethandle/v2', (req: Request, res: Response, next) => {
   save();
 });
 
-// users/all/v1
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
@@ -222,6 +221,7 @@ app.post('/message/send/v1', (req: Request, res: Response, next) => {
   const channelId = parseInt(req.body.channelId as string);
   const message = req.body.message as string;
   res.json(messageSendV1(token, channelId, message));
+  save();
 });
 
 app.post('/message/send/v2', (req: Request, res: Response, next) => {
@@ -229,6 +229,7 @@ app.post('/message/send/v2', (req: Request, res: Response, next) => {
   const channelId = parseInt(req.body.channelId as string);
   const message = req.body.message as string;
   res.json(messageSendV1(token, channelId, message));
+  save();
 });
 
 app.put('/message/edit/v1', (req: Request, res: Response, next) => {
@@ -240,6 +241,13 @@ app.put('/message/edit/v1', (req: Request, res: Response, next) => {
 });
 
 app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
+  const { dmId } = req.body;
+  const token = req.header('token');
+  res.json(dmLeaveV1(token, dmId));
+  save();
+});
+
+app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
   const { dmId } = req.body;
   const token = req.header('token');
   res.json(dmLeaveV1(token, dmId));
@@ -280,16 +288,7 @@ app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
   res.json(dmRemoveV1(token, dmId));
-});
-
-app.delete('/dm/remove/v2', (req: Request, res: Response, next) => {
-  try {
-    const token = req.header('token');
-    const dmId = parseInt(req.query.dmId as string);
-    res.json(dmRemoveV1(token, dmId));
-  } catch (err) {
-    next(err);
-  }
+  save();
 });
 
 app.get('/dm/details/v1', (req: Request, res: Response, next) => {
@@ -304,6 +303,7 @@ app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);
   res.json(dmMessagesV1(token, dmId, start));
+  save();
 });
 
 app.get('/dm/list/v1', (req: Request, res: Response, next) => {
