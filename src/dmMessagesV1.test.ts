@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -242,7 +242,7 @@ describe('Testing dmMessagesV1 error handling', () => {
       start: 0,
     }, newId.token);
 
-    expect(messages.statusCode).toBe(400);
+    expect(messages.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(messages.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -271,7 +271,7 @@ describe('Testing dmMessagesV1 error handling', () => {
       start: 0,
     }, secondId.token);
 
-    expect(messages.statusCode).toBe(403);
+    expect(messages.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(messages.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -293,7 +293,7 @@ describe('Testing dmMessagesV1 error handling', () => {
       start: 1,
     }, newId.token);
 
-    expect(messages.statusCode).toBe(400);
+    expect(messages.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(messages.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -315,7 +315,7 @@ describe('Testing dmMessagesV1 error handling', () => {
       start: 1,
     }, newId.token + 'NotAToken');
 
-    expect(messages.statusCode).toBe(403);
+    expect(messages.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(messages.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });

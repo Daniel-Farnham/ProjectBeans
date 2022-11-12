@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages, httpError
+  isMemberOfDm, getMessageId, User, Messages, httpError, FORBIDDEN,
+  BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -337,30 +338,30 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
 function dmMessagesInfoInvalid(token: string, dmId: number, start: number): httpError | boolean {
   // Check if the token is invalid
   if (!(tokenExists(token))) {
-    return { code: 403, error: 'Token is invalid' };
+    return { code: FORBIDDEN, error: 'Token is invalid' };
   }
 
   // Check if the dmId is invalid
   if (!(dmIdExists(dmId))) {
-    return { code: 400, error: 'dmId is invalid' };
+    return { code: BAD_REQUEST, error: 'dmId is invalid' };
   }
 
   // If start is negative or greater than number of messages return error
   if (start < 0) {
-    return { code: 400, error: 'Starting index can\'t be negative' };
+    return { code: BAD_REQUEST, error: 'Starting index can\'t be negative' };
   }
   const data = getData();
   const dm = data.dms.find(dm => dm.dmId === dmId);
   const numMessages = dm.messages.length;
   if (start > numMessages) {
-    return { code: 400, error: 'Start index is greater than number of messages in dm' };
+    return { code: BAD_REQUEST, error: 'Start index is greater than number of messages in dm' };
   }
 
   // If channelId is valid but user isn't a member of the channel return error
   const uId = getUidFromToken(token);
 
   if (!isMemberOfDm(dm, uId)) {
-    return { code: 403, error: 'User is not a member of dm' };
+    return { code: FORBIDDEN, error: 'User is not a member of dm' };
   }
 
   // If no error by now, the info isn't invalid
