@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -15,7 +15,7 @@ describe('Testing basic dmListV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const lists = getRequest(SERVER_URL + '/dm/list/v1', {}, regId.token);
+    const lists = getRequest(SERVER_URL + '/dm/list/v2', {}, regId.token);
 
     expect(lists).toStrictEqual({ dms: [] });
   });
@@ -47,7 +47,7 @@ describe('Testing basic dmListV1 functionality', () => {
       uIds: [firstId.authUserId]
     }, secondId.token);
 
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {}, firstId.token);
+    const list = getRequest(SERVER_URL + '/dm/list/v2', {}, firstId.token);
 
     const expectedList = [
       {
@@ -86,7 +86,7 @@ describe('Testing basic dmListV1 functionality', () => {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
-    const list = getRequest(SERVER_URL + '/dm/list/v1', {}, firstId.token);
+    const list = getRequest(SERVER_URL + '/dm/list/v2', {}, firstId.token);
 
     const expectedList = new Set([
       {
@@ -103,10 +103,12 @@ describe('Testing basic dmListV1 functionality', () => {
   });
 });
 
-describe('Testing dmCreateV1 error handling', () => {
+describe('Testing dmListV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
     const list = getRequest(SERVER_URL + '/dm/list/v1', {}, 'NotAToken');
 
-    expect(list).toStrictEqual({ error: expect.any(String) });
+    expect(list.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(list.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

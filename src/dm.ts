@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages,
+  isMemberOfDm, getMessageId, User, Messages, httpError, FORBIDDEN,
+  BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -53,12 +54,13 @@ const MAX_MESSAGE_LEN = 1000;
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {{dmId: number}} - The dm id of the new dm
   */
-function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error | boolean {
+function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error | boolean {
   // Check if the given information is valid
   const data = getData();
   const isInvalid = dmInfoInvalid(token, uIds);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
   // Create the new dm and store it in the datastore
@@ -83,7 +85,8 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
   const data = getData();
   const isInvalid = removeInfoInvalid(token, dmId);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
   // Remove all the members of the dm
@@ -108,17 +111,17 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
   * @returns {{error: string}} - An error message if any info is invalid
   * @returns {boolean} - False if the given info isn't invalid
   */
-function removeInfoInvalid(token: string, dmId: number): error | boolean {
+function removeInfoInvalid(token: string, dmId: number): httpError | boolean {
   const data = getData();
 
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    return { code: BAD_REQUEST, error: 'dmId is invalid' };
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    return { code: FORBIDDEN, error: 'Token is invalid' };
   }
 
   // Check if the authorised user is the dm creator
@@ -128,7 +131,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       if (dm.creator !== uId) {
-        return { error: 'Authorised user isn\'t the dm creator' };
+        return { code: FORBIDDEN, error: 'Authorised user isn\'t the dm creator' };
       } else if (isMemberOfDm(dm, uId)) {
         isMember = true;
       }
@@ -136,7 +139,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
   }
 
   if (!isMember) {
-    return { error: 'Authorised user is not a member of the dm' };
+    return { code: FORBIDDEN, error: 'Authorised user is not a member of the dm' };
   }
 
   return false;
@@ -153,7 +156,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
 function dmListV1(token: string): dmList | error {
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const data = getData();
@@ -182,12 +185,12 @@ function dmListV1(token: string): dmList | error {
 function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    throw HTTPError(BAD_REQUEST, 'dmId is invalid');
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const uId = getUidFromToken(token);
@@ -196,7 +199,7 @@ function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
     if (dm.dmId === dmId) {
       // Check if the user is a member of the dm
       if (!isMemberOfDm(dm, uId)) {
-        return { error: 'User is not a member of the dm' };
+        throw HTTPError(FORBIDDEN, 'User is not a member of the dm');
       }
 
       // If they are remove them from the members list
@@ -245,12 +248,12 @@ function dmRemoveUser(uId: number, dmId: number) {
 function dmDetailsV1(token: string, dmId: number): dmDetails | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    throw HTTPError(BAD_REQUEST, 'dmId is invalid');
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const uId = getUidFromToken(token);
@@ -260,7 +263,7 @@ function dmDetailsV1(token: string, dmId: number): dmDetails | error {
     if (dm.dmId === dmId) {
       // Check if the user is a member of the dm
       if (!isMemberOfDm(dm, uId)) {
-        return { error: 'User is not a member of the dm' };
+        throw HTTPError(FORBIDDEN, 'User is not a member of the dm');
       }
 
       // If they are return the dm details
@@ -288,7 +291,8 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   // Check if the given information is invalid
   const isInvalid = dmMessagesInfoInvalid(token, dmId, start);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
   // If start and number of messages are both 0, return empty message array
@@ -333,33 +337,33 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   * @returns {{error: string}} - An error message if any parameter is invalid
   * @returns {boolean} - False if the information isn't invalid
   */
-function dmMessagesInfoInvalid(token: string, dmId: number, start: number): error | boolean {
+function dmMessagesInfoInvalid(token: string, dmId: number, start: number): httpError | boolean {
   // Check if the token is invalid
   if (!(tokenExists(token))) {
-    return { error: 'Token is invalid' };
+    return { code: FORBIDDEN, error: 'Token is invalid' };
   }
 
   // Check if the dmId is invalid
   if (!(dmIdExists(dmId))) {
-    return { error: 'dmId is invalid' };
+    return { code: BAD_REQUEST, error: 'dmId is invalid' };
   }
 
   // If start is negative or greater than number of messages return error
   if (start < 0) {
-    return { error: 'Starting index can\'t be negative' };
+    return { code: BAD_REQUEST, error: 'Starting index can\'t be negative' };
   }
   const data = getData();
   const dm = data.dms.find(dm => dm.dmId === dmId);
   const numMessages = dm.messages.length;
   if (start > numMessages) {
-    return { error: 'Start index is greater than number of messages in dm' };
+    return { code: BAD_REQUEST, error: 'Start index is greater than number of messages in dm' };
   }
 
   // If channelId is valid but user isn't a member of the channel return error
   const uId = getUidFromToken(token);
 
   if (!isMemberOfDm(dm, uId)) {
-    return { error: 'User is not a member of channel' };
+    return { code: FORBIDDEN, error: 'User is not a member of dm' };
   }
 
   // If no error by now, the info isn't invalid
@@ -375,20 +379,20 @@ function dmMessagesInfoInvalid(token: string, dmId: number, start: number): erro
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {boolean} - False if the given info isn't invalid
   */
-function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
+function dmInfoInvalid(token: string, uIds: Array<number>): httpError | boolean {
   // Check if any of the given uId's are invalid
   for (const uId of uIds) {
     if (!userIdExists(uId)) {
-      return { error: 'One or more given uId\'s doesn\'t exist' };
+      return { code: BAD_REQUEST, error: 'One or more given uId\'s doesn\'t exist' };
     }
   }
   if (containsDuplicates(uIds)) {
-    return { error: 'A duplicate uId has been given' };
+    return { code: BAD_REQUEST, error: 'A duplicate uId has been given' };
   }
 
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    return { code: FORBIDDEN, error: 'Token is invalid' };
   }
 
   // If no errors then return false

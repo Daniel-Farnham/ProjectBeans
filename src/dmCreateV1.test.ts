@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -15,7 +15,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
@@ -30,7 +30,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
@@ -63,7 +63,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Ngo'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId, thirdId.authUserId]
     }, firstId.token);
 
@@ -82,7 +82,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
@@ -125,7 +125,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       nameLast: 'Ngo'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId, thirdId.authUserId]
     }, firstId.token);
 
@@ -174,7 +174,9 @@ describe('Testing dmCreateV1 error handling', () => {
       uIds: [regId.authUserId + 1]
     }, regId.token);
 
-    expect(dmId).toStrictEqual({ error: expect.any(String) });
+    expect(dmId.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(dmId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmCreateV1 returns error when uIds contains a duplicate', () => {
@@ -192,18 +194,22 @@ describe('Testing dmCreateV1 error handling', () => {
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId, secondId.authUserId]
     }, firstId.token);
 
-    expect(dmId).toStrictEqual({ error: expect.any(String) });
+    expect(dmId.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(dmId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmCreateV1 returns error when token is invalid', () => {
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, 'NotAToken');
 
-    expect(dmId).toStrictEqual({ error: expect.any(String) });
+    expect(dmId.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(dmId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
