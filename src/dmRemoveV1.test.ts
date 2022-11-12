@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -61,7 +61,7 @@ describe('Testing basic dmRemoveV1 functionality', () => {
     ];
 
     expect(firstDetails.members).toStrictEqual(expectedMembers);
-    expect(secondDetails.statusCode).toBe(403);
+    expect(secondDetails.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(secondDetails.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
