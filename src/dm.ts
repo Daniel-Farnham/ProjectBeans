@@ -184,12 +184,12 @@ function dmListV1(token: string): dmList | error {
 function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    throw HTTPError(BAD_REQUEST, 'dmId is invalid');
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const uId = getUidFromToken(token);
@@ -198,7 +198,7 @@ function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
     if (dm.dmId === dmId) {
       // Check if the user is a member of the dm
       if (!isMemberOfDm(dm, uId)) {
-        return { error: 'User is not a member of the dm' };
+        throw HTTPError(FORBIDDEN, 'User is not a member of the dm');
       }
 
       // If they are remove them from the members list

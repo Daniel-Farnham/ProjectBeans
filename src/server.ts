@@ -290,6 +290,12 @@ app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/dm/leave/v2', (req: Request, res: Response, next) => {
+  const { dmId } = req.body;
+  const token = req.header('token');
+  res.json(dmLeaveV1(token, dmId));
+});
+
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.query.messageId as string);

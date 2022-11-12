@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -19,7 +19,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       uIds: []
     }, regId.token);
 
-    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
+    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -38,7 +38,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       uIds: []
     }, regId.token);
 
-    postRequest(SERVER_URL + '/dm/leave/v1', {
+    postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -68,7 +68,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
-    postRequest(SERVER_URL + '/dm/leave/v1', {
+    postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, secondId.token);
 
@@ -108,7 +108,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
-    postRequest(SERVER_URL + '/dm/leave/v1', {
+    postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, firstId.token);
 
@@ -148,7 +148,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       uIds: [secondId.uId]
     }, firstId.token);
 
-    postRequest(SERVER_URL + '/dm/leave/v1', {
+    postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, firstId.token);
 
@@ -173,7 +173,9 @@ describe('Testing dmLeaveV1 error handling', () => {
       dmId: 0
     }, regId.token);
 
-    expect(dmLeave).toStrictEqual({ error: expect.any(String) });
+    expect(dmLeave.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(dmLeave.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmLeaveV1 returns error when authorised user isn\'t a member', () => {
@@ -195,11 +197,13 @@ describe('Testing dmLeaveV1 error handling', () => {
       uIds: []
     }, firstId.token);
 
-    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
+    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, secondId.token);
 
-    expect(dmLeave).toStrictEqual({ error: expect.any(String) });
+    expect(dmLeave.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(dmLeave.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmLeaveV1 returns error when token is invalid', () => {
@@ -214,10 +218,12 @@ describe('Testing dmLeaveV1 error handling', () => {
       uIds: []
     }, regId.token);
 
-    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
+    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: dmId.dmId
     }, regId.token + 'NotAToken');
 
-    expect(dmLeave).toStrictEqual({ error: expect.any(String) });
+    expect(dmLeave.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(dmLeave.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
