@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages,
+  isMemberOfDm, getMessageId, User, Messages, FORBIDDEN,
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -153,7 +153,7 @@ function removeInfoInvalid(token: string, dmId: number): error | boolean {
 function dmListV1(token: string): dmList | error {
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'Token is invalid');
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const data = getData();

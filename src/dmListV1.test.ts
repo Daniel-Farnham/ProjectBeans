@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -107,7 +107,7 @@ describe('Testing dmListV1 error handling', () => {
   test('Test dmListV1 returns error when token is invalid', () => {
     const list = getRequest(SERVER_URL + '/dm/list/v1', {}, 'NotAToken');
 
-    expect(list.statusCode).toBe(403);
+    expect(list.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(list.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });

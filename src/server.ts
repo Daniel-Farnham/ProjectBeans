@@ -301,13 +301,9 @@ app.get('/dm/list/v1', (req: Request, res: Response, next) => {
 });
 
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
-  try {
-    const token = req.header('token');
-    res.json(dmListV1(token));
-    save();
-  } catch (err) {
-    next(err);
-  }
+  const token = req.header('token');
+  res.json(dmListV1(token));
+  save();
 });
 
 // handles errors nicely
