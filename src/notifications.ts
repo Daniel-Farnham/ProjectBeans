@@ -1,4 +1,4 @@
-// import { getData } from './dataStore';
+import { getData } from './dataStore';
 import { tokenExists } from './other';
 import HTTPError from 'http-errors';
 
@@ -19,11 +19,31 @@ export type notifications = Array<Notification>;
   * where each object contains types { channelId, dmId, notificationMessage }
 */
 export function notificationsGetV1(token: string) {
-  // const data = getData();
-
+  const data = getData();
+  
   if (!tokenExists(token)) {
     throw HTTPError(403, 'token is invalid');
   }
+  
+  
+  return { notifications:  data.notifications };
+}
 
-  return { notifications: [] };
+export function notificationSet(uId: number, messageContainerId: number, messageId: number, message: string, type: string) {
+  if (type === 'channel') {
+
+  }
+
+  if (type === 'dm') {
+
+  }
+
+}
+
+function requiresTagging(message: string) {
+  const handleRegex = /@[A-Za-z0-9]+/;
+  if (handleRegex.test(message)) {
+    return true;
+  }
+  return false;
 }
