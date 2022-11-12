@@ -243,12 +243,14 @@ app.post('/dm/leave/v1', (req: Request, res: Response, next) => {
   const { dmId } = req.body;
   const token = req.header('token');
   res.json(dmLeaveV1(token, dmId));
+  save();
 });
 
 app.delete('/message/remove/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.query.messageId as string);
   res.json(messageRemoveV1(token, messageId));
+  save();
 });
 
 app.post('/message/senddm/v1', (req: Request, res: Response, next) => {
