@@ -291,6 +291,13 @@ app.delete('/dm/remove/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.delete('/dm/remove/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const dmId = parseInt(req.query.dmId as string);
+  res.json(dmRemoveV1(token, dmId));
+  save();
+});
+
 app.get('/dm/details/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
