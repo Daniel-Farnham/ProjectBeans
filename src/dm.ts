@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages, httpError
+  isMemberOfDm, getMessageId, User, Messages, httpError, BAD_REQUEST, FORBIDDEN
 } from './other';
 import HTTPError from 'http-errors';
 
@@ -380,16 +380,16 @@ function dmInfoInvalid(token: string, uIds: Array<number>): httpError | boolean 
   // Check if any of the given uId's are invalid
   for (const uId of uIds) {
     if (!userIdExists(uId)) {
-      return { code: 400, error: 'One or more given uId\'s doesn\'t exist' };
+      return { code: BAD_REQUEST, error: 'One or more given uId\'s doesn\'t exist' };
     }
   }
   if (containsDuplicates(uIds)) {
-    return { code: 400, error: 'A duplicate uId has been given' };
+    return { code: BAD_REQUEST, error: 'A duplicate uId has been given' };
   }
 
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    return { code: 403, error: 'Token is invalid' };
+    return { code: FORBIDDEN, error: 'Token is invalid' };
   }
 
   // If no errors then return false

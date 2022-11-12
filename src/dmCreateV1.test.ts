@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -174,7 +174,7 @@ describe('Testing dmCreateV1 error handling', () => {
       uIds: [regId.authUserId + 1]
     }, regId.token);
 
-    expect(dmId.statusCode).toBe(400);
+    expect(dmId.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(dmId.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -198,7 +198,7 @@ describe('Testing dmCreateV1 error handling', () => {
       uIds: [secondId.authUserId, secondId.authUserId]
     }, firstId.token);
 
-    expect(dmId.statusCode).toBe(400);
+    expect(dmId.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(dmId.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
@@ -208,7 +208,7 @@ describe('Testing dmCreateV1 error handling', () => {
       uIds: []
     }, 'NotAToken');
 
-    expect(dmId.statusCode).toBe(403);
+    expect(dmId.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(dmId.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
