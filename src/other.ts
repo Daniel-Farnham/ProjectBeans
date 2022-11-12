@@ -21,6 +21,7 @@ export function clearV1 (): Record<string, never> {
 }
 
 export type error = { error: string };
+export type httpError = { code: number, error: string };
 export const FORBIDDEN = 403;
 export const BAD_REQUEST = 400;
 

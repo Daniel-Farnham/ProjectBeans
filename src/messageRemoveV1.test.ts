@@ -1,6 +1,8 @@
 import { postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -25,7 +27,7 @@ describe('Testing messageDeleteV1 success for channels', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId,
     }, userId.token);
 
@@ -52,11 +54,13 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId,
     }, userId.token + 'Invalid Token');
 
-    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(deletedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(deletedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
   test('MessageId is invalid', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -76,11 +80,13 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId + 1,
     }, userId.token);
 
-    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(deletedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(deletedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user, user does have global owner permission but is not a member of the channel', () => {
@@ -113,11 +119,13 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
     }, user2.token);
 
     // user 1 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId,
     }, user1.token);
 
-    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(deletedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(deletedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   // needs to add user to global owner.
@@ -155,11 +163,13 @@ describe('Testing messageDeleteV1 error handling for channels', () => {
       message: 'Hello this is a random test message'
     }, user1.token);
     // user 2 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId,
     }, user2.token);
 
-    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(deletedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(deletedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 
@@ -181,7 +191,7 @@ describe('Testing messageDeleteV1 success for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId,
     }, userId.token);
 
@@ -206,11 +216,13 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId,
     }, userId.token + 'Invalid Token');
 
-    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(deletedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(deletedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing messageId is invalid', () => {
@@ -229,11 +241,13 @@ describe('Testing messageDeleteV1 error handling for dms', () => {
       message: 'Hello this is a random test message'
     }, userId.token);
 
-    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+    const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: message.messageId + 1,
     }, userId.token);
 
-    expect(deletedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(deletedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(deletedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 
@@ -266,9 +280,11 @@ test('Message not sent by authorised user and the user does not have global owne
   }, user1.token);
 
   // user 2 tries to delete. They are neither global owners or are the authorised sender of the message dm.
-  const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v1', {
+  const deletedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
     messageId: message.messageId,
   }, user2.token);
 
-  expect(deletedMessage).toMatchObject({ error: expect.any(String) });
+  expect(deletedMessage.statusCode).toBe(FORBIDDEN);
+  const bodyObj = JSON.parse(deletedMessage.body as string);
+  expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 });

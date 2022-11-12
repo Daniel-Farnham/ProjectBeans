@@ -1,6 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -20,7 +22,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       isPublic: false,
     }, newId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, newId.token);
@@ -45,7 +47,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       isPublic: false,
     }, newId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, newId.token);
@@ -87,7 +89,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       message: 'Testing 3'
     }, newId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, newId.token);
@@ -148,7 +150,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       message: 'Testing 3'
     }, newId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 1
     }, newId.token);
@@ -195,7 +197,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       }, newId.token);
     }
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0
     }, newId.token);
@@ -224,7 +226,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       }, newId.token);
     }
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 1
     }, newId.token);
@@ -242,7 +244,8 @@ describe('Testing channelMessagesV1 error handling', () => {
       tokenOffset: '',
       channelIdOffset: 1,
       start: 0,
-      desc: 'Testing an invalid channelId'
+      desc: 'Testing an invalid channelId',
+      statusCode: BAD_REQUEST
     },
     {
       name: 'Test',
@@ -250,7 +253,8 @@ describe('Testing channelMessagesV1 error handling', () => {
       tokenOffset: '',
       channelIdOffset: 0,
       start: 1,
-      desc: 'Testing when start is greater than number of messages'
+      desc: 'Testing when start is greater than number of messages',
+      statusCode: BAD_REQUEST
     },
     {
       name: '1234',
@@ -258,9 +262,10 @@ describe('Testing channelMessagesV1 error handling', () => {
       tokenOffset: 'invalid token',
       channelIdOffset: 0,
       start: 0,
-      desc: 'Testing an invalid authUserId'
+      desc: 'Testing an invalid authUserId',
+      statusCode: FORBIDDEN
     },
-  ])('$desc', ({ name, isPublic, tokenOffset, channelIdOffset, start }) => {
+  ])('$desc', ({ name, isPublic, tokenOffset, channelIdOffset, start, statusCode }) => {
     const newId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -273,12 +278,14 @@ describe('Testing channelMessagesV1 error handling', () => {
       isPublic: false,
     }, newId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId + channelIdOffset,
       start: start,
     }, newId.token + tokenOffset);
 
-    expect(messages).toMatchObject({ error: expect.any(String) });
+    expect(messages.statusCode).toBe(statusCode);
+    const bodyObj = JSON.parse(messages.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing a user that isn\'t a member of the channel', () => {
@@ -301,11 +308,13 @@ describe('Testing channelMessagesV1 error handling', () => {
       isPublic: true,
     }, firstId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v2', {
+    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, secondId.token);
 
-    expect(messages).toMatchObject({ error: expect.any(String) });
+    expect(messages.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(messages.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
