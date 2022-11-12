@@ -54,12 +54,13 @@ const MAX_MESSAGE_LEN = 1000;
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {{dmId: number}} - The dm id of the new dm
   */
-function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | error | boolean {
+function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error | boolean {
   // Check if the given information is valid
   const data = getData();
   const isInvalid = dmInfoInvalid(token, uIds);
   if (isInvalid !== false) {
-    return isInvalid;
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
   // Create the new dm and store it in the datastore
@@ -378,20 +379,20 @@ function dmMessagesInfoInvalid(token: string, dmId: number, start: number): http
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {boolean} - False if the given info isn't invalid
   */
-function dmInfoInvalid(token: string, uIds: Array<number>): error | boolean {
+function dmInfoInvalid(token: string, uIds: Array<number>): httpError | boolean {
   // Check if any of the given uId's are invalid
   for (const uId of uIds) {
     if (!userIdExists(uId)) {
-      return { error: 'One or more given uId\'s doesn\'t exist' };
+      return { code: BAD_REQUEST, error: 'One or more given uId\'s doesn\'t exist' };
     }
   }
   if (containsDuplicates(uIds)) {
-    return { error: 'A duplicate uId has been given' };
+    return { code: BAD_REQUEST, error: 'A duplicate uId has been given' };
   }
 
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    return { code: FORBIDDEN, error: 'Token is invalid' };
   }
 
   // If no errors then return false

@@ -13,7 +13,7 @@ import {
   channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
-import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
+import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 
@@ -26,9 +26,6 @@ app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
-
-// Importing implementation functions
-import { userProfileV1, usersAllV1 } from './users';
 
 // Get data. If datastore file exists, then update data to match datastore
 let data = getData();
@@ -326,6 +323,13 @@ app.post('/message/senddm/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/dm/create/v1', (req: Request, res: Response, next) => {
+  const { uIds } = req.body;
+  const token = req.header('token');
+  res.json(dmCreateV1(token, uIds));
+  save();
+});
+
+app.post('/dm/create/v2', (req: Request, res: Response, next) => {
   const { uIds } = req.body;
   const token = req.header('token');
   res.json(dmCreateV1(token, uIds));
