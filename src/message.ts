@@ -101,17 +101,17 @@ function storeMessageInChannel(message: Message, channelId: number) {
 
 export function messageEditV1 (token: string, messageId: number, message: string): error | Record<string, never> {
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid.' };
+    throw HTTPError(403, 'token is invalid');
   }
 
   if (message.length > MAX_MESSAGE_LEN) {
-    return { error: 'length of message is over 1000 characters.' };
+    throw HTTPError(400, 'length of message is over 1000 characters.');
   }
 
   // Checking both channels and dms to see if messageId is valid.
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
-    return { error: 'message does not exist in either channels or dms' };
+    throw HTTPError(400, 'message does not exist in either channels or dms');
   }
 
   const uId = getUidFromToken(token);
@@ -130,7 +130,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
   if (messageContainer.type === 'dm') {
     // If no errors, remove dm from channel.
     if (messageContainer.dm.creator !== uId) {
-      return { error: 'User atttempting remove message is not the owner of the dm' };
+      throw HTTPError(403, 'User atttempting remove message is not the owner of the dm');
     } else {
       editMessageFromDM(messageId, message);
     }
@@ -197,13 +197,13 @@ function editMessageFromDM(messageId: number, editedMessage: string) {
 */
 export function messageRemoveV1(token: string, messageId: number): error | Record<string, never> {
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid.' };
+    throw HTTPError(403, 'token is invalid');
   }
 
   // Checking both channels and dms to see if messageId is valid.
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
-    return { error: 'message does not exist in either channels or dms' };
+    throw HTTPError(400, 'message does not exist in either channels or dms');
   }
 
   const uId = getUidFromToken(token);
@@ -224,7 +224,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   if (messageContainer.type === 'dm') {
     // If no errors, remove dm from channel.
     if (messageContainer.dm.creator !== uId) {
-      return { error: 'User atttempting remove message is not the owner of the dm' };
+      throw HTTPError(403, 'User atttempting remove message is not the owner of the dm');
     } else {
       removeMessageFromDM(messageId);
     }
@@ -263,12 +263,12 @@ function messageFromChannelValid(channel: Channel, messageId: number, uId: numbe
   // Find user object
   const findUser = data.users.find(user => user.uId === uId);
   if (!isMemberOfChannel(channel, uId)) {
-    return { error: 'User is not a member of channel' };
+    throw HTTPError(403, 'User is not a member of the channel');
   }
 
   // If user is a member and now a channel owner and not a global owner
   if (!ownerMember && !isOwnerOfMessage(messageObj, uId) && findUser.permissionId !== GLOBAL_OWNER) {
-    return { error: 'Channel member does not have permissions to remove message' };
+    throw HTTPError(403, 'Channel member does not have permissions to remove message');
   }
   return true;
 }
