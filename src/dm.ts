@@ -248,12 +248,12 @@ function dmRemoveUser(uId: number, dmId: number) {
 function dmDetailsV1(token: string, dmId: number): dmDetails | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
-    return { error: 'dmId is invalid' };
+    throw HTTPError(BAD_REQUEST, 'dmId is invalid');
   }
 
   // Check if the token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const uId = getUidFromToken(token);
@@ -263,7 +263,7 @@ function dmDetailsV1(token: string, dmId: number): dmDetails | error {
     if (dm.dmId === dmId) {
       // Check if the user is a member of the dm
       if (!isMemberOfDm(dm, uId)) {
-        return { error: 'User is not a member of the dm' };
+        throw HTTPError(FORBIDDEN, 'User is not a member of the dm');
       }
 
       // If they are return the dm details

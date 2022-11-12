@@ -357,6 +357,13 @@ app.get('/dm/details/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.get('/dm/details/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const dmId = parseInt(req.query.dmId as string);
+  res.json(dmDetailsV1(token, dmId));
+  save();
+});
+
 app.get('/dm/messages/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const dmId = parseInt(req.query.dmId as string);
