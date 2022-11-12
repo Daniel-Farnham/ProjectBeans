@@ -156,7 +156,7 @@ function removeInfoInvalid(token: string, dmId: number): httpError | boolean {
 function dmListV1(token: string): dmList | error {
   // Check if the given token is invalid
   if (!tokenExists(token)) {
-    return { error: 'Token is invalid' };
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
 
   const data = getData();

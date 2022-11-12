@@ -378,6 +378,12 @@ app.get('/dm/list/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.get('/dm/list/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(dmListV1(token));
+  save();
+});
+
 // handles errors nicely
 app.use(errorHandler());
 
