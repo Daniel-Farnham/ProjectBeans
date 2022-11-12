@@ -20,7 +20,6 @@ function authLoginV1(email: string, password: string) {
   return postRequest(SERVER_URL + '/auth/login/v3', { email, password });
 }
 
-
 describe('Testing successful cases for authLogoutV1', () => {
   test('Testing returning empty object upon successful logout', () => {
     const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Hang', 'Pham');
