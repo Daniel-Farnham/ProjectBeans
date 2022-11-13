@@ -118,7 +118,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
   }
 
   const uId = getUidFromToken(token);
-  
+
   // Case where message is in a channel.
   if (messageContainer.type === 'channel') {
     const messageEditResult = messageFromChannelValid(messageContainer.channel, messageId, uId);
@@ -139,7 +139,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
       throw HTTPError(403, 'User atttempting remove message is not the owner of the dm');
     } else {
       editMessageFromDM(messageId, message);
-      if (requiresTagging) {
+      if (requiresTagging(message)) {
         notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
       }
     }
@@ -147,16 +147,6 @@ export function messageEditV1 (token: string, messageId: number, message: string
 
   return {};
 }
-
-/**
-  * Edits the message that exists in the channel
-  *
-  * @param {number} messageId - id of the message to be edited
-  * @param {string} editedMessage - edited message
-  * ...
-  *
-  * @returns nothing
-*/
 
 function editMessageFromChannel(messageId: number, editedMessage: string) {
   const data = getData();
