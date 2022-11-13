@@ -95,7 +95,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   };
 
   data.users.push(user);
-  
+
   const notification = {
     uId: userId,
     notifications: [],

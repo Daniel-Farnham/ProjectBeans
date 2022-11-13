@@ -67,11 +67,11 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
   setData(data);
-    // Create notification for added users
-    let uId = getUidFromToken(token);
-    let uIdsWithoutAuthUser = uIds.filter(value => value !== uId);
-    notificationSetAddDm(dm.dmId, uId, uIdsWithoutAuthUser);
-    
+  // Create notification for added users
+  const uId = getUidFromToken(token);
+  const uIdsWithoutAuthUser = uIds.filter(value => value !== uId);
+  notificationSetAddDm(dm.dmId, uId, uIdsWithoutAuthUser);
+
   return { dmId: dm.dmId };
 }
 
@@ -512,7 +512,7 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
 
   storeMessageInDm(messageObj, dmId);
   if (requiresTagging(message)) {
-    notificationSetTag(uId, -1, dmId, message,'dm');
+    notificationSetTag(uId, -1, dmId, message, 'dm');
   }
   return { messageId: messageId };
 }

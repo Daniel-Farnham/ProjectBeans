@@ -2,7 +2,7 @@ import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerO
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
-import { notificationSetAddChannel  } from './notifications';
+import { notificationSetAddChannel } from './notifications';
 
 const GLOBAL_OWNER = 1;
 

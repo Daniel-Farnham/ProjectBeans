@@ -371,7 +371,7 @@ export function getUidFromToken (token: string): number {
   * @returns {handleStr} - returns handleStr
 */
 export function getHandleFromUid(uId: number) {
-  let data = getData();
+  const data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
       return user.handleStr;
@@ -384,7 +384,7 @@ export function getHandleFromUid(uId: number) {
   * @returns {name} - returns name
 */
 export function getNameFromChannelId(channelId: number) {
-  let data = getData();
+  const data = getData();
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       return channel.name;
@@ -397,7 +397,7 @@ export function getNameFromChannelId(channelId: number) {
   * @returns {name} - returns name
 */
 export function getNameFromDmId(dmId: number) {
-  let data = getData();
+  const data = getData();
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       return dm.name;

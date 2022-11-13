@@ -2,10 +2,9 @@ import {
   channelIdExists, tokenExists, getMessageId,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
 } from './other';
-import { notificationSetTag, requiresTagging } from'./notifications';
+import { notificationSetTag, requiresTagging } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { dmCreateV1 } from './wrapperFunctions';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -131,11 +130,10 @@ export function messageEditV1 (token: string, messageId: number, message: string
       return messageEditResult;
     }
   }
-  
+
   // Case where message is in a dm.
   if (messageContainer.type === 'dm') {
-    
-    // If user is not an owner 
+    // If user is not an owner
     for (const message of messageContainer.dm.messages) {
       if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
         throw HTTPError(403, 'User atttempting edit message is not the owner of the dm or the sender');

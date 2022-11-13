@@ -1,6 +1,8 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
-getNameFromChannelId, getNameFromDmId } from './other';
+import {
+  tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
+  getNameFromChannelId, getNameFromDmId
+} from './other';
 import HTTPError from 'http-errors';
 
 export interface Notification {
@@ -21,17 +23,17 @@ export type notifications = Array<Notification>;
 */
 export function notificationsGetV1(token: string) {
   const data = getData();
-  
+
   if (!tokenExists(token)) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
-  
+
   const uId = getUidFromToken(token);
   // Loop through each notification and create reverse array so that the latest
   // notification is at the top
   for (const notification of data.notifications) {
     if (notification.uId === uId) {
-      let notificationsUpToTwenty = [];
+      const notificationsUpToTwenty = [];
       let i = 0;
       for (const notificationToAdd of notification.notifications) {
         if (i < 20) {
@@ -39,9 +41,8 @@ export function notificationsGetV1(token: string) {
         }
         i++;
       }
-      return {notifications: notificationsUpToTwenty};
+      return { notifications: notificationsUpToTwenty };
     }
-
   }
 }
 
@@ -54,8 +55,8 @@ export function notificationsGetV1(token: string) {
   *
 */
 export function notificationSetAddChannel(channelId: number, authUserId: number, uId: number) {
-  let name = getNameFromChannelId(channelId);
-  let handle = getHandleFromUid(authUserId);
+  const name = getNameFromChannelId(channelId);
+  const handle = getHandleFromUid(authUserId);
 
   const notificationMsg = {
     channelId: channelId,
@@ -73,8 +74,8 @@ export function notificationSetAddChannel(channelId: number, authUserId: number,
   * @param {array of numbers} uIds - users who were invited to dm
 */
 export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
-  let name = getNameFromDmId(dmId);
-  let handle = getHandleFromUid(uId);
+  const name = getNameFromDmId(dmId);
+  const handle = getHandleFromUid(uId);
 
   const notificationMsg = {
     channelId: -1,
@@ -92,7 +93,7 @@ export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
   * @param {number} dmId - dm that user was tagged in
   * @param {string} notificationMessage - message that was created by user
   * @param {string} type - to check whether message came from a dm/channel
-  * 
+  *
 */
 export function notificationSetTag(uId: number, channelId: number, dmId: number, notificationMessage: string, type: string) {
   const senderHandle = getHandleFromUid(uId);
@@ -102,7 +103,7 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
   } else if (type === 'dm') {
     name = getNameFromDmId(dmId);
   }
-  
+
   const notificationMsg = {
     channelId: channelId,
     dmId: dmId,
@@ -110,7 +111,7 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
   };
 
   // Loop through each uId and add notification
-  let uIds = getUidsFromHandle(notificationMessage);
+  const uIds = getUidsFromHandle(notificationMessage);
   setNotificationForEachUser(uIds, notificationMsg);
 }
 /**
@@ -118,12 +119,12 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
   *
   * @param {number} uIds - users who were tagged in message
   * @param {{notification}} notificationMsg - Notification object containing details
-  * 
+  *
 */
-function setNotificationForEachUser(uIds: any[], notificationMsg: {}) {
-  let data = getData();
+function setNotificationForEachUser(uIds: any[], notificationMsg: Notification) {
+  const data = getData();
   for (const uId of uIds) {
-    for (let notification of data.notifications) {
+    for (const notification of data.notifications) {
       if (notification.uId === uId) {
         notification.notifications.unshift(notificationMsg);
       }
@@ -136,14 +137,14 @@ function setNotificationForEachUser(uIds: any[], notificationMsg: {}) {
   * Get user ids from handles that were tagged in am essage
   *
   * @param {string} message - message containing user handles
-  * 
+  *
 */
 function getUidsFromHandle(message: string): any[] {
-  let data = getData();
+  const data = getData();
   // Strip out user handles, and emove the '@' from each handle
   const handleRegex = /@[A-Za-z0-9]+/g;
   const handles = message.match(handleRegex);
-  let handlesNoAt = handles.map(s => s.slice(1));
+  const handlesNoAt = handles.map(s => s.slice(1));
 
   // Loop through users in datastore and generate an array containing
   // the valid users to be tagged
