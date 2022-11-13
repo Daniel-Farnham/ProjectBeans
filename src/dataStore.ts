@@ -12,6 +12,7 @@ let data = {
   messageCount: 0,
   tokenCount: 0,
   dms: [],
+  notifications: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
