@@ -155,6 +155,8 @@ function getUidsFromHandle(message: string): any[] {
       }
     }
   }
+  uIds = uIds.filter((val, i, array) => array.indexOf(val) === i);
+
   return uIds;
 }
 
