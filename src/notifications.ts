@@ -61,7 +61,7 @@ function notificationSetTag(channelId: number, dmId: number, notificationMessage
   const notificationMsg = {
     channelId: channelId,
     dmId: dmId,
-    notificationMessage: notificationMessage,
+    notificationMessage: notificationMessage.substring(0, 20),
   };
 
   let uIds = getUidsFromHandle(notificationMessage);
