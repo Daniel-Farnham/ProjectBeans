@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, FORBIDDEN } from './other';
+import { tokenExists, FORBIDDEN, getUidFromToken } from './other';
 import HTTPError from 'http-errors';
 
 export interface Notification {
@@ -25,8 +25,19 @@ export function notificationsGetV1(token: string) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
   
-  
-  return { notifications:  data.notifications };
+  const uId = getUidFromToken(token);
+  // Loop through each notification and create reverse array so that the latest
+  // notification is at the top
+  for (const notification of data.notifications) {
+    if (notification.uId === uId) {
+      let notificationsReverse = [];
+      for (const toReverse of notification.notifications) {
+        notificationsReverse.unshift(toReverse);
+      }
+      return {notifications: notificationsReverse};
+    }
+
+  }
 }
 
 export function notificationSet(messageContainerId: number, message: string, type: string) {
@@ -47,7 +58,7 @@ export function notificationSet(messageContainerId: number, message: string, typ
 
 function notificationSetTag(channelId: number, dmId: number, notificationMessage: string) {
   let data = getData();
-  const notification = {
+  const notificationMsg = {
     channelId: channelId,
     dmId: dmId,
     notificationMessage: notificationMessage,
@@ -58,7 +69,7 @@ function notificationSetTag(channelId: number, dmId: number, notificationMessage
   for (const uId of uIds) {
     for (let notification of data.notifications) {
       if (notification.uId === uId) {
-        notification.notifications.push(notification);
+        notification.notifications.push(notificationMsg);
       }
     }
   }
@@ -66,7 +77,7 @@ function notificationSetTag(channelId: number, dmId: number, notificationMessage
 }
 
 function getUidsFromHandle(message: string): any[] {
-  
+  let data = getData();
   const handleRegex = /@[A-Za-z0-9]+/g;
   const handles = message.match(handleRegex);
 
