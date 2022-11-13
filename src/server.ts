@@ -254,6 +254,12 @@ app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/auth/logout/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(authLogoutV1(token));
+  save();
+});
+
 app.post('/message/send/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.body.channelId as string);
