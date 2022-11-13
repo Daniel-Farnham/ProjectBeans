@@ -5,6 +5,7 @@ import {
 import { notificationSetTag, requiresTagging } from'./notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import { dmCreateV1 } from './wrapperFunctions';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -101,7 +102,6 @@ function storeMessageInChannel(message: Message, channelId: number) {
   *
   * @returns {messageId} returns an object containing the messageId
 */
-
 export function messageEditV1 (token: string, messageId: number, message: string): error | Record<string, never> {
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
@@ -134,14 +134,17 @@ export function messageEditV1 (token: string, messageId: number, message: string
   
   // Case where message is in a dm.
   if (messageContainer.type === 'dm') {
-    // If no errors, remove dm from channel.
-    if (messageContainer.dm.creator !== uId) {
-      throw HTTPError(403, 'User atttempting remove message is not the owner of the dm');
-    } else {
-      editMessageFromDM(messageId, message);
-      if (requiresTagging(message)) {
-        notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
+    
+    // If user is not an owner 
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
+        throw HTTPError(403, 'User atttempting edit message is not the owner of the dm or the sender');
       }
+    }
+    // If no errors, edit message from channel.
+    editMessageFromDM(messageId, message);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
     }
   }
 

@@ -1,9 +1,8 @@
-import { messageSendDmV1 } from './dm';
 import { FORBIDDEN } from './other';
 import {
   clearV1, authRegisterV1, notificationsGetV1, dmCreateV1,
   channelsCreateV1, messageSendV1, messageReactV1, channelJoinV1,
-  channelInviteV1, dmLeaveV1, channelLeaveV1, messageEditV1
+  channelInviteV1, dmLeaveV1, channelLeaveV1, messageEditV1, messageSendDmV1
 } from './wrapperFunctions';
 
 beforeEach(() => {
@@ -58,7 +57,6 @@ describe('Testing notificationsGetV1 success handling', () => {
       channelJoinV1(user2.token, channel.channelId);
       const channelMsg = messageSendV1(user2.token, channel.channelId, 'hey @hangpham! how are you?');
       messageEditV1(user2.token, channelMsg.messageId, 'hey @hangpham, attention needed @hangpham!');
-
       const result = notificationsGetV1(user1.token);
       expect(result).toMatchObject({
         notifications: [
@@ -80,12 +78,10 @@ describe('Testing notificationsGetV1 success handling', () => {
       const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
       const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
       const dm = dmCreateV1(user1.token, [user2.authUserId]);
+  
       messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
+
       const result = notificationsGetV1(user1.token);
-      console.log(user1);
-      console.log(user2);
-      console.log(dm);
-      console.log(result);
       expect(result).toMatchObject({
         notifications: [
           {
@@ -97,28 +93,28 @@ describe('Testing notificationsGetV1 success handling', () => {
       });
     });
 
-    // test('dm edit double tagging multiple notifications', () => {
-    //   const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
-    //   const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-    //   const dm = dmCreateV1(user1.token, [user2.authUserId]);
-    //   const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
-    //   messageEditV1(user2.token, dmMsg.messageId, 'hey @hangpham, attention needed @hangpham!');
-    //   const result = notificationsGetV1(user1.token);
-    //   expect(result).toMatchObject({
-    //     notifications: [
-    //       {
-    //         channelId: -1,
-    //         dmId: dm.dmId,
-    //         notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham, atten',
-    //       },
-    //       {
-    //         channelId: -1,
-    //         dmId: dm.dmId,
-    //         notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
-    //       }
-    //     ],
-    //   });
-    // });
+    test('dm edit double tagging multiple notifications', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const dm = dmCreateV1(user1.token, [user2.authUserId]);
+      const dmMsg = messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
+      messageEditV1(user2.token, dmMsg.messageId, 'hey @hangpham, attention needed @hangpham!');
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject({
+        notifications: [
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham, atten',
+          },
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
+          }
+        ],
+      });
+    });
   });
 
   // describe('Reacting notifications', () => {
