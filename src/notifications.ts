@@ -45,6 +45,19 @@ export function notificationsGetV1(token: string) {
   }
 }
 
+export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
+  let name = getNameFromDmId(dmId);
+  let handle = getHandleFromUid(uId);
+
+  const notificationMsg = {
+    channelId: -1,
+    dmId: dmId,
+    notificationMessage: `${handle} added you to ${name}`,
+  };
+  console.log(notificationMsg);
+  setNotificationForEachUser(uIds, notificationMsg);
+}
+
 export function notificationSetTag(uId: number, channelId: number, dmId: number, notificationMessage: string, type: string) {
   let data = getData();
   const senderHandle = getHandleFromUid(uId);
@@ -63,6 +76,10 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
 
   // Loop through each uId and add notification
   let uIds = getUidsFromHandle(notificationMessage);
+  setNotificationForEachUser(uIds, notificationMsg);
+}
+function setNotificationForEachUser(uIds: any[], notificationMsg: {}) {
+  let data = getData();
   for (const uId of uIds) {
     for (let notification of data.notifications) {
       if (notification.uId === uId) {

@@ -5,7 +5,7 @@ import {
   BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
-import { notificationSetTag, requiresTagging } from './notifications';
+import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
 
 type dmInfo = {
   dmId: number,
@@ -68,6 +68,11 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
   setData(data);
+  
+  // Create notification for added users
+  let uId = getUidFromToken(token);
+  notificationSetAddDm(dm.dmId, uId, uIds);
+  
   return { dmId: dm.dmId };
 }
 
