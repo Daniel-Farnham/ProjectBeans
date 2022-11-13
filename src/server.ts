@@ -385,6 +385,7 @@ app.get('/dm/messages/v2', (req: Request, res: Response, next) => {
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);
   res.json(dmMessagesV1(token, dmId, start));
+  save();
 });
 
 app.get('/dm/list/v1', (req: Request, res: Response, next) => {

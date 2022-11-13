@@ -44,7 +44,7 @@ export function messageSendV1(token: string, channelId: number, message: string)
   }, token);
 }
 export function channelMessagesV1(token: string, channelId: number, start: number) {
-  return getRequest(SERVER_URL + '/channel/messages/v2', {
+  return getRequest(SERVER_URL + '/channel/messages/v3', {
     channelId: channelId,
     start: 0,
   }, token);
@@ -66,7 +66,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
   }, token);
 }
 export function dmMessagesV1(token: string, dmId: number, start: number) {
-  return getRequest(SERVER_URL + '/dm/messages/v1', {
+  return getRequest(SERVER_URL + '/dm/messages/v2', {
     dmId: dmId,
     start: 0,
   }, token);

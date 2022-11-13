@@ -199,7 +199,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
       if (!isMemberOfChannel(messageContainer.channel, uId)) {
         throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
       }
-      if (messageReactedByUser(message, uId)) {
+      if (messageReactedByUser(message, uId, reactId)) {
         throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
       }
       reactToMessage(messageId, uId, reactId, 'channel');
@@ -211,7 +211,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
         if (!isMemberOfDm(messageContainer.dm, uId)) {
           throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
         }
-        if (messageReactedByUser(message, uId)) {
+        if (messageReactedByUser(message, uId, reactId)) {
           throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
         }
         reactToMessage(messageId, uId, reactId, 'dm');
@@ -222,9 +222,9 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   return {};
 }
 
-function messageReactedByUser(message, uId: number): boolean {
+export function messageReactedByUser(message, uId: number, reactId: number): boolean {
   for (const react of message.reacts) {
-    if (react.reactId === 1) {
+    if (react.reactId === reactId) {
       if (react.uIds.includes(uId)) {
         return true;
       }

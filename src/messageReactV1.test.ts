@@ -1,7 +1,8 @@
 import { FORBIDDEN, BAD_REQUEST } from './other';
 import {
-  clearV1, authRegisterV1, notificationsGetV1, dmCreateV1,
+  clearV1, authRegisterV1, notificationsGetV1, dmCreateV1, channelMessagesV1,
   channelsCreateV1, messageSendV1, messageReactV1, channelJoinV1, messageSendDmV1,
+  dmMessagesV1
 } from './wrapperFunctions';
 
 beforeEach(() => {
@@ -74,6 +75,40 @@ describe('Testing message/react/v1 success handling', () => {
         }
       ]
     });
+  });
+
+  test('dm/messages/v3 - display active user voted and user who has not voted', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    const msg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
+    messageReactV1(user2.token, msg.messageId, 1);
+
+    let result = dmMessagesV1(user2.token, dm.dmId, 0);
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          reacts: expect.arrayContaining([
+            expect.objectContaining({
+              isThisUserReacted: true
+            })
+          ])
+        })
+      ])
+    );
+    result = dmMessagesV1(user1.token, dm.dmId, 0);  
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          reacts: expect.arrayContaining([
+            expect.objectContaining({
+              isThisUserReacted: false
+            })
+          ])
+        })
+      ])
+    );
   });
 });
 
