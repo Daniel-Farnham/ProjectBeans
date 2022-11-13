@@ -152,7 +152,7 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
       timeSent: timeSent + 1
     }, regId.token);
 
-    // Expect not to be able to edit the message for 10 seconds
+    // Expect not to be able to edit the message for 1 second
     const failedEdit = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: newMessageId.messageId,
       message: 'This is an edited message'
@@ -200,7 +200,7 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
       timeSent: timeSent + 1
     }, regId.token);
 
-    // Expect not to be able to remove the message for 10 seconds
+    // Expect not to be able to remove the message for 1 second
     const failedRemove = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: newMessageId.messageId,
     }, regId.token);
