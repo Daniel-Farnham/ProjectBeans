@@ -1,4 +1,4 @@
-import express, { json, Request, Response } from 'express';
+import express, { json, Request, response, Response } from 'express';
 import { echo } from './echo';
 import fs from 'fs';
 import morgan from 'morgan';
@@ -16,6 +16,8 @@ import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels'
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
+import { adminUserRemoveV1 } from './admin';
+import { request } from 'http';
 
 // Set up web app
 const app = express();
@@ -390,6 +392,13 @@ app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   res.json(dmListV1(token));
   save();
 });
+
+app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const uId = parseInt(req.query.uId as string);
+  res.json(adminUserRemoveV1(token, uId));
+  save();
+})
 
 // handles errors nicely
 app.use(errorHandler());
