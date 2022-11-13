@@ -211,7 +211,7 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   if (start === 0 && numMessages === 0) {
     end = -1;
   } else {
-    let uId = getUidFromToken(token);
+    const uId = getUidFromToken(token);
     // If start and number of messages aren't both 0, add up to 50 messages
     let index = start;
     while (index < numMessages && index < start + 50) {

@@ -318,11 +318,10 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   if (start === 0 && numMessages === 0) {
     end = -1;
   } else {
-    let uId = getUidFromToken(token);
+    const uId = getUidFromToken(token);
     // If start and number of messages aren't both 0, add up to 50 messages
     let index = start;
     while (index < numMessages && index < start + 50) {
-
       // Loop through each message and update whether user has reacted to message
       for (const react of dm.messages[index].reacts) {
         if (messageReactedByUser(dm.messages[index], uId, react.reactId)) {

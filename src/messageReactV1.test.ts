@@ -97,7 +97,7 @@ describe('Testing message/react/v1 success handling', () => {
         })
       ])
     );
-    result = dmMessagesV1(user1.token, dm.dmId, 0);  
+    result = dmMessagesV1(user1.token, dm.dmId, 0);
     expect(result.messages).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
