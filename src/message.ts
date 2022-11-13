@@ -1,5 +1,5 @@
 import {
-  channelIdExists, tokenExists, getMessageId,
+  channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
 } from './other';
 import { notificationSetTag, requiresTagging } from './notifications';
@@ -20,6 +20,8 @@ interface Message {
   uId: number,
   message: string,
   timeSent: number,
+  reacts: [],
+  isPinned: boolean,
 }
 
 /**
@@ -57,11 +59,13 @@ export function messageSendV1 (token: string, channelId: number, message: string
   // Create message
   const messageId = getMessageId();
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  const messageObj = {
+  const messageObj: Message = {
     messageId: messageId,
     uId: uId,
     message: message,
     timeSent: timeSent,
+    reacts: [],
+    isPinned: false,
   };
 
   storeMessageInChannel(messageObj, channelId);
@@ -148,6 +152,122 @@ export function messageEditV1 (token: string, messageId: number, message: string
 
   return {};
 }
+
+/**
+  * Reacts to the message that is entered
+  *
+  * @param {number} messageId - id of the message to be reacted to
+  * @param {string} reactId - react value
+  * ...
+  *
+  * @returns {{}}
+*/
+export function messageReactV1 (token: string, messageId: number, reactId: number): error | Record<string, never> {
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+
+  if (reactId !== 1) {
+    throw HTTPError(BAD_REQUEST, 'reactId entered is not valid');
+  }
+
+  // Checking both channels and dms to see if messageId is valid.
+  const messageContainer = getMessageContainer(messageId);
+  if (!messageContainer) {
+    throw HTTPError(400, 'message does not exist in either channels or dms');
+  }
+  const data = getData();
+
+  const uId = getUidFromToken(token);
+  if (messageContainer.type === 'channel') {
+    if (!isMemberOfChannel(messageContainer.channel, uId)) {
+      throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
+    }
+    for (const message of messageContainer.channel.messages) {
+      if (!isMemberOfChannel(messageContainer.channel, uId)) {
+        throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
+      }
+      if (messageReactedByUser(message, uId)) {
+        throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
+      }
+      reactToMessage(messageId, uId, reactId, 'channel');
+    }
+  }
+  if (messageContainer.type === 'dm') {
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === messageId) {
+        if (!isMemberOfDm(messageContainer.dm, uId)) {
+          throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
+        }
+        if (messageReactedByUser(message, uId)) {
+          throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
+        }
+        reactToMessage(messageId, uId, reactId, 'dm');
+      }
+    }
+  }
+  setData(data);
+  return {};
+}
+
+function messageReactedByUser(message, uId: number): boolean {
+  for (const react of message.reacts) {
+    if (react.uId === uId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+  * Adds react from user to message
+  *
+  * @param {number} messageId - id of the message to be reacted to
+  * @param {number} reactId - reactId
+  * ...
+  *
+  * @returns nothing
+*/
+function reactToMessage(messageId: number, uId: number, reactId: number, type: string) {
+  const data = getData();
+  if (type === 'dm') {
+    for (const dm of data.dms) {
+      for (const message of dm.messages) {
+        if (message.messageId === messageId) {
+          const reaction = {
+            reactId: reactId,
+            uId: uId,
+          };
+          message.reacts.push(reaction);
+        }
+      }
+    }
+  }
+  if (type === 'channel') {
+    for (const channel of data.channels) {
+      for (const message of channel.messages) {
+        if (message.messageId === messageId) {
+          const reaction = {
+            reactId: reactId,
+            uId: uId,
+          };
+          message.reacts.push(reaction);
+        }
+      }
+    }
+  }
+  setData(data);
+}
+
+/**
+  * Edits the message that exists in the channel
+  *
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} editedMessage - edited message
+  * ...
+  *
+  * @returns nothing
+*/
 
 function editMessageFromChannel(messageId: number, editedMessage: string) {
   const data = getData();
@@ -267,7 +387,7 @@ function messageFromChannelValid(channel: Channel, messageId: number, uId: numbe
 
   // If user is a member and now a channel owner and not a global owner
   if (!ownerMember && !isOwnerOfMessage(messageObj, uId) && findUser.permissionId !== GLOBAL_OWNER) {
-    throw HTTPError(403, 'Channel member does not have permissions to remove message');
+    throw HTTPError(403, 'Channel member does not have permissions to remove/edit message');
   }
   return true;
 }
