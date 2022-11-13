@@ -77,7 +77,7 @@ describe('Testing message/react/v1 success handling', () => {
     });
   });
 
-  test('dm/messages/v3 - display active user voted and user who has not voted', () => {
+  test('dm/messages/v2 - display active user voted and user who has not voted', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
 
@@ -98,6 +98,41 @@ describe('Testing message/react/v1 success handling', () => {
       ])
     );
     result = dmMessagesV1(user1.token, dm.dmId, 0);  
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          reacts: expect.arrayContaining([
+            expect.objectContaining({
+              isThisUserReacted: false
+            })
+          ])
+        })
+      ])
+    );
+  });
+  test('channel/messages/v3 - display active user voted and user who has not voted', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    channelJoinV1(user2.token, channel.channelId);
+    const msg = messageSendV1(user1.token, channel.channelId, 'hello!');
+    messageReactV1(user2.token, msg.messageId, 1);
+
+    let result = channelMessagesV1(user2.token, channel.channelId, 0);
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          reacts: expect.arrayContaining([
+            expect.objectContaining({
+              isThisUserReacted: true
+            })
+          ])
+        })
+      ])
+    );
+    result = channelMessagesV1(user1.token, channel.channelId, 0);
     expect(result.messages).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
