@@ -14,7 +14,8 @@ import {
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1 } from './users';
-import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
+import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1 } from './message';
+import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 
 // Set up web app
@@ -340,6 +341,13 @@ app.post('/message/senddm/v2', (req: Request, res: Response, next) => {
   res.json(messageSendDmV1(token, dmId, message));
   save();
 });
+app.post('/message/react/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  const reactId = parseInt(req.body.reactId as string);
+  res.json(messageReactV1(token, messageId, reactId));
+  save();
+});
 
 app.post('/dm/create/v1', (req: Request, res: Response, next) => {
   const { uIds } = req.body;
@@ -396,11 +404,17 @@ app.get('/dm/messages/v2', (req: Request, res: Response, next) => {
   const dmId = parseInt(req.query.dmId as string);
   const start = parseInt(req.query.start as string);
   res.json(dmMessagesV1(token, dmId, start));
+  save();
 });
 
 app.get('/dm/list/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+app.get('/notifications/get/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(notificationsGetV1(token));
   save();
 });
 
