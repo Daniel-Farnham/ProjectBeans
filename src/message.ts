@@ -123,7 +123,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
   if (messageContainer.type === 'channel') {
     const messageEditResult = messageFromChannelValid(messageContainer.channel, messageId, uId);
     if (messageEditResult === true) {
-      editMessageFromChannel(messageId, message);
+      editMessageFromChannel(messageId, message, uId);
     } else {
       return messageEditResult;
     }
@@ -135,7 +135,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
     if (messageContainer.dm.creator !== uId) {
       throw HTTPError(403, 'User atttempting remove message is not the owner of the dm');
     } else {
-      editMessageFromDM(messageId, message);
+      editMessageFromDM(messageId, message, uId);
     }
   }
 
@@ -152,17 +152,19 @@ export function messageEditV1 (token: string, messageId: number, message: string
   * @returns nothing
 */
 
-function editMessageFromChannel(messageId: number, editedMessage: string) {
+function editMessageFromChannel(messageId: number, editedMessage: string, uId: number) {
   const data = getData();
   for (const channel of data.channels) {
     for (const targetmessage of channel.messages) {
       // If there is a message with the correct messageId, edit the message.
       if (targetmessage.messageId === messageId) {
         targetmessage.message = editedMessage;
+        if (requiresTagging(editedMessage)) {
+          notificationSetTag(uId, channel.channelId, -1, editedMessage, 'channel');
+        }
       }
     }
   }
-
   setData(data);
 }
 
@@ -175,12 +177,15 @@ function editMessageFromChannel(messageId: number, editedMessage: string) {
   *
   * @returns nothing
 */
-function editMessageFromDM(messageId: number, editedMessage: string) {
+function editMessageFromDM(messageId: number, editedMessage: string, uId: number) {
   const data = getData();
   for (const dm of data.dms) {
     for (const targetmessage of dm.messages) {
       if (targetmessage.messageId === messageId) {
         targetmessage.message = editedMessage;
+        if (requiresTagging) {
+          notificationSetTag(uId, -1, dm.dmId, editedMessage, 'dm');
+        }
       }
     }
   }
