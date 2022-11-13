@@ -45,6 +45,18 @@ export function notificationsGetV1(token: string) {
   }
 }
 
+export function notificationSetAddChannel(channelId: number, authUserId: number, uId: number) {
+  let name = getNameFromChannelId(channelId);
+  let handle = getHandleFromUid(authUserId);
+
+  const notificationMsg = {
+    channelId: channelId,
+    dmId: -1,
+    notificationMessage: `${handle} added you to ${name}`,
+  };
+  setNotificationForEachUser([uId], notificationMsg);
+}
+
 export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
   let name = getNameFromDmId(dmId);
   let handle = getHandleFromUid(uId);
@@ -59,7 +71,6 @@ export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
 }
 
 export function notificationSetTag(uId: number, channelId: number, dmId: number, notificationMessage: string, type: string) {
-  let data = getData();
   const senderHandle = getHandleFromUid(uId);
   let name;
   if (type === 'channel') {

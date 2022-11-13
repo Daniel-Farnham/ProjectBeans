@@ -2,6 +2,7 @@ import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerO
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
+import { notificationSetAddChannel  } from './notifications';
 
 const GLOBAL_OWNER = 1;
 
@@ -147,6 +148,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       channel.allMembers.push(newMember.user);
+      notificationSetAddChannel(channelId, authUserId, uId);
       setData(data);
       return {};
     }
