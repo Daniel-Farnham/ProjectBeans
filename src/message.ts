@@ -224,25 +224,30 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
   const data = getData();
   if (type === 'dm') {
     for (const dm of data.dms) {
-      for (const targetmessage of dm.messages) {
-        if (targetmessage.messageId === messageId) {
-          targetmessage.reacts.uIds.push(uId);
-          targetmessage.reacts.reactId = reactId;
+      for (const message of dm.messages) {
+        if (message.messageId === messageId) {
+          const reaction = {
+            reactId: reactId,
+            uId: uId,
+          };
+          message.reacts.push(reaction);
         }
       }
     }
   }
   if (type === 'channel') {
     for (const channel of data.channels) {
-      for (const targetmessage of channel.messages) {
-        if (targetmessage.messageId === messageId) {
-          targetmessage.reacts.uIds.push(uId);
-          targetmessage.reacts.reactId = reactId;
+      for (const message of channel.messages) {
+        if (message.messageId === messageId) {
+          const reaction = {
+            reactId: reactId,
+            uId: uId,
+          };
+          message.reacts.push(reaction);
         }
       }
     }
   }
-
   setData(data);
 }
 
