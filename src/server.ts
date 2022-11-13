@@ -64,6 +64,12 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/auth/register/v3', (req: Request, res: Response, next) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  res.json(authRegisterV1(email, password, nameFirst, nameLast));
+  save();
+});
+
 app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   const { name, isPublic } = req.body;
   const token = req.header('token');
@@ -208,6 +214,13 @@ app.post('/auth/login/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/auth/login/v3', (req: Request, res: Response, next) => {
+  const email = req.body.email as string;
+  const password = req.body.password as string;
+  res.json(authLoginV1(email, password));
+  save();
+});
+
 app.post('/channel/join/v2', (req: Request, res: Response, next) => {
   const { channelId } = req.body;
   const token = req.header('token');
@@ -237,6 +250,12 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
 });
 
 app.post('/auth/logout/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(authLogoutV1(token));
+  save();
+});
+
+app.post('/auth/logout/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(authLogoutV1(token));
   save();
