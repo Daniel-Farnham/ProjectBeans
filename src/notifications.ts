@@ -30,11 +30,15 @@ export function notificationsGetV1(token: string) {
   // notification is at the top
   for (const notification of data.notifications) {
     if (notification.uId === uId) {
-      let notificationsReverse = [];
-      for (const toReverse of notification.notifications) {
-        notificationsReverse.unshift(toReverse);
+      let notificationsUpToTwenty = [];
+      let i = 0;
+      for (const notificationToAdd of notification.notifications) {
+        if (i < 20) {
+          notificationsUpToTwenty.push(notificationToAdd);
+        }
+        i++;
       }
-      return {notifications: notificationsReverse};
+      return {notifications: notificationsUpToTwenty};
     }
 
   }
@@ -69,7 +73,7 @@ function notificationSetTag(channelId: number, dmId: number, notificationMessage
   for (const uId of uIds) {
     for (let notification of data.notifications) {
       if (notification.uId === uId) {
-        notification.notifications.push(notificationMsg);
+        notification.notifications.unshift(notificationMsg);
       }
     }
   }
