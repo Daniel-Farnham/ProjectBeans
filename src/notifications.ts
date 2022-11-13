@@ -85,6 +85,22 @@ export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
   setNotificationForEachUser(uIds, notificationMsg);
 }
 
+export function notificationSetReact(message, uId: number, channelId: number, dmId: number, type: string) {
+  const reactorHandle = getHandleFromUid(uId);
+  let name;
+  if (type === 'channel') {
+    name = getNameFromChannelId(channelId);
+  } else if (type === 'dm') {
+    name = getNameFromDmId(dmId);
+  }
+
+  const notificationMsg = {
+    channelId: channelId,
+    dmId: dmId,
+    notificationMessage: `${reactorHandle} reacted to your message in ${name}`,
+  };
+  setNotificationForEachUser([message.uId], notificationMsg);
+}
 /**
   * Adds notification to users when they are tagged within a message
   *

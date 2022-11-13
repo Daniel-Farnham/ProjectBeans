@@ -128,7 +128,6 @@ describe('Testing notificationsGetV1 success handling', () => {
       const channelMsg = messageSendV1(user2.token, channel.channelId, 'hey @hangpham! how are you?');
       messageReactV1(user1.token, channelMsg.messageId, 1);
       const result = notificationsGetV1(user2.token);
-
       expect(result).toMatchObject({
         notifications: [
           {
@@ -143,15 +142,15 @@ describe('Testing notificationsGetV1 success handling', () => {
       const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
       const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
       const dm = dmCreateV1(user1.token, [user2.authUserId]);
-      const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
+      const dmMsg = messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
       messageReactV1(user1.token, dmMsg.messageId, 1);
-      const result = notificationsGetV1(user1.token);
+      const result = notificationsGetV1(user2.token);
       expect(result).toMatchObject({
         notifications: [
           {
             channelId: -1,
             dmId: dm.dmId,
-            notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
+            notificationMessage: 'hangpham reacted to your message in hangpham, janedoe',
           },
           {
             channelId: -1,

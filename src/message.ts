@@ -2,7 +2,7 @@ import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
 } from './other';
-import { notificationSetTag, requiresTagging } from './notifications';
+import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 
@@ -239,6 +239,9 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
             uId: uId,
           };
           message.reacts.push(reaction);
+          if (isMemberOfDm(dm, message.uId)) {
+            notificationSetReact(message, uId, -1, dm.dmId, 'dm');
+          }
         }
       }
     }
@@ -252,6 +255,9 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
             uId: uId,
           };
           message.reacts.push(reaction);
+          if (isMemberOfChannel(channel, message.uId)) {
+            notificationSetReact(message, uId, channel.channelId, -1, 'channel');
+          }
         }
       }
     }
