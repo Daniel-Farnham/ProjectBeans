@@ -5,7 +5,7 @@ import {
   BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
-import { notificationSetTagging, requiresTagging } from './notifications';
+import { notificationSetTag, requiresTagging } from './notifications';
 
 type dmInfo = {
   dmId: number,
@@ -508,7 +508,7 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
 
   storeMessageInDm(messageObj, dmId);
   if (requiresTagging(message)) {
-    notificationSetTagging(dmId, message, 'dm');
+    notificationSetTag(uId, -1, dmId, message,'dm');
   }
   return { messageId: messageId };
 }

@@ -364,3 +364,43 @@ export function getUidFromToken (token: string): number {
     }
   }
 }
+
+/**
+  * Get a handle from uId
+  * @param {number} uId - token to check for userId
+  * @returns {handleStr} - returns handleStr
+*/
+export function getHandleFromUid(uId: number) {
+  let data = getData();
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      return user.handleStr;
+    }
+  }
+}
+/**
+  * Get a channel name from channelId
+  * @param {number} channelId - token to check for channelId
+  * @returns {name} - returns name
+*/
+export function getNameFromChannelId(channelId: number) {
+  let data = getData();
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      return channel.name;
+    }
+  }
+}
+/**
+  * Get a dm name from dmId
+  * @param {number} dmId - token to check for dmId
+  * @returns {name} - returns name
+*/
+export function getNameFromDmId(dmId: number) {
+  let data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      return dm.name;
+    }
+  }
+}

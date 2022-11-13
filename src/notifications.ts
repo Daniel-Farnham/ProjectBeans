@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, FORBIDDEN, getUidFromToken } from './other';
+import { tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
+getNameFromChannelId, getNameFromDmId } from './other';
 import HTTPError from 'http-errors';
 
 export interface Notification {
@@ -44,25 +45,24 @@ export function notificationsGetV1(token: string) {
   }
 }
 
-export function notificationSetTagging(messageContainerId: number, message: string, type: string) {
-  if (type === 'channel') {
-    notificationSetTag(messageContainerId, -1, message);
-  }
-  if (type === 'dm') {
-    notificationSetTag(-1, messageContainerId, message);
-  }
-}
-
-function notificationSetTag(channelId: number, dmId: number, notificationMessage: string) {
+export function notificationSetTag(uId: number, channelId: number, dmId: number, notificationMessage: string, type: string) {
   let data = getData();
+  const senderHandle = getHandleFromUid(uId);
+  let name;
+  if (type === 'channel') {
+    name = getNameFromChannelId(channelId);
+  } else if (type === 'dm') {
+    name = getNameFromDmId(dmId);
+  }
+  
   const notificationMsg = {
     channelId: channelId,
     dmId: dmId,
-    notificationMessage: notificationMessage.substring(0, 20),
+    notificationMessage: `${senderHandle} tagged you in ${name}: ${notificationMessage.substring(0, 20)}`,
   };
 
+  // Loop through each uId and add notification
   let uIds = getUidsFromHandle(notificationMessage);
-
   for (const uId of uIds) {
     for (let notification of data.notifications) {
       if (notification.uId === uId) {
