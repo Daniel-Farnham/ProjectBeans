@@ -4,7 +4,6 @@ import {
 } from './other';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { RefactorEditInfo } from 'typescript';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -147,11 +146,11 @@ export function messageEditV1 (token: string, messageId: number, message: string
 /**
   * Reacts to the message that is entered
   *
-  * @param {number} messageId - id of the message to be reacted to 
+  * @param {number} messageId - id of the message to be reacted to
   * @param {string} reactId - react value
   * ...
   *
-  * @returns {{}} 
+  * @returns {{}}
 */
 export function messageReactV1 (token: string, messageId: number, reactId: number): error | Record<string, never> {
   if (!(tokenExists(token))) {
@@ -161,16 +160,16 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   if (reactId !== 1) {
     throw HTTPError(BAD_REQUEST, 'reactId entered is not valid');
   }
-  
+
   // Checking both channels and dms to see if messageId is valid.
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
     throw HTTPError(400, 'message does not exist in either channels or dms');
   }
-  let data = getData();
+  const data = getData();
 
   const uId = getUidFromToken(token);
-  if (messageContainer.type === 'channel') { 
+  if (messageContainer.type === 'channel') {
     if (!isMemberOfChannel(messageContainer.channel, uId)) {
       throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
     }
@@ -184,7 +183,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
       reactToMessage(messageId, uId, reactId, 'channel');
     }
   }
-  if (messageContainer.type === 'dm') { 
+  if (messageContainer.type === 'dm') {
     for (const message of messageContainer.dm.messages) {
       if (message.messageId === messageId) {
         if (!isMemberOfDm(messageContainer.dm, uId)) {
@@ -195,7 +194,6 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
         }
         reactToMessage(messageId, uId, reactId, 'dm');
       }
-
     }
   }
   setData(data);

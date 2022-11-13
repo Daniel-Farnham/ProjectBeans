@@ -16,9 +16,9 @@ describe('Testing message/react/v1 success handling', () => {
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
     const result = messageReactV1(user2.token, msg.messageId, 1);
-    console.log(result);
     expect(result).toMatchObject({});
   });
+
   // test('react notification displayed for channel', () => {
   //   const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
   //   const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
@@ -57,7 +57,6 @@ describe('Testing message/react/v1 success handling', () => {
   //     ]
   //   });
   // });
-
 });
 
 // describe('Testing message/react/v1 error handling', () => {
@@ -65,7 +64,7 @@ describe('Testing message/react/v1 success handling', () => {
 //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
 //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
 //     const user3 = authRegisterV1('bobdoe@gmail.com', 'password', 'Bob', 'Doe');
-  
+
 //     const channel = channelsCreateV1(user1.token, 'Boost', true);
 //     channelJoinV1(user2.token, channel.channelId);
 //     const msg = messageSendV1(user1.token, channel.channelId, 'hello!');
@@ -73,20 +72,20 @@ describe('Testing message/react/v1 success handling', () => {
 //     expect(result.statusCode).toBe(BAD_REQUEST);
 //     let bodyObj = JSON.parse(result.body as string);
 //     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    
+
 //     const dm = dmCreateV1(user1.token, [user2.authUserId]);
 //     const dmMsg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
-    
+
 //     result = messageReactV1(user3.token, dmMsg.messageId, 1);
 //     expect(result.statusCode).toBe(BAD_REQUEST);
 //     bodyObj = JSON.parse(result.body as string);
 //     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 //   });
-  
+
 //   test('channel: the message already contains a react with ID reactId from the authorised user', () => {
 //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
 //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  
+
 //     const channel = channelsCreateV1(user1.token, 'Boost', true);
 //     channelJoinV1(user2.token, channel.channelId);
 
@@ -102,17 +101,17 @@ describe('Testing message/react/v1 success handling', () => {
 //   test('dm: the message already contains a react with ID reactId from the authorised user', () => {
 //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
 //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  
+
 //     const dm = dmCreateV1(user1.token, [user2.authUserId]);
 //     const msg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
-  
+
 //     messageReactV1(user2.token, msg.messageId, 1);
 //     const result = messageReactV1(user2.token, msg.messageId, 1);
 //     expect(result.statusCode).toBe(BAD_REQUEST);
 //     const bodyObj = JSON.parse(result.body as string);
 //     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 //   });
-  
+
 //   test.each([
 //     { desc: 'Token is invalid',
 //       statusCode: FORBIDDEN, token: 'InvalidToken', messageId: 0, reactId: 1},
@@ -122,12 +121,12 @@ describe('Testing message/react/v1 success handling', () => {
 //       statusCode: BAD_REQUEST, token: '', messageId: 0, reactId: 1000},
 
 //   ])('$desc', ({ statusCode, token, messageId, reactId }) => {
-    
+
 //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
 //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  
+
 //     const dm = dmCreateV1(user1.token, [user2.authUserId]);
-    
+
 //     const msg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
 
 //     const result = messageReactV1(user2.token + token, msg.messageId + messageId, reactId);
@@ -143,10 +142,10 @@ describe('Testing message/react/v1 success handling', () => {
 //       statusCode: BAD_REQUEST, token: '', messageId: 0, reactId: 1000},
 
 //   ])('$desc', ({ statusCode, token, messageId, reactId }) => {
-    
+
 //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
 //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  
+
 //     const channel = channelsCreateV1(user1.token, 'Boost', true);
 //     const msg = messageSendV1(user1.token, channel.channelId, 'hello!');
 

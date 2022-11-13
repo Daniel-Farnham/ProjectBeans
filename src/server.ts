@@ -324,7 +324,7 @@ app.post('/message/senddm/v2', (req: Request, res: Response, next) => {
 app.post('/message/react/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
-  const reactId = parseInt(req.body.reactId  as string);
+  const reactId = parseInt(req.body.reactId as string);
   res.json(messageReactV1(token, messageId, reactId));
   save();
 });
