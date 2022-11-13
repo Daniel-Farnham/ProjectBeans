@@ -45,6 +45,14 @@ export function notificationsGetV1(token: string) {
   }
 }
 
+/**
+  * Adds notification to a user when they were invited to a channel
+  *
+  * @param {number} channelId - channelId of channel user was added to
+  * @param {number} authUserId - auth user who added the user
+  * @param {number} uId - user who was invited to channel
+  *
+*/
 export function notificationSetAddChannel(channelId: number, authUserId: number, uId: number) {
   let name = getNameFromChannelId(channelId);
   let handle = getHandleFromUid(authUserId);
@@ -57,6 +65,13 @@ export function notificationSetAddChannel(channelId: number, authUserId: number,
   setNotificationForEachUser([uId], notificationMsg);
 }
 
+/**
+  * Adds notification to a user when they were invited to a dm
+  *
+  * @param {number} dmId - dmId of dm user was added to
+  * @param {number} uId - auth user who invited the other users
+  * @param {array of numbers} uIds - users who were invited to dm
+*/
 export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
   let name = getNameFromDmId(dmId);
   let handle = getHandleFromUid(uId);
@@ -66,10 +81,19 @@ export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
     dmId: dmId,
     notificationMessage: `${handle} added you to ${name}`,
   };
-  console.log(notificationMsg);
   setNotificationForEachUser(uIds, notificationMsg);
 }
 
+/**
+  * Adds notification to users when they are tagged within a message
+  *
+  * @param {number} uId - user who did the tagging
+  * @param {number} channelId - channel that user was tagged in
+  * @param {number} dmId - dm that user was tagged in
+  * @param {string} notificationMessage - message that was created by user
+  * @param {string} type - to check whether message came from a dm/channel
+  * 
+*/
 export function notificationSetTag(uId: number, channelId: number, dmId: number, notificationMessage: string, type: string) {
   const senderHandle = getHandleFromUid(uId);
   let name;
@@ -89,6 +113,13 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
   let uIds = getUidsFromHandle(notificationMessage);
   setNotificationForEachUser(uIds, notificationMsg);
 }
+/**
+  * Set datastore to contain new notifications for tagged users
+  *
+  * @param {number} uIds - users who were tagged in message
+  * @param {{notification}} notificationMsg - Notification object containing details
+  * 
+*/
 function setNotificationForEachUser(uIds: any[], notificationMsg: {}) {
   let data = getData();
   for (const uId of uIds) {
@@ -101,12 +132,21 @@ function setNotificationForEachUser(uIds: any[], notificationMsg: {}) {
   setData(data);
 }
 
+/**
+  * Get user ids from handles that were tagged in am essage
+  *
+  * @param {string} message - message containing user handles
+  * 
+*/
 function getUidsFromHandle(message: string): any[] {
   let data = getData();
+  // Strip out user handles, and emove the '@' from each handle
   const handleRegex = /@[A-Za-z0-9]+/g;
   const handles = message.match(handleRegex);
-
   let handlesNoAt = handles.map(s => s.slice(1));
+
+  // Loop through users in datastore and generate an array containing
+  // the valid users to be tagged
   const uIds = [];
   for (const handle of handlesNoAt) {
     for (const user of data.users) {
