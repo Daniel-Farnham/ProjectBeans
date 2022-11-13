@@ -57,6 +57,24 @@ describe('Testing message/react/v1 success handling', () => {
       ]
     });
   });
+  test('reacts display correctly', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    const msg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
+    messageReactV1(user2.token, msg.messageId, 1);
+    const result = notificationsGetV1(user1.token);
+    expect(result).toMatchObject({
+      notifications: [
+        {
+          channelId: -1,
+          dmId: dm.dmId,
+          notificationMessage: 'janedoe reacted to your message in hangpham, janedoe',
+        }
+      ]
+    });
+  });
 });
 
 describe('Testing message/react/v1 error handling', () => {

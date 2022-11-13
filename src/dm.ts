@@ -28,7 +28,13 @@ interface Message {
   uId: number,
   message: string,
   timeSent: number,
-  reacts: [],
+  reacts: [
+    {
+      reactId: number,
+      uIds: [],
+      isThisUserReacted: boolean,
+    }
+  ],
   isPinned: boolean,
 }
 
@@ -510,7 +516,13 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
     uId: uId,
     message: message,
     timeSent: timeSent,
-    reacts: [],
+    reacts: [
+      {
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false,
+      }
+    ],
     isPinned: false,
   };
 

@@ -20,7 +20,13 @@ interface Message {
   uId: number,
   message: string,
   timeSent: number,
-  reacts: [],
+  reacts: [
+    {
+      reactId: number,
+      uIds: [],
+      isThisUserReacted: boolean,
+    }
+  ],
   isPinned: boolean,
 }
 
@@ -64,7 +70,13 @@ export function messageSendV1 (token: string, channelId: number, message: string
     uId: uId,
     message: message,
     timeSent: timeSent,
-    reacts: [],
+    reacts: [
+      {
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false,
+      }
+    ],
     isPinned: false,
   };
 
@@ -212,8 +224,10 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
 
 function messageReactedByUser(message, uId: number): boolean {
   for (const react of message.reacts) {
-    if (react.uId === uId) {
-      return true;
+    if (react.reactId === 1) {
+      if (react.uIds.includes(uId)) {
+        return true;
+      }
     }
   }
   return false;
@@ -234,13 +248,14 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
     for (const dm of data.dms) {
       for (const message of dm.messages) {
         if (message.messageId === messageId) {
-          const reaction = {
-            reactId: reactId,
-            uId: uId,
-          };
-          message.reacts.push(reaction);
-          if (isMemberOfDm(dm, message.uId)) {
-            notificationSetReact(message, uId, -1, dm.dmId, 'dm');
+          for (const reaction of message.reacts) {
+            if (reaction.reactId === reactId) {
+              reaction.uIds.push(uId);
+              reaction.isThisUserReacted = true;
+            }
+            if (isMemberOfDm(dm, message.uId)) {
+              notificationSetReact(message, uId, -1, dm.dmId, 'dm');
+            }
           }
         }
       }
@@ -250,13 +265,14 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
     for (const channel of data.channels) {
       for (const message of channel.messages) {
         if (message.messageId === messageId) {
-          const reaction = {
-            reactId: reactId,
-            uId: uId,
-          };
-          message.reacts.push(reaction);
-          if (isMemberOfChannel(channel, message.uId)) {
-            notificationSetReact(message, uId, channel.channelId, -1, 'channel');
+          for (const reaction of message.reacts) {
+            if (reaction.reactId === reactId) {
+              reaction.uIds.push(uId);
+              reaction.isThisUserReacted = true;
+            }
+            if (isMemberOfChannel(channel, message.uId)) {
+              notificationSetReact(message, uId, channel.channelId, -1, 'channel');
+            }
           }
         }
       }
