@@ -119,83 +119,83 @@ describe('Testing notificationsGetV1 success handling', () => {
     });
   });
 
-  // describe('Reacting notifications', () => {
-  //   test('reacted to channel message', () => {
-  //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
-  //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  //     const channel = channelsCreateV1(user1.token, 'Boost', true);
-  //     channelJoinV1(user2.token, channel.channelId);
-  //     const channelMsg = messageSendV1(user2.token, channel.channelId, 'hey @hangpham! how are you?');
-  //     messageReactV1(user1.token, channelMsg.messageId, 1);
-  //     const result = notificationsGetV1(user2.token);
+  describe('Reacting notifications', () => {
+    test('reacted to channel message', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const channel = channelsCreateV1(user1.token, 'Boost', true);
+      channelJoinV1(user2.token, channel.channelId);
+      const channelMsg = messageSendV1(user2.token, channel.channelId, 'hey @hangpham! how are you?');
+      messageReactV1(user1.token, channelMsg.messageId, 1);
+      const result = notificationsGetV1(user2.token);
 
-  //     expect(result).toMatchObject({
-  //       notifications: [
-  //         {
-  //           channelId: channel.channelId,
-  //           dmId: -1,
-  //           notificationMessage: 'hangpham reacted to your message in Boost',
-  //         }
-  //       ],
-  //     });
-  //   });
-  //   test('reacted to dm message', () => {
-  //     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
-  //     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  //     const dm = dmCreateV1(user1.token, [user2.authUserId]);
-  //     const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
-  //     messageReactV1(user1.token, dmMsg.messageId, 1);
-  //     const result = notificationsGetV1(user1.token);
-  //     expect(result).toMatchObject({
-  //       notifications: [
-  //         {
-  //           channelId: -1,
-  //           dmId: dm.dmId,
-  //           notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
-  //         },
-  //         {
-  //           channelId: -1,
-  //           dmId: dm.dmId,
-  //           notificationMessage: 'hangpham added you to hangpham, janedoe'
-  //         }
-  //       ],
-  //     });
-  //   });
+      expect(result).toMatchObject({
+        notifications: [
+          {
+            channelId: channel.channelId,
+            dmId: -1,
+            notificationMessage: 'hangpham reacted to your message in Boost',
+          }
+        ],
+      });
+    });
+    test('reacted to dm message', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const dm = dmCreateV1(user1.token, [user2.authUserId]);
+      const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
+      messageReactV1(user1.token, dmMsg.messageId, 1);
+      const result = notificationsGetV1(user1.token);
+      expect(result).toMatchObject({
+        notifications: [
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
+          },
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: 'hangpham added you to hangpham, janedoe'
+          }
+        ],
+      });
+    });
 
-  //   describe('No longer receive notifications after leaving dm/channel', () => {
-  //     test('no notification when message reacted to user who is no longer part of channel', () => {
-  //       const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
-  //       const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  //       const channel = channelsCreateV1(user1.token, 'Boost', true);
-  //       channelJoinV1(user2.token, channel.channelId);
-  //       const channelMsg = messageSendV1(user2.token, channel.channelId, 'hey @hangpham! how are you?');
-  //       channelLeaveV1(user2.token, channel.channelId);
-  //       messageReactV1(user1.token, channelMsg.messageId, 1);
-  //       const result = notificationsGetV1(user2.token);
-  //       expect(result).toMatchObject({
-  //         notifications: []
-  //       });
-  //     });
-  //     test('no notification when message reacted to user who is no longer part of dm', () => {
-  //       const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
-  //       const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-  //       const dm = dmCreateV1(user1.token, [user2.authUserId]);
-  //       const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, 'hey there');
-  //       dmLeaveV1(user2.token, dm.dmId);
-  //       messageReactV1(user1.token, dmMsg.messageId, 1);
-  //       const result = notificationsGetV1(user2.token);
-  //       expect(result).toMatchObject({
-  //         notifications: [
-  //           {
-  //             channelId: -1,
-  //             dmId: dm.dmId,
-  //             notificationMessage: 'hangpham added you to hangpham, janedoe'
-  //           }
-  //         ]
-  //       });
-  //     });
-  //   });
-  // });
+    describe('No longer receive notifications after leaving dm/channel', () => {
+      test('no notification when message reacted to user who is no longer part of channel', () => {
+        const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+        const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+        const channel = channelsCreateV1(user1.token, 'Boost', true);
+        channelJoinV1(user2.token, channel.channelId);
+        const channelMsg = messageSendV1(user2.token, channel.channelId, 'hey @hangpham! how are you?');
+        channelLeaveV1(user2.token, channel.channelId);
+        messageReactV1(user1.token, channelMsg.messageId, 1);
+        const result = notificationsGetV1(user2.token);
+        expect(result).toMatchObject({
+          notifications: []
+        });
+      });
+      test('no notification when message reacted to user who is no longer part of dm', () => {
+        const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+        const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+        const dm = dmCreateV1(user1.token, [user2.authUserId]);
+        const dmMsg:any = messageSendDmV1(user2.token, dm.dmId, 'hey there');
+        dmLeaveV1(user2.token, dm.dmId);
+        messageReactV1(user1.token, dmMsg.messageId, 1);
+        const result = notificationsGetV1(user2.token);
+        expect(result).toMatchObject({
+          notifications: [
+            {
+              channelId: -1,
+              dmId: dm.dmId,
+              notificationMessage: 'hangpham added you to hangpham, janedoe'
+            }
+          ]
+        });
+      });
+    });
+  });
 
   describe('Adding to channel/dm', () => {
     test('add user to channel', () => {
