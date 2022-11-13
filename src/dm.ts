@@ -63,16 +63,15 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
     const errorMsg = isInvalid as any;
     throw HTTPError(errorMsg.code, errorMsg.error);
   }
-
   // Create the new dm and store it in the datastore
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
   setData(data);
-  
-  // Create notification for added users
-  let uId = getUidFromToken(token);
-  notificationSetAddDm(dm.dmId, uId, uIds);
-  
+    // Create notification for added users
+    let uId = getUidFromToken(token);
+    let uIdsWithoutAuthUser = uIds.filter(value => value !== uId);
+    notificationSetAddDm(dm.dmId, uId, uIdsWithoutAuthUser);
+    
   return { dmId: dm.dmId };
 }
 

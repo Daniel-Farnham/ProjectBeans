@@ -147,7 +147,7 @@ function getUidsFromHandle(message: string): any[] {
 
   // Loop through users in datastore and generate an array containing
   // the valid users to be tagged
-  const uIds = [];
+  let uIds = [];
   for (const handle of handlesNoAt) {
     for (const user of data.users) {
       if (user.handleStr === handle) {
@@ -161,14 +161,6 @@ function getUidsFromHandle(message: string): any[] {
 }
 
 export function requiresTagging(message: string) {
-  const handleRegex = /@[A-Za-z0-9]+/;
-  if (handleRegex.test(message)) {
-    return true;
-  }
-  return false;
-}
-
-function requiresAddedNotification(message: string) {
   const handleRegex = /@[A-Za-z0-9]+/;
   if (handleRegex.test(message)) {
     return true;

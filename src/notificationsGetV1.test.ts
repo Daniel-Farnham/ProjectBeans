@@ -60,7 +60,6 @@ describe('Testing notificationsGetV1 success handling', () => {
       messageEditV1(user2.token, channelMsg.messageId, 'hey @hangpham, attention needed @hangpham!');
 
       const result = notificationsGetV1(user1.token);
-      console.log(result);
       expect(result).toMatchObject({
         notifications: [
           {
@@ -77,23 +76,26 @@ describe('Testing notificationsGetV1 success handling', () => {
       });
     });
 
-    // test('tagged into a dm', () => {
-    //   const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
-    //   const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-    //   const dm = dmCreateV1(user1.token, [user2.authUserId]);
-    //   messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
-    //   const result = notificationsGetV1(user1.token);
-    //   console.log(result);
-    //   expect(result).toMatchObject({
-    //     notifications: [
-    //       {
-    //         channelId: -1,
-    //         dmId: dm.dmId,
-    //         notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
-    //       }
-    //     ],
-    //   });
-    // });
+    test('tagged into a dm', () => {
+      const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+      const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+      const dm = dmCreateV1(user1.token, [user2.authUserId]);
+      messageSendDmV1(user2.token, dm.dmId, 'hey @hangpham! had to follow up on something');
+      const result = notificationsGetV1(user1.token);
+      console.log(user1);
+      console.log(user2);
+      console.log(dm);
+      console.log(result);
+      expect(result).toMatchObject({
+        notifications: [
+          {
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: 'janedoe tagged you in hangpham, janedoe: hey @hangpham! had t',
+          }
+        ],
+      });
+    });
 
     // test('dm edit double tagging multiple notifications', () => {
     //   const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
