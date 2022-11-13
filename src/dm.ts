@@ -27,6 +27,8 @@ interface Message {
   uId: number,
   message: string,
   timeSent: number,
+  reacts: [],
+  isPinned: boolean,
 }
 
 type messageId = { messageId: number }
@@ -498,11 +500,13 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   // Create message
   const messageId = getMessageId();
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  const messageObj = {
+  const messageObj: Message = {
     messageId: messageId,
     uId: uId,
     message: message,
     timeSent: timeSent,
+    reacts: [],
+    isPinned: false,
   };
 
   storeMessageInDm(messageObj, dmId);
