@@ -19,7 +19,7 @@ export function dmCreateV1(token: string, uIds: [any]) {
   }, token);
 }
 export function channelsCreateV1(token: string, name: string, isPublic: boolean) {
-  return postRequest(SERVER_URL + '/channels/create/v3', {
+  return postRequest(SERVER_URL + '/channels/create/v2', {
     name: name,
     isPublic: isPublic,
   }, token);
