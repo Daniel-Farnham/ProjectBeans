@@ -44,20 +44,13 @@ export function notificationsGetV1(token: string) {
   }
 }
 
-export function notificationSet(messageContainerId: number, message: string, type: string) {
-
+export function notificationSetTagging(messageContainerId: number, message: string, type: string) {
   if (type === 'channel') {
-    if (requiresTagging(message)) {
-      notificationSetTag(messageContainerId, -1, message);
-    }
+    notificationSetTag(messageContainerId, -1, message);
   }
-  
   if (type === 'dm') {
-    if (requiresTagging(message)) {
-      notificationSetTag(-1, messageContainerId, message);
-    }
+    notificationSetTag(-1, messageContainerId, message);
   }
-
 }
 
 function notificationSetTag(channelId: number, dmId: number, notificationMessage: string) {
@@ -97,7 +90,15 @@ function getUidsFromHandle(message: string): any[] {
   return uIds;
 }
 
-function requiresTagging(message: string) {
+export function requiresTagging(message: string) {
+  const handleRegex = /@[A-Za-z0-9]+/;
+  if (handleRegex.test(message)) {
+    return true;
+  }
+  return false;
+}
+
+function requiresAddedNotification(message: string) {
   const handleRegex = /@[A-Za-z0-9]+/;
   if (handleRegex.test(message)) {
     return true;

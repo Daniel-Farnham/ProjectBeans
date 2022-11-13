@@ -2,7 +2,7 @@ import {
   channelIdExists, tokenExists, getMessageId,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
 } from './other';
-import { notificationSet } from'./notifications';
+import { notificationSetTagging, requiresTagging } from'./notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 
@@ -65,7 +65,9 @@ export function messageSendV1 (token: string, channelId: number, message: string
   };
 
   storeMessageInChannel(messageObj, channelId);
-  notificationSet(channelId, message, 'channel');
+  if (requiresTagging(message)) {
+    notificationSetTagging(channelId, message, 'channel');
+  }
   return { messageId: messageId };
 }
 
