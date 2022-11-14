@@ -475,7 +475,7 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
       throw HTTPError(FORBIDDEN, 'valid channelId and dmId, but user is not member of dm to share to');
     }
     // If no errors, share message
-    const fullMessage = generateDmNewMessageString(messageContainer.channel, ogMessageId, message);
+    const fullMessage = generateDmNewMessageString(messageContainer.dm, ogMessageId, message);
     sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
   }
   return { sharedMessageId: sharedMessageId };
