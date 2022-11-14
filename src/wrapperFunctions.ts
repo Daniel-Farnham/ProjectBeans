@@ -13,7 +13,7 @@ export function authRegisterV1(email: string, password: string, nameFirst: strin
     nameLast: nameLast,
   });
 }
-export function dmCreateV1(token: string, uIds: [any]) {
+export function dmCreateV1(token: string, uIds: any[]) {
   return postRequest(SERVER_URL + '/dm/create/v1', {
     uIds: uIds,
   }, token);
@@ -81,4 +81,7 @@ export function notificationsGetV1(token: string) {
 }
 export function messageReactV1 (token: string, messageId: number, reactId: number) {
   return postRequest(SERVER_URL + '/message/react/v1', { messageId, reactId }, token);
+}
+export function searchV1 (token: string, queryStr: string) {
+  return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
 }
