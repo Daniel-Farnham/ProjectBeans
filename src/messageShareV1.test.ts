@@ -1,8 +1,7 @@
 import { FORBIDDEN, BAD_REQUEST } from './other';
 import {
-  clearV1, authRegisterV1, notificationsGetV1, dmCreateV1, channelMessagesV1,
-  channelsCreateV1, messageSendV1, messageReactV1, channelJoinV1, messageSendDmV1,
-  dmMessagesV1, messageShareV1
+  clearV1, authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
+  channelJoinV1, messageSendDmV1, messageShareV1
 } from './wrapperFunctions';
 
 beforeEach(() => {
@@ -16,13 +15,12 @@ describe('Testing message/share/v1 success handling', () => {
 
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
-    const result = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId );
-    expect(result).toMatchObject({sharedMessageId : expect.any(Number)});
+    const result = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
+    expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });
   });
 });
 
 describe('Testing message/share/v1 error handling', () => {
-
   const largerThan1000Characters = 'a'.repeat(1005);
   test.each([
     {
@@ -68,7 +66,7 @@ describe('Testing message/share/v1 error handling', () => {
     const channel = channelsCreateV1(user1.token, 'Boost', true);
     channelJoinV1(user2.token, channel.channelId);
     const msg = messageSendV1(user1.token, channel.channelId, 'og message');
-    
+
     const result = messageShareV1(user2.token + token, msg.messageId + ogMessageId, message, channel.channelId + channelId, dmId);
 
     expect(result.statusCode).toBe(statusCode);
@@ -92,7 +90,7 @@ describe('Testing message/share/v1 error handling', () => {
 
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'og message');
-    
+
     const result = messageShareV1(user2.token + token, msg.messageId + ogMessageId, message, channelId, dmId + dm.dmId);
 
     expect(result.statusCode).toBe(statusCode);
@@ -109,7 +107,7 @@ describe('Testing message/share/v1 error handling', () => {
     const dmMsg = messageSendDmV1(user1.token, dm.dmId, 'dm message!');
     messageSendV1(user1.token, channel.channelId, 'channel message');
 
-    const result = messageShareV1(user1.token, dmMsg.messageId, 'sharing this message', channel.channelId, dm.dmId );
+    const result = messageShareV1(user1.token, dmMsg.messageId, 'sharing this message', channel.channelId, dm.dmId);
     expect(result.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
@@ -129,7 +127,7 @@ describe('Testing message/share/v1 error handling', () => {
     expect(result.statusCode).toBe(BAD_REQUEST);
     let bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    
+
     result = messageShareV1(user3.token, dmMsg.messageId, 'sharing this message', channel.channelId, -1);
     expect(result.statusCode).toBe(BAD_REQUEST);
     bodyObj = JSON.parse(result.body as string);
@@ -153,12 +151,11 @@ describe('Testing message/share/v1 error handling', () => {
     let bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 
-    result = messageShareV1(user3.token, channelMsg.messageId, 'sharing this message', channel2.channelId , -1);
+    result = messageShareV1(user3.token, channelMsg.messageId, 'sharing this message', channel2.channelId, -1);
     expect(result.statusCode).toBe(BAD_REQUEST);
     bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
-
 
   test('test sharing a message to a channel that user is not a part of', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
@@ -187,5 +184,4 @@ describe('Testing message/share/v1 error handling', () => {
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
-
 });
