@@ -1,6 +1,6 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
-  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel
+  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel,
 } from './other';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
@@ -11,6 +11,7 @@ const MAX_MESSAGE_LEN = 1000;
 const GLOBAL_OWNER = 1;
 
 type messageId = { messageId: number }
+type messages = { messages: Array<messages> };
 
 /**
   * Interface for message object
@@ -372,6 +373,80 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   }
 
   return {};
+}
+
+/**
+  * Searches messages in dms/channels that user is a part of and returns
+  * messages that match the query string
+  *
+  * @param {string} token - token of authorised user
+  * @param {string} token - query string to search messages for
+  *
+  * @returns {{messages}} returns an array containing message objects
+*/
+export function searchV1 (token: string, queryStr: string): error | messages {
+  if (!(tokenExists(token))) {
+    throw HTTPError(403, 'token is invalid');
+  }
+
+  if (queryStr.length < MIN_MESSAGE_LEN || queryStr.length > MAX_MESSAGE_LEN) {
+    throw HTTPError(400, 'length of query is less than 1 or over 1000 characters');
+  }
+  let messages = [];
+  const uId = getUidFromToken(token);
+  messages = getMessagesFromDms(messages, uId, queryStr);
+  messages = getMessagesFromChannels(messages, uId, queryStr);
+  return { messages };
+}
+
+/**
+  * Searches messages in dms that user is a part of and returns
+  * messages that match the query string
+  *
+  * @param {array} messages - messages array which is used to push matching messages
+  *                           to
+  * @param {number} uId - uId of authorised user requesting message
+  *
+  * @returns {{messages}} returns an array containing message objects
+*/
+function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
+  const data = getData();
+  const caseInsensitive = queryStr.toLowerCase();
+  for (const dm of data.dms) {
+    if (isMemberOfDm(dm, uId)) {
+      for (const message of dm.messages) {
+        if (message.message.toLowerCase().includes(caseInsensitive)) {
+          messages.push(message);
+        }
+      }
+    }
+  }
+  return messages;
+}
+
+/**
+  * Searches messages in channels that user is a part of and returns
+  * messages that match the query string
+  *
+  * @param {array} messages - messages array which is used to push matching messages
+  *                           to
+  * @param {number} uId - uId of authorised user requesting message
+  *
+  * @returns {{messages}} returns an array containing message objects
+*/
+function getMessagesFromChannels (messages: any[], uId: number, queryStr: string) {
+  const data = getData();
+  const caseInsensitive = queryStr.toLowerCase();
+  for (const channel of data.channels) {
+    if (isMemberOfChannel(channel, uId)) {
+      for (const message of channel.messages) {
+        if (message.message.toLowerCase().includes(caseInsensitive)) {
+          messages.push(message);
+        }
+      }
+    }
+  }
+  return messages;
 }
 
 /**
