@@ -1,6 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 400;
+const BAD_REQUEST = 403;
 
 describe('Testing channelDetails', () => {
   beforeEach(() => {
@@ -16,15 +18,13 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId.token,
+    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
-    });
+    }, userId.token);
 
     const ExpectedChannelObj = {
       name: 'ChannelBoost',
@@ -62,16 +62,17 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token + 1,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId.token,
+    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
-    });
-    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+    }, userId.token + 1);
+
+    expect(ReturnedChannelObj.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing invalid channelId', () => {
@@ -83,16 +84,17 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId.token,
+    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId + 1
-    });
-    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+    }, userId.token);
+
+    expect(ReturnedChannelObj.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Authorised user is not a member of the channel', () => {
@@ -111,16 +113,16 @@ describe('Testing channelDetails', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
-    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user2.token,
+    const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
-    });
+    }, user2.token);
 
-    expect(ReturnedChannelObj).toMatchObject({ error: expect.any(String) });
+    expect(ReturnedChannelObj.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(ReturnedChannelObj.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

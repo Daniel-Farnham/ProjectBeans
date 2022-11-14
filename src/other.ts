@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
+import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
-
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required
@@ -12,13 +12,18 @@ export function clearV1 (): Record<string, never> {
     channels: [],
     sessions: [],
     messageCount: 0,
+    tokenCount: 0,
     dms: [],
+    notifications: [],
   };
   setData(data);
   return {};
 }
 
 export type error = { error: string };
+export type httpError = { code: number, error: string };
+export const FORBIDDEN = 403;
+export const BAD_REQUEST = 400;
 
 /**
   * Specifies the user interface (used for return types)
@@ -83,55 +88,72 @@ export const parseBody = (res: any) => {
 /**
   * Function used to create a post request
 */
-export const postRequest = (url: string, data: any) => {
+export const postRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'POST',
     url,
     {
       json: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 /**
   * Function used to create a put request
 */
-export const putRequest = (url: string, data: any) => {
+export const putRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'PUT',
     url,
     {
       json: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
+
   return parseBody(res);
 };
 
 /**
   * Function used to create a delete request
 */
-export const deleteRequest = (url: string, data: any) => {
+export const deleteRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'DELETE',
     url,
     {
       qs: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 
 /**
   * Function used to create a get request
 */
-export const getRequest = (url: string, data: any) => {
+export const getRequest = (url: string, data: any, token?: string) => {
   const res = request(
     'GET',
     url,
     {
       qs: data,
+      headers: { token: token }
     }
   );
+  if (res.statusCode !== 200) {
+    return res;
+  }
   return parseBody(res);
 };
 
@@ -301,10 +323,11 @@ export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
 */
 export function tokenExists (token: string): boolean {
   const data = getData();
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
 
   // Loop through sessions array to check if token exists
   for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
+    if (session.tokens.includes(hashedToken)) {
       return true;
     }
   }
@@ -334,10 +357,50 @@ export function getMessageId(): number {
 */
 export function getUidFromToken (token: string): number {
   const data = getData();
-
+  const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    if (session.tokens.includes(token)) {
+    if (session.tokens.includes(hashedToken)) {
       return session.uId;
+    }
+  }
+}
+
+/**
+  * Get a handle from uId
+  * @param {number} uId - token to check for userId
+  * @returns {handleStr} - returns handleStr
+*/
+export function getHandleFromUid(uId: number) {
+  const data = getData();
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      return user.handleStr;
+    }
+  }
+}
+/**
+  * Get a channel name from channelId
+  * @param {number} channelId - token to check for channelId
+  * @returns {name} - returns name
+*/
+export function getNameFromChannelId(channelId: number) {
+  const data = getData();
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      return channel.name;
+    }
+  }
+}
+/**
+  * Get a dm name from dmId
+  * @param {number} dmId - token to check for dmId
+  * @returns {name} - returns name
+*/
+export function getNameFromDmId(dmId: number) {
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      return dm.name;
     }
   }
 }

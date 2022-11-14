@@ -17,16 +17,14 @@ describe('Testing channelsListV3', () => {
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
-    });
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    }, userId.token);
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Boost',
       isPublic: false
-    });
+    }, userId.token);
 
     const expectedChannels =
     {
@@ -42,9 +40,7 @@ describe('Testing channelsListV3', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
-      token: userId.token
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -57,9 +53,7 @@ describe('Testing channelsListV3', () => {
       nameLast: 'Ngo'
     });
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
-      token: userId.token + 1
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token + 1);
 
     expect(resultChannels).toThrow(HTTPError);
   });
@@ -77,9 +71,7 @@ describe('Testing channelsListV3', () => {
       channels: []
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
-      token: userId.token
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -91,11 +83,10 @@ describe('Testing channelsListV3', () => {
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
-    });
+    }, userId.token);
 
     const expectedChannels =
     {
@@ -107,9 +98,7 @@ describe('Testing channelsListV3', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
-      token: userId.token
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -121,31 +110,26 @@ describe('Testing channelsListV3', () => {
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
-    });
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    }, userId.token);
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Terrys HELP Room',
       isPublic: true
-    });
-    const channelId3 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    }, userId.token);
+    const channelId3 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Boost',
       isPublic: false
-    });
-    const channelId4 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    }, userId.token);
+    const channelId4 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Aero',
       isPublic: false
-    });
-    const channelId5 = postRequest(SERVER_URL + '/channels/create/v3', {
-      token: userId.token,
+    }, userId.token);
+    const channelId5 = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'Egg',
       isPublic: false
-    });
+    }, userId.token);
 
     const expectedChannels =
     {
@@ -173,9 +157,7 @@ describe('Testing channelsListV3', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
-      token: userId.token
-    });
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
