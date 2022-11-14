@@ -14,7 +14,7 @@ import {
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 } from './users';
-import { messageSendV1, messageEditV1, messageRemoveV1 } from './message';
+import { messageSendV1, messageEditV1, messageRemoveV1, messagePinV1, messageUnpinV1} from './message';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 
 // Set up web app
@@ -69,19 +69,19 @@ app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   save();
 });
 
-app.post('/channels/create/v2', (req: Request, res: Response, next) => {
+app.post('/channels/create/v3', (req: Request, res: Response, next) => {
   const { token, name, isPublic } = req.body;
   res.json(channelsCreateV1(token, name, isPublic));
   save();
 });
 
-app.get('/channels/list/v2', (req:Request, res: Response, next) => {
+app.get('/channels/list/v3', (req:Request, res: Response, next) => {
   const token = req.query.token as string;
   res.json(channelsListV1(token));
   save();
 });
 
-app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
+app.get('/channels/listAll/v3', (req: Request, res: Response, next) => {
   const token = req.query.token as string;
   res.json(channelsListAllV1(token));
   save();
@@ -93,19 +93,19 @@ app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   save();
 });
 
-app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
+app.post('/channel/leave/v2', (req:Request, res: Response, next) => {
   const { token, channelId } = req.body;
   res.json(channelLeaveV1(token, channelId));
   save();
 });
 
-app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
+app.post('/channel/addowner/v2', (req:Request, res:Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelAddOwnerV1(token, channelId, uId));
   save();
 });
 
-app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
+app.post('/channel/removeowner/v2', (req:Request, res: Response, next) => {
   const { token, channelId, uId } = req.body;
   res.json(channelRemoveOwnerV1(token, channelId, uId));
   save();
