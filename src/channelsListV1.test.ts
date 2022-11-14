@@ -1,5 +1,7 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
+import HTTPError from 'http-errors';
+
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -7,20 +9,20 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing channelsListV1', () => {
+describe('Testing channelsListV3', () => {
   test('Test successful return of users channels', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'General',
       isPublic: true
     });
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'Boost',
       isPublic: false
@@ -40,7 +42,7 @@ describe('Testing channelsListV1', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
       token: userId.token
     });
 
@@ -48,22 +50,22 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing invalid authUserId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
       token: userId.token + 1
     });
 
-    expect(resultChannels).toStrictEqual({ error: expect.any(String) });
+    expect(resultChannels).toThrow(HTTPError);
   });
 
   test('Testing no channels', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
@@ -75,7 +77,7 @@ describe('Testing channelsListV1', () => {
       channels: []
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
       token: userId.token
     });
 
@@ -83,13 +85,13 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing single channel', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'General',
       isPublic: true
@@ -105,7 +107,7 @@ describe('Testing channelsListV1', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
       token: userId.token
     });
 
@@ -113,33 +115,33 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing many channels', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'General',
       isPublic: true
     });
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'Terrys HELP Room',
       isPublic: true
     });
-    const channelId3 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId3 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'Boost',
       isPublic: false
     });
-    const channelId4 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId4 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'Aero',
       isPublic: false
     });
-    const channelId5 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId5 = postRequest(SERVER_URL + '/channels/create/v3', {
       token: userId.token,
       name: 'Egg',
       isPublic: false
@@ -171,7 +173,7 @@ describe('Testing channelsListV1', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {
       token: userId.token
     });
 
