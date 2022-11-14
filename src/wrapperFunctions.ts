@@ -85,3 +85,12 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
 export function searchV1 (token: string, queryStr: string) {
   return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
 }
+
+export function messageShareV1(token: string, ogMessageId: number, message: string, channelId: number, dmId: number){
+  return postRequest(SERVER_URL + '/message/share/v1', {
+    ogMessageId: ogMessageId,
+    message: message,
+    channelId: channelId,
+    dmId: dmId,
+  }, token);
+}

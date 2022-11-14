@@ -399,6 +399,11 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   return { messages };
 }
 
+export function messageShareV1 (token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+
+  return {sharedMessageId: 1};  
+}
+
 /**
   * Searches messages in dms that user is a part of and returns
   * messages that match the query string
