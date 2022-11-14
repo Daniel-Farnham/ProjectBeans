@@ -1,6 +1,8 @@
 import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
+import HTTPError from 'http-errors';
+
 
 const GLOBAL_OWNER = 1;
 
@@ -234,8 +236,12 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   * @returns {Object} {} - returns an empty object upon success
 */
 function channelLeaveV1 (token: string, channelId: number): error | boolean | Record<string, never> {
-  if (!tokenExists(token) || !channelIdExists(channelId)) {
-    return { error: 'token/uId/channelId not valid' };
+  if (!tokenExists(token)) {
+    return { error: 'token is not valid' };
+  }
+
+  if (!(channelIdExists(channelId))) {
+	  throw HTTPError(400, 'channelId does not refer to a valid channel');
   }
 
   const data = getData();
@@ -244,9 +250,14 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
 
   // Check if user is not a member of valid channel
   if (!isMemberOfChannel(findChannel, authUserId)) {
-    return { error: 'User is not a member of the channel' };
+		throw HTTPError(403, 'User is not a member of a valid channel');
   }
 
+/*	// If user started an active standup
+	if (standupActiveV1(channelId)) {
+		throw HTTPError(400, 'Auth user started an active standup');
+	}
+*/
   for (const channel of data.channels) {
     // Loop through owner members and filter out user
     for (const member of channel.ownerMembers) {
@@ -278,21 +289,29 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
   * @returns {Object} {} - returns an empty object upon success
 */
 function channelAddOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
-  if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
-    return { error: 'token/uId/channelId not valid' };
+  if (!tokenExists(token)) {
+    throw new Error('token or userId or channelId are invalid')
   }
 
+	if (!channelIdExists(channelId)) {
+		throw HTTPError(400, 'channelId does not refer to a valid channel');
+	}
+
+	if (!userIdExists(uId)) {
+		throw HTTPError(400, 'uId does not refer to a valid user');
+	}
+	
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
   // Check if user is not a member of channel
   if (!isMemberOfChannel(findChannel, uId)) {
-    return { error: 'User is not a member of the channel' };
+    throw HTTPError(400, 'User is not a member of the channel');
   }
 
   // Check if member is not an owner already
   if (isOwnerOfChannel(findChannel, uId)) {
-    return { error: 'User is already an owner of the channel' };
+    throw HTTPError(400, 'Member is already an owner');
   }
 
   // Check authorised user has owner permissions
@@ -300,11 +319,11 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
   const authUser = data.users.find(user => user.uId === authUserId);
 
   if (!isMemberOfChannel(findChannel, authUserId)) {
-    return { error: 'Auth user is not a member of the channel' };
+    throw new Error('Auth user is not a member of the channel');
   }
 
   if (!isOwnerOfChannel(findChannel, authUserId) && authUser.permissionId !== GLOBAL_OWNER) {
-    return { error: 'Authorising user does not have owner permissions in this channel' };
+    throw new Error('Authorising user does not have owner permissions in this channel');
   }
 
   // Add new owner to array if token is member of channel
@@ -333,18 +352,28 @@ function channelAddOwnerV1(token: string, channelId: number, uId: number): error
 function channelRemoveOwnerV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
   // Check if token, channelId, uId are valid
   if (!tokenExists(token) || !userIdExists(uId) || !channelIdExists(channelId)) {
-    return { error: 'token/uId/channelId not valid' };
+    throw new Error('token or userId or channelId are invalid')
   }
 
+	if (!channelIdExists(channelId)) {
+		throw HTTPError(400, 'channelId does not refer to a valid channel');
+	}
+
+	if (!userIdExists(uId)) {
+		throw HTTPError(400, 'uId does not refer to a valid user');
+	}
+	
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
 
+  // Check if user is not an owner of channel
   if (!isOwnerOfChannel(findChannel, uId)) {
-    return { error: 'User to remove is not the owner of a channel' };
+    throw HTTPError(400, 'User is not an owner of the channel');
   }
 
+  // Check if member is not an owner already
   if (findChannel.ownerMembers.length === 1) {
-    return { error: 'The user to remove is the only owner of the channel' };
+		throw HTTPError(400, 'User is currently the onky owner of the channel');
   }
 
   // Check authorised user has owner permissions
@@ -352,11 +381,11 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
   const authUser = data.users.find(user => user.uId === authUserId);
 
   if (!isMemberOfChannel(findChannel, authUserId)) {
-    return { error: 'Auth user is not a member of the channel' };
+    throw new Error('Auth user is not a member of the channel');
   }
 
   if (!isOwnerOfChannel(findChannel, authUserId) && authUser.permissionId !== GLOBAL_OWNER) {
-    return { error: 'Authorising user does not have owner permissions in this channel' };
+    throw new Error('Authorising user does not have owner permissions in this channel');
   }
 
   // Remove the member from owner list
