@@ -1,7 +1,8 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
-  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel,
+  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel, dmIdExists,
 } from './other';
+import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
@@ -372,6 +373,17 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
     }
   }
 
+  // Case where message is in a dm.
+  if (messageContainer.type === 'dm') {
+    // If user is not an owner
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
+        throw HTTPError(403, 'User atttempting edit message is not the owner of the dm or the sender');
+      }
+    }
+    // If no errors, remove
+    removeMessageFromDM(messageId);
+  }
   return {};
 }
 
@@ -399,9 +411,145 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   return { messages };
 }
 
+/**
+  * Shares a message from a dm/channel to a dm/channel
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} ogMessageId - messageId of original message to be shared
+  * @param {string} message - additional optional message
+  * @param {number} channelId - channelId to share to
+  * @param {number} dmId - dmId to share to
+  *
+  * @returns {sharedMessageId} returns value of messageId of the shared message
+*/
 export function messageShareV1 (token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
 
-  return {sharedMessageId: 1};  
+  if (!channelIdExists(channelId) && !dmIdExists(dmId)) {
+    throw HTTPError(BAD_REQUEST, 'both dmId and channelId are invalid');
+  }
+
+  if (notValidSharing(channelId, dmId)) {
+    throw HTTPError(BAD_REQUEST, 'neither channelId nor dmId are -1');
+  }
+  // Checking both channels and dms to see if messageId is valid.
+  const messageContainer = getMessageContainer(ogMessageId);
+  if (!messageContainer) {
+    throw HTTPError(BAD_REQUEST, 'ogMessageId does not exist in either channels or dms');
+  }
+
+  if (message.length > MAX_MESSAGE_LEN) {
+    throw HTTPError(BAD_REQUEST, 'length of optional message is more than 1000 characters');
+  }
+
+  const uId = getUidFromToken(token);
+  let sharedMessageId;
+  // Error handling where message is in a channel
+  if (messageContainer.type === 'channel') {
+    const messageShareResult = messageFromChannelValid(messageContainer.channel, ogMessageId, uId);
+
+    // If no errors, share message
+    if (!messageShareResult) {
+      return messageShareResult;
+    }
+    // Check that the message to share to is valid
+    if (dmId === -1 && !isMemberOfChannel(messageContainer.channel, uId)) {
+      throw HTTPError(FORBIDDEN, 'valid channelId and dmId, but user is not member of channel to share to');
+    }
+    const fullMessage = generateChannelNewMessageString(messageContainer.channel, ogMessageId, message);
+    sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+  }
+
+  // Case where message is in a dm.
+  if (messageContainer.type === 'dm') {
+    // If user is not an owner of original message
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === ogMessageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
+        throw HTTPError(BAD_REQUEST, 'User atttempting share message is not the owner of the dm or the sender');
+      }
+    }
+    // Check that the message to share to is valid
+    if (channelId === -1 && !isMemberOfDm(messageContainer.dm, uId)) {
+      throw HTTPError(FORBIDDEN, 'valid channelId and dmId, but user is not member of dm to share to');
+    }
+    // If no errors, share message
+    const fullMessage = generateDmNewMessageString(messageContainer.channel, ogMessageId, message);
+    sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+  }
+  return { sharedMessageId: sharedMessageId };
+}
+
+function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string) {
+  // Create message
+  const messageId = getMessageId();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const messageObj: Message = {
+    messageId: messageId,
+    uId: uId,
+    message: message,
+    timeSent: timeSent,
+    reacts: [
+      {
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false,
+      }
+    ],
+    isPinned: false,
+  };
+
+  if (channelId !== -1) {
+    storeMessageInChannel(messageObj, channelId);
+  } else if (dmId !== -1) {
+    storeMessageInDm(messageObj, dmId);
+  }
+}
+
+function notValidSharing(channelId: number, dmId: number) {
+  if (channelId !== -1 && dmId !== -1) {
+    return true;
+  }
+  return false;
+}
+
+/**
+  * Generate new message string for sharing
+  *
+  * @param {dm} dm - dm object
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} additionalMsg - additional message to append
+  * @returns newly generated message
+  *
+*/
+function generateDmNewMessageString(dm, messageId: number, additionalMsg: string) {
+  for (const targetmessage of dm.messages) {
+    // If there is a message with the correct messageId, edit the message.
+    if (targetmessage.messageId === messageId) {
+      additionalMsg = targetmessage.message + additionalMsg;
+    }
+  }
+  return additionalMsg;
+}
+/**
+  * Generate new message string for sharing
+  *
+  * @param {channel} channel - channel object
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} additionalMsg - additional message to append
+  * ...
+  *
+  * @returns newly generated message
+*/
+function generateChannelNewMessageString(channel, messageId: number, additionalMsg: string) {
+  for (const targetmessage of channel.messages) {
+    // If there is a message with the correct messageId, edit the message.
+    if (targetmessage.messageId === messageId) {
+      additionalMsg = targetmessage.message + additionalMsg;
+    }
+  }
+  return additionalMsg;
 }
 
 /**
@@ -489,7 +637,7 @@ function messageFromChannelValid(channel: Channel, messageId: number, uId: numbe
 
   // If user is a member and now a channel owner and not a global owner
   if (!ownerMember && !isOwnerOfMessage(messageObj, uId) && findUser.permissionId !== GLOBAL_OWNER) {
-    throw HTTPError(403, 'Channel member does not have permissions to remove/edit message');
+    throw HTTPError(403, 'Channel member does not have permissions to remove/edit/share message');
   }
   return true;
 }
