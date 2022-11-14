@@ -460,6 +460,9 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
     }
     const fullMessage = generateChannelNewMessageString(messageContainer.channel, ogMessageId, message);
     sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, messageContainer.channel.channelId, -1, message, 'channel');
+    }
   }
 
   // Case where message is in a dm.
@@ -477,6 +480,9 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
     // If no errors, share message
     const fullMessage = generateDmNewMessageString(messageContainer.dm, ogMessageId, message);
     sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
+    }
   }
   return { sharedMessageId: sharedMessageId };
 }
