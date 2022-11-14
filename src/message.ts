@@ -382,7 +382,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   * @param {string} token - token of authorised user
   * @param {string} token - query string to search messages for
   *
-  * @returns {{messages}} returns an array containing message objects 
+  * @returns {{messages}} returns an array containing message objects
 */
 export function searchV1 (token: string, queryStr: string): error | messages {
   if (!(tokenExists(token))) {
@@ -406,8 +406,8 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   * @param {array} messages - messages array which is used to push matching messages
   *                           to
   * @param {number} uId - uId of authorised user requesting message
-  * 
-  * @returns {{messages}} returns an array containing message objects 
+  *
+  * @returns {{messages}} returns an array containing message objects
 */
 function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
   const data = getData();
@@ -431,8 +431,8 @@ function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
   * @param {array} messages - messages array which is used to push matching messages
   *                           to
   * @param {number} uId - uId of authorised user requesting message
-  * 
-  * @returns {{messages}} returns an array containing message objects 
+  *
+  * @returns {{messages}} returns an array containing message objects
 */
 function getMessagesFromChannels (messages: any[], uId: number, queryStr: string) {
   const data = getData();
