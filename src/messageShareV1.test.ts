@@ -13,16 +13,16 @@ describe('Testing message/share/v1 success handling', () => {
   test('correct return type after sharing', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-    
+
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
     const result = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
-    expect(result).toMatchObject({ sharedMessageId: expect.any(Number)});
+    expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });
   });
   test('correctly display shared message in dm messages', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-    
+
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
     const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
@@ -31,7 +31,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user1.authUserId,
-      message: "original message!sharing this message",
+      message: 'original message!sharing this message',
       timeSent: result.messages[0].timeSent,
       reacts: [{
         reactId: 1,
@@ -51,7 +51,7 @@ describe('Testing message/share/v1 success handling', () => {
   test('correctly display shared message in dm messages', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-    
+
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
     const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
@@ -60,7 +60,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user1.authUserId,
-      message: "original message!sharing this message",
+      message: 'original message!sharing this message',
       timeSent: result.messages[0].timeSent,
       reacts: [{
         reactId: 1,
@@ -89,7 +89,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
-      message: "original message!sharing this message",
+      message: 'original message!sharing this message',
       timeSent: result.messages[0].timeSent,
       reacts: [{
         reactId: 1,
@@ -118,7 +118,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
-      message: "original message!",
+      message: 'original message!',
       timeSent: result.messages[0].timeSent,
       reacts: [{
         reactId: 1,
@@ -148,7 +148,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
-      message: "original message!",
+      message: 'original message!',
       timeSent: result.messages[0].timeSent,
       reacts: [{
         reactId: 1,
