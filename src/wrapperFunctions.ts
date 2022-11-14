@@ -83,5 +83,5 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   return postRequest(SERVER_URL + '/message/react/v1', { messageId, reactId }, token);
 }
 export function searchV1 (token: string, queryStr: string) {
-  return getRequest(SERVER_URL + '/search/v1', {queryStr}, token);
+  return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
 }

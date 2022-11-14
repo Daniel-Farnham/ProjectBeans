@@ -13,7 +13,6 @@ const GLOBAL_OWNER = 1;
 type messageId = { messageId: number }
 type messages = { messages: Array<messages> };
 
-
 /**
   * Interface for message object
 */
@@ -376,7 +375,6 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   return {};
 }
 
-
 export function searchV1 (token: string, queryStr: string): error | messages {
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
@@ -389,12 +387,12 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   const uId = getUidFromToken(token);
   messages = getMessagesFromDms(messages, uId, queryStr);
   messages = getMessagesFromChannels(messages, uId, queryStr);
-  return {messages};
+  return { messages };
 }
 
 function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
-  let data = getData();
-  const caseInsensitive = queryStr.toLowerCase(); 
+  const data = getData();
+  const caseInsensitive = queryStr.toLowerCase();
   for (const dm of data.dms) {
     if (isMemberOfDm(dm, uId)) {
       for (const message of dm.messages) {
@@ -407,7 +405,7 @@ function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
   return messages;
 }
 function getMessagesFromChannels (messages: any[], uId: number, queryStr: string) {
-  let data = getData();
+  const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const channel of data.channels) {
     if (isMemberOfChannel(channel, uId)) {
