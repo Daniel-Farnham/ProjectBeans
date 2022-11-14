@@ -24,21 +24,18 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const newOwner = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
-    });
+    }, userId1.token);
 
     expect(newOwner).toStrictEqual({});
   });
@@ -59,26 +56,22 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
-    });
+    }, userId1.token);
 
     const channelDetails = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: userId1.token,
       channelId: channel.channelId
-    });
+    }, userId1.token);
 
     const expectedOwners = new Set([
       {
@@ -116,10 +109,9 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
       token: userId2.token,
@@ -127,10 +119,9 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId + 5,
       uId: userId2.authUserId
-    });
+    }, userId1.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -151,21 +142,18 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId + 10
-    });
+    }, userId1.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -186,16 +174,14 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId,
       uId: userId2.authUserId
-    });
+    }, userId1.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -209,16 +195,14 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token,
       channelId: channel.channelId,
       uId: userId1.authUserId
-    });
+    }, userId1.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -239,21 +223,18 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId2.token,
       channelId: channel.channelId,
       uId: userId1.authUserId
-    });
+    }, userId2.token);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });
@@ -274,21 +255,18 @@ describe('Testing channelAddOwnerV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId1.token,
       name: 'General',
       isPublic: true
-    });
+    }, userId1.token);
 
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId2.token,
       channelId: channel.channelId
-    });
+    }, userId2.token);
 
     const expectedResult = postRequest(SERVER_URL + '/channel/addowner/v1', {
-      token: userId1.token + 10,
       channelId: channel.channelId,
       uId: userId2.authUserId
-    });
+    }, userId1.token + 10);
 
     expect(expectedResult).toStrictEqual({ error: expect.any(String) });
   });

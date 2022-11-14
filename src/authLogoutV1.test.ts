@@ -2,68 +2,51 @@ import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_TOKEN = 403;
 
 beforeEach(() => {
-  deleteRequest(SERVER_URL + '/clear/v1', {});
+  clearV1();
 });
+
+function clearV1() {
+  return deleteRequest(SERVER_URL + '/clear/v1', {});
+}
+
+function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
+  return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
+}
+
+function authLoginV1(email: string, password: string) {
+  return postRequest(SERVER_URL + '/auth/login/v3', { email, password });
+}
 
 describe('Testing successful cases for authLogoutV1', () => {
   test('Testing returning empty object upon successful logout', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hang.pham1@student.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Hang',
-      nameLast: 'Pham'
-    });
-
-    const result = postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Hang', 'Pham');
+    const result = postRequest(SERVER_URL + '/auth/logout/v2', {}, user.token);
 
     expect(result).toStrictEqual({});
   });
 
   test('Testing unsuccessful user profile access when using token that is no longer valid', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hang.pham1@student.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Hang',
-      nameLast: 'Pham'
-    });
+    const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Hang', 'Pham');
 
-    postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
+    postRequest(SERVER_URL + '/auth/logout/v2', {}, user.token);
 
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: user.token,
-      uId: user.authUserId,
-    });
+    const result = getRequest(SERVER_URL + '/user/profile/v3', { uId: user.authUserId }, user.token);
 
-    expect(result).toMatchObject({ error: expect.any(String) });
+    expect(result.statusCode).toBe(INVALID_TOKEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing ability to login with another token if logged out of one token', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hang.pham1@student.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Hang',
-      nameLast: 'Pham'
-    });
+    const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Hang', 'Pham');
+    const loggedInSession = authLoginV1('hang.pham1@student.unsw.edu.au', 'password');
 
-    const loggedInSession = postRequest(SERVER_URL + '/auth/login/v2', {
-      email: 'hang.pham1@student.unsw.edu.au',
-      password: 'password'
-    });
+    postRequest(SERVER_URL + '/auth/logout/v2', {}, user.token);
 
-    postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token,
-    });
-
-    const result = getRequest(SERVER_URL + '/user/profile/v2', {
-      token: loggedInSession.token,
-      uId: user.authUserId,
-    });
+    const result = getRequest(SERVER_URL + '/user/profile/v3', { uId: user.authUserId }, loggedInSession.token);
 
     const expectedResult = {
       user: {
@@ -82,17 +65,13 @@ describe('Testing authLogoutV1 error handling', () => {
   test.each([
     { token: 'InvalidToken', desc: 'Testing invalid token' },
   ])('$desc', ({ token }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hang.pham1@student.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Hang',
-      nameLast: 'Pham'
-    });
+    const user = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Hang', 'Pham');
 
-    const result = postRequest(SERVER_URL + '/auth/logout/v1', {
-      token: user.token + token,
-    });
+    const result = postRequest(SERVER_URL + '/auth/logout/v2', {
+    }, user.token + token);
 
-    expect(result).toMatchObject({ error: expect.any(String) });
+    expect(result.statusCode).toBe(INVALID_TOKEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

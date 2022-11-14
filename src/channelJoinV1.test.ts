@@ -1,6 +1,8 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 describe('Testing positive cases for channelJoinV1', () => {
   beforeEach(() => {
@@ -23,14 +25,12 @@ describe('Testing positive cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
-    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
+    }, user1.token);
+    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
-    });
+    }, user2.token);
 
     expect(returnedChannelObject).toMatchObject({});
   });
@@ -51,15 +51,13 @@ describe('Testing positive cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user2.token,
       name: 'ChannelBoost',
       isPublic: false,
-    });
+    }, user2.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user1.token,
+    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
-    });
+    }, user1.token);
 
     expect(returnedChannelObject).toMatchObject({});
   });
@@ -80,20 +78,17 @@ describe('Testing positive cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId,
-    });
+    }, user2.token);
 
     const channelObj = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user1.token,
       channelId: channel.channelId
-    });
+    }, user1.token);
 
     const expectedChannelObj = {
       name: 'ChannelBoost',
@@ -142,17 +137,17 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId.token + 1,
+    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
-    });
+    }, userId.token + 1);
 
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedChannelObject.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(returnedChannelObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing invalid channelId', () => {
@@ -164,17 +159,17 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId.token,
+    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId + 1,
-    });
+    }, userId.token);
 
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(returnedChannelObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing if the user is already a member of the channel', () => {
@@ -186,17 +181,17 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: userId.token,
+    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId,
-    });
+    }, userId.token);
 
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(returnedChannelObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing if user is trying to join private channel assuming they are not global owner', () => {
@@ -215,16 +210,16 @@ describe('Testing negative cases for channelJoinV1', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: false,
-    });
+    }, user1.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
+    const returnedChannelObject = postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
-    });
+    }, user2.token);
 
-    expect(returnedChannelObject).toMatchObject({ error: expect.any(String) });
+    expect(returnedChannelObject.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(returnedChannelObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

@@ -1,6 +1,8 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -21,16 +23,14 @@ describe('Working cases', () => {
       nameLast: 'Doe',
     });
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
+    }, user1.token);
 
-    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user1.token,
+    const result = postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId,
       uId: user2.authUserId
-    });
+    }, user1.token);
 
     expect(result).toMatchObject({});
   });
@@ -50,21 +50,18 @@ describe('Working cases', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
+    }, user1.token);
 
-    postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user1.token,
+    postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId,
       uId: user2.authUserId
-    });
+    }, user1.token);
 
     const result = getRequest(SERVER_URL + '/channel/details/v2', {
-      token: user2.token,
       channelId: channel.channelId,
-    });
+    }, user2.token);
 
     const expectedResult = {
       name: 'General',
@@ -116,20 +113,18 @@ describe('Testing channelInviteV1 error handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
+    }, user1.token);
 
-    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user1.token,
+    const result = postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId + 10,
       uId: user2.authUserId
-    });
+    }, user1.token);
 
-    expect(result).toStrictEqual({
-      error: expect.any(String),
-    });
+    expect(result.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('uId does not refer to a valid user', () => {
@@ -146,19 +141,17 @@ describe('Testing channelInviteV1 error handling', () => {
       nameLast: 'Doe',
     });
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
-    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user1.token,
+    }, user1.token);
+    const result = postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId,
       uId: user1.authUserId + user2.authUserId + 10
-    });
+    }, user1.token);
 
-    expect(result).toStrictEqual({
-      error: expect.any(String),
-    });
+    expect(result.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('token is invalid', () => {
@@ -176,20 +169,18 @@ describe('Testing channelInviteV1 error handling', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
+    }, user1.token);
 
-    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user1.token + user2.token + 'InvalidToken',
+    const result = postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId,
       uId: user2.authUserId
-    });
+    }, user1.token + user2.token + 'InvalidToken');
 
-    expect(result).toStrictEqual({
-      error: expect.any(String),
-    });
+    expect(result.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('uId refers to a user who is already a member of the channel', () => {
@@ -200,19 +191,17 @@ describe('Testing channelInviteV1 error handling', () => {
       nameLast: 'Pham',
     });
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
-    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user1.token,
+    }, user1.token);
+    const result = postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId,
       uId: user1.authUserId
-    });
+    }, user1.token);
 
-    expect(result).toStrictEqual({
-      error: expect.any(String),
-    });
+    expect(result.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('channelId is valid and the authorised user is not a member of the channel', () => {
@@ -235,18 +224,16 @@ describe('Testing channelInviteV1 error handling', () => {
       nameLast: 'Jones',
     });
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'General',
       isPublic: true
-    });
-    const result = postRequest(SERVER_URL + '/channel/invite/v2', {
-      token: user3.token,
+    }, user1.token);
+    const result = postRequest(SERVER_URL + '/channel/invite/v3', {
       channelId: channel.channelId,
       uId: user2.authUserId
-    });
+    }, user3.token);
 
-    expect(result).toStrictEqual({
-      error: expect.any(String),
-    });
+    expect(result.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

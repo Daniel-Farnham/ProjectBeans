@@ -1,6 +1,8 @@
 import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const FORBIDDEN = 403;
+const BAD_REQUEST = 400;
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -16,22 +18,19 @@ describe('Testing messageEditV1 success for channels', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, userId.token);
 
     expect(editedMessage).toStrictEqual({});
   });
@@ -47,24 +46,23 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token + 'Invalid Token',
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, userId.token + 'Invalid Token');
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('MessageId is invalid', () => {
@@ -76,24 +74,23 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId + 1,
       message: 'This is an edited message'
-    });
+    }, userId.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message is an invalid length', () => {
@@ -106,24 +103,23 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: userId.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/send/v1', {
-      token: userId.token,
       channelId: channel.channelId,
       message: 'This is an edited message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: messageGreaterThan1000Char,
-    });
+    }, userId.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user, user does have global owner permission but is not a member of the channel', () => {
@@ -145,26 +141,25 @@ describe('Testing messageEditV1 error handling for channels', () => {
 
     // if user2 creates this channel, they have owner permissions.
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user2.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user2.token);
 
     // a valid message is created by user 2 who is also the owner of the channel.
     const message = postRequest(SERVER_URL + '/message/send/v1', {
-      token: user2.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, user2.token);
 
     // user 1 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: user1.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, user1.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user and the user does not have the global owner permission but they are a member of the channel', () => {
@@ -186,32 +181,30 @@ describe('Testing messageEditV1 error handling for channels', () => {
 
     // if user1 creates this channel, they have owner permissions. user2 won't have owner status.
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      token: user1.token,
       name: 'ChannelBoost',
       isPublic: true,
-    });
+    }, user1.token);
 
     // user2 is now becoming a member of the channel but won't be an owner.
     postRequest(SERVER_URL + '/channel/join/v2', {
-      token: user2.token,
       channelId: channel.channelId
-    });
+    }, user2.token);
 
     // a valid message is created by user 1 who is also the owner of the channel.
     const message = postRequest(SERVER_URL + '/message/send/v1', {
-      token: user1.token,
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
-    });
+    }, user1.token);
 
     // user 2 tries to edit the message. They neither have owner permissions of the channel and are not the authorised sender of the message dm.
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: user2.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, user2.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 
@@ -225,21 +218,18 @@ describe('Testing messageEditV1 success for dms', () => {
     });
 
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: userId.token,
       uIds: [],
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, userId.token);
 
     expect(editedMessage).toStrictEqual({});
   });
@@ -254,23 +244,22 @@ describe('Testing messageEditV1 error handling for dms', () => {
       nameLast: 'Farnham',
     });
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: userId.token,
       uIds: [],
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token + 'Invalid Token',
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, userId.token + 'Invalid Token');
 
-    expect(editedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing messageId is invalid', () => {
@@ -281,23 +270,22 @@ describe('Testing messageEditV1 error handling for dms', () => {
       nameLast: 'Farnham',
     });
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: userId.token,
       uIds: [],
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId + 1,
       message: 'This is an edited message'
-    });
+    }, userId.token);
 
-    expect(editedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message is an invalid length', () => {
@@ -309,23 +297,22 @@ describe('Testing messageEditV1 error handling for dms', () => {
       nameLast: 'Farnham',
     });
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: userId.token,
       uIds: [],
-    });
+    }, userId.token);
 
     const message = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: userId.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
-    });
+    }, userId.token);
 
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: userId.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: messageGreaterThan1000Char
-    });
+    }, userId.token);
 
-    expect(editedMessage).toStrictEqual({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Message not sent by authorised user and the user does not have global owner permissions', () => {
@@ -347,24 +334,23 @@ describe('Testing messageEditV1 error handling for dms', () => {
 
     // if user1 creates this dm, they have dm owner permissions && are global owners.
     const dm = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: user1.token,
       uIds: [],
-    });
+    }, user1.token);
 
     // a valid message is created by user 1 who is also the creator of the dm.
     const message = postRequest(SERVER_URL + '/message/senddm/v1', {
-      token: user1.token,
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
-    });
+    }, user1.token);
 
     // user 2 tries to edit. They are neither global owners or are the authorised sender of the message dm.
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v1', {
-      token: user2.token,
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    });
+    }, user2.token);
 
-    expect(editedMessage).toMatchObject({ error: expect.any(String) });
+    expect(editedMessage.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(editedMessage.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });

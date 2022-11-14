@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -16,14 +16,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails).toStrictEqual({ name: expect.any(String), members: expect.any(Array) });
   });
@@ -37,14 +35,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     expect(dmDetails.name).toStrictEqual('curtisscully');
   });
@@ -58,14 +54,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
-    });
+    }, regId.token);
 
     const expectedMembers = [
       {
@@ -103,14 +97,12 @@ describe('Testing basic dmDetailsV1 functionality', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: [secondId.authUserId, thirdId.authUserId]
-    });
+    }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: firstId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
-    });
+    }, firstId.token);
 
     const expectedMembers = new Set([
       {
@@ -149,12 +141,13 @@ describe('Testing dmDetailsV1 error handling', () => {
       nameLast: 'Scully'
     });
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: 0
-    });
+    }, regId.token);
 
-    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+    expect(dmDetails.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmDetailsV1 returns error when authorised user is not a member of the dm', () => {
@@ -173,16 +166,16 @@ describe('Testing dmDetailsV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: firstId.token,
       uIds: []
-    });
+    }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: secondId.token,
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
-    });
+    }, secondId.token);
 
-    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+    expect(dmDetails.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing dmDetailsV1 returns error when token is invalid', () => {
@@ -194,15 +187,15 @@ describe('Testing dmDetailsV1 error handling', () => {
     });
 
     const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
-      token: regId.token,
       uIds: []
-    });
+    }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
-      token: regId.token + 'NotAToken',
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
-    });
+    }, regId.token + 'NotAToken');
 
-    expect(dmDetails).toStrictEqual({ error: expect.any(String) });
+    expect(dmDetails.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(dmDetails.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
