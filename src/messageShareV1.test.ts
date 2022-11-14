@@ -1,7 +1,8 @@
 import { FORBIDDEN, BAD_REQUEST } from './other';
 import {
   clearV1, authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
-  channelJoinV1, messageSendDmV1, messageShareV1
+  channelJoinV1, messageSendDmV1, messageShareV1, dmMessagesV1, channelMessagesV1,
+  messageRemoveV1
 } from './wrapperFunctions';
 
 beforeEach(() => {
@@ -9,14 +10,155 @@ beforeEach(() => {
 });
 
 describe('Testing message/share/v1 success handling', () => {
-  test('correct return type after reacting', () => {
+  test('correct return type after sharing', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
-
+    
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
     const result = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
-    expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });
+    expect(result).toMatchObject({ sharedMessageId: expect.any(Number)});
+  });
+  test('correctly display shared message in dm messages', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
+    const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
+    const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
+    const result = dmMessagesV1(user2.token, dm.dmId, 0);
+    const expectedMsg = {
+      messageId: sharedMsg.sharedMessageId,
+      uId: user1.authUserId,
+      message: "original message!sharing this message",
+      timeSent: result.messages[0].timeSent,
+      reacts: [{
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false
+      }],
+      isPinned: false,
+    };
+    expect(result.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(expectedMsg)
+      ])
+    );
+  });
+  test('correctly display shared message in dm messages', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    const msg = messageSendDmV1(user1.token, dm.dmId, 'original message!');
+    const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
+    const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
+    const result = dmMessagesV1(user2.token, dm.dmId, 0);
+    const expectedMsg = {
+      messageId: sharedMsg.sharedMessageId,
+      uId: user1.authUserId,
+      message: "original message!sharing this message",
+      timeSent: result.messages[0].timeSent,
+      reacts: [{
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false
+      }],
+      isPinned: false,
+    };
+    expect(result.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(expectedMsg)
+      ])
+    );
+  });
+  test('correctly display shared message in channel messages', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    channelJoinV1(user2.token, channel.channelId);
+    const msg = messageSendV1(user1.token, channel.channelId, 'original message!');
+    const sharedMsg = messageShareV1(user2.token, msg.messageId, 'sharing this message', channel.channelId, -1);
+    const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
+    const result = channelMessagesV1(user2.token, channel.channelId, 0);
+    const expectedMsg = {
+      messageId: sharedMsg.sharedMessageId,
+      uId: user2.authUserId,
+      message: "original message!sharing this message",
+      timeSent: result.messages[0].timeSent,
+      reacts: [{
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false
+      }],
+      isPinned: false,
+    };
+    expect(result.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(expectedMsg)
+      ])
+    );
+  });
+  test('shared message without any additional message content', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    channelJoinV1(user2.token, channel.channelId);
+    const msg = messageSendV1(user1.token, channel.channelId, 'original message!');
+    const sharedMsg = messageShareV1(user2.token, msg.messageId, '', channel.channelId, -1);
+    const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
+    const result = channelMessagesV1(user2.token, channel.channelId, 0);
+    const expectedMsg = {
+      messageId: sharedMsg.sharedMessageId,
+      uId: user2.authUserId,
+      message: "original message!",
+      timeSent: result.messages[0].timeSent,
+      reacts: [{
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false
+      }],
+      isPinned: false,
+    };
+    expect(result.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(expectedMsg)
+      ])
+    );
+  });
+  test('shared message not deleted when removing original', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    channelJoinV1(user2.token, channel.channelId);
+    const msg = messageSendV1(user1.token, channel.channelId, 'original message!');
+    const sharedMsg = messageShareV1(user2.token, msg.messageId, ' shared!', channel.channelId, -1);
+    const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
+    messageRemoveV1(user1.token, msg.messageId);
+    const result = channelMessagesV1(user2.token, channel.channelId, 0);
+    const expectedMsg = {
+      messageId: sharedMsg.sharedMessageId,
+      uId: user2.authUserId,
+      message: "original message!",
+      timeSent: result.messages[0].timeSent,
+      reacts: [{
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false
+      }],
+      isPinned: false,
+    };
+    expect(result.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
+    expect(result.messages).toMatchObject([expectedMsg]);
   });
 });
 

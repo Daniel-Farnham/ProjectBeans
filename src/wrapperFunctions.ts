@@ -82,6 +82,9 @@ export function notificationsGetV1(token: string) {
 export function messageReactV1 (token: string, messageId: number, reactId: number) {
   return postRequest(SERVER_URL + '/message/react/v1', { messageId, reactId }, token);
 }
+export function messageRemoveV1(token: string, messageId: number) {
+  return deleteRequest(SERVER_URL + '/message/remove/v2', { messageId}, token);
+}
 export function searchV1 (token: string, queryStr: string) {
   return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
 }

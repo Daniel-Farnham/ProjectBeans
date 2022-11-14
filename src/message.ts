@@ -324,7 +324,6 @@ function editMessageFromDM(messageId: number, editedMessage: string) {
       }
     }
   }
-
   setData(data);
 }
 
@@ -446,17 +445,18 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
 
   const uId = getUidFromToken(token);
   let sharedMessageId;
+
   // Error handling where message is in a channel
   if (messageContainer.type === 'channel') {
-    const messageShareResult = messageFromChannelValid(messageContainer.channel, ogMessageId, uId);
+    // const messageShareResult = messageFromChannelValid(messageContainer.channel, ogMessageId, uId);
 
-    // If no errors, share message
-    if (!messageShareResult) {
-      return messageShareResult;
-    }
+    // // If no errors, share message
+    // if (!messageShareResult) {
+    //   return messageShareResult;
+    // }
     // Check that the message to share to is valid
     if (dmId === -1 && !isMemberOfChannel(messageContainer.channel, uId)) {
-      throw HTTPError(FORBIDDEN, 'valid channelId and dmId, but user is not member of channel to share to');
+      throw HTTPError(FORBIDDEN, 'user is not member of channel to share to');
     }
     const fullMessage = generateChannelNewMessageString(messageContainer.channel, ogMessageId, message);
     sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
@@ -505,6 +505,7 @@ function sendSharedMessage(uId: number, channelId: number, dmId: number, message
   } else if (dmId !== -1) {
     storeMessageInDm(messageObj, dmId);
   }
+  return messageId;
 }
 
 function notValidSharing(channelId: number, dmId: number) {
