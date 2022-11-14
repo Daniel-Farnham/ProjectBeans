@@ -148,7 +148,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
-      message: 'original message!',
+      message: 'original message! shared!',
       timeSent: result.messages[0].timeSent,
       reacts: [{
         reactId: 1,
