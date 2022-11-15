@@ -1,7 +1,10 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error, getUidFromToken } from './other';
+import { userIdExists, tokenExists, User, error, getUidFromToken, FORBIDDEN,
+BAD_REQUEST } from './other';
 import validator from 'validator';
 import HTTPError from 'http-errors';
+import request from 'sync-request';
+import fs from 'fs';
 
 /**
   * Returns user object if a valid user is found
@@ -270,6 +273,27 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
 */
 export function userProfileUploadPhotoV1 (token: string, imgUrl: string,
 xStart: number, yStart: number, xEnd: number, yEnd: number ) {
+  if (!tokenExists(token)) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+  const response = request('GET', imgUrl);
+  if (response.statusCode !== 200) {
+    throw HTTPError(BAD_REQUEST, 'Retrieving image from imgUrl failed');
+  }
+  const imgUrlIsJpg = /\.jpg$/;
+  if (!imgUrlIsJpg.test(imgUrl)) {
+    throw HTTPError(BAD_REQUEST, 'imgUrl is not a jpg file');
+  }
+  // Generate a random string
+  var randomstring = require("randomstring");
+  const res = randomstring.generate({
+    length: 25,
+    charset: 'alphabetic'
+  });
+  const imageFile = response.getBody();
+  console.log(`static/${res}.jpg`)
+  fs.writeFileSync(`static/${res}.jpg`, imageFile, {flag: 'w'});
+
   return {};
 }
 /**
