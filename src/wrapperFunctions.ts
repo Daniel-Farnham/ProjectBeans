@@ -85,3 +85,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
 export function searchV1 (token: string, queryStr: string) {
   return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
 }
+export function userProfileUploadPhotoV1 (token: string, imgUrl: string, xStart: number,
+yStart: number, xEnd: number, yEnd: number) {
+  return postRequest(SERVER_URL + '/user/profile/uploadphoto/v1', { imgUrl, xStart, yStart, xEnd, yEnd }, token);
+}

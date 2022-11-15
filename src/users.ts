@@ -257,6 +257,21 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
 }
 
 /**
+  * Given a URL of an image on the internet, crops the image within bounds
+  * of xStart, yStart and xEnd, yEnd at the top left 
+  *
+  * @param {string} imgUrl - HTTP URL for image
+  * @param {number} xStart - coordinate xStart
+  * @param {number} yStart - coordinate yStart
+  * @param {number} xEnd - coordinate xEnd
+  * @param {number} yEnd - coordinate yEnd
+  *
+  * @returns {} - returns empty object upon success
+*/
+export function userProfileUploadPhotoV1 (imgUrl, xStart, yStart, xEnd, yEnd ) {
+  return {};
+}
+/**
   * Checks if name is within 1 and 50 characters
   *
   * @param {string} name - token session for user requesting change
