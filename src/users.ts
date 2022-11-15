@@ -268,7 +268,8 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
   *
   * @returns {} - returns empty object upon success
 */
-export function userProfileUploadPhotoV1 (imgUrl, xStart, yStart, xEnd, yEnd ) {
+export function userProfileUploadPhotoV1 (token: string, imgUrl: string,
+xStart: number, yStart: number, xEnd: number, yEnd: number ) {
   return {};
 }
 /**

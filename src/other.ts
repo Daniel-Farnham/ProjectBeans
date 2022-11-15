@@ -392,6 +392,34 @@ export function getNameFromChannelId(channelId: number) {
   }
 }
 /**
+  * Get a channel object from channelId
+  * @param {number} channelId - token to check for channelId
+  * @returns {channel} - returns channel object
+*/
+export function getChannelObjectFromChannelId(channelId: number) {
+  const data = getData();
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      return channel;
+    }
+  }
+  return false;
+}
+/**
+  * Get a dm object from dmId
+  * @param {number} dmId - token to check for dmId
+  * @returns {dm} - returns dm object
+*/
+export function getDmObjectFromDmlId(dmId: number) {
+  const data = getData();
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      return dm;
+    }
+  }
+  return false;
+}
+/**
   * Get a dm name from dmId
   * @param {number} dmId - token to check for dmId
   * @returns {name} - returns name
