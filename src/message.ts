@@ -423,6 +423,41 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   * @returns {sharedMessageId} returns value of messageId of the shared message
 */
 export function messageShareV1 (token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+  messageShareErrorChecking(token, ogMessageId, message, channelId, dmId);
+  const uId = getUidFromToken(token);
+  const messageContainer = getMessageContainer(ogMessageId);
+
+  let fullMessage;
+
+  // Case where message being shared is shared to a channel
+  if (dmId === -1) {
+    fullMessage = generateChannelNewMessageString(messageContainer.channel, ogMessageId, message);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
+    }
+  }
+  // Case where message being shared is shared to a dm
+  if (channelId === -1) {
+    fullMessage = generateDmNewMessageString(messageContainer.dm, ogMessageId, message);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
+    }
+  }
+  const sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+  return { sharedMessageId: sharedMessageId };
+}
+
+/**
+  * Performs error checking for messageShareV1 function and throws any errors
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} ogMessageId - messageId of original message to be shared
+  * @param {string} message - additional optional message
+  * @param {number} channelId - channelId to share to
+  * @param {number} dmId - dmId to share to
+  *
+*/
+function messageShareErrorChecking(token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
@@ -433,6 +468,7 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
   if (notValidSharing(channelId, dmId)) {
     throw HTTPError(BAD_REQUEST, 'neither channelId nor dmId are -1');
   }
+
   const uId = getUidFromToken(token);
   const messageContainer = getMessageContainer(ogMessageId);
 
@@ -447,35 +483,24 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
   if (messageContainer.type === 'channel' && !isMemberOfChannel(messageContainer.channel, uId)) {
     throw HTTPError(BAD_REQUEST, 'user is not member of channel that message is a part of');
   }
-
   if (message.length > MAX_MESSAGE_LEN) {
     throw HTTPError(BAD_REQUEST, 'length of optional message is more than 1000 characters');
   }
+
   const dm = getDmObjectFromDmlId(dmId);
   const channel = getChannelObjectFromChannelId(channelId);
-  let fullMessage;
+
   if (dmId === -1) {
     if (!isMemberOfChannel(channel, uId)) {
       throw HTTPError(FORBIDDEN, 'user not joined to channel that message is to be shared to');
-    }
-    fullMessage = generateChannelNewMessageString(messageContainer.channel, ogMessageId, message);
-    if (requiresTagging(message)) {
-      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
     }
   }
   if (channelId === -1) {
     if (!isMemberOfDm(dm, uId)) {
       throw HTTPError(FORBIDDEN, 'user not joined to dm that message is to be shared to');
     }
-    fullMessage = generateDmNewMessageString(messageContainer.dm, ogMessageId, message);
-    if (requiresTagging(message)) {
-      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
-    }
   }
-  const sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
-  return { sharedMessageId: sharedMessageId };
 }
-
 function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string) {
   // Create message
   const messageId = getMessageId();
