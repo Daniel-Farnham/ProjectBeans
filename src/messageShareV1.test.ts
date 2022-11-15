@@ -28,6 +28,7 @@ describe('Testing message/share/v1 success handling', () => {
     const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     const result = dmMessagesV1(user2.token, dm.dmId, 0);
+    console.log(result);
     const expectedMsg = {
       messageId: sharedMsg.sharedMessageId,
       uId: user1.authUserId,
@@ -184,7 +185,7 @@ describe('Testing message/share/v1 error handling', () => {
       statusCode: BAD_REQUEST,
     },
     {
-      desc: 'ogMessageId doesn\'t exist',
+      desc: 'ogMessageId invalid',
       token: '',
       ogMessageId: 1000,
       message: 'Shared message',
@@ -276,27 +277,20 @@ describe('Testing message/share/v1 error handling', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('ogMessageId does not refer to a valid message within a channel/DM that the authorised user has joined', () => {
+  test('ogMessageId does not refer to a valid message within a dm that the authorised user has joined', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
     const user3 = authRegisterV1('bdoe@gmail.com', 'password', 'Bob', 'Doe');
 
     const channel = channelsCreateV1(user1.token, 'Boost', true);
-    const channel2 = channelsCreateV1(user3.token, 'Boost', true);
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
-    channelJoinV1(user3.token, channel.channelId);
     const dmMsg = messageSendDmV1(user1.token, dm.dmId, 'dm message!');
-    const channelMsg = messageSendV1(user1.token, channel.channelId, 'channel message');
 
     let result = messageShareV1(user3.token, dmMsg.messageId, 'sharing this message', channel.channelId, -1);
     expect(result.statusCode).toBe(BAD_REQUEST);
     let bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-
-    result = messageShareV1(user3.token, channelMsg.messageId, 'sharing this message', channel2.channelId, -1);
-    expect(result.statusCode).toBe(BAD_REQUEST);
-    bodyObj = JSON.parse(result.body as string);
-    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+  
   });
 
   test('test sharing a message to a channel that user is not a part of', () => {
