@@ -1,4 +1,4 @@
-import express, { json, Request, response, Response } from 'express';
+import express, { json, Request, Response } from 'express';
 import { echo } from './echo';
 import fs from 'fs';
 import morgan from 'morgan';
@@ -18,7 +18,6 @@ import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1 } from '.
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 import { adminUserRemoveV1 } from './admin';
-import { request } from 'http';
 
 // Set up web app
 const app = express();
@@ -431,7 +430,7 @@ app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
   const uId = parseInt(req.query.uId as string);
   res.json(adminUserRemoveV1(token, uId));
   save();
-})
+});
 
 // handles errors nicely
 app.use(errorHandler());

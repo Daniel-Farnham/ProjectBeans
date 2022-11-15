@@ -1,8 +1,5 @@
 import { getRequest, postRequest, deleteRequest } from './other';
-import { getUidFromToken } from './other';
 import { port, url } from './config.json';
-import { usersAllV1 } from './users';
-import { channelMessagesV1 } from './wrapperFunctions';
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
@@ -10,12 +7,16 @@ beforeEach(() => {
 });
 
 function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
-    return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
-};
+  return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
+}
 
 function adminUserRemoveV1(token: string, uId: number) {
-    return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
-};
+  return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
+}
+
+function usersAllV1(token: string) {
+  return getRequest(SERVER_URL + '/users/all/v2', { }, token);
+}
 
 describe('Testing basic adminUserRemoveV1 functionality', () => {
   test('Test that adminUserRemoveV1 successful retrives user profile', () => {
@@ -26,16 +27,16 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
 
     const expectedUser = {
       user: {
-        uId: global.authUserId,
-        email: 'bubbles@ad.unsw.edu.au',
-        nameFirst: 'Bubleen',
-        nameLast: 'Rosie',
-        handleStr: expect.any(String)
+        uId: user.authUserId,
+        email: expect.any(String),
+        nameFirst: 'Removed',
+        nameLast: 'user',
+        handleStr: expect.any(String),
       }
     };
 
-    const resultUser = getRequest(SERVER_URL + '/user/profile/v3', { uId: user.authUserId }, user.token);
-    expect(resultUser).toBe(expectedUser);
+    const resultUser = getRequest(SERVER_URL + '/user/profile/v3', { uId: user.authUserId }, global.token);
+    expect(resultUser).toEqual(expectedUser);
   });
 
   test('Test that adminUserRemoveV1 successfully removes user from all channels, dms and messages replaced with removed user', () => {
@@ -51,7 +52,7 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
       channelId: channel.channelId
     }, user.token);
 
-    const newMessageId = postRequest(SERVER_URL + '/message/send/v2', {
+    postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, user.token);
@@ -60,27 +61,27 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
       uIds: [user.authUserId]
     }, global.token);
 
-    const sendDm = postRequest(SERVER_URL + '/message/senddm/v2', {
+    postRequest(SERVER_URL + '/message/senddm/v2', {
       dmId: dmId.dmId,
       message: 'This is my first message',
     }, user.token);
 
     adminUserRemoveV1(global.token, user.authUserId);
 
-    //channel and dm messages are now removed user 
+    // channel and dm messages are now removed user
     const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, global.token);
 
-    expect(messages[0].message).toBe('Removed user');
+    expect(messages.messages[0].message).toBe('Removed user');
 
     const dms = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dmId.dmId,
       start: 0,
     }, global.token);
 
-    expect(dms[0].message).toBe('Removed user');
+    expect(dms.messages[0].message).toBe('Removed user');
 
     const returnedChannelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
@@ -88,22 +89,23 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
 
     const expectedUser = {
       user: {
-        uId: global.authUserId,
-        email: 'bubbles@ad.unsw.edu.au',
-        nameFirst: 'Bubleen',
-        nameLast: 'Rosie',
+        uId: user.authUserId,
+        email: expect.any(String),
+        nameFirst: 'Removed',
+        nameLast: 'user',
         handleStr: expect.any(String)
       }
     };
 
-    expect(returnedChannelObj.allMembers).toBe(expectedUser)
+    const removedInChannel = returnedChannelObj.allMembers.find((member) => member.uId === user.authUserId);
+    expect(removedInChannel).toEqual(expectedUser.user);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, global.token);
 
-    expect(dmDetails.members).toBe(expectedUser);
-
+    const removedInDm = dmDetails.members.find((member) => member.uId === user.authUserId);
+    expect(removedInDm).toEqual(expectedUser.user);
   });
 
   test('Test that adminUserRemoveV1 successfully removes user from users all', () => {
@@ -111,28 +113,26 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
     const user = authRegisterV1('roses@ad.unsw.edu.au', 'password', 'Bee', 'Rosie');
 
     adminUserRemoveV1(global.token, user.authUserId);
-    const userArray = usersAllV1(global.token); 
+    const userArray = usersAllV1(global.token);
 
     const expectedUser = {
-      user: {
-        uId: global.authUserId,
-        email: 'bubbles@ad.unsw.edu.au',
-        nameFirst: 'Bubleen',
-        nameLast: 'Rosie',
-        handleStr: expect.any(String)
-      }
+      uId: global.authUserId,
+      email: expect.any(String),
+      nameFirst: 'Bubleen',
+      nameLast: 'Rosie',
+      handleStr: expect.any(String)
     };
 
-    expect(userArray).toBe([expectedUser]); 
+    expect(userArray.users).toEqual([expectedUser]);
   });
 });
 
-describe('Testing adminUserRemoveV1 error handling 400 errors', () => {
+describe('Testing adminUserRemoveV1 error handling HTTP errors', () => {
   test('Testing uId does not refer to a valid user', () => {
     const authId = authRegisterV1('roses@ad.unsw.edu.au', 'password', 'Bee', 'Rosie');
-    authRegisterV1('bubbles@ad.unsw.edu.au', 'password', 'Bubleen', 'Rosie');
+    const removeUser = authRegisterV1('bubbles', 'password', 'Bubleen', 'Rosie');
 
-    const remove = adminUserRemoveV1(authId.token, authId.authUserId + 1);
+    const remove = adminUserRemoveV1(authId.token, removeUser.authUserId);
 
     expect(remove.statusCode).toBe(400);
     const bodyObj = JSON.parse(remove.body as string);
@@ -140,7 +140,7 @@ describe('Testing adminUserRemoveV1 error handling 400 errors', () => {
   });
 
   test('Testing uId which referes to a user who is the only global owner', () => {
-    const authId = authRegisterV1('roses@ad.unsw.edu.au', 'password', 'Bee', 'Rosie'); 
+    const authId = authRegisterV1('roses@ad.unsw.edu.au', 'password', 'Bee', 'Rosie');
     const remove = adminUserRemoveV1(authId.token, authId.authUserId);
 
     expect(remove.statusCode).toBe(400);
