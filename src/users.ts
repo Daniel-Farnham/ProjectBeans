@@ -334,7 +334,6 @@ function setUserImgUrl (token: string, imgUrl: string) {
     if (user.uId === uId) {
       user.profileImgUrl = imgUrl;
     }
-    console.log(user)
   }
   setData(data);
 }

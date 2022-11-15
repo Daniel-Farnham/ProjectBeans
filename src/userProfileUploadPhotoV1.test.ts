@@ -1,6 +1,6 @@
 import { FORBIDDEN, BAD_REQUEST } from './other';
 import {
-  clearV1, authRegisterV1, userProfileUploadPhotoV1
+  clearV1, authRegisterV1, userProfileUploadPhotoV1, userProfileV1
 } from './wrapperFunctions';
 
 beforeEach(() => {
@@ -14,6 +14,25 @@ describe('Testing user/profile/uploadphoto/v1 success handling', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const result = userProfileUploadPhotoV1(user1.token, MOSS_PHOTO, 0, 0, 50, 50);
     expect(result).toMatchObject({});
+  });
+  test('default photo returned in userProfileV1', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const result = userProfileV1(user1.token, user1.authUserId);
+    expect(result.user).toMatchObject({
+      uId: user1.authUserId,
+      email: 'hangpham@gmail.com',
+      nameFirst: 'Hang',
+      nameLast: 'Pham',
+      handleStr: 'hangpham',
+      profileImgUrl: expect.stringMatching(/\.jpg$/),
+    });
+  });
+  test('uploaded photo returned in userProfileV1 is different to first user profile', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const beforeUpload = userProfileV1(user1.token, user1.authUserId);
+    userProfileUploadPhotoV1(user1.token, MOSS_PHOTO, 0, 0, 50, 50);
+    const afterUpload = userProfileV1(user1.token, user1.authUserId);
+    expect(beforeUpload.user.profileImgUrl).not.toEqual(afterUpload.user.profileImgUrl);
   });
 });
 describe('Testing user/profile/uploadphoto/v1 error case handling', () => {
