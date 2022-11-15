@@ -277,28 +277,67 @@ xStart: number, yStart: number, xEnd: number, yEnd: number ) {
   if (!tokenExists(token)) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
-  const response = request('GET', imgUrl);
-  if (response.statusCode !== 200) {
+  let response;
+  try {
+    response = request('GET', imgUrl);
+  }
+  catch(err){
     throw HTTPError(BAD_REQUEST, 'Retrieving image from imgUrl failed');
   }
   const imgUrlIsJpg = /\.jpg$/;
   if (!imgUrlIsJpg.test(imgUrl)) {
     throw HTTPError(BAD_REQUEST, 'imgUrl is not a jpg file');
   }
-  // Generate a random string
+  // Generate a random string to use for the image file name
   var randomstring = require("randomstring");
   const randomString = randomstring.generate({length: 25, charset: 'alphabetic'});
+  
+  // Store uncropped image onto static folder
   const imageFile = response.getBody();
   fs.writeFileSync(`static/uncropped${randomString}.jpg`, imageFile, {flag: 'w'});
   const sizeOf = require('image-size')
+  
+  // Check valid dimensions
   const dimensions = sizeOf(`static/uncropped${randomString}.jpg`);
-  cropImage(`static/uncropped${randomString}.jpg`, `static/${randomString}.jpg`)
+  if (notWithinDimensions(dimensions.width, dimensions.height, xStart, yStart, xEnd, yEnd)) {
+    throw HTTPError(BAD_REQUEST, 'any of xStart, yStart, xEnd, yEnd are not within the dimensions of the image');
+  }
+  if (invalidEndCoordinates(xStart, yStart, xEnd, yEnd)) {
+    throw HTTPError(BAD_REQUEST, 'coordinates xEnd <= xStart or yEnd <= yStart');
+  }
+
+  cropImage(`static/uncropped${randomString}.jpg`, `static/${randomString}.jpg`,
+  xStart, yStart, xEnd, yEnd);
   return {};
 }
-async function cropImage(imgUrl: string, croppedImgUrl: string) {
+function notWithinDimensions(width: number, height: number, xStart: number,
+yStart: number, xEnd: number, yEnd: number) {
+  if (xStart < 0 || yStart < 0 || xEnd < 0 || yEnd < 0) {
+    return true;
+  }
+  if (xStart > width || yStart > height || xEnd > width || yEnd > height) {
+    return true;
+  }
+  return false;
+}
+
+function invalidEndCoordinates(xStart: number, yStart: number, xEnd: number, yEnd: number) {
+  if (xEnd <= xStart) {
+    return true;
+  }
+  if (yEnd <= yStart) {
+    return true;
+  }
+}
+
+
+async function cropImage(imgUrl: string, croppedImgUrl: string, xStart: number,
+  yStart: number, xEnd: number, yEnd: number) {
+    const width = xEnd - xStart;
+    const height = yEnd - yStart
   try {
     await sharp(imgUrl)
-      .extract({ width: 100, height: 100, left: 0, top: 0 })
+      .extract({ width: width, height: height, left: xStart, top: yStart })
       .toFile(croppedImgUrl);
   } catch (error) {
     console.log(error);
