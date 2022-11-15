@@ -435,28 +435,26 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
   }
   const uId = getUidFromToken(token);
   const messageContainer = getMessageContainer(ogMessageId);
-  
-  // ogMessageId does not refer to a valid message within a channel/DM 
+
+  // ogMessageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
   if (!messageContainer) {
     throw HTTPError(BAD_REQUEST, 'ogMessageId not a valid message');
   }
-  if (channelId === -1 && messageContainer.type === 'dm'&& !isMemberOfDm(messageContainer.dm, uId)) {
+  if (messageContainer.type === 'dm' && !isMemberOfDm(messageContainer.dm, uId)) {
     throw HTTPError(BAD_REQUEST, 'user is not member of dm that message is a part of');
   }
-  if (dmId === -1 && messageContainer.type === 'channel' && !isMemberOfChannel(messageContainer.channel, uId)) {
+  if (messageContainer.type === 'channel' && !isMemberOfChannel(messageContainer.channel, uId)) {
     throw HTTPError(BAD_REQUEST, 'user is not member of channel that message is a part of');
   }
-  
+
   if (message.length > MAX_MESSAGE_LEN) {
     throw HTTPError(BAD_REQUEST, 'length of optional message is more than 1000 characters');
   }
-
   const dm = getDmObjectFromDmlId(dmId);
   const channel = getChannelObjectFromChannelId(channelId);
-  let sharedMessageId;
   let fullMessage;
-  if (dmId === -1) { 
+  if (dmId === -1) {
     if (!isMemberOfChannel(channel, uId)) {
       throw HTTPError(FORBIDDEN, 'user not joined to channel that message is to be shared to');
     }
@@ -474,7 +472,7 @@ export function messageShareV1 (token: string, ogMessageId: number, message: str
       notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
     }
   }
-  sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+  const sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
   return { sharedMessageId: sharedMessageId };
 }
 
@@ -682,22 +680,4 @@ function removeMessageFromDM(messageId: number):any {
     }
   }
   setData(data);
-}
-
-function messageIdExistsInChannel(channel, messageId: number) {
-  for (const message of channel.messages) {
-    if (message.messageId === messageId) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function messageIdExistsInDm(dm, messageId: number) {
-  for (const message of dm.messages) {
-    if (message.messageId === messageId) {
-      return true;
-    }
-  }
-  return false;
 }
