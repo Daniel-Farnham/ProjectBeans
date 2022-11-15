@@ -14,9 +14,11 @@ import {
   channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
-import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, 
-    userProfileV1, usersAllV1, userProfileUploadPhotoV1 } from './users';
-import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1  } from './message';
+import {
+  userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1
+} from './users';
+import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 // Set up web app
@@ -457,10 +459,10 @@ if (!fs.existsSync('static')) {
   fs.mkdirSync('static');
 }
 // Set up default photo
-const DEFAULT_PHOTO = 'http://cdn.comedy.co.uk/images/library/people/180x200/t/the_it_crowd_moss.jpg'
+const DEFAULT_PHOTO = 'http://cdn.comedy.co.uk/images/library/people/180x200/t/the_it_crowd_moss.jpg';
 const response = request('GET', DEFAULT_PHOTO);
 const responseBody = response.getBody();
-fs.writeFileSync('static/defaultpic.jpg', responseBody, {flag: 'w'});
+fs.writeFileSync('static/defaultpic.jpg', responseBody, { flag: 'w' });
 
 // start server
 const server = app.listen(PORT, HOST, () => {

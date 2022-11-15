@@ -1,11 +1,13 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error, getUidFromToken, FORBIDDEN,
-BAD_REQUEST } from './other';
+import {
+  userIdExists, tokenExists, User, error, getUidFromToken, FORBIDDEN,
+  BAD_REQUEST
+} from './other';
 import validator from 'validator';
 import HTTPError from 'http-errors';
 import request from 'sync-request';
 import fs from 'fs';
-const sharp = require("sharp");
+const sharp = require('sharp');
 
 /**
   * Returns user object if a valid user is found
@@ -262,7 +264,7 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
 
 /**
   * Given a URL of an image on the internet, crops the image within bounds
-  * of xStart, yStart and xEnd, yEnd at the top left 
+  * of xStart, yStart and xEnd, yEnd at the top left
   *
   * @param {string} imgUrl - HTTP URL for image
   * @param {number} xStart - coordinate xStart
@@ -273,15 +275,14 @@ export function userProfileSetEmailV1 (token: string, email: string): error | Re
   * @returns {} - returns empty object upon success
 */
 export function userProfileUploadPhotoV1 (token: string, imgUrl: string,
-xStart: number, yStart: number, xEnd: number, yEnd: number ) {
+  xStart: number, yStart: number, xEnd: number, yEnd: number) {
   if (!tokenExists(token)) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
   let response;
   try {
     response = request('GET', imgUrl);
-  }
-  catch(err){
+  } catch (err) {
     throw HTTPError(BAD_REQUEST, 'Retrieving image from imgUrl failed');
   }
   const imgUrlIsJpg = /\.jpg$/;
@@ -289,14 +290,14 @@ xStart: number, yStart: number, xEnd: number, yEnd: number ) {
     throw HTTPError(BAD_REQUEST, 'imgUrl is not a jpg file');
   }
   // Generate a random string to use for the image file name
-  var randomstring = require("randomstring");
-  const randomString = randomstring.generate({length: 25, charset: 'alphabetic'});
-  
+  const randomstring = require('randomstring');
+  const randomString = randomstring.generate({ length: 25, charset: 'alphabetic' });
+
   // Store uncropped image onto static folder
   const imageFile = response.getBody();
-  fs.writeFileSync(`static/uncropped${randomString}.jpg`, imageFile, {flag: 'w'});
-  const sizeOf = require('image-size')
-  
+  fs.writeFileSync(`static/uncropped${randomString}.jpg`, imageFile, { flag: 'w' });
+  const sizeOf = require('image-size');
+
   // Check valid dimensions
   const dimensions = sizeOf(`static/uncropped${randomString}.jpg`);
   if (notWithinDimensions(dimensions.width, dimensions.height, xStart, yStart, xEnd, yEnd)) {
@@ -307,11 +308,11 @@ xStart: number, yStart: number, xEnd: number, yEnd: number ) {
   }
 
   cropImage(`static/uncropped${randomString}.jpg`, `static/${randomString}.jpg`,
-  xStart, yStart, xEnd, yEnd);
+    xStart, yStart, xEnd, yEnd);
   return {};
 }
 function notWithinDimensions(width: number, height: number, xStart: number,
-yStart: number, xEnd: number, yEnd: number) {
+  yStart: number, xEnd: number, yEnd: number) {
   if (xStart < 0 || yStart < 0 || xEnd < 0 || yEnd < 0) {
     return true;
   }
@@ -330,11 +331,10 @@ function invalidEndCoordinates(xStart: number, yStart: number, xEnd: number, yEn
   }
 }
 
-
 async function cropImage(imgUrl: string, croppedImgUrl: string, xStart: number,
   yStart: number, xEnd: number, yEnd: number) {
-    const width = xEnd - xStart;
-    const height = yEnd - yStart
+  const width = xEnd - xStart;
+  const height = yEnd - yStart;
   try {
     await sharp(imgUrl)
       .extract({ width: width, height: height, left: xStart, top: yStart })
