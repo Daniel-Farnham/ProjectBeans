@@ -28,6 +28,7 @@ export function standupStartV1 (token: string, channelId: number, length: number
         throw HTTPError(403, 'User is not a member of the channel');
     }
 
+    // this error case is not working. 
     for (const channel of data.channels) {
         if(channel.channelId === channelId && channel.isActive === true) {
             throw HTTPError(400, 'Active standup already running in the channel'); 
@@ -36,24 +37,21 @@ export function standupStartV1 (token: string, channelId: number, length: number
 
     const timeFinish = timeStandup(length); 
     
-    /*
-    let isActive = true; 
-
     const ActivateStandup = {
-        isActive: isActive,
+        isActive: true,
+        timeFinish: timeFinish, 
     };
-    */ 
+    
     
     for (const channel of data.channels) {
         if (channel.channelId === channelId) {
-          channel.isActive = true;
+          channel.isActive.push(ActivateStandup);
         }
     }
     setData(data);
     
 
-
-    console.log(data.channels); 
+    console.log(findChannel.isActive); 
     return {timeFinish: timeFinish};
     
     /*
@@ -78,5 +76,5 @@ function timeStandup (length) {
 
 
 function isStandUpActive (channelId) {
-    
+
 }
