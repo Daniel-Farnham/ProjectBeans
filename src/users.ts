@@ -5,6 +5,7 @@ import validator from 'validator';
 import HTTPError from 'http-errors';
 import request from 'sync-request';
 import fs from 'fs';
+const sharp = require("sharp");
 
 /**
   * Returns user object if a valid user is found
@@ -286,16 +287,24 @@ xStart: number, yStart: number, xEnd: number, yEnd: number ) {
   }
   // Generate a random string
   var randomstring = require("randomstring");
-  const res = randomstring.generate({
-    length: 25,
-    charset: 'alphabetic'
-  });
+  const randomString = randomstring.generate({length: 25, charset: 'alphabetic'});
   const imageFile = response.getBody();
-  console.log(`static/${res}.jpg`)
-  fs.writeFileSync(`static/${res}.jpg`, imageFile, {flag: 'w'});
-
+  fs.writeFileSync(`static/uncropped${randomString}.jpg`, imageFile, {flag: 'w'});
+  const sizeOf = require('image-size')
+  const dimensions = sizeOf(`static/uncropped${randomString}.jpg`);
+  cropImage(`static/uncropped${randomString}.jpg`, `static/${randomString}.jpg`)
   return {};
 }
+async function cropImage(imgUrl: string, croppedImgUrl: string) {
+  try {
+    await sharp(imgUrl)
+      .extract({ width: 100, height: 100, left: 0, top: 0 })
+      .toFile(croppedImgUrl);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 /**
   * Checks if name is within 1 and 50 characters
   *
