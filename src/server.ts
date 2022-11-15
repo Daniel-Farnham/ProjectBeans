@@ -451,9 +451,9 @@ app.use(errorHandler());
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
 
-// Serving files
+// Serving files within static folder
 app.use('/static', express.static('static'));
-if (!fs.existsSync('/static')) {
+if (!fs.existsSync('static')) {
   fs.mkdirSync('static');
 }
 // Set up default photo
