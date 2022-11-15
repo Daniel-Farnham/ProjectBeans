@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe('Testing positive cases for standupStartV1', () => {
  
-  test('Testing invalid channelId', () => {
+  test('Testing successful return of timeFinish', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -28,14 +28,36 @@ describe('Testing positive cases for standupStartV1', () => {
       length: 1,
     }, userId.token);
 
-    const bodyObj = JSON.parse(standupStart.body as string);
-    expect(bodyObj.error).toStrictEqual({ timeFinish: expect(true) });
+    expect(standupStart).toStrictEqual({ timeFinish: expect.any(Number) });
   });
 
 })
 
 
 describe('Testing negative cases for standupStartV1', () => {
+
+  test('Testing invalid token', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      name: 'ChannelBoost',
+      isPublic: true,
+    }, userId.token);
+
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
+      channelId: channel.channelId,
+      length: 1,
+    }, userId.token + 1);
+
+    expect(returnedChannelObject.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(returnedChannelObject.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+  });
 
   test('Testing invalid channelId', () => {
       const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -134,7 +156,7 @@ describe('Testing negative cases for standupStartV1', () => {
         isPublic: true,
       }, user1.token);
   
-      const ReturnedChannelObj = getRequest(SERVER_URL + '/channel/start/v1', {
+      const ReturnedChannelObj = postRequest(SERVER_URL + '/standup/start/v1', {
         channelId: channel.channelId
       }, user2.token);
   

@@ -426,9 +426,10 @@ app.get('/dm/list/v2', (req: Request, res: Response, next) => {
 });
 
 app.post('/standup/start/v1', (req: Request, res: Response, next) => {
-  const { uIds } = req.body;
-  const channelId = req.header('channelId');
-  res.json(standupStartV1(token, uIds));
+  const token = req.header('token');
+  const { channelId } = req.body; 
+  const { length } = req.body;
+  res.json(standupStartV1(token, channelId, length));
   save();
 });
 
