@@ -17,7 +17,7 @@ import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, us
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
-
+import { adminUserPermissionChangeV1} from './admin2';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -434,6 +434,13 @@ app.post('/message/share/v1', (req: Request, res: Response, next) => {
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+
+app.post('/admin/userpermission/change/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { uId, permissionId } = req.body;
+  res.json(adminUserPermissionChangeV1(token, uId, permissionId));
   save();
 });
 
