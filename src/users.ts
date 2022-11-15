@@ -41,6 +41,7 @@ export function userProfileV1 (token: string, uId: number): error | { user: User
           nameFirst: user.nameFirst,
           nameLast: user.nameLast,
           handleStr: user.handleStr,
+          profileImgUrl: user.profileImgUrl,
         }
       };
     }
@@ -331,8 +332,9 @@ function setUserImgUrl (token: string, imgUrl: string) {
   const data = getData();
   for (const user of data.users) {
     if (user.uId === uId) {
-      user.imgUrl = imgUrl;
+      user.profileImgUrl = imgUrl;
     }
+    console.log(user)
   }
   setData(data);
 }
