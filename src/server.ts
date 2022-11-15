@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import errorHandler from 'middleware-http-errors';
-import { clearV1, getRequest } from './other';
+import { clearV1 } from './other';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { getData, setData } from './dataStore';
 import {
@@ -19,7 +19,6 @@ import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1  } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
-import { dir } from 'console';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -457,7 +456,7 @@ app.use('/static', express.static('static'));
 if (!fs.existsSync('/static')) {
   fs.mkdirSync('static');
 }
-
+// Set up default photo
 const DEFAULT_PHOTO = 'http://cdn.comedy.co.uk/images/library/people/180x200/t/the_it_crowd_moss.jpg'
 const response = request('GET', DEFAULT_PHOTO);
 const responseBody = response.getBody();
