@@ -9,17 +9,17 @@ export function standupStartV1 (token: string, channelId: number, length: number
     const data = getData();
     const findChannel = data.channels.find(chan => chan.channelId === channelId);
 
+    
     // might need to convert length to time, length is in seconds. 
     if (!(tokenExists(token))) {
         throw HTTPError(403, 'token is invalid');
     }
 
-    const length_ms = length*1000; 
     if (!channelIdExists(channelId)) {
         throw HTTPError(400, 'channelId is invalid');
     }
 
-    if(length_ms < 0) {
+    if(length < 0) {
         throw HTTPError(400, 'standup length is invalid');
     }
 
@@ -28,33 +28,55 @@ export function standupStartV1 (token: string, channelId: number, length: number
         throw HTTPError(403, 'User is not a member of the channel');
     }
 
-    // if channelmessages = 
-    const time = timeStandup(length_ms); 
+    for (const channel of data.channels) {
+        if(channel.channelId === channelId && channel.isActive === true) {
+            throw HTTPError(400, 'Active standup already running in the channel'); 
+        }
+    }
+
+    const timeFinish = timeStandup(length); 
     
-    return {timeFinish: time};
     /*
-        Standups can be started on the frontend by typing "/standup X"
-        Standups can be started on the frontend by typing "/standup X"        
+    let isActive = true; 
+
+    const ActivateStandup = {
+        isActive: isActive,
+    };
+    */ 
+    
+    for (const channel of data.channels) {
+        if (channel.channelId === channelId) {
+          channel.isActive = true;
+        }
+    }
+    setData(data);
+    
+
+
+    console.log(data.channels); 
+    return {timeFinish: timeFinish};
+    
+    /*
+    TO DO LIST 
+        - don't need to call this function 
+        - but I will need a way of saying that this channel has an active standup. 
+        - then once I have that, just check if (standup is active) { throw error }
+        - 
 
     */
+   
 }
 
-function timeStandup (length_ms) {
-    
-    let timeStart = Math.floor((new Date()).getTime()); 
-    
-    while (timeStart < length_ms) {
-        isActive(true); 
-        timeStart++; 
-    }
-    
-    isActive(false);
-
-    const timeFinish = timeStart/1000; 
+function timeStandup (length) {
+    let timeStart = Math.floor((new Date()).getTime() / 1000);
+    let timeFinish = timeStart + length; 
+  
     return timeFinish; 
   
 }
 
-function isActive () {
 
+
+function isStandUpActive (channelId) {
+    
 }
