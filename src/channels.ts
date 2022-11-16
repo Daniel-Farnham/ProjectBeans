@@ -146,10 +146,10 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
   */
  function updateChannelAnalytics() {
   const data = getData();
-  const index = data.workplaceStats.channelsExist.length;
-  const numChannels = data.workplaceStats.channelsExist[index - 1].numChannelsExist;
+  const index = data.workspaceStats.channelsExist.length;
+  const numChannels = data.workspaceStats.channelsExist[index - 1].numChannelsExist;
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  data.workplaceStats.channelsExist.push({ numChannelsExist: numChannels + 1, timeStamp: timeSent });
+  data.workspaceStats.channelsExist.push({ numChannelsExist: numChannels + 1, timeStamp: timeSent });
   setData(data);
 }
 

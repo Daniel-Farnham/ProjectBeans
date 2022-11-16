@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error, getUidFromToken, FORBIDDEN } from './other';
+import { userIdExists, tokenExists, User, error, getUidFromToken, FORBIDDEN, isMemberOfChannel, isMemberOfDm } from './other';
 import validator from 'validator';
 import HTTPError from 'http-errors';
+import { channel } from 'diagnostics_channel';
 
 /**
   * Returns user object if a valid user is found
@@ -293,7 +294,7 @@ function emailInUse (email: string): boolean {
   * @param {string} handleStr - token session for user requesting change
   *
   * @returns {boolean} - returns true if handle in use
-*/
+  */
 function handleInUse (handleStr: string): boolean {
   const data = getData();
 
@@ -305,7 +306,13 @@ function handleInUse (handleStr: string): boolean {
   return false;
 }
 
-function usersStatsV1 (token: string) {
+/**
+  * Returns the required statistics about the workspace's use of the program
+  * @param {string} token - token session for user requesting the stats
+  *
+  * @returns {workspaceStats} - returns true if handle in use
+  */
+export function usersStatsV1 (token: string) {
   if (!tokenExists(token)) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
@@ -327,4 +334,51 @@ function usersStatsV1 (token: string) {
   // decreases with dmRemove        ---
 
   // calculate utilizationRate
+  // numOfUsersWhoHaveJoinedAtLeastOneChannel / numUsers
+
+  const data = getData();
+
+  const numUsersInChannelOrDm = findNumUsersInChannelOrDm();
+  const numUsers = data.users.length;
+
+  const stats = {
+    channelsExist: data.workspaceStats.channelsExist,
+    dmsExist: data.workspaceStats.dmsExist,
+    messagesExist: data.workspaceStats.messagesExist,
+    utilizationRate: numUsersInChannelOrDm / numUsers
+  };
+
+  return { workspaceStats: stats };
+}
+
+/**
+  * Calculates the number of users who have joined at least one channel
+  * or dm
+  * @returns {count} - number of users who are in at least one channel or dm
+  */
+function findNumUsersInChannelOrDm(): number {
+  const data = getData();
+  let count = 0;
+  // For every registered user check if they are in any channels of dms
+  for (const user of data.users) {
+    let active = false;
+    for (const channel of data.channels) {
+      if (isMemberOfChannel(channel, user.uId)) {
+        active = true;
+      }
+    }
+
+    for (const dm of data.dms) {
+      if (isMemberOfDm(dm, user.uId)) {
+        active = true;
+      }
+    }
+
+    // If they are increase the count of users in at least one channel or dm
+    if (active) {
+      count++;
+    }
+  }
+
+  return count;
 }

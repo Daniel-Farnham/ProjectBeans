@@ -400,10 +400,10 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   */
 function decrementMessageAnalytics() {
   const data = getData();
-  const index = data.workplaceStats.messagesExist.length;
-  const numMsgs = data.workplaceStats.messagesExist[index - 1].numMessagesExist;
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  data.workplaceStats.messagesExist.push({ numMessagesExist: numMsgs - 1, timeStamp: timeSent });
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs - 1, timeStamp: timeSent });
   setData(data);
 }
 

@@ -15,7 +15,7 @@ describe('Testing basic usersStatsV1 functionality', () => {
       nameLast: 'Scully'
     });
 
-    const stats = getRequest(SERVER_URL + 'users/stats/v1', {
+    const stats = getRequest(SERVER_URL + '/users/stats/v1', {
     }, regId.token);
 
     const expectedStats = {
@@ -25,7 +25,7 @@ describe('Testing basic usersStatsV1 functionality', () => {
       utilizationRate: 0
     };
 
-    expect(stats).toStrictEqual({ workplaceStats: expectedStats });
+    expect(stats).toMatchObject({ workspaceStats: expectedStats });
   });
 
   test('Testing usersStatsV1 returns the correct information when channels, dms and message are made', () => {
@@ -50,8 +50,10 @@ describe('Testing basic usersStatsV1 functionality', () => {
       message: 'Hello this is a random test message'
     }, regId.token);
 
-    const stats = getRequest(SERVER_URL + 'users/stats/v1', {
+    const stats = getRequest(SERVER_URL + '/users/stats/v1', {
     }, regId.token);
+
+    console.log(stats);
 
     const expectedStats = {
       channelsExist: [
@@ -69,7 +71,7 @@ describe('Testing basic usersStatsV1 functionality', () => {
       utilizationRate: 1
     };
 
-    expect(stats).toStrictEqual({ workplaceStats: expectedStats });
+    expect(stats).toMatchObject({ workspaceStats: expectedStats });
   });
 
   test('Testing usersStatsV1 returns the correct information when channels/dms are removed', () => {
@@ -114,7 +116,7 @@ describe('Testing basic usersStatsV1 functionality', () => {
       dmId: dmId.dmId
     }, regId.token);
 
-    const stats = getRequest(SERVER_URL + 'users/stats/v1', {
+    const stats = getRequest(SERVER_URL + '/users/stats/v1', {
     }, regId.token);
 
     const expectedStats = {
@@ -136,13 +138,13 @@ describe('Testing basic usersStatsV1 functionality', () => {
       utilizationRate: 0.5
     };
 
-    expect(stats).toStrictEqual({ workplaceStats: expectedStats });
+    expect(stats).toMatchObject({ workspaceStats: expectedStats });
   });
 });
 
 describe('Testing usersStatsV1 error handling', () => {
   test('Testing usersStatsV1 returns error when token is invalid', () => {
-    const stats = getRequest(SERVER_URL + 'users/stats/v1', {
+    const stats = getRequest(SERVER_URL + '/users/stats/v1', {
     }, 'NotAToken');
 
     expect(stats.statusCode).toBe(FORBIDDEN);

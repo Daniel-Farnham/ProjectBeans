@@ -15,6 +15,11 @@ export function clearV1 (): Record<string, never> {
     tokenCount: 0,
     dms: [],
     notifications: [],
+    workspaceStats: {
+      channelsExist: [],
+      dmsExist: [],
+      messagesExist: []
+    }
   };
   setData(data);
   return {};
@@ -163,9 +168,9 @@ export const getRequest = (url: string, data: any, token?: string) => {
   */
 export function updateMessageAnalytics(timeSent: number) {
   const data = getData();
-  const index = data.workplaceStats.messagesExist.length;
-  const numMsgs = data.workplaceStats.messagesExist[index - 1].numMessagesExist;
-  data.workplaceStats.messagesExist.push({ numMessagesExist: numMsgs + 1, timeStamp: timeSent });
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs + 1, timeStamp: timeSent });
   setData(data);
 }
 

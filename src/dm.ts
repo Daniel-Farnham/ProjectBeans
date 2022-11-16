@@ -93,10 +93,10 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
   */
 function updateDmAnalytics() {
   const data = getData();
-  const index = data.workplaceStats.dmsExist.length;
-  const numDms = data.workplaceStats.dmsExist[index - 1].numDmsExist;
+  const index = data.workspaceStats.dmsExist.length;
+  const numDms = data.workspaceStats.dmsExist[index - 1].numDmsExist;
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  data.workplaceStats.dmsExist.push({ numDmsExist: numDms + 1, timeStamp: timeSent });
+  data.workspaceStats.dmsExist.push({ numDmsExist: numDms + 1, timeStamp: timeSent });
   setData(data);
 }
 
@@ -144,15 +144,15 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
 export function decrementDmMessageAnalytics(msgCount: number) {
   const data = getData();
   // Decrement numMessagesExist
-  const index = data.workplaceStats.messagesExist.length;
-  const numMsgs = data.workplaceStats.messagesExist[index - 1].numMessagesExist;
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  data.workplaceStats.messagesExist.push({ numMessagesExist: numMsgs - msgCount, timeStamp: timeSent });
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs - msgCount, timeStamp: timeSent });
 
   // Decrement numDmsExist
-  const dmIndex = data.workplaceStats.dmsExist.length;
-  const numDms = data.workplaceStats.dmsExist[dmIndex - 1].numDmsExist;
-  data.workplaceStats.dmsExist.push({ numDmsExist: numDms - 1, timeStamp: timeSent });
+  const dmIndex = data.workspaceStats.dmsExist.length;
+  const numDms = data.workspaceStats.dmsExist[dmIndex - 1].numDmsExist;
+  data.workspaceStats.dmsExist.push({ numDmsExist: numDms - 1, timeStamp: timeSent });
 
   setData(data);
 }

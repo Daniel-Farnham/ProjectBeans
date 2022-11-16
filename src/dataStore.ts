@@ -13,7 +13,7 @@ let data = {
   tokenCount: 0,
   dms: [],
   notifications: [],
-  workplaceStats: {
+  workspaceStats: {
     channelsExist: [],
     dmsExist: [],
     messagesExist: []

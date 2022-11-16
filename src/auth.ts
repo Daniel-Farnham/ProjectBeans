@@ -131,12 +131,13 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   */
 function createAnalytics() {
   const data = getData();
-  const channelStats = { numChannelsExist: 0, timeStamp: 0 };
-  const dmsStats = { numDmsExist: 0, timeStamp: 0 };
-  const msgStats = { numMessagesExist: 0, timeStamp: 0 };
-  data.workplaceStats.channelsExist.push(channelStats);
-  data.workplaceStats.dmsExist.push(dmsStats);
-  data.workplaceStats.messagesExist.push(msgStats);
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const channelStats = { numChannelsExist: 0, timeStamp: timeSent };
+  const dmsStats = { numDmsExist: 0, timeStamp: timeSent };
+  const msgStats = { numMessagesExist: 0, timeStamp: timeSent };
+  data.workspaceStats.channelsExist.push(channelStats);
+  data.workspaceStats.dmsExist.push(dmsStats);
+  data.workspaceStats.messagesExist.push(msgStats);
   setData(data);
 }
 
