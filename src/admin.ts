@@ -34,6 +34,11 @@ export function adminUserRemoveV1 (token: string, uId: number) {
   remove.nameLast = 'user';
   remove.email = 'Not a user - removed';
   remove.handleStr = '~RemovedUserRemovedUserRemovedUserRemovedUser~';
+  for (const session of data.sessions) {
+    if (session.uId === uId) {
+      session.tokens = [];
+    }
+  }
 
   for (const channel of data.channels) {
     const removeChannel = channel.allMembers.find((member) => member.uId === uId);
@@ -66,4 +71,41 @@ export function adminUserRemoveV1 (token: string, uId: number) {
   }
   setData(data);
   return ({});
+}
+
+
+export function adminUserPermissionChangeV1 (token: string, uId: number, permissionId: number) {
+  const data = getData();
+  if (!tokenExists(token)) {
+    throw HTTPError(403, 'Token provided is invalid');
+  }
+  const globalUid = getUidFromToken(token);
+  const global = data.users.find((user) => user.uId === globalUid);
+  if (global.permissionId !== 1) {
+    throw HTTPError(403, 'auth user provided is not global owner');
+  }
+
+  const userToChange = data.users.find((user) => user.uId === uId);
+  if (typeof userToChange === 'undefined' || userToChange.permissionId === 10) {
+    throw HTTPError(400, 'Not valid uId');
+  }
+
+  const globalOwnerNum = data.users.filter((user) => user.permissionId === 1);
+  if (userToChange.permissionId === 1 && globalOwnerNum.length === 1 && permissionId === 2) {
+    throw HTTPError(400, 'Only global owner and is being demoted');
+  }
+
+  if (permissionId !== 1 && permissionId !== 2) {
+    throw HTTPError(400, 'permissionId is invalid');
+  }
+
+  if (userToChange.permissionId === permissionId) {
+    throw HTTPError(400, 'permissionId is already the same');
+  }
+  
+  //implementation
+  userToChange.permissionId = permissionId; 
+  setData(data);
+  
+  return {}; 
 }
