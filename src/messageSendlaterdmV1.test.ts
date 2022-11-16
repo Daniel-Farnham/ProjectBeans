@@ -149,7 +149,6 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
       timeSent: timeSent + 1
     }, regId.token);
 
-
     // Expect not to be able to edit the message for 1 second
     const failedEdit = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: newMessageId.messageId,

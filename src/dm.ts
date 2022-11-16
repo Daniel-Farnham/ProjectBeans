@@ -63,6 +63,9 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
     throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
+  // Clear the set timeouts for any messages queued to send in the future
+  clearTimeouts(dmId);
+
   // Remove all the members of the dm
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
@@ -74,6 +77,21 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
 
   setData(data);
   return {};
+}
+
+/**
+  * Clears every set timeout for messageSendlaterdm associated with a given dmId
+  *
+  * @param {number} dmId - Unique id of the dm being having its timeouts cleared
+  */
+function clearTimeouts(dmId: number) {
+  const data = getData();
+  for (const timeouts of data.timeoutIds) {
+    if (timeouts.dmId === dmId) {
+      clearTimeout(timeouts.timeoutId);
+    }
+  }
+  setData(data);
 }
 
 /**
