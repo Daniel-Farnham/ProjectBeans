@@ -14,12 +14,12 @@ describe('Testing basic functionality of standupActiveV1', () => {
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
-  
+
     const channelId = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, regId.token);
-  
+
     const standup = postRequest(SERVER_URL + 'standup/start/v1', {
       channelId: channelId.channelId,
       length: 120
@@ -31,7 +31,7 @@ describe('Testing basic functionality of standupActiveV1', () => {
 
     expect(standupActive).toStrictEqual({ isActive: true, timeFinish: standup.timeFinish });
   });
-  
+
   test('Testing standupActiveV1 return the correct info for an inactive standup', () => {
     const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
@@ -39,12 +39,12 @@ describe('Testing basic functionality of standupActiveV1', () => {
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
-  
+
     const channelId = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, regId.token);
-  
+
     const standupActive = getRequest(SERVER_URL + 'standup/active/v1', {
       channelId: channelId
     }, regId.token);

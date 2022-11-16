@@ -42,7 +42,7 @@ interface Message {
   * ...
   *
   * @returns {messageId} returns an object containing the messageId
-*/
+  */
 export function messageSendV1 (token: string, channelId: number, message: string): messageId | error {
   const data = getData();
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
