@@ -1,8 +1,8 @@
 import { postRequest, deleteRequest, getRequest } from './other';
 import { port, url } from './config.json';
-
 const SERVER_URL = `${url}:${port}`;
 
+type channelsOutput = { channels };
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
@@ -24,8 +24,7 @@ describe('Testing channelsListV1', () => {
       isPublic: false
     }, userId.token);
 
-    const expectedChannels =
-    {
+    const expectedChannels: channelsOutput = {
       channels: [
         {
           channelId: channelId1.channelId,
@@ -64,7 +63,7 @@ describe('Testing channelsListV1', () => {
       nameLast: 'Ngo'
     });
 
-    const expectedChannels =
+    const expectedChannels: channelsOutput =
     {
       channels: []
     };
@@ -86,8 +85,7 @@ describe('Testing channelsListV1', () => {
       isPublic: true
     }, userId.token);
 
-    const expectedChannels =
-    {
+    const expectedChannels: channelsOutput = {
       channels: [
         {
           channelId: channelId1.channelId,
@@ -129,8 +127,7 @@ describe('Testing channelsListV1', () => {
       isPublic: false
     }, userId.token);
 
-    const expectedChannels =
-    {
+    const expectedChannels: {channels} = {
       channels: [
         {
           channelId: channelId1.channelId,
