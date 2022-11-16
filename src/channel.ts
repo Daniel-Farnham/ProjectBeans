@@ -252,8 +252,11 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   * @returns {Object} {} - returns an empty object upon success
 */
 function channelLeaveV1 (token: string, channelId: number): error | boolean | Record<string, never> {
-  if (!tokenExists(token) || !channelIdExists(channelId)) {
-    return { error: 'token/uId/channelId not valid' };
+  if (!tokenExists(token)) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+  if (!channelIdExists(channelId)) {
+    throw HTTPError(BAD_REQUEST, 'channelId is invalid');
   }
 
   const data = getData();
@@ -262,7 +265,7 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
 
   // Check if user is not a member of valid channel
   if (!isMemberOfChannel(findChannel, authUserId)) {
-    return { error: 'User is not a member of the channel' };
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
   for (const channel of data.channels) {

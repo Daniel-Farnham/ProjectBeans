@@ -128,6 +128,12 @@ app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
   res.json(channelLeaveV1(token, channelId));
   save();
 });
+app.post('/channel/leave/v2', (req:Request, res: Response, next) => {
+  const { channelId } = req.body;
+  const token = req.header('token');
+  res.json(channelLeaveV1(token, channelId));
+  save();
+});
 
 app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   const { channelId, uId } = req.body;
