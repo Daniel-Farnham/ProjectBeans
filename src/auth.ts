@@ -2,6 +2,10 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
+import HTTPError from 'http-errors';
+import { internalNotification } from './types';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -44,12 +48,12 @@ function authLoginV1(email: string, password: string): authInfo | error {
 
       return { token: token.token, authUserId: userId };
     } else if (user.email === caseInsensitiveEmail && user.password !== hashedPassword) {
-      return { error: 'Incorrect password.' };
+      throw HTTPError(400, 'Incorrect password.');
     }
   }
 
   // If haven't returned yet, email doesn't belong to a user
-  return { error: 'Email doesn\'t belong to a user.' };
+  throw HTTPError(400, 'Email doesn\'t belong to a user.');
 }
 
 /**
@@ -90,11 +94,18 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
+    profileImgUrl: SERVER_URL + '/static/defaultpic.jpg',
     password: getHashOf(password),
     permissionId: permissionId
   };
 
   data.users.push(user);
+
+  const notification: internalNotification = {
+    uId: userId,
+    notifications: [],
+  };
+  data.notifications.push(notification);
 
   // Add the new token to the database
   const token = generateToken();
@@ -122,7 +133,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   */
 export function authLogoutV1 (token: string): Record<string, never> | error {
   if (!tokenExists(token)) {
-    return { error: 'Token provided is invalid' };
+    throw HTTPError(403, 'Token provided is invalid');
   }
 
   const data = getData();
@@ -130,7 +141,8 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
   // Filter out the token from the user's sessions
   const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    session.tokens = session.tokens.filter(activeToken => activeToken !== hashedToken);
+    session.tokens = session.tokens.filter(
+      (activeToken: string): activeToken is string => activeToken !== hashedToken);
   }
 
   setData(data);
@@ -151,16 +163,16 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
 function registerInfoInvalid(email: string, password: string, nameFirst: string, nameLast: string): error | boolean {
   // Check whether email, password and first/last name meet the criteria
   if (!(validator.isEmail(email))) {
-    return { error: 'Invalid email.' };
+    throw HTTPError(400, 'Invalid email.');
   }
   if (password.length < MIN_PASSWORD_LEN) {
-    return { error: 'Password is less than 6 characters.' };
+    throw HTTPError(400, 'Password is less than 6 characters.');
   }
   if (nameFirst.length < MIN_NAME_LEN || nameFirst.length > MAX_NAME_LEN) {
-    return { error: 'First name isn\'t between 1 and 50 characters (inclusive)' };
+    throw HTTPError(400, 'First name isn\'t between 1 and 50 characters (inclusive)');
   }
   if (nameLast.length < MIN_NAME_LEN || nameLast.length > MAX_NAME_LEN) {
-    return { error: 'Last name isn\'t between 1 and 50 characters (inclusive)' };
+    throw HTTPError(400, 'Last name isn\'t between 1 and 50 characters (inclusive)');
   }
 
   // Check if the email is in use
@@ -168,7 +180,7 @@ function registerInfoInvalid(email: string, password: string, nameFirst: string,
   const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
     if (caseInsensitiveEmail === user.email) {
-      return { error: 'Email is already in use.' };
+      throw HTTPError(400, 'Email is already in use.');
     }
   }
 

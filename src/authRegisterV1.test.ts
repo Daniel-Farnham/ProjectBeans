@@ -2,49 +2,37 @@ import { getRequest, postRequest, deleteRequest } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+const INVALID_PARAM = 400;
+
+function clearV1() {
+  return deleteRequest(SERVER_URL + '/clear/v1', {});
+}
+
+function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
+  return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
+}
 
 beforeEach(() => {
-  deleteRequest(SERVER_URL + '/clear/v1', {});
+  clearV1();
 });
 
 describe('Testing basic authRegisterV1 functionality', () => {
   test('Test successful registration of new account', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Curtis',
-      nameLast: 'Scully'
-    });
+    const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
 
     expect(newId).toStrictEqual({ token: expect.any(String), authUserId: expect.any(Number) });
   });
 
   test('Test uniqueness of newly registered account tokens and Ids', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Curtis',
-      nameLast: 'Scully'
-    });
-
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hayden.smith@unsw.edu.au',
-      password: '123456',
-      nameFirst: 'Hayden',
-      nameLast: 'Smith'
-    });
+    const firstId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
+    const secondId = authRegisterV1('hayden.smith@unsw.edu.au', '123456', 'Hayden', 'Smith');
 
     expect(firstId.token).not.toBe(secondId.token);
     expect(firstId.authUserId).not.toBe(secondId.authUserId);
   });
 
   test('Test user info is registered correctly', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones'
-    });
+    const newId = authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
       uId: newId.authUserId
@@ -64,33 +52,11 @@ describe('Testing basic authRegisterV1 functionality', () => {
   });
 
   test('Test user info is registered correctly when user handle is already taken', () => {
-    postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones'
-    });
+    authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
+    authRegisterV1('hayden.smith@unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
+    authRegisterV1('edwin.ngo@student.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
 
-    postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hayden.smith@unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones'
-    });
-
-    postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'edwin.ngo@student.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones'
-    });
-
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'hang.pham1@student.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Johnathon',
-      nameLast: 'Augustus-Jones'
-    });
+    const newId = authRegisterV1('hang.pham1@student.unsw.edu.au', 'password', 'Johnathon', 'Augustus-Jones');
 
     const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
       uId: newId.authUserId
@@ -155,31 +121,19 @@ describe('Testing authRegisterV1 error handling', () => {
       desc: 'Testing registration with last name too long'
     },
   ])('$desc', ({ email, password, nameFirst, nameLast }) => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: email,
-      password: password,
-      nameFirst: nameFirst,
-      nameLast: nameLast
-    });
+    const newId = authRegisterV1(email, password, nameFirst, nameLast);
 
-    expect(newId).toMatchObject({ error: expect.any(String) });
+    expect(newId.statusCode).toBe(INVALID_PARAM);
+    const bodyObj = JSON.parse(newId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing registration with in use email', () => {
-    postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: 'password',
-      nameFirst: 'Curtis',
-      nameLast: 'Scully'
-    });
+    authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
+    const newId = authRegisterV1('z5361935@ad.unsw.edu.au', '123456', 'Mike', 'Wazowski');
 
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'z5361935@ad.unsw.edu.au',
-      password: '123456',
-      nameFirst: 'Mike',
-      nameLast: 'Wazowski'
-    });
-
-    expect(newId).toMatchObject({ error: expect.any(String) });
+    expect(newId.statusCode).toBe(INVALID_PARAM);
+    const bodyObj = JSON.parse(newId.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
