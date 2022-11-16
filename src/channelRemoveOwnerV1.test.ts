@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest, getRequest } from './other';
+import { postRequest, deleteRequest, getRequest, BAD_REQUEST, FORBIDDEN } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
@@ -37,7 +37,7 @@ describe('Testing channelRemoveOwnerV1', () => {
       uId: userId2.authUserId
     }, userId1.token);
 
-    const removeOwner = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const removeOwner = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -74,12 +74,14 @@ describe('Testing channelRemoveOwnerV1', () => {
       uId: userId2.authUserId
     }, userId1.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId + 10,
       uId: userId2.authUserId
     }, userId1.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(expectedResult.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(expectedResult.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing invalid uId', () => {
@@ -111,12 +113,14 @@ describe('Testing channelRemoveOwnerV1', () => {
       uId: userId2.authUserId
     }, userId1.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId + 10
     }, userId1.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(expectedResult.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(expectedResult.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing invalid token', () => {
@@ -148,12 +152,14 @@ describe('Testing channelRemoveOwnerV1', () => {
       uId: userId2.authUserId
     }, userId1.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId1.authUserId
     }, userId1.token + 10);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(expectedResult.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(expectedResult.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing channelRemoveOwnerV1 removes the owner successfully', () => {
@@ -195,18 +201,20 @@ describe('Testing channelRemoveOwnerV1', () => {
         email: 'edwin.ngo@ad.unsw.edu.au',
         nameFirst: 'Edwin',
         nameLast: 'Ngo',
-        handleStr: 'edwinngo'
+        handleStr: 'edwinngo',
+        profileImgUrl: detailsBefore.ownerMembers[0].profileImgUrl,
       },
       {
         uId: userId2.authUserId,
         email: 'john.smith@ad.unsw.edu.au',
         nameFirst: 'John',
         nameLast: 'Smith',
-        handleStr: 'johnsmith'
+        handleStr: 'johnsmith',
+        profileImgUrl: detailsBefore.ownerMembers[1].profileImgUrl,
       }
     ]);
 
-    postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -253,12 +261,14 @@ describe('Testing channelRemoveOwnerV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(expectedResult.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(expectedResult.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing user is only owner of channel', () => {
@@ -274,12 +284,14 @@ describe('Testing channelRemoveOwnerV1', () => {
       isPublic: true
     }, userId1.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId1.authUserId
     }, userId1.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(expectedResult.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(expectedResult.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing valid channelId but user has no owner permissions', () => {
@@ -306,11 +318,13 @@ describe('Testing channelRemoveOwnerV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/removeowner/v2', {
       channelId: channel.channelId,
       uId: userId1.authUserId
     }, userId2.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(expectedResult.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(expectedResult.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
