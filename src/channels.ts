@@ -1,5 +1,6 @@
 import { tokenExists, isMemberOfChannel, error, getUidFromToken, FORBIDDEN, BAD_REQUEST } from './other';
 import { getData, setData } from './dataStore';
+import { internalChannel } from './types';
 import HTTPError from 'http-errors';
 
 // Constants
@@ -123,7 +124,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
   }
 
   const channelId = data.channels.length;
-  const channelObj = {
+  const channelObj: internalChannel = {
     channelId: channelId,
     name: name,
     ownerMembers: ownerMembers,

@@ -1,4 +1,5 @@
 import { FORBIDDEN, BAD_REQUEST } from './other';
+import { Message } from './types';
 import {
   clearV1, authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
   channelJoinV1, messageSendDmV1, messageShareV1, dmMessagesV1, channelMessagesV1,
@@ -28,7 +29,7 @@ describe('Testing message/share/v1 success handling', () => {
     const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     const result = dmMessagesV1(user2.token, dm.dmId, 0);
-    const expectedMsg = {
+    const expectedMsg: Message = {
       messageId: sharedMsg.sharedMessageId,
       uId: user1.authUserId,
       message: 'original message!sharing this message',
@@ -57,7 +58,7 @@ describe('Testing message/share/v1 success handling', () => {
     const sharedMsg = messageShareV1(user1.token, msg.messageId, 'sharing this message', -1, dm.dmId);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     const result = dmMessagesV1(user2.token, dm.dmId, 0);
-    const expectedMsg = {
+    const expectedMsg: Message = {
       messageId: sharedMsg.sharedMessageId,
       uId: user1.authUserId,
       message: 'original message!sharing this message',
@@ -86,7 +87,7 @@ describe('Testing message/share/v1 success handling', () => {
     const sharedMsg = messageShareV1(user2.token, msg.messageId, 'sharing this message', channel.channelId, -1);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     const result = channelMessagesV1(user2.token, channel.channelId, 0);
-    const expectedMsg = {
+    const expectedMsg: Message = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
       message: 'original message!sharing this message',
@@ -115,7 +116,7 @@ describe('Testing message/share/v1 success handling', () => {
     const sharedMsg = messageShareV1(user2.token, msg.messageId, '', channel.channelId, -1);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     const result = channelMessagesV1(user2.token, channel.channelId, 0);
-    const expectedMsg = {
+    const expectedMsg: Message = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
       message: 'original message!',
@@ -145,7 +146,7 @@ describe('Testing message/share/v1 success handling', () => {
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     messageRemoveV1(user1.token, msg.messageId);
     const result = channelMessagesV1(user2.token, channel.channelId, 0);
-    const expectedMsg = {
+    const expectedMsg: Message = {
       messageId: sharedMsg.sharedMessageId,
       uId: user2.authUserId,
       message: 'original message! shared!',
