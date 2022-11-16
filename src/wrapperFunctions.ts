@@ -55,7 +55,7 @@ export function channelJoinV1 (token: string, channelId: number) {
   }, token);
 }
 export function channelLeaveV1 (token: string, channelId: number) {
-  return postRequest(SERVER_URL + '/channel/leave/v1', {
+  return postRequest(SERVER_URL + '/channel/leave/v2', {
     channelId: channelId
   }, token);
 }
