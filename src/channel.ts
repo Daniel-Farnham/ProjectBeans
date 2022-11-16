@@ -1,20 +1,17 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel, FORBIDDEN, BAD_REQUEST } from './other';
+import {
+  tokenExists, userIdExists, channelIdExists, isMemberOfChannel,
+  isOwnerOfChannel, error, getUidFromToken, FORBIDDEN, BAD_REQUEST
+} from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
 import { notificationSetAddChannel } from './notifications';
 import { messageReactedByUser } from './message';
+import { user, messagesOutput, internalChannel, channelDetails } from './types';
 
 const GLOBAL_OWNER = 1;
 
-type channelDetails = {
-  name: string,
-  isPublic: boolean,
-  ownerMembers: Array<User>,
-  allMembers: Array<User>,
-};
-
-type messages = { messages: Array<messages> };
+// type messages = { messages: Array<messages> };
 
 type start = { start: number };
 
@@ -167,7 +164,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   * @returns {Object} {} - returns error object if fail, false otherwise
 */
 
-function invalidMemberships (channel: Channel, authUserId: number, uId: number): error | boolean {
+function invalidMemberships (channel: internalChannel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
     throw HTTPError(400, 'User to invite already a member of channel');
@@ -193,7 +190,7 @@ function invalidMemberships (channel: Channel, authUserId: number, uId: number):
   * @returns {{start: number}} - The starting index of the returned messages
   * @returns {{end: number}} - The final index of the returned messages
   */
-function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messages | start | end {
+function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messagesOutput | start | end {
   // Check if the given information is valid
 
   const isInvalid = messagesInfoInvalid(token, channelId, start);
@@ -272,13 +269,15 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
     // Loop through owner members and filter out user
     for (const member of channel.ownerMembers) {
       if (member.uId === authUserId) {
-        channel.ownerMembers = channel.ownerMembers.filter(member => member.uId !== authUserId);
+        channel.ownerMembers = channel.ownerMembers.filter(
+          (member: user): member is user => member.uId !== authUserId);
       }
     }
     // Loop through all members and filter out user
     for (const member of channel.allMembers) {
       if (member.uId === authUserId) {
-        channel.allMembers = channel.allMembers.filter(member => member.uId !== authUserId);
+        channel.allMembers = channel.allMembers.filter(
+          (member: user): member is user => member.uId !== authUserId);
       }
     }
   }
@@ -403,7 +402,8 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
   for (const channel of data.channels) {
     for (const ownerMembers of channel.ownerMembers) {
       if (ownerMembers.uId === uId) {
-        channel.ownerMembers = channel.ownerMembers.filter(ownerMembers => ownerMembers.uId !== uId);
+        channel.ownerMembers = channel.ownerMembers.filter(
+          (ownerMembers: user): ownerMembers is user => ownerMembers.uId !== uId);
       }
     }
   }

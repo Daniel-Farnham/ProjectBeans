@@ -27,3 +27,8 @@ linting:
   stage: checks
   script:
     - npm run lint
+
+typescript compliance:
+  stage: checks
+  script:
+    - npm run tsc
