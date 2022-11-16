@@ -77,6 +77,13 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channels/create/v3', (req: Request, res: Response, next) => {
+  const { name, isPublic } = req.body;
+  const token = req.header('token');
+  res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
 app.get('/channels/list/v2', (req:Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListV1(token));
