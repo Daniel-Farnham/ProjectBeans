@@ -98,7 +98,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
   // Create channel if true, return error if false.
   const channelStr = (name);
   if (channelStr.length < MIN_CHANNEL_LEN || channelStr.length > MAX_CHANNEL_LEN) {
-    throw HTTPError(BAD_REQUEST, 'Channel name is invalid.')
+    throw HTTPError(BAD_REQUEST, 'Channel name is invalid.');
   }
 
   // Add the new channel to the database and push users

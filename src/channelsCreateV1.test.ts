@@ -55,48 +55,45 @@ describe('Testing channelsCreateV1', () => {
       isPublic: true
     }, userId.token + 1);
 
-		expect(returnedChannelId.statusCode).toBe(FORBIDDEN);
+    expect(returnedChannelId.statusCode).toBe(FORBIDDEN);
     const bodyObj = JSON.parse(returnedChannelId.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-
   });
 
   describe('Test if name length is valid', () => {
-		test('Channel name is less than 1 character', () => {
-			const userId = postRequest(SERVER_URL + '/auth/register/v3', {
-				email: 'edwin.ngo@ad.unsw.edu.au',
-				password: 'ANicePassword',
-				nameFirst: 'Edwin',
-				nameLast: 'Ngo'
-			});
-	
-			const returnedChannelId = postRequest(SERVER_URL + '/channels/create/v3', {
-				name: '',
-				isPublic: true
-			}, userId.token);
-	
-			expect(returnedChannelId.statusCode).toBe(BAD_REQUEST);
-			const bodyObj = JSON.parse(returnedChannelId.body as string);
-			expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-	
-		});
-		test('Channel name is more than 20 characters', () => {
-			const userId = postRequest(SERVER_URL + '/auth/register/v3', {
-				email: 'edwin.ngo@ad.unsw.edu.au',
-				password: 'ANicePassword',
-				nameFirst: 'Edwin',
-				nameLast: 'Ngo'
-			});
-	
-			const returnedChannelId = postRequest(SERVER_URL + '/channels/create/v3', {
-				name: 'Verylongchannelname!!!!!!!!',
-				isPublic: true
-			}, userId.token);
-	
-			expect(returnedChannelId.statusCode).toBe(BAD_REQUEST);
-			const bodyObj = JSON.parse(returnedChannelId.body as string);
-			expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-	
-		});
-	});
+    test('Channel name is less than 1 character', () => {
+      const userId = postRequest(SERVER_URL + '/auth/register/v3', {
+        email: 'edwin.ngo@ad.unsw.edu.au',
+        password: 'ANicePassword',
+        nameFirst: 'Edwin',
+        nameLast: 'Ngo'
+      });
+
+      const returnedChannelId = postRequest(SERVER_URL + '/channels/create/v3', {
+        name: '',
+        isPublic: true
+      }, userId.token);
+
+      expect(returnedChannelId.statusCode).toBe(BAD_REQUEST);
+      const bodyObj = JSON.parse(returnedChannelId.body as string);
+      expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+    });
+    test('Channel name is more than 20 characters', () => {
+      const userId = postRequest(SERVER_URL + '/auth/register/v3', {
+        email: 'edwin.ngo@ad.unsw.edu.au',
+        password: 'ANicePassword',
+        nameFirst: 'Edwin',
+        nameLast: 'Ngo'
+      });
+
+      const returnedChannelId = postRequest(SERVER_URL + '/channels/create/v3', {
+        name: 'Verylongchannelname!!!!!!!!',
+        isPublic: true
+      }, userId.token);
+
+      expect(returnedChannelId.statusCode).toBe(BAD_REQUEST);
+      const bodyObj = JSON.parse(returnedChannelId.body as string);
+      expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+    });
+  });
 });
