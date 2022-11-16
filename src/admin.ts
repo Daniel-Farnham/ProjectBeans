@@ -34,7 +34,11 @@ export function adminUserRemoveV1 (token: string, uId: number) {
   remove.nameLast = 'user';
   remove.email = 'Not a user - removed';
   remove.handleStr = '~RemovedUserRemovedUserRemovedUserRemovedUser~';
-  remove.tokens = [];
+  for (const session of data.sessions) {
+    if (session.uId === uId) {
+      session.tokens = [];
+    }
+  }
 
   for (const channel of data.channels) {
     const removeChannel = channel.allMembers.find((member) => member.uId === uId);
