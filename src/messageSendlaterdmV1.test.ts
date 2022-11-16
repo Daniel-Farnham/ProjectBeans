@@ -203,14 +203,13 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
     const newMessageId = postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
       dmId: dmId.dmId,
       message: 'This is another test.',
-      timeSent: timeSent + 1
+      timeSent: timeSent + 10
     }, regId.token);
 
     deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: newMessageId.messageId
     }, regId.token);
 
-    sleep(2);
     const messages = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dmId.dmId,
       start: 0,
@@ -309,8 +308,8 @@ describe('Testing messageSendlaterdmV1 error handling', () => {
     const timeSent = Math.floor((new Date()).getTime() / 1000);
     const newMessageId = postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
       dmId: dmId.dmId,
-      message: '',
-      timeSent: timeSent + 1
+      message: 'Test',
+      timeSent: timeSent - 1
     }, regId.token);
 
     expect(newMessageId.statusCode).toBe(BAD_REQUEST);
@@ -318,7 +317,7 @@ describe('Testing messageSendlaterdmV1 error handling', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('Testing messageSendlaterdmV1 returns error when user is not a channel member', () => {
+  test('Testing messageSendlaterdmV1 returns error when user is not a dm member', () => {
     const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
