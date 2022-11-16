@@ -66,15 +66,17 @@ export function usersAllV1 (token: string): error | {users: any[]} {
   const users = [];
 
   for (const user of data.users) {
-    users.push(
-      {
-        uId: user.uId,
-        email: user.email,
-        nameFirst: user.nameFirst,
-        nameLast: user.nameLast,
-        handleStr: user.handleStr,
-      }
-    );
+    if (user.permissionId !== 10) {
+      users.push(
+        {
+          uId: user.uId,
+          email: user.email,
+          nameFirst: user.nameFirst,
+          nameLast: user.nameLast,
+          handleStr: user.handleStr,
+        }
+      );
+    }
   }
   return { users };
 }
