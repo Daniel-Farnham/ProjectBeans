@@ -7,7 +7,6 @@ export type end =  number;
 export type name =  string;
 export type is =  boolean
 export type uId = number;
-
 // Iteration 1 Types
 export type length = number;
 export type time = number;
@@ -16,8 +15,17 @@ export type channelId = number;
 export type handleStr = string;
 export type nameFirst = string;
 export type nameLast = string;
+export type isPublic = boolean;
 
 export type channels = {channelId: channelId, name: name}[];
+export type Channel = {
+  channelId: channelId,
+  name: name,
+  ownerMembers: user[],
+  allMembers: user[],
+  messages: user[],
+  isPublic: isPublic,
+};
 export type user = {
   uId: uId,
   email: email,
