@@ -17,6 +17,7 @@ import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, us
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
+import { standupSendV1 } from './standup'
 
 // Set up web app
 const app = express();
@@ -421,6 +422,15 @@ app.get('/notifications/get/v1', (req: Request, res: Response, next) => {
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+
+app.post('/standup/send/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { channelId } = req.body;
+  const message = req.body.message as string; 
+  const { length } = req.body;
+  res.json(standupSendV1(token, channelId, message));
   save();
 });
 
