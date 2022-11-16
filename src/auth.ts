@@ -3,6 +3,9 @@ import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
+import { internalNotification } from './types';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -91,13 +94,14 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
+    profileImgUrl: SERVER_URL + '/static/defaultpic.jpg',
     password: getHashOf(password),
     permissionId: permissionId
   };
 
   data.users.push(user);
 
-  const notification = {
+  const notification: internalNotification = {
     uId: userId,
     notifications: [],
   };
@@ -137,7 +141,8 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
   // Filter out the token from the user's sessions
   const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    session.tokens = session.tokens.filter(activeToken => activeToken !== hashedToken);
+    session.tokens = session.tokens.filter(
+      (activeToken: string): activeToken is string => activeToken !== hashedToken);
   }
 
   setData(data);

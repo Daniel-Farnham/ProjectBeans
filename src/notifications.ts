@@ -3,6 +3,7 @@ import {
   tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
   getNameFromChannelId, getNameFromDmId
 } from './other';
+import { Message, notification } from './types';
 import HTTPError from 'http-errors';
 
 export interface Notification {
@@ -10,8 +11,6 @@ export interface Notification {
   dmId: number;
   notificationMessage: string;
 }
-
-export type notifications = Array<Notification>;
 
 /**
   * Returns user object if a valid user is found
@@ -85,7 +84,7 @@ export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
   setNotificationForEachUser(uIds, notificationMsg);
 }
 
-export function notificationSetReact(message, uId: number, channelId: number, dmId: number, type: string) {
+export function notificationSetReact(message: Message, uId: number, channelId: number, dmId: number, type: string) {
   const reactorHandle = getHandleFromUid(uId);
   let name;
   if (type === 'channel') {
@@ -120,7 +119,7 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
     name = getNameFromDmId(dmId);
   }
 
-  const notificationMsg = {
+  const notificationMsg: notification = {
     channelId: channelId,
     dmId: dmId,
     notificationMessage: `${senderHandle} tagged you in ${name}: ${notificationMessage.substring(0, 20)}`,
@@ -137,7 +136,7 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
   * @param {{notification}} notificationMsg - Notification object containing details
   *
 */
-function setNotificationForEachUser(uIds: any[], notificationMsg: Notification) {
+function setNotificationForEachUser(uIds: any[], notificationMsg: notification) {
   const data = getData();
   for (const uId of uIds) {
     for (const notification of data.notifications) {

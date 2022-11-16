@@ -1,6 +1,7 @@
 import express, { json, Request, Response } from 'express';
 import { echo } from './echo';
 import fs from 'fs';
+import request from 'sync-request';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
@@ -13,10 +14,19 @@ import {
   channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
+
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1 } from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messagePinV1 } from './message';
+
+import {
+  userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1
+} from './users';
+import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1, messagePinV1 } from './message';
+
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
+import { adminUserRemoveV1 } from './admin';
 
 // Set up web app
 const app = express();
@@ -77,13 +87,32 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channels/create/v3', (req: Request, res: Response, next) => {
+  const { name, isPublic } = req.body;
+  const token = req.header('token');
+  res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
 app.get('/channels/list/v2', (req:Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListV1(token));
   save();
 });
 
+app.get('/channels/list/v3', (req:Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(channelsListV1(token));
+  save();
+});
+
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(channelsListAllV1(token));
+  save();
+});
+
+app.get('/channels/listAll/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListAllV1(token));
   save();
@@ -109,6 +138,12 @@ app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
   res.json(channelLeaveV1(token, channelId));
   save();
 });
+app.post('/channel/leave/v2', (req:Request, res: Response, next) => {
+  const { channelId } = req.body;
+  const token = req.header('token');
+  res.json(channelLeaveV1(token, channelId));
+  save();
+});
 
 app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   const { channelId, uId } = req.body;
@@ -117,7 +152,21 @@ app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   save();
 });
 
+app.post('/channel/addowner/v2', (req:Request, res:Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelAddOwnerV1(token, channelId, uId));
+  save();
+});
+
 app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelRemoveOwnerV1(token, channelId, uId));
+  save();
+});
+
+app.post('/channel/removeowner/v2', (req:Request, res: Response, next) => {
   const { channelId, uId } = req.body;
   const token = req.header('token');
   res.json(channelRemoveOwnerV1(token, channelId, uId));
@@ -198,6 +247,13 @@ app.put('/user/profile/sethandle/v2', (req: Request, res: Response, next) => {
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
+  save();
+});
+
+app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+  res.json(userProfileUploadPhotoV1(token, imgUrl, xStart, yStart, xEnd, yEnd));
   save();
 });
 
@@ -424,16 +480,36 @@ app.get('/search/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/message/share/v1', (req: Request, res: Response, next) => {
+  const { ogMessageId, message, channelId, dmId } = req.body;
+  const token = req.header('token');
+  res.json(messageShareV1(token, ogMessageId, message, channelId, dmId));
+  save();
+});
+
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
   save();
 });
 
+<<<<<<< src/server.ts
 app.post('/message/pin/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
   res.json(messagePinV1(token, messageId));
+=======
+app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const uId = parseInt(req.query.uId as string);
+  res.json(adminUserRemoveV1(token, uId));
+});
+
+app.get('/channel/details/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
+>>>>>>> src/server.ts
   save();
 });
 
@@ -442,6 +518,17 @@ app.use(errorHandler());
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
+
+// Serving files within static folder
+app.use('/static', express.static('static'));
+if (!fs.existsSync('static')) {
+  fs.mkdirSync('static');
+}
+// Set up default photo
+const DEFAULT_PHOTO = 'http://cdn.comedy.co.uk/images/library/people/180x200/t/the_it_crowd_moss.jpg';
+const response = request('GET', DEFAULT_PHOTO);
+const responseBody = response.getBody();
+fs.writeFileSync('static/defaultpic.jpg', responseBody, { flag: 'w' });
 
 // start server
 const server = app.listen(PORT, HOST, () => {

@@ -1,36 +1,22 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
+<<<<<<< src/message.ts
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel,
   isOwnerOfChannel
+=======
+  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
+  getDmObjectFromDmlId, getChannelObjectFromChannelId
+>>>>>>> src/message.ts
 } from './other';
+import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import { dm, internalChannel, messages, messageIdReturnedObject, messagesReturnObject, Message, messageId } from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
 const GLOBAL_OWNER = 1;
-
-type messageId = { messageId: number }
-type messages = { messages: Array<messages> };
-
-/**
-  * Interface for message object
-*/
-interface Message {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number,
-  reacts: [
-    {
-      reactId: number,
-      uIds: [],
-      isThisUserReacted: boolean,
-    }
-  ],
-  isPinned: boolean,
-}
 
 /**
   * Creates a message and stores it in the messages array in a channel
@@ -42,10 +28,7 @@ interface Message {
   *
   * @returns {messageId} returns an object containing the messageId
 */
-export function messageSendV1 (token: string, channelId: number, message: string): messageId | error {
-  const data = getData();
-  const findChannel = data.channels.find(chan => chan.channelId === channelId);
-
+export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }
@@ -59,7 +42,9 @@ export function messageSendV1 (token: string, channelId: number, message: string
     throw HTTPError(400, 'length of message is less than 1 or over 1000 characters');
   }
 
+  const data = getData();
   const uId = getUidFromToken(token);
+  const findChannel = data.channels.find(chan => chan.channelId === channelId);
   if (!isMemberOfChannel(findChannel, uId)) {
     throw HTTPError(403, 'user is not a member of the channel');
   }
@@ -224,6 +209,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   return {};
 }
 
+<<<<<<< src/message.ts
 export function messagePinV1 (token: string, messageId: number): error | Record<string, never> {
   const data = getData();
   // check if token is valid
@@ -279,11 +265,14 @@ export function messagePinV1 (token: string, messageId: number): error | Record<
   return {};
 }
 
-export function messageReactedByUser(message, uId: number, reactId: number): boolean {
+export function messageReactedByUser(message: Message, uId: number, reactId: number): boolean {
+>>>>>>> src/message.ts
   for (const react of message.reacts) {
     if (react.reactId === reactId) {
-      if (react.uIds.includes(uId)) {
-        return true;
+      for (reactId of react.uIds) {
+        if (reactId === uId) {
+          return true;
+        }
       }
     }
   }
@@ -379,7 +368,6 @@ function editMessageFromDM(messageId: number, editedMessage: string) {
       }
     }
   }
-
   setData(data);
 }
 
@@ -428,6 +416,17 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
     }
   }
 
+  // Case where message is in a dm.
+  if (messageContainer.type === 'dm') {
+    // If user is not an owner
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
+        throw HTTPError(403, 'User atttempting edit message is not the owner of the dm or the sender');
+      }
+    }
+    // If no errors, remove
+    removeMessageFromDM(messageId);
+  }
   return {};
 }
 
@@ -440,19 +439,181 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   *
   * @returns {{messages}} returns an array containing message objects
 */
-export function searchV1 (token: string, queryStr: string): error | messages {
+export function searchV1 (token: string, queryStr: string): error | messagesReturnObject {
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (queryStr.length < MIN_MESSAGE_LEN || queryStr.length > MAX_MESSAGE_LEN) {
-    throw HTTPError(400, 'length of query is less than 1 or over 1000 characters');
+    throw HTTPError(BAD_REQUEST, 'length of query is less than 1 or over 1000 characters');
   }
-  let messages = [];
+  let messages: messages = [];
   const uId = getUidFromToken(token);
   messages = getMessagesFromDms(messages, uId, queryStr);
   messages = getMessagesFromChannels(messages, uId, queryStr);
   return { messages };
+}
+
+/**
+  * Shares a message from a dm/channel to a dm/channel
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} ogMessageId - messageId of original message to be shared
+  * @param {string} message - additional optional message
+  * @param {number} channelId - channelId to share to
+  * @param {number} dmId - dmId to share to
+  *
+  * @returns {sharedMessageId} returns value of messageId of the shared message
+*/
+export function messageShareV1 (token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+  messageShareErrorChecking(token, ogMessageId, message, channelId, dmId);
+  const uId = getUidFromToken(token);
+  const messageContainer = getMessageContainer(ogMessageId);
+
+  let fullMessage;
+
+  // Case where message being shared is shared to a channel
+  if (dmId === -1) {
+    fullMessage = generateChannelNewMessageString(messageContainer.channel, ogMessageId, message);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
+    }
+  }
+  // Case where message being shared is shared to a dm
+  if (channelId === -1) {
+    fullMessage = generateDmNewMessageString(messageContainer.dm, ogMessageId, message);
+    if (requiresTagging(message)) {
+      notificationSetTag(uId, -1, messageContainer.dm.dmId, message, 'dm');
+    }
+  }
+  const sharedMessageId = sendSharedMessage(uId, channelId, dmId, fullMessage);
+  return { sharedMessageId: sharedMessageId };
+}
+
+/**
+  * Performs error checking for messageShareV1 function and throws any errors
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} ogMessageId - messageId of original message to be shared
+  * @param {string} message - additional optional message
+  * @param {number} channelId - channelId to share to
+  * @param {number} dmId - dmId to share to
+  *
+*/
+function messageShareErrorChecking(token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+  if (!channelIdExists(channelId) && !dmIdExists(dmId)) {
+    throw HTTPError(BAD_REQUEST, 'both dmId and channelId are invalid');
+  }
+
+  if (notValidSharing(channelId, dmId)) {
+    throw HTTPError(BAD_REQUEST, 'neither channelId nor dmId are -1');
+  }
+
+  const uId = getUidFromToken(token);
+  const messageContainer = getMessageContainer(ogMessageId);
+
+  // ogMessageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
+  if (!messageContainer) {
+    throw HTTPError(BAD_REQUEST, 'ogMessageId not a valid message');
+  }
+  if (messageContainer.type === 'dm' && !isMemberOfDm(messageContainer.dm, uId)) {
+    throw HTTPError(BAD_REQUEST, 'user is not member of dm that message is a part of');
+  }
+  if (messageContainer.type === 'channel' && !isMemberOfChannel(messageContainer.channel, uId)) {
+    throw HTTPError(BAD_REQUEST, 'user is not member of channel that message is a part of');
+  }
+  if (message.length > MAX_MESSAGE_LEN) {
+    throw HTTPError(BAD_REQUEST, 'length of optional message is more than 1000 characters');
+  }
+
+  const dm = getDmObjectFromDmlId(dmId);
+  const channel = getChannelObjectFromChannelId(channelId);
+
+  if (dmId === -1) {
+    if (!isMemberOfChannel(channel, uId)) {
+      throw HTTPError(FORBIDDEN, 'user not joined to channel that message is to be shared to');
+    }
+  }
+  if (channelId === -1) {
+    if (!isMemberOfDm(dm, uId)) {
+      throw HTTPError(FORBIDDEN, 'user not joined to dm that message is to be shared to');
+    }
+  }
+}
+function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string): messageId {
+  // Create message
+  const messageId = getMessageId();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const messageObj: Message = {
+    messageId: messageId,
+    uId: uId,
+    message: message,
+    timeSent: timeSent,
+    reacts: [
+      {
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false,
+      }
+    ],
+    isPinned: false,
+  };
+
+  if (channelId !== -1) {
+    storeMessageInChannel(messageObj, channelId);
+  } else if (dmId !== -1) {
+    storeMessageInDm(messageObj, dmId);
+  }
+  return messageId;
+}
+
+function notValidSharing(channelId: number, dmId: number) {
+  if (channelId !== -1 && dmId !== -1) {
+    return true;
+  }
+  return false;
+}
+
+/**
+  * Generate new message string for sharing
+  *
+  * @param {dm} dm - dm object
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} additionalMsg - additional message to append
+  * @returns newly generated message
+  *
+*/
+function generateDmNewMessageString(dm: dm, messageId: number, additionalMsg: string) {
+  for (const targetmessage of dm.messages) {
+    // If there is a message with the correct messageId, edit the message.
+    if (targetmessage.messageId === messageId) {
+      additionalMsg = targetmessage.message + additionalMsg;
+    }
+  }
+  return additionalMsg;
+}
+/**
+  * Generate new message string for sharing
+  *
+  * @param {channel} channel - channel object
+  * @param {number} messageId - id of the message to be edited
+  * @param {string} additionalMsg - additional message to append
+  * ...
+  *
+  * @returns newly generated message
+*/
+function generateChannelNewMessageString(channel: internalChannel, messageId: number, additionalMsg: string) {
+  for (const targetmessage of channel.messages) {
+    // If there is a message with the correct messageId, edit the message.
+    if (targetmessage.messageId === messageId) {
+      additionalMsg = targetmessage.message + additionalMsg;
+    }
+  }
+  return additionalMsg;
 }
 
 /**
@@ -465,7 +626,7 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   *
   * @returns {{messages}} returns an array containing message objects
 */
-function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
+function getMessagesFromDms (messages: messages, uId: number, queryStr: string) {
   const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const dm of data.dms) {
@@ -490,7 +651,7 @@ function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
   *
   * @returns {{messages}} returns an array containing message objects
 */
-function getMessagesFromChannels (messages: any[], uId: number, queryStr: string) {
+function getMessagesFromChannels (messages: messages, uId: number, queryStr: string) {
   const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const channel of data.channels) {
@@ -515,7 +676,7 @@ function getMessagesFromChannels (messages: any[], uId: number, queryStr: string
   * @returns {error} returns an error object.
   * @returns {boolean} returns a boolean value.
 */
-function messageFromChannelValid(channel: Channel, messageId: number, uId: number): any {
+function messageFromChannelValid(channel: internalChannel, messageId: number, uId: number): any {
   const data = getData();
 
   let ownerMember = false;
@@ -540,7 +701,7 @@ function messageFromChannelValid(channel: Channel, messageId: number, uId: numbe
 
   // If user is a member and now a channel owner and not a global owner
   if (!ownerMember && !isOwnerOfMessage(messageObj, uId) && findUser.permissionId !== GLOBAL_OWNER) {
-    throw HTTPError(403, 'Channel member does not have permissions to remove/edit message');
+    throw HTTPError(403, 'Channel member does not have permissions to remove/edit/share message');
   }
   return true;
 }
@@ -560,7 +721,8 @@ function removeMessageFromChannel(messageId: number): any {
   for (const channel of data.channels) {
     for (const message of channel.messages) {
       if (message.messageId === messageId) {
-        channel.messages = channel.messages.filter(message => message.messageId !== messageId);
+        channel.messages = channel.messages.filter(
+          (message: Message): message is Message => message.messageId !== messageId);
       }
     }
   }
@@ -582,7 +744,8 @@ function removeMessageFromDM(messageId: number):any {
   for (const dm of data.dms) {
     for (const message of dm.messages) {
       if (message.messageId === messageId) {
-        dm.messages = dm.messages.filter(message => message.messageId !== messageId);
+        dm.messages = dm.messages.filter(
+          (message: Message): message is Message => message.messageId !== messageId);
       }
     }
   }
