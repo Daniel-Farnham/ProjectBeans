@@ -1,5 +1,6 @@
-import { tokenExists, isMemberOfChannel, error, getUidFromToken } from './other';
+import { tokenExists, isMemberOfChannel, error, getUidFromToken, FORBIDDEN, BAD_REQUEST } from './other';
 import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
 
 // Constants
 const MIN_CHANNEL_LEN = 1;
@@ -24,7 +25,7 @@ type channels = { channels: Array<channelSummary> };
 function channelsListV1(token: string): channels | error {
   // Check if token exists
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid' };
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   const data = getData();
@@ -57,7 +58,7 @@ function channelsListV1(token: string): channels | error {
 function channelsListAllV1(token: string): channels | error {
   // Case where token is not valid
   if (!tokenExists(token)) {
-    return { error: 'token is invalid' };
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   // Case for when token is valid
@@ -90,14 +91,14 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
 
   // Check token exists
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid.' };
+    throw HTTPError(FORBIDDEN, 'token is invalid.');
   }
 
   // Check if the length of the name is between 1-20 characters long.
   // Create channel if true, return error if false.
   const channelStr = (name);
   if (channelStr.length < MIN_CHANNEL_LEN || channelStr.length > MAX_CHANNEL_LEN) {
-    return { error: 'Channel name is invalid.' };
+    throw HTTPError(BAD_REQUEST, 'Channel name is invalid.');
   }
 
   // Add the new channel to the database and push users
