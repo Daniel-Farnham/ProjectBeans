@@ -24,9 +24,6 @@ const GLOBAL_OWNER = 1;
   * @returns {messageId} returns an object containing the messageId
 */
 export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
-  const data = getData();
-  const findChannel = data.channels.find(chan => chan.channelId === channelId);
-
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }
@@ -40,7 +37,9 @@ export function messageSendV1 (token: string, channelId: number, message: string
     throw HTTPError(400, 'length of message is less than 1 or over 1000 characters');
   }
 
+  const data = getData();
   const uId = getUidFromToken(token);
+  const findChannel = data.channels.find(chan => chan.channelId === channelId);
   if (!isMemberOfChannel(findChannel, uId)) {
     throw HTTPError(403, 'user is not a member of the channel');
   }
