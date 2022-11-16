@@ -17,14 +17,6 @@ function adminUserPermissionChangeV1(token: string, uId: number, permissionId: n
   return postRequest(SERVER_URL + '/admin/userpermission/change/v1', { uId, permissionId }, token);
 }
 
-function usersAllV1(token: string) {
-  return getRequest(SERVER_URL + '/users/all/v2', { }, token);
-}
-
-function adminUserRemoveV1(token: string, uId: number) {
-  return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
-}
-
 function channelDetailsV1(token: string, channelId: number) {
   return getRequest(SERVER_URL + '/channel/details/v3', { channelId }, token);
 }
@@ -37,12 +29,12 @@ describe('Testing basic adminUserPermissionChangeV1 functionality', () => {
     const channel = channelsCreateV1(global.token, 'a test case', false).channelId;
     const channel2 = channelsCreateV1(changeUser.token, 'another test case', false).channelId;
 
-    adminUserPermissionChangeV1(global.token, changeUser.globalId, 1);
+    adminUserPermissionChangeV1(global.token, changeUser.authUserId, 1);
     adminUserPermissionChangeV1(changeUser.token, global.authUserId, 2);
 
     expect(channelJoinV1(global.token, channel2).statusCode).toBe(403);
     channelJoinV1(changeUser.token, channel);
-    expect(channelDetailsV1(changeUser.token, channel).allMembers.body).toEqual([
+    expect(channelDetailsV1(changeUser.token, channel).allMembers).toEqual([
       {
         uId: global.authUserId,
         nameFirst: expect.any(String),

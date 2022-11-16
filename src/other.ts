@@ -115,7 +115,7 @@ export function userIdExists(userId: number): boolean {
 
   // Loop through users array to check if user exists
   for (const user of data.users) {
-    if (user.uId === userId) {
+    if (user.uId === userId && user.permissionId !== 10) {
       return true;
     }
   }

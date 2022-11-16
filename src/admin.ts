@@ -73,7 +73,6 @@ export function adminUserRemoveV1 (token: string, uId: number) {
   return ({});
 }
 
-
 export function adminUserPermissionChangeV1 (token: string, uId: number, permissionId: number) {
   const data = getData();
   if (!tokenExists(token)) {
@@ -102,10 +101,10 @@ export function adminUserPermissionChangeV1 (token: string, uId: number, permiss
   if (userToChange.permissionId === permissionId) {
     throw HTTPError(400, 'permissionId is already the same');
   }
-  
-  //implementation
-  userToChange.permissionId = permissionId; 
+
+  // implementation
+  userToChange.permissionId = permissionId;
   setData(data);
-  
-  return {}; 
+
+  return {};
 }
