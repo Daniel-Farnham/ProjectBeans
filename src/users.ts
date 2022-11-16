@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error, getUidFromToken } from './other';
+import { userIdExists, tokenExists, User, error, getUidFromToken, FORBIDDEN } from './other';
 import validator from 'validator';
 import HTTPError from 'http-errors';
 
@@ -303,4 +303,28 @@ function handleInUse (handleStr: string): boolean {
     }
   }
   return false;
+}
+
+function usersStatsV1 (token: string) {
+  if (!tokenExists(token)) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+
+  // Make first registered user initialise timestamps to 0 --- DONE BUT CHECK IF TIMESTAMP SHOULD BE 0 OR NOT
+
+  // numMsgs
+  // increase with messageSend      ---
+  // increase with messageSendDm    ---
+  // decrease with messageRemove    ---
+  // decrease with dmRemove         ---
+  // increase when standup/send messages are finally packaged and sent
+
+  // numChannels
+  // increase with channelsCreate   ---
+
+  // numDms
+  // increase with dmCreate
+  // decreases with dmRemove        ---
+
+  // calculate utilizationRate
 }

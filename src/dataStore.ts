@@ -13,6 +13,11 @@ let data = {
   tokenCount: 0,
   dms: [],
   notifications: [],
+  workplaceStats: {
+    channelsExist: [],
+    dmsExist: [],
+    messagesExist: []
+  }
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

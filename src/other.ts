@@ -158,6 +158,18 @@ export const getRequest = (url: string, data: any, token?: string) => {
 };
 
 /**
+  * Updates the message analytics
+  * @param {number} timeSent - the time stamp of the analytics change
+  */
+export function updateMessageAnalytics(timeSent: number) {
+  const data = getData();
+  const index = data.workplaceStats.messagesExist.length;
+  const numMsgs = data.workplaceStats.messagesExist[index - 1].numMessagesExist;
+  data.workplaceStats.messagesExist.push({ numMessagesExist: numMsgs + 1, timeStamp: timeSent });
+  setData(data);
+}
+
+/**
   * Checks if the user id is registered in the database.
   * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise

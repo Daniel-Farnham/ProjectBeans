@@ -133,9 +133,24 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
 
   // Push the user to the channel
   data.channels.push(channelObj);
-  setData(data);
 
+  // Update the workplace analytics
+  updateChannelAnalytics();
+
+  setData(data);
   return { channelId: channelId };
+}
+
+/**
+  * Update the workplace analytics for newly created channel
+  */
+ function updateChannelAnalytics() {
+  const data = getData();
+  const index = data.workplaceStats.channelsExist.length;
+  const numChannels = data.workplaceStats.channelsExist[index - 1].numChannelsExist;
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  data.workplaceStats.channelsExist.push({ numChannelsExist: numChannels + 1, timeStamp: timeSent });
+  setData(data);
 }
 
 export { channelsListV1, channelsListAllV1, channelsCreateV1 };

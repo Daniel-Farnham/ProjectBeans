@@ -2,7 +2,7 @@ import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
   isMemberOfDm, getMessageId, User, Messages, httpError, FORBIDDEN,
-  BAD_REQUEST
+  BAD_REQUEST, updateMessageAnalytics
 } from './other';
 import HTTPError from 'http-errors';
 import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
@@ -74,13 +74,30 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
   // Create the new dm and store it in the datastore
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
+
+  // Update the workplace analytics
+  updateDmAnalytics();
+
   setData(data);
+
   // Create notification for added users
   const uId = getUidFromToken(token);
   const uIdsWithoutAuthUser = uIds.filter(value => value !== uId);
   notificationSetAddDm(dm.dmId, uId, uIdsWithoutAuthUser);
 
   return { dmId: dm.dmId };
+}
+
+/**
+  * Increases the number of dms in the workplace analytics
+  */
+function updateDmAnalytics() {
+  const data = getData();
+  const index = data.workplaceStats.dmsExist.length;
+  const numDms = data.workplaceStats.dmsExist[index - 1].numDmsExist;
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  data.workplaceStats.dmsExist.push({ numDmsExist: numDms + 1, timeStamp: timeSent });
+  setData(data);
 }
 
 /**
@@ -102,17 +119,42 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
     throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
+  let msgCount = 0;
   // Remove all the members of the dm
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
+      msgCount = dm.messages.length;
       while (dm.members.length !== 0) {
         dm.members.pop();
       }
     }
   }
 
+  // Update the workplace analytics
+  decrementDmMessageAnalytics(msgCount);
+
   setData(data);
   return {};
+}
+
+/**
+  * Decrements the dm count and message count when dm is removed
+  * @param {number} msgCount - the number of messages removed when dm is removed
+  */
+export function decrementDmMessageAnalytics(msgCount: number) {
+  const data = getData();
+  // Decrement numMessagesExist
+  const index = data.workplaceStats.messagesExist.length;
+  const numMsgs = data.workplaceStats.messagesExist[index - 1].numMessagesExist;
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  data.workplaceStats.messagesExist.push({ numMessagesExist: numMsgs - msgCount, timeStamp: timeSent });
+
+  // Decrement numDmsExist
+  const dmIndex = data.workplaceStats.dmsExist.length;
+  const numDms = data.workplaceStats.dmsExist[dmIndex - 1].numDmsExist;
+  data.workplaceStats.dmsExist.push({ numDmsExist: numDms - 1, timeStamp: timeSent });
+
+  setData(data);
 }
 
 /**
@@ -539,6 +581,10 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   if (requiresTagging(message)) {
     notificationSetTag(uId, -1, dmId, message, 'dm');
   }
+
+  // Update the workplace analytics
+  updateMessageAnalytics(timeSent);
+
   return { messageId: messageId };
 }
 
