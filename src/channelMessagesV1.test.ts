@@ -118,7 +118,6 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 0,
       end: -1
     };
-
     expect(messages).toMatchObject(messagesObj);
   });
 

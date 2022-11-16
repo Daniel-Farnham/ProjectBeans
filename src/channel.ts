@@ -2,6 +2,8 @@ import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerO
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
+import { notificationSetAddChannel } from './notifications';
+import { messageReactedByUser } from './message';
 
 const GLOBAL_OWNER = 1;
 
@@ -147,6 +149,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       channel.allMembers.push(newMember.user);
+      notificationSetAddChannel(channelId, authUserId, uId);
       setData(data);
       return {};
     }
@@ -208,9 +211,18 @@ function channelMessagesV1(token: string, channelId: number, start: number): boo
   if (start === 0 && numMessages === 0) {
     end = -1;
   } else {
+    const uId = getUidFromToken(token);
     // If start and number of messages aren't both 0, add up to 50 messages
     let index = start;
     while (index < numMessages && index < start + 50) {
+      // Loop through each message and update whether user has reacted to message
+      for (const react of channel.messages[index].reacts) {
+        if (messageReactedByUser(channel.messages[index], uId, react.reactId)) {
+          react.isThisUserReacted = true;
+        } else {
+          react.isThisUserReacted = false;
+        }
+      }
       messages.unshift(channel.messages[index]);
       index++;
     }

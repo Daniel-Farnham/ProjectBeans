@@ -5,7 +5,8 @@ import {
   BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
-
+import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
+import { messageReactedByUser } from './message';
 type dmInfo = {
   dmId: number,
   name: string,
@@ -27,6 +28,14 @@ interface Message {
   uId: number,
   message: string,
   timeSent: number,
+  reacts: [
+    {
+      reactId: number,
+      uIds: [],
+      isThisUserReacted: boolean,
+    }
+  ],
+  isPinned: boolean,
 }
 
 type messageId = { messageId: number }
@@ -62,11 +71,15 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
     const errorMsg = isInvalid as any;
     throw HTTPError(errorMsg.code, errorMsg.error);
   }
-
   // Create the new dm and store it in the datastore
   const dm = constructDm(token, uIds);
   data.dms.push(dm);
   setData(data);
+  // Create notification for added users
+  const uId = getUidFromToken(token);
+  const uIdsWithoutAuthUser = uIds.filter(value => value !== uId);
+  notificationSetAddDm(dm.dmId, uId, uIdsWithoutAuthUser);
+
   return { dmId: dm.dmId };
 }
 
@@ -305,9 +318,18 @@ function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | 
   if (start === 0 && numMessages === 0) {
     end = -1;
   } else {
+    const uId = getUidFromToken(token);
     // If start and number of messages aren't both 0, add up to 50 messages
     let index = start;
     while (index < numMessages && index < start + 50) {
+      // Loop through each message and update whether user has reacted to message
+      for (const react of dm.messages[index].reacts) {
+        if (messageReactedByUser(dm.messages[index], uId, react.reactId)) {
+          react.isThisUserReacted = true;
+        } else {
+          react.isThisUserReacted = false;
+        }
+      }
       messages.unshift(dm.messages[index]);
       index++;
     }
@@ -498,19 +520,29 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   // Create message
   const messageId = getMessageId();
   const timeSent = Math.floor((new Date()).getTime() / 1000);
-  const messageObj = {
+  const messageObj: Message = {
     messageId: messageId,
     uId: uId,
     message: message,
     timeSent: timeSent,
+    reacts: [
+      {
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false,
+      }
+    ],
+    isPinned: false,
   };
 
   storeMessageInDm(messageObj, dmId);
-
+  if (requiresTagging(message)) {
+    notificationSetTag(uId, -1, dmId, message, 'dm');
+  }
   return { messageId: messageId };
 }
 
-function storeMessageInDm(message: Message, dmId: number) {
+export function storeMessageInDm(message: Message, dmId: number) {
   const data = getData();
 
   for (const dm of data.dms) {
