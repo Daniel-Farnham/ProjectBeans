@@ -162,7 +162,7 @@ export function dmIdExists(dmId: number): boolean {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfChannel(channel: internalChannel, uId: number): boolean {
+export function isMemberOfChannel(channel: internalChannel | Channel, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
   const allMembers = channel.allMembers;
@@ -234,7 +234,7 @@ export function getMessageContainer(messageId: number): boolean | any {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfDm(dm: internalDm, uId: number): boolean {
+export function isMemberOfDm(dm: internalDm | dm, uId: number): boolean {
   // Loop through all members of dm
   // if user is found, then return true
   for (const member of dm.members) {

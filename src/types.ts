@@ -54,6 +54,7 @@ export type Message = {
   isPinned: isPinned,
 };
 export type notificationMessage = string;
+
 export type notification = {
   channelId: channelId,
   dmId: dmId,
@@ -138,7 +139,7 @@ export type internalChannels = internalChannel[];
 
 export type internalNotification = {
   uId: uId,
-  notifications: notifications[]
+  notifications: notifications
 };
 
 export type internalNotifications = internalNotification[];
@@ -146,7 +147,7 @@ export type internalDm = {
   dmId: dmId,
   name: name,
   creator: uId,
-  members: internalUsers,
+  members: users,
   messages: messages,
 };
 export type internalDms = internalDm[];
@@ -159,4 +160,25 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+};
+
+// Used for messageSendDmV1 and messageSendV1
+export type messageIdReturnedObject = { messageId: messageId }
+export type messagesReturnObject = { messages: messages };
+
+// Used for dmDetailsV1
+export type dmDetailsOuput = {
+  name: name,
+  members: users
+};
+
+
+// Used for dmListV1
+export type dmListInfo = {
+  dmId: number,
+  name: string
+};
+
+export type dmListOutput = {
+  dms: dmListInfo[],
 };

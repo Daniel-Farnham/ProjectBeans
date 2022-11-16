@@ -3,7 +3,7 @@ import {
   tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
   getNameFromChannelId, getNameFromDmId
 } from './other';
-import { Message } from './types';
+import { internalNotification, Message, notification } from './types';
 import HTTPError from 'http-errors';
 
 export interface Notification {
@@ -119,7 +119,7 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
     name = getNameFromDmId(dmId);
   }
 
-  const notificationMsg = {
+  const notificationMsg: notification = {
     channelId: channelId,
     dmId: dmId,
     notificationMessage: `${senderHandle} tagged you in ${name}: ${notificationMessage.substring(0, 20)}`,
@@ -136,7 +136,7 @@ export function notificationSetTag(uId: number, channelId: number, dmId: number,
   * @param {{notification}} notificationMsg - Notification object containing details
   *
 */
-function setNotificationForEachUser(uIds: any[], notificationMsg: Notification) {
+function setNotificationForEachUser(uIds: any[], notificationMsg: notification) {
   const data = getData();
   for (const uId of uIds) {
     for (const notification of data.notifications) {

@@ -6,28 +6,9 @@ import {
 import HTTPError from 'http-errors';
 import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
 import { messageReactedByUser } from './message';
-import { uIds, dm, users, messages, Message } from './types';
+import { uIds, Message, internalDm, messagesOutput,
+  messageIdReturnedObject, dmDetailsOuput, dmListOutput, users  } from './types';
 
-type dmListInfo = {
-  dmId: number,
-  name: string
-};
-
-type dmList = {
-  dms: Array<dmListInfo>
-};
-type messageId = { messageId: number }
-
-type dmDetails = {
-  name: string,
-  members: users
-};
-
-type dmMessages = {
-  messages: messages,
-  start: number,
-  end: number
-};
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
 
@@ -144,7 +125,7 @@ function removeInfoInvalid(token: string, dmId: number): httpError | boolean {
   *
   * @returns {{dms: dmList}} - An array of dms the user is a member of
   */
-function dmListV1(token: string): dmList | error {
+function dmListV1(token: string): dmListOutput | error {
   // Check if the given token is invalid
   if (!tokenExists(token)) {
     throw HTTPError(FORBIDDEN, 'Token is invalid');
@@ -236,7 +217,7 @@ function dmRemoveUser(uId: number, dmId: number) {
   * @returns {{name: string}} - The name of the dm
   * @returns {{members: Array<User>}} - The members list of users in the dm
   */
-function dmDetailsV1(token: string, dmId: number): dmDetails | error {
+function dmDetailsV1(token: string, dmId: number): dmDetailsOuput | error {
   // Check if the dmId is invalid
   if (!dmIdExists(dmId)) {
     throw HTTPError(BAD_REQUEST, 'dmId is invalid');
@@ -278,7 +259,7 @@ function dmDetailsV1(token: string, dmId: number): dmDetails | error {
   * @returns {{start: number}} - The given starting index of the messages
   * @returns {{end: number}} - The end index of the returned messages
   */
-function dmMessagesV1(token: string, dmId: number, start: number): dmMessages | error | boolean {
+function dmMessagesV1(token: string, dmId: number, start: number): messagesOutput | error | boolean {
   // Check if the given information is invalid
   const isInvalid = dmMessagesInfoInvalid(token, dmId, start);
   if (isInvalid !== false) {
@@ -408,7 +389,7 @@ function dmInfoInvalid(token: string, uIds: Array<number>): httpError | boolean 
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {boolean} - False if the given info isn't invalid
   */
-function constructDm(token: string, uIds: uIds): dm {
+function constructDm(token: string, uIds: uIds): internalDm {
   // Find the handle strings of all users in the dm and sort them alphabetically
   const data = getData();
   const handles = [];
@@ -432,8 +413,7 @@ function constructDm(token: string, uIds: uIds): dm {
   }
 
   // Add the creator to the members list
-
-  const members = [];
+  const members: users = [];
 
   // Add the other users in the dm to the members list
   for (const uId of uIds) {
@@ -452,14 +432,13 @@ function constructDm(token: string, uIds: uIds): dm {
 
   // Construct the dm object
   data.messageCount += 1;
-  const dm: dm = {
+  const dm: internalDm = {
     dmId: data.messageCount,
     name: name,
     creator: creatorId,
     members: members,
     messages: []
   };
-
   return dm;
 }
 
@@ -473,7 +452,7 @@ function constructDm(token: string, uIds: uIds): dm {
   *
   * @returns {messageId} returns an object containing the messageId
 */
-export function messageSendDmV1 (token: string, dmId: number, message: string): messageId | error {
+export function messageSendDmV1 (token: string, dmId: number, message: string): messageIdReturnedObject | error {
   const data = getData();
   const findDm = data.dms.find(dm => dm.dmId === dmId);
 

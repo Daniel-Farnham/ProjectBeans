@@ -7,31 +7,13 @@ import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { dm, internalChannel, messages } from './types';
+import { dm, internalChannel, messages, messageIdReturnedObject, messagesReturnObject, Message } from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
 const GLOBAL_OWNER = 1;
 
-type messageId = { messageId: number }
-type messagesOutput = { messages: messages };
-/**
-  * Interface for message object
-*/
-interface Message {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number,
-  reacts: [
-    {
-      reactId: number,
-      uIds: [],
-      isThisUserReacted: boolean,
-    }
-  ],
-  isPinned: boolean,
-}
+
 
 /**
   * Creates a message and stores it in the messages array in a channel
@@ -43,7 +25,7 @@ interface Message {
   *
   * @returns {messageId} returns an object containing the messageId
 */
-export function messageSendV1 (token: string, channelId: number, message: string): messageId | error {
+export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
   const data = getData();
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
 
@@ -398,7 +380,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   *
   * @returns {{messages}} returns an array containing message objects
 */
-export function searchV1 (token: string, queryStr: string): error | messagesOutput {
+export function searchV1 (token: string, queryStr: string): error | messagesReturnObject {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
