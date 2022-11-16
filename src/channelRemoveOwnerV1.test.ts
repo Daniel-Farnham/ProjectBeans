@@ -202,7 +202,7 @@ describe('Testing channelRemoveOwnerV1', () => {
         nameFirst: 'Edwin',
         nameLast: 'Ngo',
         handleStr: 'edwinngo',
-        profileImgUrl:  detailsBefore.ownerMembers[0].profileImgUrl,
+        profileImgUrl: detailsBefore.ownerMembers[0].profileImgUrl,
       },
       {
         uId: userId2.authUserId,
@@ -210,7 +210,7 @@ describe('Testing channelRemoveOwnerV1', () => {
         nameFirst: 'John',
         nameLast: 'Smith',
         handleStr: 'johnsmith',
-        profileImgUrl:  detailsBefore.ownerMembers[1].profileImgUrl,
+        profileImgUrl: detailsBefore.ownerMembers[1].profileImgUrl,
       }
     ]);
 

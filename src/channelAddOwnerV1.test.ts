@@ -80,7 +80,7 @@ describe('Testing channelAddOwnerV1', () => {
         nameFirst: 'Edwin',
         nameLast: 'Ngo',
         handleStr: 'edwinngo',
-        profileImgUrl:  channelDetails.ownerMembers[0].profileImgUrl,
+        profileImgUrl: channelDetails.ownerMembers[0].profileImgUrl,
       },
       {
         uId: userId2.authUserId,
