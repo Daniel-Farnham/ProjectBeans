@@ -29,6 +29,49 @@ describe('Testing positive cases for standupStartV1', () => {
 
     expect(standupStart).toStrictEqual({ timeFinish: expect.any(Number) });
   });
+
+  test('Testing start standup immediately after the end of a prior standup', () => {
+
+    const length1 = 2;
+    const length2 = 3; 
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      name: 'ChannelBoost',
+      isPublic: true,
+    }, userId.token);
+
+
+    const standupStart = postRequest(SERVER_URL + '/standup/start/v1', {
+      channelId: channel.channelId,
+      length: length1,
+    }, userId.token);
+
+    
+    const start = new Date().getTime();
+    const expire = start + length1*1000;
+    while (new Date().getTime() < expire) {
+
+    }
+    
+    console.log(standupStart);
+    
+    const standupStartAgain = postRequest(SERVER_URL + '/standup/start/v1', {
+      channelId: channel.channelId,
+      length: length1,
+    }, userId.token);
+
+    console.log(standupStartAgain); 
+    
+    expect(standupStartAgain).toStrictEqual({ timeFinish: expect.any(Number) });
+  }); 
+
+  // start a new standup after the length is ended. 
 });
 
 describe('Testing negative cases for standupStartV1', () => {

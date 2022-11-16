@@ -8,6 +8,7 @@ export function standupStartV1 (token: string, channelId: number, length: number
     const data = getData();
     const findChannel = data.channels.find(chan => chan.channelId === channelId);
 
+    console.log('test');
     if (!(tokenExists(token))) {
         throw HTTPError(403, 'token is invalid');
     }
@@ -41,33 +42,41 @@ export function standupStartV1 (token: string, channelId: number, length: number
         timeFinish: timeFinish, 
     };
 
-    const currentTime = Math.floor((new Date()).getTime() / 1000);
-    const StopStandup = {
-        isActive: false,
-        timeFinish: timeFinish, 
-    }
-
     for (const channel of data.channels) {
         if (channel.channelId === channelId) {
-            if(currentTime > timeFinish) {
-                channel.standUp.push(StopStandup);
-            }
-            if (currentTime < timeFinish) {
-                channel.standUp.push(ActivateStandup);
-            }
+            channel.standUp.push(ActivateStandup); 
         }
     }
     setData(data);
 
-    return {timeFinish: timeFinish};
+    const start = new Date().getTime();
+    while (new Date().getTime() < timeFinish) {
+    }
+
+    for (const channel of data.channels) {
+        for (const targetStandup of channel.standUp) {
+            if (targetStandup.timeFinish === timeFinish) {
+                targetStandup.isActive = false; 
+           
+            }
+        }
+    }
+    setData(data);
+    
+    // to pass relevant test cases need to make sure we might need to implement setTimeout (asynchronous) 
+    // if currentTime > timeFinish change targetStandup.isActive = false; 
+    // Probably need to sort out timeFinish like the milli seconds and what not. 
+
+    return { timeFinish: timeFinish };
    
 }
 
 function timeStandup (length) {
-    let timeStart = Math.floor((new Date()).getTime() / 1000);
+    let timeStart = Math.floor((new Date()).getTime());
     let timeFinish = timeStart + length; 
   
-    return timeFinish; 
-  
+    return timeFinish;  
 }
+
+
 
