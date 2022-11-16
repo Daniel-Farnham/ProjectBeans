@@ -14,14 +14,10 @@ import {
   channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
-<<<<<<< HEAD
-import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1, usersStatsV1 } from './users';
-=======
 import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
-  userProfileV1, usersAllV1, userProfileUploadPhotoV1
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1, usersStatsV1
 } from './users';
->>>>>>> master
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
