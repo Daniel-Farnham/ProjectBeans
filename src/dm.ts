@@ -542,7 +542,7 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   return { messageId: messageId };
 }
 
-function storeMessageInDm(message: Message, dmId: number) {
+export function storeMessageInDm(message: Message, dmId: number) {
   const data = getData();
 
   for (const dm of data.dms) {
