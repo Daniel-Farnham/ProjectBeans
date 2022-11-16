@@ -73,6 +73,7 @@ export type dm = {
 // Output Types
 export type messages = Message[];
 
+// Used for dm/messages/v2 and channel/messages/v3
 export type messagesOutput = {
   messages: Message[],
   start: start,
@@ -126,6 +127,8 @@ export type internalChannel = {
   messages: Message[],
   isPublic: isPublic,
 };
+export type internalChannels = internalChannel[];
+
 export type internalNotification = {
   uId: uId,
   notifications: notifications[]

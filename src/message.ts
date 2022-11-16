@@ -7,15 +7,14 @@ import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { internalChannel } from './types';
+import { dm, internalChannel, messages } from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
 const GLOBAL_OWNER = 1;
 
 type messageId = { messageId: number }
-type messages = { messages: Array<messages> };
-
+type messagesOutput = { messages: messages };
 /**
   * Interface for message object
 */
@@ -226,11 +225,13 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   return {};
 }
 
-export function messageReactedByUser(message, uId: number, reactId: number): boolean {
+export function messageReactedByUser(message: Message, uId: number, reactId: number): boolean {
   for (const react of message.reacts) {
     if (react.reactId === reactId) {
-      if (react.uIds.includes(uId)) {
-        return true;
+      for (reactId of react.uIds) {
+        if (reactId === uId) {
+          return true;
+        }
       }
     }
   }
@@ -397,7 +398,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   *
   * @returns {{messages}} returns an array containing message objects
 */
-export function searchV1 (token: string, queryStr: string): error | messages {
+export function searchV1 (token: string, queryStr: string): error | messagesOutput {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
@@ -405,7 +406,7 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   if (queryStr.length < MIN_MESSAGE_LEN || queryStr.length > MAX_MESSAGE_LEN) {
     throw HTTPError(BAD_REQUEST, 'length of query is less than 1 or over 1000 characters');
   }
-  let messages = [];
+  let messages: messages = [];
   const uId = getUidFromToken(token);
   messages = getMessagesFromDms(messages, uId, queryStr);
   messages = getMessagesFromChannels(messages, uId, queryStr);
@@ -545,7 +546,7 @@ function notValidSharing(channelId: number, dmId: number) {
   * @returns newly generated message
   *
 */
-function generateDmNewMessageString(dm, messageId: number, additionalMsg: string) {
+function generateDmNewMessageString(dm: dm, messageId: number, additionalMsg: string) {
   for (const targetmessage of dm.messages) {
     // If there is a message with the correct messageId, edit the message.
     if (targetmessage.messageId === messageId) {
@@ -564,7 +565,7 @@ function generateDmNewMessageString(dm, messageId: number, additionalMsg: string
   *
   * @returns newly generated message
 */
-function generateChannelNewMessageString(channel, messageId: number, additionalMsg: string) {
+function generateChannelNewMessageString(channel: internalChannel, messageId: number, additionalMsg: string) {
   for (const targetmessage of channel.messages) {
     // If there is a message with the correct messageId, edit the message.
     if (targetmessage.messageId === messageId) {
@@ -584,7 +585,7 @@ function generateChannelNewMessageString(channel, messageId: number, additionalM
   *
   * @returns {{messages}} returns an array containing message objects
 */
-function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
+function getMessagesFromDms (messages: messages, uId: number, queryStr: string) {
   const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const dm of data.dms) {
@@ -609,7 +610,7 @@ function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
   *
   * @returns {{messages}} returns an array containing message objects
 */
-function getMessagesFromChannels (messages: any[], uId: number, queryStr: string) {
+function getMessagesFromChannels (messages: messages, uId: number, queryStr: string) {
   const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const channel of data.channels) {
@@ -679,7 +680,9 @@ function removeMessageFromChannel(messageId: number): any {
   for (const channel of data.channels) {
     for (const message of channel.messages) {
       if (message.messageId === messageId) {
-        channel.messages = channel.messages.filter(message => message.messageId !== messageId);
+        channel.messages = channel.messages.filter(
+          (message: Message): message is Message => message.messageId !== messageId);
+
       }
     }
   }
@@ -701,7 +704,8 @@ function removeMessageFromDM(messageId: number):any {
   for (const dm of data.dms) {
     for (const message of dm.messages) {
       if (message.messageId === messageId) {
-        dm.messages = dm.messages.filter(message => message.messageId !== messageId);
+        dm.messages = dm.messages.filter(
+          (message: Message): message is Message => message.messageId !== messageId);
       }
     }
   }

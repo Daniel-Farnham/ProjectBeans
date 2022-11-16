@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error, getUidFromToken } from './other';
+import { userIdExists, tokenExists, error, getUidFromToken } from './other';
 import validator from 'validator';
 import HTTPError from 'http-errors';
+import { user } from './types';
 
 /**
   * Returns user object if a valid user is found
@@ -12,7 +13,7 @@ import HTTPError from 'http-errors';
   * @returns {user} - Returns object with valid user ID, email, first name, last name,
   * and handle
 */
-export function userProfileV1 (token: string, uId: number): error | { user: User } | any {
+export function userProfileV1 (token: string, uId: number): error | { user: user } | any {
   // If either uId or token does not exist, then return error
   if (!tokenExists(token)) {
     throw HTTPError(403, 'token is invalid');

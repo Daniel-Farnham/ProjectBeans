@@ -4,7 +4,7 @@ import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
 import { notificationSetAddChannel } from './notifications';
 import { messageReactedByUser } from './message';
-import { user, Channel, internalChannel } from './types';
+import { user, messagesOutput, internalChannel } from './types';
 
 const GLOBAL_OWNER = 1;
 
@@ -15,7 +15,7 @@ type channelDetails = {
   allMembers: user[],
 };
 
-type messages = { messages: Array<messages> };
+// type messages = { messages: Array<messages> };
 
 type start = { start: number };
 
@@ -194,7 +194,7 @@ function invalidMemberships (channel: internalChannel, authUserId: number, uId: 
   * @returns {{start: number}} - The starting index of the returned messages
   * @returns {{end: number}} - The final index of the returned messages
   */
-function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messages | start | end {
+function channelMessagesV1(token: string, channelId: number, start: number): boolean | error | messagesOutput | start | end {
   // Check if the given information is valid
 
   const isInvalid = messagesInfoInvalid(token, channelId, start);
