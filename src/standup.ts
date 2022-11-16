@@ -1,6 +1,5 @@
 import { getData, setData } from './dataStore';
-import { userIdExists, tokenExists, User, error, getUidFromToken, channelIdExists, isMemberOfChannel } from './other';
-import validator from 'validator';
+import { tokenExists, User, error, getUidFromToken, channelIdExists, isMemberOfChannel } from './other';
 import HTTPError from 'http-errors';
 
 
