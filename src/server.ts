@@ -124,6 +124,13 @@ app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
   save();
 });
 
+app.post('/channel/removeowner/v2', (req:Request, res: Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelRemoveOwnerV1(token, channelId, uId));
+  save();
+});
+
 app.get('/channel/messages/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);
