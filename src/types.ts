@@ -17,18 +17,6 @@ export type nameFirst = string;
 export type nameLast = string;
 export type isPublic = boolean;
 
-
-export type Channel = {
-  channelId: channelId,
-  name: name,
-  ownerMembers: user[],
-  allMembers: user[],
-  messages: user[],
-  isPublic: isPublic,
-};
-
-
-
 // Iteration 2 Types
 export type token = string;
 export type dmId = number;
@@ -37,6 +25,7 @@ export type permissionId = number;
 // Iteration 3 Types
 export type isThisUserReacted = boolean;
 export type isPinned = boolean;
+export type uIds = uId[];
 
 export type reactId = number;
 
@@ -45,6 +34,7 @@ export type react = {
   uIds: uIds,
   isThisUserReacted: isThisUserReacted,
 };
+export type reacts = react[];
 export type Message = {
   messageId: messageId,
   uId: uId,
@@ -60,16 +50,6 @@ export type notification = {
   dmId: dmId,
   notificationMessage: notificationMessage,
 };
-
-
-export type dm = {
-  dmId: dmId,
-  name: name,
-  creator: uId,
-  members: user[],
-  messages: Message[],
-};
-
 
 // Output Types
 export type messages = Message[];
@@ -95,16 +75,21 @@ export type user = {
 };
 export type members = user[];
 export type users = user[];
-
+export type Channel = {
+  channelId: channelId,
+  name: name,
+  ownerMembers: user[],
+  allMembers: user[],
+  messages: user[],
+  isPublic: isPublic,
+};
 
 export type dmOutput = {
   dmId: dmId,
   name: name,
 };
 export type dms = dmOutput[];
-export type uIds = uId[];
 
-export type reacts = react[];
 export type notifications = notification[];
 
 // Internal representations of objects in datastore
@@ -172,7 +157,6 @@ export type dmDetailsOuput = {
   members: users
 };
 
-
 // Used for dmListV1
 export type dmListInfo = {
   dmId: number,
@@ -181,4 +165,12 @@ export type dmListInfo = {
 
 export type dmListOutput = {
   dms: dmListInfo[],
+};
+
+export type dm = {
+  dmId: dmId,
+  name: name,
+  creator: uId,
+  members: user[],
+  messages: Message[],
 };

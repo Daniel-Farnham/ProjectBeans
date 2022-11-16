@@ -2,7 +2,6 @@ import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
 import { Channel, datastore, dm, internalChannel, internalDm, Message } from './types';
-import internal from 'stream';
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required

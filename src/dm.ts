@@ -6,8 +6,10 @@ import {
 import HTTPError from 'http-errors';
 import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
 import { messageReactedByUser } from './message';
-import { uIds, Message, internalDm, messagesOutput,
-  messageIdReturnedObject, dmDetailsOuput, dmListOutput, users  } from './types';
+import {
+  uIds, Message, internalDm, messagesOutput,
+  messageIdReturnedObject, dmDetailsOuput, dmListOutput, users
+} from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;

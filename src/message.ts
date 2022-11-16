@@ -13,8 +13,6 @@ const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
 const GLOBAL_OWNER = 1;
 
-
-
 /**
   * Creates a message and stores it in the messages array in a channel
   *
@@ -664,7 +662,6 @@ function removeMessageFromChannel(messageId: number): any {
       if (message.messageId === messageId) {
         channel.messages = channel.messages.filter(
           (message: Message): message is Message => message.messageId !== messageId);
-
       }
     }
   }

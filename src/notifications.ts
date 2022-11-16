@@ -3,7 +3,7 @@ import {
   tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
   getNameFromChannelId, getNameFromDmId
 } from './other';
-import { internalNotification, Message, notification } from './types';
+import { Message, notification } from './types';
 import HTTPError from 'http-errors';
 
 export interface Notification {
