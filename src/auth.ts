@@ -3,7 +3,7 @@ import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
-
+import {notifications} from './types';
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
 const GLOBAL_MEMBER = 2;
@@ -13,7 +13,10 @@ const MAX_NAME_LEN = 50;
 export const GLOBAL_SECRET = "YouAren'tGettingIn!";
 
 type authInfo = { token: string, authUserId: number };
-
+type notificationInfo = {
+  uId: number,
+  notifications: notifications,
+};
 /**
   * Will attempt to login to an account with the given email and password,
   * returning an object containing the user's id.
@@ -97,7 +100,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
   data.users.push(user);
 
-  const notification = {
+  const notification: notificationInfo = {
     uId: userId,
     notifications: [],
   };
@@ -137,7 +140,8 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
   // Filter out the token from the user's sessions
   const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    session.tokens = session.tokens.filter(activeToken => activeToken !== hashedToken);
+    session.tokens = session.tokens.filter(
+      (activeToken: string): activeToken is string => activeToken !== hashedToken);
   }
 
   setData(data);
