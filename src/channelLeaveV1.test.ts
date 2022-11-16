@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest, getRequest } from './other';
+import { postRequest, deleteRequest, getRequest, FORBIDDEN, BAD_REQUEST } from './other';
 
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
@@ -32,7 +32,7 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
+    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v2', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -84,7 +84,7 @@ describe('Testing channelLeaveV1', () => {
       }
     ]);
 
-    postRequest(SERVER_URL + '/channel/leave/v1', {
+    postRequest(SERVER_URL + '/channel/leave/v2', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -156,7 +156,7 @@ describe('Testing channelLeaveV1', () => {
       }
     ]);
 
-    postRequest(SERVER_URL + '/channel/leave/v1', {
+    postRequest(SERVER_URL + '/channel/leave/v2', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -202,11 +202,13 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
+    const result = postRequest(SERVER_URL + '/channel/leave/v2', {
       channelId: channel.channelId + 10
     }, userId2.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(result.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing invalid token', () => {
@@ -233,11 +235,13 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
+    const result = postRequest(SERVER_URL + '/channel/leave/v2', {
       channelId: channel.channelId
     }, userId2.token + 10);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(result.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing valid channelId, but user is not a member', () => {
@@ -260,10 +264,12 @@ describe('Testing channelLeaveV1', () => {
       isPublic: true
     }, userId1.token);
 
-    const expectedResult = postRequest(SERVER_URL + '/channel/leave/v1', {
+    const result = postRequest(SERVER_URL + '/channel/leave/v2', {
       channelId: channel.channelId
     }, userId2.token);
 
-    expect(expectedResult).toStrictEqual({ error: expect.any(String) });
+    expect(result.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
