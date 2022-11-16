@@ -1,5 +1,5 @@
 
-import { getRequest, postRequest, putRequest, deleteRequest, BAD_REQUEST, FORBIDDEN } from './other';
+import { getRequest, postRequest, putRequest, deleteRequest, BAD_REQUEST, FORBIDDEN, sleep } from './other';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
@@ -27,6 +27,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
       timeSent: timeSent + 1
     }, regId.token);
 
+    sleep(2);
     expect(newMessageId).toStrictEqual({ messageId: expect.any(Number) });
   });
 
@@ -49,16 +50,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
       timeSent: timeSent + 1
     }, regId.token);
 
-    // Using setTimeout with dm/messages to pass time, ensuring the message is now sent
-    setTimeout(
-      getRequest(SERVER_URL + '/dm/messages/v2', {
-        dmId: dmId.dmId,
-        start: 0,
-      }, regId.token),
-      2000
-    );
-
-    // Call dm/messages again, this time storing the output to view the sent message
+    sleep(2);
     const messages = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dmId.dmId,
       start: 0,
@@ -69,7 +61,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
         messageId: newMessageId.messageId,
         uId: regId.authUserId,
         message: 'This is also a test.',
-        timeSent: timeSent + 1
+        timeSent: expect.any(Number)
       }
     ];
 
@@ -103,16 +95,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
 
     expect(firstMessages.messages).toStrictEqual([]);
 
-    // Using setTimeout with dm/messages to pass time, ensuring the message is now sent
-    setTimeout(
-      getRequest(SERVER_URL + '/dm/messages/v2', {
-        dmId: dmId.dmId,
-        start: 0,
-      }, regId.token),
-      10000
-    );
-
-    // Call dm/messages again, this time storing the output to view the sent message
+    sleep(11);
     const messages = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dmId.dmId,
       start: 0,
@@ -123,7 +106,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
         messageId: newMessageId.messageId,
         uId: regId.authUserId,
         message: 'This is also another test.',
-        timeSent: timeSent + 1
+        timeSent: expect.any(Number)
       }
     ];
 
@@ -159,16 +142,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
     const bodyObj = JSON.parse(failedEdit.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 
-    // Using setTimeout with dm/messages to pass time, ensuring the message is now sent
-    setTimeout(
-      getRequest(SERVER_URL + '/dm/messages/v2', {
-        dmId: dmId.dmId,
-        start: 0,
-      }, regId.token),
-      2000
-    );
-
-    // Call message/edit again to check it is now successful
+    sleep(2);
     const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: newMessageId.messageId,
       message: 'This is an edited message'
@@ -205,16 +179,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
     const bodyObj = JSON.parse(failedRemove.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
 
-    // Using setTimeout with dm/messages to pass time, ensuring the message is now sent
-    setTimeout(
-      getRequest(SERVER_URL + '/dm/messages/v2', {
-        dmId: dmId.dmId,
-        start: 0,
-      }, regId.token),
-      2000
-    );
-
-    // Call message/remove again to check it is now successful
+    sleep(2);
     const removedMessage = deleteRequest(SERVER_URL + '/message/remove/v2', {
       messageId: newMessageId.messageId,
     }, regId.token);
@@ -245,16 +210,7 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
       messageId: newMessageId.messageId
     }, regId.token);
 
-    // Using setTimeout with dm/messages to pass time
-    setTimeout(
-      getRequest(SERVER_URL + '/dm/messages/v2', {
-        dmId: dmId.dmId,
-        start: 0,
-      }, regId.token),
-      2000
-    );
-
-    // Check that the message was not sent after timeSent
+    sleep(2);
     const messages = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dmId.dmId,
       start: 0,
