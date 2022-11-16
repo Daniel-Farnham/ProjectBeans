@@ -173,3 +173,6 @@ dist/**/*
 
 # Ignore datastore file for project
 *dataStore.json
+
+# Ignore /static/ folder
+static/

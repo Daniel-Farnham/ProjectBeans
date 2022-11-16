@@ -1,17 +1,14 @@
-export interface DataStore {
-  users: [];
-  channels: [];
-}
+import { datastore } from './types';
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {
-
+let data: datastore = {
   users: [],
   channels: [],
   sessions: [],
   messageCount: 0,
   tokenCount: 0,
   dms: [],
+  notifications: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
@@ -31,12 +28,12 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
+function getData(): datastore {
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+function setData(newData: datastore) {
   data = newData;
 }
 
