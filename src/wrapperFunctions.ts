@@ -50,7 +50,7 @@ export function channelMessagesV1(token: string, channelId: number, start: numbe
   }, token);
 }
 export function channelJoinV1 (token: string, channelId: number) {
-  postRequest(SERVER_URL + '/channel/join/v3', {
+  return postRequest(SERVER_URL + '/channel/join/v3', {
     channelId: channelId
   }, token);
 }
