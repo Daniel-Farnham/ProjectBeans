@@ -1,12 +1,13 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
-  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel, dmIdExists,
+  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
   getDmObjectFromDmlId, getChannelObjectFromChannelId
 } from './other';
 import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import { internalChannel } from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -633,7 +634,7 @@ function getMessagesFromChannels (messages: any[], uId: number, queryStr: string
   * @returns {error} returns an error object.
   * @returns {boolean} returns a boolean value.
 */
-function messageFromChannelValid(channel: Channel, messageId: number, uId: number): any {
+function messageFromChannelValid(channel: internalChannel, messageId: number, uId: number): any {
   const data = getData();
 
   let ownerMember = false;

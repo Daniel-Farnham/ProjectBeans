@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
-import { Channel, dm, Message } from './types';
+import { Channel, dm, internalChannel, Message } from './types';
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required
@@ -161,7 +161,7 @@ export function dmIdExists(dmId: number): boolean {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfChannel(channel: Channel, uId: number): boolean {
+export function isMemberOfChannel(channel: internalChannel, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
   const allMembers = channel.allMembers;

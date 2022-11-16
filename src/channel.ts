@@ -1,18 +1,18 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, User, getUidFromToken, Channel } from './other';
+import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, isOwnerOfChannel, error, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
 import { notificationSetAddChannel } from './notifications';
 import { messageReactedByUser } from './message';
-import { user } from './types';
+import { user, Channel, internalChannel } from './types';
 
 const GLOBAL_OWNER = 1;
 
 type channelDetails = {
   name: string,
   isPublic: boolean,
-  ownerMembers: Array<User>,
-  allMembers: Array<User>,
+  ownerMembers: user[],
+  allMembers: user[],
 };
 
 type messages = { messages: Array<messages> };
@@ -168,7 +168,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
   * @returns {Object} {} - returns error object if fail, false otherwise
 */
 
-function invalidMemberships (channel: Channel, authUserId: number, uId: number): error | boolean {
+function invalidMemberships (channel: internalChannel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
     throw HTTPError(400, 'User to invite already a member of channel');

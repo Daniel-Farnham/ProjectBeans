@@ -117,6 +117,15 @@ export type internalUser = {
   permissionId: permissionId
 }
 export type internalUsers = internalUser[];
+
+export type internalChannel = {
+  channelId: channelId,
+  name: name,
+  ownerMembers: internalUsers,
+  allMembers: internalUsers,
+  messages: Message[],
+  isPublic: isPublic,
+};
 export type internalNotification = {
   uId: uId,
   notifications: notifications[]
