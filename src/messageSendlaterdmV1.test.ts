@@ -284,7 +284,7 @@ describe('Testing messageSendlaterdmV1 error handling', () => {
     const timeSent = Math.floor((new Date()).getTime() / 1000);
     const newMessageId = postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
       dmId: dmId.dmId,
-      message: '',
+      message: longMessage,
       timeSent: timeSent + 1
     }, regId.token);
 
@@ -309,7 +309,7 @@ describe('Testing messageSendlaterdmV1 error handling', () => {
     const newMessageId = postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
       dmId: dmId.dmId,
       message: 'Test',
-      timeSent: timeSent - 1
+      timeSent: timeSent - 10
     }, regId.token);
 
     expect(newMessageId.statusCode).toBe(BAD_REQUEST);
@@ -363,7 +363,7 @@ describe('Testing messageSendlaterdmV1 error handling', () => {
     const timeSent = Math.floor((new Date()).getTime() / 1000);
     const newMessageId = postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
       dmId: dmId.dmId,
-      message: 'timeSent is in the past!',
+      message: 'token test',
       timeSent: timeSent + 1
     }, regId.token + 'NotAToken');
 
