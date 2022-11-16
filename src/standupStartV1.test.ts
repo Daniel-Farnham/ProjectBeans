@@ -28,8 +28,6 @@ describe('Testing positive cases for standupStartV1', () => {
       length: 1,
     }, userId.token);
 
-    console.log(standupStart); 
-
     expect(standupStart).toStrictEqual({ timeFinish: expect.any(Number) });
   });
 

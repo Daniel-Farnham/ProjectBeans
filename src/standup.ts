@@ -9,8 +9,6 @@ export function standupStartV1 (token: string, channelId: number, length: number
     const data = getData();
     const findChannel = data.channels.find(chan => chan.channelId === channelId);
 
-    
-    // might need to convert length to time, length is in seconds. 
     if (!(tokenExists(token))) {
         throw HTTPError(403, 'token is invalid');
     }
@@ -28,40 +26,41 @@ export function standupStartV1 (token: string, channelId: number, length: number
         throw HTTPError(403, 'User is not a member of the channel');
     }
 
-    // this error case is not working. 
     for (const channel of data.channels) {
-        if(channel.channelId === channelId && channel.isActive === true) {
-            throw HTTPError(400, 'Active standup already running in the channel'); 
+        if (channel.channelId === channelId) {
+            for (const standup of channel.standUp) {
+                if (standup.isActive === true) {
+                    throw HTTPError(400, 'Active standup already running in the channel'); 
+                }
+            }
         }
     }
 
     const timeFinish = timeStandup(length); 
-    
     const ActivateStandup = {
         isActive: true,
         timeFinish: timeFinish, 
     };
-    
-    
+
+    const currentTime = Math.floor((new Date()).getTime() / 1000);
+    const StopStandup = {
+        isActive: false,
+        timeFinish: timeFinish, 
+    }
+
     for (const channel of data.channels) {
         if (channel.channelId === channelId) {
-          channel.isActive.push(ActivateStandup);
+            if(currentTime > timeFinish) {
+                channel.standUp.push(StopStandup);
+            }
+            if (currentTime < timeFinish) {
+                channel.standUp.push(ActivateStandup);
+            }
         }
     }
     setData(data);
-    
 
-    console.log(findChannel.isActive); 
     return {timeFinish: timeFinish};
-    
-    /*
-    TO DO LIST 
-        - don't need to call this function 
-        - but I will need a way of saying that this channel has an active standup. 
-        - then once I have that, just check if (standup is active) { throw error }
-        - 
-
-    */
    
 }
 
@@ -73,8 +72,3 @@ function timeStandup (length) {
   
 }
 
-
-
-function isStandUpActive (channelId) {
-
-}

@@ -128,7 +128,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
     ownerMembers: ownerMembers,
     allMembers: allMembers,
     messages: [],
-    isActive: [],
+    standUp: [],
     isPublic: isPublic,
   };
 
