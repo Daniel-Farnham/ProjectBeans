@@ -77,6 +77,13 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channels/create/v3', (req: Request, res: Response, next) => {
+  const { name, isPublic } = req.body;
+  const token = req.header('token');
+  res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
 app.get('/channels/list/v2', (req:Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListV1(token));
@@ -111,6 +118,13 @@ app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
 });
 
 app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelAddOwnerV1(token, channelId, uId));
+  save();
+});
+
+app.post('/channel/addowner/v2', (req:Request, res:Response, next) => {
   const { channelId, uId } = req.body;
   const token = req.header('token');
   res.json(channelAddOwnerV1(token, channelId, uId));
@@ -427,6 +441,13 @@ app.get('/search/v1', (req: Request, res: Response, next) => {
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+
+app.get('/channel/details/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
   save();
 });
 
