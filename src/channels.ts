@@ -1,5 +1,6 @@
-import { tokenExists, isMemberOfChannel, error, getUidFromToken } from './other';
+import { tokenExists, isMemberOfChannel, error, getUidFromToken, FORBIDDEN } from './other';
 import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
 
 // Constants
 const MIN_CHANNEL_LEN = 1;
@@ -57,7 +58,7 @@ function channelsListV1(token: string): channels | error {
 function channelsListAllV1(token: string): channels | error {
   // Case where token is not valid
   if (!tokenExists(token)) {
-    return { error: 'token is invalid' };
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   // Case for when token is valid
