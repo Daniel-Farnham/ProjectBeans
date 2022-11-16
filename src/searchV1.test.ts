@@ -3,7 +3,7 @@ import {
   clearV1, authRegisterV1, channelsCreateV1, messageSendV1, channelJoinV1,
   channelInviteV1, messageSendDmV1, searchV1, dmCreateV1
 } from './wrapperFunctions';
-
+import { messages, message } from './types'
 beforeEach(() => {
   clearV1();
 });
@@ -43,16 +43,19 @@ describe('Testing searchV1 success handling', () => {
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
     const result = searchV1(user1.token, 'something');
     expect(result.messages[0].timeSent).toBeLessThanOrEqual(expectedTimeSent + 3);
-    expect(result).toMatchObject({
-      messages: [{
-        messageId: msg.messageId,
-        uId: user1.authUserId,
-        message: 'This is something!',
-        timeSent: result.messages[0].timeSent,
-        reacts: {},
-        isPinned: false,
-      }]
-    });
+    const expectedResult: messages = [{
+      messageId: msg.messageId,
+      uId: user1.authUserId,
+      message: 'This is something!',
+      timeSent: result.messages[0].timeSent,
+      reacts: [{
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false
+      }],
+      isPinned: false,
+    }];
+    expect(result.messages).toMatchObject(expectedResult);
   });
 
   test('return a two messages from channel and dm', () => {
@@ -88,7 +91,7 @@ describe('Testing searchV1 success handling', () => {
         message = messageContents[1];
       }
       expect(result.messages[i].timeSent).toBeLessThanOrEqual(messagesTimeSent[i] + 3);
-      const expectedMsg = {
+      const expectedMsg= {
         messageId: messages[i].messageId,
         uId: userId,
         message: message,

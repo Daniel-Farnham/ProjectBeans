@@ -34,6 +34,9 @@ export type dmId = number;
 export type dm = {
   dmId: dmId,
   name: name,
+  creator: uId,
+  members: user[],
+  messages: message[],
 };
 export type dms = dm[];
 export type uIds = uId[];

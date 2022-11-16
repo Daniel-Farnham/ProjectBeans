@@ -1,6 +1,7 @@
 import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
+import { dm, dms } from './types';
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required
@@ -285,7 +286,7 @@ export function getMessageContainer(messageId: number): boolean | any {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfDm(dm, uId: number): boolean {
+export function isMemberOfDm(dm: dm, uId: number): boolean {
   // Loop through all members of dm
   // if user is found, then return true
   for (const member of dm.members) {

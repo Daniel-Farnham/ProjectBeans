@@ -7,6 +7,7 @@ import {
 import HTTPError from 'http-errors';
 import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
 import { messageReactedByUser } from './message';
+import { uIds } from './types';
 type dmInfo = {
   dmId: number,
   name: string,
@@ -554,8 +555,8 @@ export function storeMessageInDm(message: Message, dmId: number) {
   setData(data);
 }
 
-function containsDuplicates(array) {
-  if (array.length !== new Set(array).size) {
+function containsDuplicates(uIds: uIds) {
+  if (uIds.length !== new Set(uIds).size) {
     return true;
   }
   return false;

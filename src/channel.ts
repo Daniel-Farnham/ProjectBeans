@@ -4,6 +4,7 @@ import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
 import { notificationSetAddChannel } from './notifications';
 import { messageReactedByUser } from './message';
+import { user } from './types';
 
 const GLOBAL_OWNER = 1;
 
@@ -269,13 +270,16 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
     // Loop through owner members and filter out user
     for (const member of channel.ownerMembers) {
       if (member.uId === authUserId) {
-        channel.ownerMembers = channel.ownerMembers.filter(member => member.uId !== authUserId);
+        channel.ownerMembers = channel.ownerMembers.filter(
+          (member: user): member is user => member.uId !== authUserId);
       }
     }
     // Loop through all members and filter out user
     for (const member of channel.allMembers) {
       if (member.uId === authUserId) {
-        channel.allMembers = channel.allMembers.filter(member => member.uId !== authUserId);
+        channel.allMembers = channel.allMembers.filter(
+          (member: user): member is user => member.uId !== authUserId);
+        
       }
     }
   }
@@ -381,7 +385,8 @@ function channelRemoveOwnerV1(token: string, channelId: number, uId: number): er
   for (const channel of data.channels) {
     for (const ownerMembers of channel.ownerMembers) {
       if (ownerMembers.uId === uId) {
-        channel.ownerMembers = channel.ownerMembers.filter(ownerMembers => ownerMembers.uId !== uId);
+        channel.ownerMembers = channel.ownerMembers.filter(
+          (ownerMembers: user): ownerMembers is user => ownerMembers.uId !== uId);
       }
     }
   }
