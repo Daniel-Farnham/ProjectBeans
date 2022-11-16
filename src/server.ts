@@ -7,7 +7,7 @@ import config from './config.json';
 import cors from 'cors';
 import errorHandler from 'middleware-http-errors';
 import { clearV1 } from './other';
-import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1, authPasswordResetRequestV1 } from './auth';
 import { getData, setData } from './dataStore';
 import {
   channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1,
@@ -500,6 +500,11 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
   res.json(channelDetailsV1(token, channelId));
   save();
 });
+
+app.post('/auth/passwordreset/request/v1', (req: Request, res: Response, next) => {
+  const { email } = req.body;
+  res.json(authPasswordResetRequestV1(email));
+})
 
 // handles errors nicely
 app.use(errorHandler());
