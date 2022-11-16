@@ -1,8 +1,3 @@
-export interface DataStore {
-  users: [];
-  channels: [];
-}
-
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data = {
 

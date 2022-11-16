@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
-import { dm } from './types';
+import { Channel, dm, Message } from './types';
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required
@@ -25,59 +25,6 @@ export type error = { error: string };
 export type httpError = { code: number, error: string };
 export const FORBIDDEN = 403;
 export const BAD_REQUEST = 400;
-
-/**
-  * Specifies the user interface (used for return types)
-*/
-export interface User {
-  uId: number;
-  email: string;
-  nameFirst: string;
-  nameLast: string;
-  handleStr: string;
-}
-/**
-  * Specifies the user interface for user objects which contain all properties
-  * including private properties
-*/
-export interface UserPrivate {
-  uId: number,
-  email: string,
-  nameFirst: string,
-  nameLast: string,
-  handleStr: string,
-  password: string,
-  permissionId: number,
-}
-
-/**
-  * Specifies the message interface (used for return types)
-*/
-export interface Message {
-  messageId: number;
-  uId: number;
-  message: string;
-  timeSent: number;
-}
-
-/**
-  * Specifies the channel interface (used for return types)
-*/
-export interface Channel {
-  channelId: number;
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-  messages: Array<Message>;
-}
-
-export type Messages = {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number
-};
 
 /**
   * Parses the JSON response body into a string

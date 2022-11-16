@@ -3,7 +3,8 @@ import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
-import { notifications } from './types';
+import { notifications, internalNotification } from './types';
+import internal from 'stream';
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
 const GLOBAL_MEMBER = 2;
@@ -13,10 +14,7 @@ const MAX_NAME_LEN = 50;
 export const GLOBAL_SECRET = "YouAren'tGettingIn!";
 
 type authInfo = { token: string, authUserId: number };
-type notificationInfo = {
-  uId: number,
-  notifications: notifications,
-};
+
 /**
   * Will attempt to login to an account with the given email and password,
   * returning an object containing the user's id.
@@ -100,7 +98,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
   data.users.push(user);
 
-  const notification: notificationInfo = {
+  const notification: internalNotification = {
     uId: userId,
     notifications: [],
   };
