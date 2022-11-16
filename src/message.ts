@@ -22,8 +22,10 @@ const GLOBAL_OWNER = 1;
   * ...
   *
   * @returns {messageId} returns an object containing the messageId
+
 */
 export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
+
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }
