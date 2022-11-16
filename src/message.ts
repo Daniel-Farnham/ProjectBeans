@@ -25,7 +25,6 @@ const GLOBAL_OWNER = 1;
 
 */
 export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
-
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }

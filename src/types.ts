@@ -26,7 +26,6 @@ export type permissionId = number;
 export type isThisUserReacted = boolean;
 export type isPinned = boolean;
 export type uIds = uId[];
-
 export type reactId = number;
 
 export type react = {

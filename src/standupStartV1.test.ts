@@ -31,9 +31,7 @@ describe('Testing positive cases for standupStartV1', () => {
   });
 
   test('Testing start standup immediately after the end of a prior standup', () => {
-
-    const length1 = 2;
-    const length2 = 3; 
+    const length = 3;
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -46,32 +44,23 @@ describe('Testing positive cases for standupStartV1', () => {
       isPublic: true,
     }, userId.token);
 
-
     const standupStart = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      length: length1,
+      length: length,
     }, userId.token);
 
-    
     const start = new Date().getTime();
-    const expire = start + length1*1000;
+    const expire = start + length * 1000;
     while (new Date().getTime() < expire) {
-
     }
-    
-    console.log(standupStart);
-    
+
     const standupStartAgain = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      length: length1,
+      length: length,
     }, userId.token);
 
-    console.log(standupStartAgain); 
-    
     expect(standupStartAgain).toStrictEqual({ timeFinish: expect.any(Number) });
-  }); 
-
-  // start a new standup after the length is ended. 
+  });
 });
 
 describe('Testing negative cases for standupStartV1', () => {

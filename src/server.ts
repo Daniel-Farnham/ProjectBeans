@@ -490,20 +490,19 @@ app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   save();
 });
 
-
 app.post('/standup/start/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const { channelId } = req.body;
   const { length } = req.body;
   res.json(standupStartV1(token, channelId, length));
-  save(); 
+  save();
 });
 
 app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
   res.json(adminUserRemoveV1(token, uId));
-  save(); 
+  save();
 });
 
 app.get('/channel/details/v3', (req: Request, res: Response, next) => {
