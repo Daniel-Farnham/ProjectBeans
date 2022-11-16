@@ -1,13 +1,14 @@
 import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
+import { Channel, datastore, dm, internalChannel, internalDm, Message } from './types';
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required
   * @returns {} - returns empty object
 */
 export function clearV1 (): Record<string, never> {
-  const data = {
+  const data: datastore = {
     users: [],
     channels: [],
     sessions: [],
@@ -29,59 +30,6 @@ export type error = { error: string };
 export type httpError = { code: number, error: string };
 export const FORBIDDEN = 403;
 export const BAD_REQUEST = 400;
-
-/**
-  * Specifies the user interface (used for return types)
-*/
-export interface User {
-  uId: number;
-  email: string;
-  nameFirst: string;
-  nameLast: string;
-  handleStr: string;
-}
-/**
-  * Specifies the user interface for user objects which contain all properties
-  * including private properties
-*/
-export interface UserPrivate {
-  uId: number,
-  email: string,
-  nameFirst: string,
-  nameLast: string,
-  handleStr: string,
-  password: string,
-  permissionId: number,
-}
-
-/**
-  * Specifies the message interface (used for return types)
-*/
-export interface Message {
-  messageId: number;
-  uId: number;
-  message: string;
-  timeSent: number;
-}
-
-/**
-  * Specifies the channel interface (used for return types)
-*/
-export interface Channel {
-  channelId: number;
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-  messages: Array<Message>;
-}
-
-export type Messages = {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number
-};
 
 /**
   * Parses the JSON response body into a string
@@ -230,7 +178,7 @@ export function dmIdExists(dmId: number): boolean {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfChannel(channel: Channel, uId: number): boolean {
+export function isMemberOfChannel(channel: internalChannel |Channel, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
   const allMembers = channel.allMembers;
@@ -302,7 +250,7 @@ export function getMessageContainer(messageId: number): boolean | any {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfDm(dm, uId: number): boolean {
+export function isMemberOfDm(dm: internalDm | dm, uId: number): boolean {
   // Loop through all members of dm
   // if user is found, then return true
   for (const member of dm.members) {
@@ -320,7 +268,7 @@ export function isMemberOfDm(dm, uId: number): boolean {
   * @param {number} uId - uId to check
   * @returns {boolean} - true if user is owner, false otherwise
 */
-export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+export function isOwnerOfChannel(channel: internalChannel, uId: number): boolean {
   // Loop through owner members of channel
   // if user is found, then return true
   const ownerMembers = channel.ownerMembers;
@@ -413,28 +361,26 @@ export function getNameFromChannelId(channelId: number) {
   * @param {number} channelId - token to check for channelId
   * @returns {channel} - returns channel object
 */
-export function getChannelObjectFromChannelId(channelId: number) {
+export function getChannelObjectFromChannelId(channelId: number): internalChannel {
   const data = getData();
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       return channel;
     }
   }
-  return false;
 }
 /**
   * Get a dm object from dmId
   * @param {number} dmId - token to check for dmId
   * @returns {dm} - returns dm object
 */
-export function getDmObjectFromDmlId(dmId: number) {
+export function getDmObjectFromDmlId(dmId: number): internalDm {
   const data = getData();
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       return dm;
     }
   }
-  return false;
 }
 /**
   * Get a dm name from dmId

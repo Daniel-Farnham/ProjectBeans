@@ -1,7 +1,7 @@
 import { postRequest, deleteRequest, getRequest, FORBIDDEN } from './other';
 import { port, url } from './config.json';
-
 const SERVER_URL = `${url}:${port}`;
+import { channels } from './types';
 
 beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
@@ -24,23 +24,20 @@ describe('Testing channelsListV1', () => {
       isPublic: false
     }, userId.token);
 
-    const expectedChannels =
-    {
-      channels: [
-        {
-          channelId: channelId1.channelId,
-          name: 'General',
-        },
-        {
-          channelId: channelId2.channelId,
-          name: 'Boost',
-        },
-      ]
-    };
+    const expectedChannels: channels = [
+      {
+        channelId: channelId1.channelId,
+        name: 'General',
+      },
+      {
+        channelId: channelId2.channelId,
+        name: 'Boost',
+      },
+    ];
 
     const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
-    expect(resultChannels).toMatchObject(expectedChannels);
+    expect(resultChannels).toMatchObject({ channels: expectedChannels });
   });
 
   test('Testing invalid authUserId', () => {
@@ -66,14 +63,11 @@ describe('Testing channelsListV1', () => {
       nameLast: 'Ngo'
     });
 
-    const expectedChannels =
-    {
-      channels: []
-    };
+    const expectedChannels: channels = [];
 
     const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
-    expect(resultChannels).toMatchObject(expectedChannels);
+    expect(resultChannels).toMatchObject({ channels: expectedChannels });
   });
 
   test('Testing single channel', () => {
@@ -88,19 +82,16 @@ describe('Testing channelsListV1', () => {
       isPublic: true
     }, userId.token);
 
-    const expectedChannels =
-    {
-      channels: [
-        {
-          channelId: channelId1.channelId,
-          name: 'General',
-        }
-      ]
-    };
+    const expectedChannels: channels = [
+      {
+        channelId: channelId1.channelId,
+        name: 'General',
+      }
+    ];
 
     const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
-    expect(resultChannels).toMatchObject(expectedChannels);
+    expect(resultChannels).toMatchObject({ channels: expectedChannels });
   });
 
   test('Testing many channels', () => {
@@ -131,34 +122,31 @@ describe('Testing channelsListV1', () => {
       isPublic: false
     }, userId.token);
 
-    const expectedChannels =
-    {
-      channels: [
-        {
-          channelId: channelId1.channelId,
-          name: 'General',
-        },
-        {
-          channelId: channelId2.channelId,
-          name: 'Terrys HELP Room',
-        },
-        {
-          channelId: channelId3.channelId,
-          name: 'Boost',
-        },
-        {
-          channelId: channelId4.channelId,
-          name: 'Aero',
-        },
-        {
-          channelId: channelId5.channelId,
-          name: 'Egg',
-        },
-      ]
-    };
+    const expectedChannels: channels = [
+      {
+        channelId: channelId1.channelId,
+        name: 'General',
+      },
+      {
+        channelId: channelId2.channelId,
+        name: 'Terrys HELP Room',
+      },
+      {
+        channelId: channelId3.channelId,
+        name: 'Boost',
+      },
+      {
+        channelId: channelId4.channelId,
+        name: 'Aero',
+      },
+      {
+        channelId: channelId5.channelId,
+        name: 'Egg',
+      },
+    ];
 
     const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
-    expect(resultChannels).toMatchObject(expectedChannels);
+    expect(resultChannels).toMatchObject({ channels: expectedChannels });
   });
 });
