@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest, getRequest } from './other';
+import { postRequest, deleteRequest, getRequest, FORBIDDEN } from './other';
 import { port, url } from './config.json';
 
 const SERVER_URL = `${url}:${port}`;
@@ -38,7 +38,7 @@ describe('Testing channelsListV1', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -51,9 +51,11 @@ describe('Testing channelsListV1', () => {
       nameLast: 'Ngo'
     });
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token + 1);
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token + 1);
 
-    expect(resultChannels).toStrictEqual({ error: expect.any(String) });
+    expect(resultChannels.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(resultChannels.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
   test('Testing no channels', () => {
@@ -69,7 +71,7 @@ describe('Testing channelsListV1', () => {
       channels: []
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -96,7 +98,7 @@ describe('Testing channelsListV1', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -155,7 +157,7 @@ describe('Testing channelsListV1', () => {
       ]
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/list/v2', {}, userId.token);
+    const resultChannels = getRequest(SERVER_URL + '/channels/list/v3', {}, userId.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });

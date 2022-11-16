@@ -25,7 +25,7 @@ type channels = { channels: Array<channelSummary> };
 function channelsListV1(token: string): channels | error {
   // Check if token exists
   if (!(tokenExists(token))) {
-    return { error: 'token is invalid' };
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   const data = getData();
@@ -58,7 +58,7 @@ function channelsListV1(token: string): channels | error {
 function channelsListAllV1(token: string): channels | error {
   // Case where token is not valid
   if (!tokenExists(token)) {
-    return { error: 'token is invalid' };
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   // Case for when token is valid
