@@ -92,6 +92,34 @@ export type dms = dmOutput[];
 
 export type notifications = notification[];
 
+// Used for messageSendDmV1 and messageSendV1
+export type messageIdReturnedObject = { messageId: messageId }
+export type messagesReturnObject = { messages: messages };
+
+// Used for dmDetailsV1
+export type dmDetailsOuput = {
+  name: name,
+  members: users
+};
+
+// Used for dmListV1
+export type dmListInfo = {
+  dmId: number,
+  name: string
+};
+
+export type dmListOutput = {
+  dms: dmListInfo[],
+};
+
+export type dm = {
+  dmId: dmId,
+  name: name,
+  creator: uId,
+  members: user[],
+  messages: Message[],
+};
+
 // Internal representations of objects in datastore
 
 export type internalUser = {
@@ -145,32 +173,4 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
-};
-
-// Used for messageSendDmV1 and messageSendV1
-export type messageIdReturnedObject = { messageId: messageId }
-export type messagesReturnObject = { messages: messages };
-
-// Used for dmDetailsV1
-export type dmDetailsOuput = {
-  name: name,
-  members: users
-};
-
-// Used for dmListV1
-export type dmListInfo = {
-  dmId: number,
-  name: string
-};
-
-export type dmListOutput = {
-  dms: dmListInfo[],
-};
-
-export type dm = {
-  dmId: dmId,
-  name: name,
-  creator: uId,
-  members: user[],
-  messages: Message[],
 };
