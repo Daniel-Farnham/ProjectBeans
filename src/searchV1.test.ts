@@ -3,7 +3,7 @@ import {
   clearV1, authRegisterV1, channelsCreateV1, messageSendV1, channelJoinV1,
   channelInviteV1, messageSendDmV1, searchV1, dmCreateV1
 } from './wrapperFunctions';
-import { messages, message } from './types'
+import { messages, Message } from './types';
 beforeEach(() => {
   clearV1();
 });
@@ -91,7 +91,7 @@ describe('Testing searchV1 success handling', () => {
         message = messageContents[1];
       }
       expect(result.messages[i].timeSent).toBeLessThanOrEqual(messagesTimeSent[i] + 3);
-      const expectedMsg= {
+      const expectedMsg: Message = {
         messageId: messages[i].messageId,
         uId: userId,
         message: message,
@@ -132,7 +132,7 @@ describe('Testing searchV1 success handling', () => {
     // Loop through array and check for dms
     for (let i = 0; i <= 15; i++) {
       expect(result.messages[i].timeSent).toBeLessThanOrEqual(messagesTimeSent[i] + 3);
-      const expectedMsg = {
+      const expectedMsg: Message = {
         messageId: messages[i].messageId,
         uId: user2.authUserId,
         message: 'This is something!',
@@ -165,7 +165,7 @@ describe('Testing searchV1 success handling', () => {
     let j = 20;
     for (let i = 0; i <= 5; i++) {
       expect(result.messages[i].timeSent).toBeLessThanOrEqual(messagesTimeSent[j] + 3);
-      const expectedMsg = {
+      const expectedMsg: Message = {
         messageId: messages[j].messageId,
         uId: user1.authUserId,
         message: 'Anythhing goes',

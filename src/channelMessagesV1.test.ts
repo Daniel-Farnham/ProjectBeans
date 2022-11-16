@@ -174,7 +174,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       start: 1
     }, newId.token);
 
-    const messagesObj: messagesOutput= {
+    const messagesObj: messagesOutput = {
       messages: [
         {
           messageId: thirdMsg.messageId,

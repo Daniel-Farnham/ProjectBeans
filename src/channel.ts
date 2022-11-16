@@ -279,7 +279,6 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
       if (member.uId === authUserId) {
         channel.allMembers = channel.allMembers.filter(
           (member: user): member is user => member.uId !== authUserId);
-        
       }
     }
   }

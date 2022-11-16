@@ -2,7 +2,6 @@ import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from '
 import { port, url } from './config.json';
 import { messagesOutput } from './types';
 
-
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
