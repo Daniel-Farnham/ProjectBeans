@@ -4,16 +4,9 @@ import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
 import { notificationSetAddChannel } from './notifications';
 import { messageReactedByUser } from './message';
-import { user, messagesOutput, internalChannel } from './types';
+import { user, messagesOutput, internalChannel, channelDetails } from './types';
 
 const GLOBAL_OWNER = 1;
-
-type channelDetails = {
-  name: string,
-  isPublic: boolean,
-  ownerMembers: user[],
-  allMembers: user[],
-};
 
 // type messages = { messages: Array<messages> };
 

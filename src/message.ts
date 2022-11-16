@@ -7,7 +7,7 @@ import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { dm, internalChannel, messages, messageIdReturnedObject, messagesReturnObject, Message } from './types';
+import { dm, internalChannel, messages, messageIdReturnedObject, messagesReturnObject, Message, messageId } from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -483,7 +483,7 @@ function messageShareErrorChecking(token: string, ogMessageId: number, message: 
     }
   }
 }
-function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string) {
+function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string): messageId {
   // Create message
   const messageId = getMessageId();
   const timeSent = Math.floor((new Date()).getTime() / 1000);

@@ -120,6 +120,12 @@ export type dm = {
   messages: Message[],
 };
 
+export type channelDetails = {
+  name: string,
+  isPublic: boolean,
+  ownerMembers: user[],
+  allMembers: user[],
+};
 // Internal representations of objects in datastore
 
 export type internalUser = {
@@ -173,4 +179,10 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+};
+
+export type messageContainerType = {
+  type: string,
+  dm?: internalDm,
+  channel?: internalChannel
 };

@@ -161,7 +161,7 @@ export function dmIdExists(dmId: number): boolean {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfChannel(channel: internalChannel | Channel, uId: number): boolean {
+export function isMemberOfChannel(channel: internalChannel |Channel, uId: number): boolean {
   // Loop through all members of channel
   // if user is found, then return true
   const allMembers = channel.allMembers;
@@ -344,28 +344,26 @@ export function getNameFromChannelId(channelId: number) {
   * @param {number} channelId - token to check for channelId
   * @returns {channel} - returns channel object
 */
-export function getChannelObjectFromChannelId(channelId: number) {
+export function getChannelObjectFromChannelId(channelId: number): internalChannel {
   const data = getData();
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       return channel;
     }
   }
-  return false;
 }
 /**
   * Get a dm object from dmId
   * @param {number} dmId - token to check for dmId
   * @returns {dm} - returns dm object
 */
-export function getDmObjectFromDmlId(dmId: number) {
+export function getDmObjectFromDmlId(dmId: number): internalDm {
   const data = getData();
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       return dm;
     }
   }
-  return false;
 }
 /**
   * Get a dm name from dmId
