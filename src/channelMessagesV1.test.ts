@@ -1,6 +1,7 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
-import { channelMessages} from './types';
+import { messagesOutput } from './types';
+
 const SERVER_URL = `${url}:${port}`;
 const FORBIDDEN = 403;
 const BAD_REQUEST = 400;
@@ -9,8 +10,8 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing basic functionality for channelMessagesV1', () => {
-  test('Testing channelMessagesV1 returns the correct types', () => {
+describe('Testing basic functionality for messagesOutputV1', () => {
+  test('Testing messagesOutputV1 returns the correct types', () => {
     const newId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
@@ -23,7 +24,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       isPublic: false,
     }, newId.token);
 
-    const messages: channelMessages = getRequest(SERVER_URL + '/channel/messages/v3', {
+    const messages: messagesOutput = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, newId.token);
@@ -53,7 +54,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 0,
     }, newId.token);
 
-    const messagesObj: channelMessages = {
+    const messagesObj: messagesOutput = {
       messages: [],
       start: 0,
       end: -1
@@ -95,7 +96,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 0,
     }, newId.token);
 
-    const messagesObj: channelMessages = {
+    const messagesObj: messagesOutput = {
       messages: [
         {
           messageId: thirdMsg.messageId,
@@ -173,7 +174,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 1
     }, newId.token);
 
-    const messagesObj: channelMessages= {
+    const messagesObj: messagesOutput= {
       messages: [
         {
           messageId: thirdMsg.messageId,
@@ -227,7 +228,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       }, newId.token);
     }
 
-    const messages: channelMessages = getRequest(SERVER_URL + '/channel/messages/v3', {
+    const messages: messagesOutput = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0
     }, newId.token);
@@ -256,7 +257,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       }, newId.token);
     }
 
-    const messages: channelMessages = getRequest(SERVER_URL + '/channel/messages/v3', {
+    const messages: messagesOutput = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 1
     }, newId.token);
@@ -266,7 +267,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
   });
 });
 
-describe('Testing channelMessagesV1 error handling', () => {
+describe('Testing messagesOutputV1 error handling', () => {
   test.each([
     {
       name: 'General',

@@ -1,5 +1,8 @@
 import { getRequest, postRequest, deleteRequest, FORBIDDEN, BAD_REQUEST } from './other';
 import { port, url } from './config.json';
+import { messagesOutput } from './types';
+
+
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
@@ -48,7 +51,7 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       start: 0,
     }, newId.token);
 
-    const messagesObj = {
+    const messagesObj: messagesOutput = {
       messages: [],
       start: 0,
       end: -1
@@ -89,25 +92,43 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       start: 0,
     }, newId.token);
 
-    const messagesObj = {
+    const messagesObj: messagesOutput = {
       messages: [
         {
           messageId: thirdMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 3',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
         {
           messageId: secondMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 2',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
         {
           messageId: firstMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 1',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         }
       ],
       start: 0,
@@ -149,19 +170,31 @@ describe('Testing basic functionality for dmMessagesV1', () => {
       start: 1,
     }, newId.token);
 
-    const messagesObj = {
+    const messagesObj: messagesOutput = {
       messages: [
         {
           messageId: thirdMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 3',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
         {
           messageId: secondMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 2',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         }
       ],
       start: 1,

@@ -49,7 +49,8 @@ export type dm = {
 };
 export type dms = dm[];
 export type uIds = uId[];
-export type channelMessages = {
+
+export type messagesOutput = {
   messages: Message[],
   start: start,
   end: end,
