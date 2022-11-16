@@ -55,7 +55,7 @@ export function channelJoinV1 (token: string, channelId: number) {
   }, token);
 }
 export function channelLeaveV1 (token: string, channelId: number) {
-  return postRequest(SERVER_URL + '/channel/leave/v1', {
+  return postRequest(SERVER_URL + '/channel/leave/v2', {
     channelId: channelId
   }, token);
 }
@@ -88,7 +88,13 @@ export function messageRemoveV1(token: string, messageId: number) {
 export function searchV1 (token: string, queryStr: string) {
   return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
 }
-
+export function userProfileV1 (token: string, uId: number) {
+  return getRequest(SERVER_URL + '/user/profile/v3', { uId }, token);
+}
+export function userProfileUploadPhotoV1 (token: string, imgUrl: string, xStart: number,
+  yStart: number, xEnd: number, yEnd: number) {
+  return postRequest(SERVER_URL + '/user/profile/uploadphoto/v1', { imgUrl, xStart, yStart, xEnd, yEnd }, token);
+}
 export function messageShareV1(token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
   return postRequest(SERVER_URL + '/message/share/v1', {
     ogMessageId: ogMessageId,
