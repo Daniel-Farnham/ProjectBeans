@@ -465,30 +465,15 @@ export function usersStatsV1 (token: string) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
-  // Make first registered user initialise timestamps to 0 --- DONE BUT CHECK IF TIMESTAMP SHOULD BE 0 OR NOT
-
-  // numMsgs
-  // increase with messageSend      ---
-  // increase with messageSendDm    ---
-  // decrease with messageRemove    ---
-  // decrease with dmRemove         ---
-  // increase when standup/send messages are finally packaged and sent
-
-  // numChannels
-  // increase with channelsCreate   ---
-
-  // numDms
-  // increase with dmCreate
-  // decreases with dmRemove        ---
-
-  // calculate utilizationRate
-  // numOfUsersWhoHaveJoinedAtLeastOneChannel / numUsers
-
   const data = getData();
 
+  // Calculate the number of users that exist, and how many of them are in at
+  // least one channel or dm
   const numUsersInChannelOrDm = findNumUsersInChannelOrDm();
   const numUsers = data.users.length;
 
+  // Collect the timestamped analytics for channels, dms and messages then
+  // calculate the utilization rate of the workspace
   const stats = {
     channelsExist: data.workspaceStats.channelsExist,
     dmsExist: data.workspaceStats.dmsExist,
