@@ -79,14 +79,16 @@ describe('Testing channelAddOwnerV1', () => {
         email: 'edwin.ngo@ad.unsw.edu.au',
         nameFirst: 'Edwin',
         nameLast: 'Ngo',
-        handleStr: 'edwinngo'
+        handleStr: 'edwinngo',
+        profileImgUrl: channelDetails.ownerMembers[0].profileImgUrl,
       },
       {
         uId: userId2.authUserId,
         email: 'john.smith@ad.unsw.edu.au',
         nameFirst: 'John',
         nameLast: 'Smith',
-        handleStr: 'johnsmith'
+        handleStr: 'johnsmith',
+        profileImgUrl: channelDetails.ownerMembers[1].profileImgUrl,
       }
     ]);
 

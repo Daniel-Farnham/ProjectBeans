@@ -32,6 +32,7 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
         nameFirst: 'Removed',
         nameLast: 'user',
         handleStr: expect.any(String),
+        profileImgUrl: expect.any(String),
       }
     };
 

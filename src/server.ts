@@ -1,6 +1,7 @@
 import express, { json, Request, Response } from 'express';
 import { echo } from './echo';
 import fs from 'fs';
+import request from 'sync-request';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
@@ -13,7 +14,10 @@ import {
   channelAddOwnerV1, channelLeaveV1, channelRemoveOwnerV1
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
-import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1 } from './users';
+import {
+  userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1
+} from './users';
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
@@ -238,6 +242,13 @@ app.put('/user/profile/sethandle/v2', (req: Request, res: Response, next) => {
 app.get('/users/all/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
+  save();
+});
+
+app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+  res.json(userProfileUploadPhotoV1(token, imgUrl, xStart, yStart, xEnd, yEnd));
   save();
 });
 
@@ -495,6 +506,17 @@ app.use(errorHandler());
 
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
+
+// Serving files within static folder
+app.use('/static', express.static('static'));
+if (!fs.existsSync('static')) {
+  fs.mkdirSync('static');
+}
+// Set up default photo
+const DEFAULT_PHOTO = 'http://cdn.comedy.co.uk/images/library/people/180x200/t/the_it_crowd_moss.jpg';
+const response = request('GET', DEFAULT_PHOTO);
+const responseBody = response.getBody();
+fs.writeFileSync('static/defaultpic.jpg', responseBody, { flag: 'w' });
 
 // start server
 const server = app.listen(PORT, HOST, () => {
