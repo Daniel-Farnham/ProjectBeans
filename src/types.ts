@@ -127,13 +127,14 @@ export type channelDetails = {
   allMembers: user[],
 };
 // Internal representations of objects in datastore
-
+export type profileImgUrl = string;
 export type internalUser = {
   uId: uId,
   email: email,
   nameFirst: nameFirst,
   nameLast: nameLast,
   handleStr: handleStr,
+  profileImgUrl: profileImgUrl,
   password: password,
   permissionId: permissionId
 }

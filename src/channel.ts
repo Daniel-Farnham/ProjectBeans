@@ -1,5 +1,7 @@
-import { tokenExists, userIdExists, channelIdExists, isMemberOfChannel, 
-  isOwnerOfChannel, error, getUidFromToken, FORBIDDEN, BAD_REQUEST } from './other';
+import {
+  tokenExists, userIdExists, channelIdExists, isMemberOfChannel,
+  isOwnerOfChannel, error, getUidFromToken, FORBIDDEN, BAD_REQUEST
+} from './other';
 import { getData, setData } from './dataStore';
 import { userProfileV1 } from './users';
 import HTTPError from 'http-errors';
