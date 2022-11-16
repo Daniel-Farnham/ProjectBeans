@@ -1,6 +1,6 @@
 import { tokenExists, isMemberOfChannel, error, getUidFromToken } from './other';
 import { getData, setData } from './dataStore';
-import { Channel } from './types';
+import { internalChannel } from './types';
 // Constants
 const MIN_CHANNEL_LEN = 1;
 const MAX_CHANNEL_LEN = 20;
@@ -122,7 +122,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
   }
 
   const channelId = data.channels.length;
-  const channelObj: Channel = {
+  const channelObj: internalChannel = {
     channelId: channelId,
     name: name,
     ownerMembers: ownerMembers,

@@ -122,11 +122,18 @@ export type internalUsers = internalUser[];
 export type internalChannel = {
   channelId: channelId,
   name: name,
-  ownerMembers: internalUsers,
-  allMembers: internalUsers,
-  messages: Message[],
+  ownerMembers: users,
+  allMembers: users,
+  messages: messages,
   isPublic: isPublic,
 };
+
+export type session = {
+  uId: uId,
+  tokens: string[]
+};
+export type sessions = session[];
+
 export type internalChannels = internalChannel[];
 
 export type internalNotification = {
@@ -135,3 +142,21 @@ export type internalNotification = {
 };
 
 export type internalNotifications = internalNotification[];
+export type internalDm = {
+  dmId: dmId,
+  name: name,
+  creator: uId,
+  members: internalUsers,
+  messages: messages,
+};
+export type internalDms = internalDm[];
+
+export type datastore = {
+  users: internalUsers,
+  channels: internalChannels,
+  sessions: sessions,
+  messageCount: number,
+  tokenCount: number,
+  dms: internalDms,
+  notifications: internalNotifications,
+};

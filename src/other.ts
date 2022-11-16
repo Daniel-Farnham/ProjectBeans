@@ -1,14 +1,15 @@
 import { getData, setData } from './dataStore';
 import { getHashOf, GLOBAL_SECRET } from './auth';
 import request from 'sync-request';
-import { Channel, dm, internalChannel, Message } from './types';
+import { Channel, datastore, dm, internalChannel, internalDm, Message } from './types';
+import internal from 'stream';
 /**
   * Function to clear the data store object
   * @param {}  - no parameters required
   * @returns {} - returns empty object
 */
 export function clearV1 (): Record<string, never> {
-  const data = {
+  const data: datastore = {
     users: [],
     channels: [],
     sessions: [],
@@ -233,7 +234,7 @@ export function getMessageContainer(messageId: number): boolean | any {
   *
   * @returns {boolean} - true if user is member, false otherwise
 */
-export function isMemberOfDm(dm: dm, uId: number): boolean {
+export function isMemberOfDm(dm: internalDm, uId: number): boolean {
   // Loop through all members of dm
   // if user is found, then return true
   for (const member of dm.members) {
@@ -251,7 +252,7 @@ export function isMemberOfDm(dm: dm, uId: number): boolean {
   * @param {number} uId - uId to check
   * @returns {boolean} - true if user is owner, false otherwise
 */
-export function isOwnerOfChannel(channel: Channel, uId: number): boolean {
+export function isOwnerOfChannel(channel: internalChannel, uId: number): boolean {
   // Loop through owner members of channel
   // if user is found, then return true
   const ownerMembers = channel.ownerMembers;

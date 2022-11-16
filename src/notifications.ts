@@ -12,8 +12,6 @@ export interface Notification {
   notificationMessage: string;
 }
 
-export type notifications = Array<Notification>;
-
 /**
   * Returns user object if a valid user is found
   *

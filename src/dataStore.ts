@@ -1,5 +1,7 @@
+import { datastore } from "./types";
+
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {
+let data: datastore = {
 
   users: [],
   channels: [],
