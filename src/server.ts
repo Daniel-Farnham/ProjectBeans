@@ -129,6 +129,13 @@ app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   save();
 });
 
+app.post('/channel/addowner/v2', (req:Request, res:Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelAddOwnerV1(token, channelId, uId));
+  save();
+});
+
 app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
   const { channelId, uId } = req.body;
   const token = req.header('token');
@@ -453,6 +460,13 @@ app.post('/message/share/v1', (req: Request, res: Response, next) => {
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+
+app.get('/channel/details/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
   save();
 });
 
