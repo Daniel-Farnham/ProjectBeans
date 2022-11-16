@@ -407,7 +407,6 @@ function decrementMessageAnalytics() {
   setData(data);
 }
 
-
 /**
   * Searches messages in dms/channels that user is a part of and returns
   * messages that match the query string

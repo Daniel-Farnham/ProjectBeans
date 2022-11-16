@@ -145,7 +145,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
 /**
   * Update the workplace analytics for newly created channel
   */
- function updateChannelAnalytics() {
+function updateChannelAnalytics() {
   const data = getData();
   const index = data.workspaceStats.channelsExist.length;
   const numChannels = data.workspaceStats.channelsExist[index - 1].numChannelsExist;

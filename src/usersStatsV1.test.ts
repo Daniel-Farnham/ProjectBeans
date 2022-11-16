@@ -53,8 +53,6 @@ describe('Testing basic usersStatsV1 functionality', () => {
     const stats = getRequest(SERVER_URL + '/users/stats/v1', {
     }, regId.token);
 
-    console.log(stats);
-
     const expectedStats = {
       channelsExist: [
         { numChannelsExist: 0, timeStamp: expect.any(Number) },
@@ -133,7 +131,8 @@ describe('Testing basic usersStatsV1 functionality', () => {
         { numMessagesExist: 0, timeStamp: expect.any(Number) },
         { numMessagesExist: 1, timeStamp: expect.any(Number) },
         { numMessagesExist: 0, timeStamp: expect.any(Number) },
-        { numMessagesExist: 1, timeStamp: expect.any(Number) }
+        { numMessagesExist: 1, timeStamp: expect.any(Number) },
+        { numMessagesExist: 0, timeStamp: expect.any(Number) }
       ],
       utilizationRate: 0.5
     };
