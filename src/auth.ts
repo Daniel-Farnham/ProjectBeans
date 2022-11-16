@@ -3,6 +3,8 @@ import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -91,6 +93,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
+    profileImgUrl: SERVER_URL + '/static/defaultpic.jpg',
     password: getHashOf(password),
     permissionId: permissionId
   };
