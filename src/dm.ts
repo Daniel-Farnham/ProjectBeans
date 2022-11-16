@@ -7,13 +7,7 @@ import {
 import HTTPError from 'http-errors';
 import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
 import { messageReactedByUser } from './message';
-import { uIds } from './types';
-type dmInfo = {
-  dmId: number,
-  name: string,
-  creator: number,
-  members: Array<number>
-};
+import { uIds, dm } from './types';
 
 type dmListInfo = {
   dmId: number,
@@ -431,7 +425,7 @@ function dmInfoInvalid(token: string, uIds: Array<number>): httpError | boolean 
   * @returns {{error: string}} - An error message if token/uIds is invalid
   * @returns {boolean} - False if the given info isn't invalid
   */
-function constructDm(token: string, uIds: Array<number>): dmInfo {
+function constructDm(token: string, uIds: uIds): dm {
   // Find the handle strings of all users in the dm and sort them alphabetically
   const data = getData();
   const handles = [];
@@ -475,7 +469,7 @@ function constructDm(token: string, uIds: Array<number>): dmInfo {
 
   // Construct the dm object
   data.messageCount += 1;
-  const dm = {
+  const dm: dm = {
     dmId: data.messageCount,
     name: name,
     creator: creatorId,
