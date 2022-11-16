@@ -3,6 +3,7 @@ export type email =  string;
 export type password =  string;
 export type message =  string;
 export type start =  number;
+export type end =  number;
 export type name =  string;
 export type is =  boolean
 export type uId = number;
@@ -40,6 +41,11 @@ export type dm = {
 };
 export type dms = dm[];
 export type uIds = uId[];
+export type channelMessages = {
+  messages: Message[],
+  start: start,
+  end: end,
+};
 
 // Iteration 3 Types
 export type reactId = number;

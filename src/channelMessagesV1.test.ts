@@ -1,5 +1,6 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
+import { channelMessages} from './types';
 const SERVER_URL = `${url}:${port}`;
 const FORBIDDEN = 403;
 const BAD_REQUEST = 400;
@@ -22,7 +23,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       isPublic: false,
     }, newId.token);
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
+    const messages: channelMessages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0,
     }, newId.token);
@@ -52,7 +53,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 0,
     }, newId.token);
 
-    const messagesObj = {
+    const messagesObj: channelMessages = {
       messages: [],
       start: 0,
       end: -1
@@ -94,25 +95,43 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 0,
     }, newId.token);
 
-    const messagesObj = {
+    const messagesObj: channelMessages = {
       messages: [
         {
           messageId: thirdMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 3',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
         {
           messageId: secondMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 2',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
         {
           messageId: firstMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 1',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         }
       ],
       start: 0,
@@ -154,19 +173,31 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       start: 1
     }, newId.token);
 
-    const messagesObj = {
+    const messagesObj: channelMessages= {
       messages: [
         {
           messageId: thirdMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 3',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
         {
           messageId: secondMsg.messageId,
           uId: newId.authUserId,
           message: 'Testing 2',
-          timeSent: expect.any(Number)
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         }
       ],
       start: 1,
@@ -196,7 +227,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       }, newId.token);
     }
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
+    const messages: channelMessages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 0
     }, newId.token);
@@ -225,7 +256,7 @@ describe('Testing basic functionality for channelMessagesV1', () => {
       }, newId.token);
     }
 
-    const messages = getRequest(SERVER_URL + '/channel/messages/v3', {
+    const messages: channelMessages = getRequest(SERVER_URL + '/channel/messages/v3', {
       channelId: channel.channelId,
       start: 1
     }, newId.token);
