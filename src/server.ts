@@ -18,8 +18,8 @@ import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
   userProfileV1, usersAllV1, userProfileUploadPhotoV1
 } from './users';
-import { 
-  messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 ,
+import {
+  messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
   messageSendlaterV1
 } from './message';
 import { notificationsGetV1 } from './notifications';

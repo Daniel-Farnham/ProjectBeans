@@ -1,7 +1,7 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
-  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, sleep
+  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError
 } from './other';
 import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
@@ -712,7 +712,7 @@ export function messageSendlaterV1(token: string, channelId: number, message: st
 
   // Make the message send at the given time, and return what the messageId will be
   setTimeout(function() {
-    messageSendV1(token, channelId, message)
+    messageSendV1(token, channelId, message);
   }, (timeSent - currentTime) * 1000);
 
   const data = getData();

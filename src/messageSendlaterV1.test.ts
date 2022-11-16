@@ -59,7 +59,7 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
       channelId: channel.channelId,
       start: 0,
     }, regId.token);
-    
+
     const expectedMessages = [
       {
         messageId: newMessageId.messageId,
