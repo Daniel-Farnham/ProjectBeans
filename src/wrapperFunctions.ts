@@ -13,7 +13,7 @@ export function authRegisterV1(email: string, password: string, nameFirst: strin
     nameLast: nameLast,
   });
 }
-export function dmCreateV1(token: string, uIds: [any]) {
+export function dmCreateV1(token: string, uIds: any[]) {
   return postRequest(SERVER_URL + '/dm/create/v1', {
     uIds: uIds,
   }, token);
@@ -55,7 +55,7 @@ export function channelJoinV1 (token: string, channelId: number) {
   }, token);
 }
 export function channelLeaveV1 (token: string, channelId: number) {
-  return postRequest(SERVER_URL + '/channel/leave/v1', {
+  return postRequest(SERVER_URL + '/channel/leave/v2', {
     channelId: channelId
   }, token);
 }
@@ -81,4 +81,19 @@ export function notificationsGetV1(token: string) {
 }
 export function messageReactV1 (token: string, messageId: number, reactId: number) {
   return postRequest(SERVER_URL + '/message/react/v1', { messageId, reactId }, token);
+}
+export function messageRemoveV1(token: string, messageId: number) {
+  return deleteRequest(SERVER_URL + '/message/remove/v2', { messageId }, token);
+}
+export function searchV1 (token: string, queryStr: string) {
+  return getRequest(SERVER_URL + '/search/v1', { queryStr }, token);
+}
+
+export function messageShareV1(token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+  return postRequest(SERVER_URL + '/message/share/v1', {
+    ogMessageId: ogMessageId,
+    message: message,
+    channelId: channelId,
+    dmId: dmId,
+  }, token);
 }

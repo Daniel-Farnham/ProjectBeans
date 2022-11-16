@@ -14,7 +14,7 @@ import {
 } from './channel';
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import { userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, usersAllV1 } from './users';
-import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1 } from './message';
+import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 import { adminUserRemoveV1 } from './admin';
@@ -78,13 +78,32 @@ app.post('/channels/create/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/channels/create/v3', (req: Request, res: Response, next) => {
+  const { name, isPublic } = req.body;
+  const token = req.header('token');
+  res.json(channelsCreateV1(token, name, isPublic));
+  save();
+});
+
 app.get('/channels/list/v2', (req:Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListV1(token));
   save();
 });
 
+app.get('/channels/list/v3', (req:Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(channelsListV1(token));
+  save();
+});
+
 app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(channelsListAllV1(token));
+  save();
+});
+
+app.get('/channels/listAll/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListAllV1(token));
   save();
@@ -110,6 +129,12 @@ app.post('/channel/leave/v1', (req:Request, res: Response, next) => {
   res.json(channelLeaveV1(token, channelId));
   save();
 });
+app.post('/channel/leave/v2', (req:Request, res: Response, next) => {
+  const { channelId } = req.body;
+  const token = req.header('token');
+  res.json(channelLeaveV1(token, channelId));
+  save();
+});
 
 app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   const { channelId, uId } = req.body;
@@ -118,7 +143,21 @@ app.post('/channel/addowner/v1', (req:Request, res:Response, next) => {
   save();
 });
 
+app.post('/channel/addowner/v2', (req:Request, res:Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelAddOwnerV1(token, channelId, uId));
+  save();
+});
+
 app.post('/channel/removeowner/v1', (req:Request, res: Response, next) => {
+  const { channelId, uId } = req.body;
+  const token = req.header('token');
+  res.json(channelRemoveOwnerV1(token, channelId, uId));
+  save();
+});
+
+app.post('/channel/removeowner/v2', (req:Request, res: Response, next) => {
   const { channelId, uId } = req.body;
   const token = req.header('token');
   res.json(channelRemoveOwnerV1(token, channelId, uId));
@@ -418,6 +457,19 @@ app.get('/notifications/get/v1', (req: Request, res: Response, next) => {
   res.json(notificationsGetV1(token));
   save();
 });
+app.get('/search/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const queryStr = req.query.queryStr as string;
+  res.json(searchV1(token, queryStr));
+  save();
+});
+
+app.post('/message/share/v1', (req: Request, res: Response, next) => {
+  const { ogMessageId, message, channelId, dmId } = req.body;
+  const token = req.header('token');
+  res.json(messageShareV1(token, ogMessageId, message, channelId, dmId));
+  save();
+});
 
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
@@ -429,6 +481,12 @@ app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
   res.json(adminUserRemoveV1(token, uId));
+}); 
+  
+app.get('/channel/details/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(channelDetailsV1(token, channelId));
   save();
 });
 
