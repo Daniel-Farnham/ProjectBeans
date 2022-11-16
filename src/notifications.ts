@@ -3,6 +3,7 @@ import {
   tokenExists, FORBIDDEN, getUidFromToken, getHandleFromUid,
   getNameFromChannelId, getNameFromDmId
 } from './other';
+import { Message } from './types';
 import HTTPError from 'http-errors';
 
 export interface Notification {
@@ -85,7 +86,7 @@ export function notificationSetAddDm(dmId: number, uId: number, uIds: any[]) {
   setNotificationForEachUser(uIds, notificationMsg);
 }
 
-export function notificationSetReact(message, uId: number, channelId: number, dmId: number, type: string) {
+export function notificationSetReact(message: Message, uId: number, channelId: number, dmId: number, type: string) {
   const reactorHandle = getHandleFromUid(uId);
   let name;
   if (type === 'channel') {
