@@ -89,6 +89,12 @@ app.get('/channels/listAll/v2', (req: Request, res: Response, next) => {
   save();
 });
 
+app.get('/channels/listAll/v3', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(channelsListAllV1(token));
+  save();
+});
+
 app.post('/channel/invite/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const { channelId, uId } = req.body;
