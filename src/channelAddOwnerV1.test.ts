@@ -23,7 +23,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -55,7 +55,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -108,7 +108,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -143,7 +143,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -177,7 +177,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -200,7 +200,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Ngo'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -230,7 +230,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -264,7 +264,7 @@ describe('Testing channelAddOwnerV1', () => {
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'General',
       isPublic: true
     }, userId1.token);
