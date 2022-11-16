@@ -1,13 +1,12 @@
 import { getData, setData } from './dataStore';
 import {
   error, tokenExists, userIdExists, getUidFromToken, dmIdExists,
-  isMemberOfDm, getMessageId, User, Messages, httpError, FORBIDDEN,
-  BAD_REQUEST
+  isMemberOfDm, getMessageId, httpError, FORBIDDEN, BAD_REQUEST
 } from './other';
 import HTTPError from 'http-errors';
 import { notificationSetTag, requiresTagging, notificationSetAddDm } from './notifications';
 import { messageReactedByUser } from './message';
-import { uIds, dm } from './types';
+import { uIds, dm, users, messages, Message } from './types';
 
 type dmListInfo = {
   dmId: number,
@@ -17,31 +16,15 @@ type dmListInfo = {
 type dmList = {
   dms: Array<dmListInfo>
 };
-
-interface Message {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number,
-  reacts: [
-    {
-      reactId: number,
-      uIds: [],
-      isThisUserReacted: boolean,
-    }
-  ],
-  isPinned: boolean,
-}
-
 type messageId = { messageId: number }
 
 type dmDetails = {
   name: string,
-  members: Array<User>
+  members: users
 };
 
 type dmMessages = {
-  messages: Array<Messages>,
+  messages: messages,
   start: number,
   end: number
 };
