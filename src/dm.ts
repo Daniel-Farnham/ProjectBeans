@@ -81,6 +81,10 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
     throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
+  
+  // Sets the dm's status to inactive so any messages sent later get cancelled
+  setInactive(dmId);
+
   let msgCount = 0;
   // Remove all the members of the dm
   for (const dm of data.dms) {
@@ -100,10 +104,25 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
 }
 
 /**
+  * Sets the dm's status to inactive so any messages sent later get cancelled
+  *
+  * @param {number} dmId - Unique id of the dm being having its timeouts cleared
+  */
+function setInactive(dmId: number) {
+  const data = getData();
+  for (const timeouts of data.timeoutIds) {
+    if (timeouts.dmId === dmId) {
+      timeouts.isActive = false;
+    }
+  }
+  setData(data);
+}
+
+/**
   * Decrements the dm count and message count when dm is removed
   * @param {number} msgCount - the number of messages removed when dm is removed
   */
-export function decrementDmMessageAnalytics(msgCount: number) {
+ export function decrementDmMessageAnalytics(msgCount: number) {
   const data = getData();
   // Decrement numMessagesExist
   const index = data.workspaceStats.messagesExist.length;
@@ -508,6 +527,11 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
     throw HTTPError(400, 'dmId is invalid');
   }
 
+  // If the dm status is inactive, prevent the message from being sent
+  if (checkIsActive(dmId) === false) {
+    return;
+  }
+
   // Check if length of the message is between 1-1000 characters long.
   // Create message if true, return error if false.
   if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
@@ -546,6 +570,27 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   updateMessageAnalytics(timeSent);
 
   return { messageId: messageId };
+}
+
+/**
+  * Checks whether a dm is active or not
+  *
+  * @param {number} dmId - id of dm being check
+  *
+  * @returns {boolean} returns state of activity
+*/
+function checkIsActive(dmId: number): boolean {
+  const data = getData();
+  // A dm is only inactive if it has been deliberately set to inactive
+  // A dm is active if no state has been set by messageSendlaterdm
+  for (const timeouts of data.timeoutIds) {
+    if (timeouts.dmId === dmId) {
+      if (timeouts.isActive === false) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 export function storeMessageInDm(message: Message, dmId: number) {

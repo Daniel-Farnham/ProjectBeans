@@ -20,7 +20,8 @@ export function clearV1 (): Record<string, never> {
       channelsExist: [],
       dmsExist: [],
       messagesExist: []
-    }
+    },
+    timeoutIds: []
   };
   setData(data);
   return {};

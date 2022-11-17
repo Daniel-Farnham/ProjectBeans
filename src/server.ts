@@ -20,7 +20,7 @@ import {
 } from './users';
 import {
   messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
-  messageSendlaterV1
+  messageSendlaterV1, messageSendlaterdmV1
 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
@@ -498,6 +498,15 @@ app.post('/message/share/v1', (req: Request, res: Response, next) => {
   const { ogMessageId, message, channelId, dmId } = req.body;
   const token = req.header('token');
   res.json(messageShareV1(token, ogMessageId, message, channelId, dmId));
+  save();
+});
+
+app.post('/message/sendlaterdm/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const dmId = parseInt(req.body.dmId as string);
+  const message = req.body.message as string;
+  const timeSent = parseInt(req.body.timeSent as string);
+  res.json(messageSendlaterdmV1(token, dmId, message, timeSent));
   save();
 });
 

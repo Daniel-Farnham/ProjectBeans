@@ -183,6 +183,8 @@ export type internalWorkspaceStats = {
   dmsExist: internalDmsExist,
   messagesExist: internalMessagesExist
 }
+export type timeoutIds = { dmId: number, isActive: boolean };
+export type internalTimeoutIds = timeoutIds[];
 
 export type datastore = {
   users: internalUsers,
@@ -193,6 +195,7 @@ export type datastore = {
   dms: internalDms,
   notifications: internalNotifications,
   workspaceStats: internalWorkspaceStats
+  timeoutIds: internalTimeoutIds
 };
 
 export type messageContainerType = {
