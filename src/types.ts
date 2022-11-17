@@ -26,8 +26,9 @@ export type permissionId = number;
 export type isThisUserReacted = boolean;
 export type isPinned = boolean;
 export type uIds = uId[];
-
 export type reactId = number;
+export type isActive = boolean;
+export type timeFinish = number | null;
 
 export type react = {
   reactId: reactId,
@@ -49,6 +50,11 @@ export type notification = {
   channelId: channelId,
   dmId: dmId,
   notificationMessage: notificationMessage,
+};
+
+export type StandUp = {
+  isActive: isActive,
+  timeFinish: timeFinish,
 };
 
 // Output Types
@@ -126,6 +132,11 @@ export type channelDetails = {
   ownerMembers: user[],
   allMembers: user[],
 };
+
+// Used for standup functions
+
+export type standUp = StandUp[];
+
 // Internal representations of objects in datastore
 export type profileImgUrl = string;
 export type internalUser = {
@@ -147,6 +158,7 @@ export type internalChannel = {
   allMembers: users,
   messages: messages,
   isPublic: isPublic,
+  standUp: standUp,
 };
 
 export type session = {
@@ -172,6 +184,20 @@ export type internalDm = {
 };
 export type internalDms = internalDm[];
 
+export type messagesAnalytics = { numMessagesExist: number, timeStamp: number };
+export type internalMessagesExist = messagesAnalytics[];
+export type dmsAnalytics = { numDmsExist: number, timeStamp: number };
+export type internalDmsExist = dmsAnalytics[];
+export type channelsAnalytics = { numChannelsExist: number, timeStamp: number };
+export type internalChannelsExist = channelsAnalytics[];
+export type internalWorkspaceStats = {
+  channelsExist: internalChannelsExist,
+  dmsExist: internalDmsExist,
+  messagesExist: internalMessagesExist
+}
+export type timeoutIds = { dmId: number, isActive: boolean };
+export type internalTimeoutIds = timeoutIds[];
+
 export type datastore = {
   users: internalUsers,
   channels: internalChannels,
@@ -180,6 +206,8 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+  workspaceStats: internalWorkspaceStats
+  timeoutIds: internalTimeoutIds
 };
 
 export type messageContainerType = {
