@@ -2,6 +2,8 @@ import { getData, setData } from './dataStore';
 import { tokenExists, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
 import HTTPError from 'http-errors';
 
+const  MAX_MESSAGE_LEN = 1000; 
+
 type standupInfo = {
     isActive: boolean
     timeFinish: number | null
@@ -35,6 +37,10 @@ export function standupSendV1 (token: string, channelId: number, message: string
     throw HTTPError(BAD_REQUEST, 'channelId is invalid');
   }
 
+  if (message.length > MAX_MESSAGE_LEN) {
+    throw HTTPError(BAD_REQUEST, 'length of message is over 1000 characters.');
+  }
+
   const uId = getUidFromToken(token);
   if (!isMemberOfChannel(findChannel, uId)) {
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
@@ -50,8 +56,43 @@ export function standupSendV1 (token: string, channelId: number, message: string
     }
   }
 
-  /*
+  // creating standup message package
 
+  const standupMessagesPackage = [];
+  let index = 0; 
+
+    // this is the bit where i will be using messages.
+
+  while(standUpActive(token, channelId).isActive === true ) {
+    // need to write if statement confirming tags. 
+    standupMessagesPackage[index] = message; 
+    index++; 
+  }
+  //while(standUpActive(token, channelId).isActive === true ) {
+    //for (const channel of data.channels) {
+      //if (channel.channelId === channelId) {
+        //standupMessagesPackage[index] = channel.messages[index]; 
+      //}
+    //}
+  //}
+
+  // Checking if standUp has ended. 
+  if (standUpActive(token, channelId).isActive === false) {
+    packageAndSendStandUp(token, channelId, standupMessagesPackage);
+
+
+  }
+  standupMessagesPackageString = standupMessagesPackage[index].join('\n');
+  
+  messageSendV1(token, channelId, standupMessagesPackageString); 
+
+  return {}; 
+  
+
+   packageAndSendStandUp(token, channelId, standupMessagesPackage) {
+
+   }
+   /*
   // all messages are packed together in one single message
   // posted by the user who started the standup 
   // the packaged messaged is sent to the channel where the standup started, timestamped at the moment the standup finished. 
