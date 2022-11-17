@@ -2,66 +2,72 @@ import { FORBIDDEN, BAD_REQUEST } from './other';
 import {
   clearV1, authRegisterV1, dmCreateV1, channelMessagesV1,
   channelsCreateV1, messageSendV1, messagePinV1, channelJoinV1, messageSendDmV1,
-  dmMessagesV1,
+  dmMessagesV1, messageUnpinV1
 } from './wrapperFunctions';
 
 beforeEach(() => {
   clearV1();
 });
 
-describe('Testing message/pin/v1 success handling', () => {
-  test('correct return type after pin', () => {
+describe('Testing message/unpin/v1 success handling', () => {
+  test('correct return type after unpin', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
 
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user2.token, dm.dmId, 'hello!');
-    const pin = messagePinV1(user1.token, msg.messageId);
-    expect(pin).toMatchObject({});
+    messagePinV1(user1.token, msg.messageId);
+    const unpin = messageUnpinV1(user1.token, msg.messageId);
+    expect(unpin).toMatchObject({});
   });
 
-  test('dm/messages/v2 - active pin', () => {
+  test('dm/messages/v2 - unpinned message', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
     messagePinV1(user1.token, msg.messageId);
+    messageUnpinV1(user1.token, msg.messageId);
 
     const result = dmMessagesV1(user1.token, dm.dmId, 0);
     expect(result.messages).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({
-          isPinned: true,
-        })
-      ])
-    );
-  });
-
-  test('channel/messages/v3 - active pin and inactive pin', () => {
-    const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
-    const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
-
-    const channel = channelsCreateV1(user1.token, 'Boost', true);
-    channelJoinV1(user2.token, channel.channelId);
-    const msg = messageSendV1(user1.token, channel.channelId, 'hello!');
-    messageSendV1(user2.token, channel.channelId, 'Hey!');
-    messagePinV1(user1.token, msg.messageId);
-
-    const result = channelMessagesV1(user1.token, channel.channelId, 0);
-    expect(result.messages).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          isPinned: true,
-        }),
         expect.objectContaining({
           isPinned: false,
         })
       ])
     );
   });
+
+  test('channel/messages/v3 - two pinned messages, one becomes unpinned', () => {
+    const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
+    const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
+
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    channelJoinV1(user2.token, channel.channelId);
+    const msg = messageSendV1(user1.token, channel.channelId, 'hello!');
+    const msg2 = messageSendV1(user2.token, channel.channelId, 'Hey!');
+
+    messagePinV1(user1.token, msg.messageId);
+    messagePinV1(user1.token, msg2.messageId);
+
+    messageUnpinV1(user1.token, msg.messageId);
+
+    const result = channelMessagesV1(user1.token, channel.channelId, 0);
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          isPinned: false,
+        }),
+        expect.objectContaining({
+          isPinned: true,
+        })
+      ])
+    );
+  });
 });
 
-describe('Testing message/Pin/v1 error handling', () => {
+describe('Testing message/unpin/v1 error handling', () => {
   test('messageId is not a valid message within a channel or DM that the authorised user is part of', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
@@ -70,7 +76,9 @@ describe('Testing message/Pin/v1 error handling', () => {
     const channel = channelsCreateV1(user1.token, 'Boost', true);
     channelJoinV1(user2.token, channel.channelId);
     const msg = messageSendV1(user1.token, channel.channelId, 'hello!');
-    let result = messagePinV1(user3.token, msg.messageId);
+    messagePinV1(user3.token, msg.messageId);
+
+    let result = messageUnpinV1(user3.token, msg.messageId);
 
     expect(result.statusCode).toBe(BAD_REQUEST);
     let bodyObj = JSON.parse(result.body as string);
@@ -79,14 +87,15 @@ describe('Testing message/Pin/v1 error handling', () => {
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const dmMsg = messageSendDmV1(user1.token, dm.dmId, 'hello!');
 
-    result = messagePinV1(user3.token, dmMsg.messageId);
+    messagePinV1(user3.token, dmMsg.messageId);
+    result = messageUnpinV1(user3.token, dmMsg.messageId);
 
     expect(result.statusCode).toBe(BAD_REQUEST);
     bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('channel: the message is already pinned', () => {
+  test('channel: the message is not pinned', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
 
@@ -94,23 +103,21 @@ describe('Testing message/Pin/v1 error handling', () => {
     channelJoinV1(user2.token, channel.channelId);
 
     const msg = messageSendV1(user2.token, channel.channelId, 'hello!');
-    messagePinV1(user1.token, msg.messageId);
-    const result = messagePinV1(user1.token, msg.messageId);
+    const result = messageUnpinV1(user1.token, msg.messageId);
 
     expect(result.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(result.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('dm: the message is already pinned', () => {
+  test('dm: the message is not pinned', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
 
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const msg = messageSendDmV1(user2.token, dm.dmId, 'hello!');
 
-    messagePinV1(user1.token, msg.messageId);
-    const result = messagePinV1(user1.token, msg.messageId);
+    const result = messageUnpinV1(user1.token, msg.messageId);
 
     expect(result.statusCode).toBe(BAD_REQUEST);
     const bodyObj = JSON.parse(result.body as string);

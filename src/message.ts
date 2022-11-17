@@ -1,11 +1,7 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
-<<<<<<< src/message.ts
-  getDmObjectFromDmlId, getChannelObjectFromChannelId, isOwnerOfChannel
-=======
   getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, isOwnerOfChannel
->>>>>>> src/message.ts
 } from './other';
 import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
@@ -212,7 +208,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   * Pins a message in a channel or dm
   *
   * @param {string} token - token of authorised user
-  * @param {number} messageId - id of the message to be edited
+  * @param {number} messageId - id of the message to be pinned
   * ...
   *
   * @returns {{}}
@@ -260,6 +256,70 @@ export function messagePinV1 (token: string, messageId: number): error | Record<
           throw HTTPError(BAD_REQUEST, 'That message is already pinned');
         } else {
           message.isPinned = true;
+          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
+          if (!isOwner) {
+            throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
+          }
+        }
+      }
+    }
+  }
+  setData(data);
+  return {};
+}
+
+/**
+  * Unpins a message in a channel or dm
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} messageId - id of the message to be unpinned
+  * ...
+  *
+  * @returns {{}}
+*/
+export function messageUnpinV1 (token: string, messageId: number): error | Record<string, never> {
+  const data = getData();
+  // check if token is valid
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
+  }
+
+  // Checking both channels and dms to see if messageId is valid.
+  const messageContainer = getMessageContainer(messageId);
+  if (!messageContainer) {
+    throw HTTPError(BAD_REQUEST, 'Message does not exist in either channels or dms');
+  }
+  const uId = getUidFromToken(token);
+
+  if (messageContainer.type === 'channel') {
+    if (!isMemberOfChannel(messageContainer.channel, uId)) {
+      throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
+    }
+
+    for (const message of messageContainer.channel.messages) {
+      if (message.messageId === messageId) {
+        if (message.isPinned === false) {
+          throw HTTPError(BAD_REQUEST, 'That message is not pinned');
+        } else {
+          message.isPinned = false;
+          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
+          if (!isOwner) {
+            throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
+          }
+        }
+      }
+    }
+  } else {
+    for (const message of messageContainer.dm.messages) {
+      if (!isMemberOfDm(messageContainer.dm, uId)) {
+        throw HTTPError(BAD_REQUEST, 'User is not a member of this dm');
+      }
+
+      if (message.messageId === messageId) {
+        if (message.isPinned === false) {
+          throw HTTPError(BAD_REQUEST, 'That message is not pinned');
+        } else {
+          message.isPinned = false;
           const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
           if (!isOwner) {
             throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');

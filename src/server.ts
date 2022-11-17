@@ -18,14 +18,10 @@ import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
   userProfileV1, usersAllV1, userProfileUploadPhotoV1
 } from './users';
-<<<<<<< src/server.ts
-import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1, messagePinV1 } from './message';
-=======
 import {
   messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
-  messageSendlaterV1, messagePinV1 
+  messageSendlaterV1, messagePinV1, messageUnpinV1
 } from './message';
->>>>>>> src/server.ts
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 import { adminUserRemoveV1 } from './admin';
@@ -525,6 +521,12 @@ app.post('/message/pin/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/message/unpin/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  res.json(messageUnpinV1(token, messageId));
+  save();
+});
 // handles errors nicely
 app.use(errorHandler());
 

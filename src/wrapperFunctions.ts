@@ -106,3 +106,6 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
 export function messagePinV1 (token: string, messageId: number) {
   return postRequest(SERVER_URL + '/message/pin/v1', { messageId }, token);
 }
+export function messageUnpinV1 (token: string, messageId: number) {
+  return postRequest(SERVER_URL + '/message/unpin/v1', { messageId }, token);
+}
