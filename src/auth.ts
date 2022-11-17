@@ -4,8 +4,7 @@ import { error, tokenExists } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
 import { internalNotification } from './types';
-import { port, url } from './config.json';
-const SERVER_URL = `${url}:${port}`;
+import { getWebServerHost } from './server';
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -88,13 +87,14 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     permissionId = GLOBAL_OWNER;
   }
 
+  const WEB_SERVER_HOST = getWebServerHost();
   const user = {
     uId: userId,
     email: caseInsensitiveEmail,
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
-    profileImgUrl: SERVER_URL + '/static/defaultpic.jpg',
+    profileImgUrl: WEB_SERVER_HOST + '/static/defaultpic.jpg',
     password: getHashOf(password),
     permissionId: permissionId
   };

@@ -9,8 +9,7 @@ import {
 import request from 'sync-request';
 import fs from 'fs';
 const sharp = require('sharp');
-import { port, url } from './config.json';
-const SERVER_URL = `${url}:${port}`;
+import { getWebServerHost } from './server';
 
 /**
   * Returns user object if a valid user is found
@@ -318,8 +317,9 @@ export function userProfileUploadPhotoV1 (token: string, imgUrl: string,
 
   cropImage(`static/uncropped${randomString}.jpg`, `static/${randomString}.jpg`,
     xStart, yStart, xEnd, yEnd);
+  const WEB_SERVER_HOST = getWebServerHost();
 
-  setUserImgUrl(token, `${SERVER_URL}/static/${randomString}.jpg`);
+  setUserImgUrl(token, `${WEB_SERVER_HOST}/static/${randomString}.jpg`);
   return {};
 }
 

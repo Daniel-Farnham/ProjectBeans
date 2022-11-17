@@ -33,6 +33,11 @@ app.use(cors());
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
+export let WEB_SERVER_HOST = HOST;
+
+export function getWebServerHost() {
+  return WEB_SERVER_HOST;
+}
 // Get data. If datastore file exists, then update data to match datastore
 let data = getData();
 if (fs.existsSync('./dataStore.json')) {
@@ -65,6 +70,7 @@ app.delete('/clear/v1', (req: Request, res: Response, next) => {
 
 app.post('/auth/register/v2', (req: Request, res: Response, next) => {
   const { email, password, nameFirst, nameLast } = req.body;
+  WEB_SERVER_HOST = req.protocol + '://' + req.headers.host;
   res.json(authRegisterV1(email, password, nameFirst, nameLast));
   save();
 });
@@ -193,6 +199,7 @@ app.get('/user/profile/v2', (req: Request, res: Response, next) => {
 app.get('/user/profile/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
+  console.log(res);
   res.json(userProfileV1(token, uId));
   save();
 });
@@ -248,6 +255,7 @@ app.get('/users/all/v1', (req: Request, res: Response, next) => {
 app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+  WEB_SERVER_HOST = req.protocol + '://' + req.headers.host;
   res.json(userProfileUploadPhotoV1(token, imgUrl, xStart, yStart, xEnd, yEnd));
   save();
 });
