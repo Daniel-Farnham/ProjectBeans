@@ -65,7 +65,13 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
         messageId: newMessageId.messageId,
         uId: regId.authUserId,
         message: 'This is also a test.',
-        timeSent: expect.any(Number)
+        timeSent: expect.any(Number),
+        reacts: [{
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        }],
+        isPinned: false,
       }
     ];
 
@@ -111,7 +117,13 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
         messageId: newMessageId.messageId,
         uId: regId.authUserId,
         message: 'This is also another test.',
-        timeSent: expect.any(Number)
+        timeSent: expect.any(Number),
+        reacts: [{
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        }],
+        isPinned: false,
       }
     ];
 
