@@ -26,7 +26,7 @@ describe('Testing basic functionality of standupActiveV1', () => {
     }, regId.token);
 
     const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
-      channelId: channelId
+      channelId: channelId.channelId
     }, regId.token);
 
     expect(standupActive).toStrictEqual({ isActive: true, timeFinish: standup.timeFinish });
@@ -46,9 +46,10 @@ describe('Testing basic functionality of standupActiveV1', () => {
     }, regId.token);
 
     const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
-      channelId: channelId
+      channelId: channelId.channelId
     }, regId.token);
 
+    expect(standupActive.statusCode).toBe(FORBIDDEN);
     expect(standupActive).toStrictEqual({ isActive: false, timeFinish: null });
   });
 });
