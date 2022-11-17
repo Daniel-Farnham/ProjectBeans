@@ -58,6 +58,7 @@ export function standupStartV1 (token: string, channelId: number, length: number
   const ActivateStandup = {
     isActive: true,
     timeFinish: timeFinish,
+    standUpStarter: uId, 
   };
 
   for (const channel of data.channels) {
