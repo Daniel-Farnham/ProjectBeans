@@ -111,10 +111,24 @@ export const getRequest = (url: string, data: any, token?: string) => {
 };
 
 /**
+  * Loops for a given amount of time, in other words sleeps, pauses or waits
+  * a certain period of time.
+  * @param {number} time - The length of time to sleep in seconds
+*/
+export function sleep(time: number) {
+  let timeSent = Math.floor((new Date()).getTime() / 1000);
+  const timeFinish = timeSent + time;
+
+  while (timeSent !== timeFinish) {
+    timeSent = Math.floor((new Date()).getTime() / 1000);
+  }
+}
+
+/**
   * Updates the message analytics
   * @param {number} timeSent - the time stamp of the analytics change
   */
-export function updateMessageAnalytics(timeSent: number) {
+ export function updateMessageAnalytics(timeSent: number) {
   const data = getData();
   const index = data.workspaceStats.messagesExist.length;
   const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
