@@ -691,6 +691,75 @@ function removeMessageFromDM(messageId: number):any {
 }
 
 /**
+  * Sends a message to a channel automatically at a specified time in the future
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} channelId - id of the channel where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+
+  *
+  * @returns {messageId} returns an object containing the messageId
+  */
+export function messageSendlaterV1(token: string, channelId: number, message: string, timeSent: number): messageIdReturnedObject | error {
+  // Check if the given information is valid
+  const currentTime = Math.floor((new Date()).getTime() / 1000);
+  const isInvalid = sendlaterInfoInvalid(token, channelId, message, timeSent, currentTime);
+  if (isInvalid !== false) {
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
+  }
+
+  // Make the message send at the given time, and return what the messageId will be
+  setTimeout(function() {
+    messageSendV1(token, channelId, message);
+  }, (timeSent - currentTime) * 1000);
+
+  const data = getData();
+  return { messageId: data.messageCount };
+}
+
+/**
+  * Checks the info given in messageSendlaterV1 is valid
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} channelId - id of the channel where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+  * @param {number} currentTime - the current time (in seconds)
+  *
+  * @returns {httpError} returns an error code and message if the info is invalid
+  * @returns {boolean} returns false if the info is valid
+  */
+function sendlaterInfoInvalid(token: string, channelId: number, message: string, timeSent: number, currentTime: number): httpError | boolean {
+  const data = getData();
+
+  if (!tokenExists(token)) {
+    return { code: FORBIDDEN, error: 'Token is invalid' };
+  }
+
+  if (!channelIdExists(channelId)) {
+    return { code: BAD_REQUEST, error: 'ChannelId is invalid' };
+  }
+
+  if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
+    return { code: BAD_REQUEST, error: 'Length of message is less than 1 or over 1000 characters' };
+  }
+
+  if (timeSent - currentTime < 0) {
+    return { code: BAD_REQUEST, error: 'timeSent is in the past' };
+  }
+
+  const uId = getUidFromToken(token);
+  const findChannel = data.channels.find(chan => chan.channelId === channelId);
+  if (!isMemberOfChannel(findChannel, uId)) {
+    return { code: FORBIDDEN, error: 'User is not a member of the channel' };
+  }
+
+  return false;
+}
+
+/**
   * Sends a message to a dm automatically at a specified time in the future
   *
   * @param {string} token - the token of the user making the request
@@ -700,7 +769,7 @@ function removeMessageFromDM(messageId: number):any {
   *
   * @returns {messageId} returns an object containing the messageId
   */
-export function messageSendlaterdmV1(token: string, dmId: number, message: string, timeSent: number): messageIdReturnedObject | error {
+ export function messageSendlaterdmV1(token: string, dmId: number, message: string, timeSent: number): messageIdReturnedObject | error {
   // Check if the given information is valid
   const currentTime = Math.floor((new Date()).getTime() / 1000);
   const isInvalid = sendlaterdmInfoInvalid(token, dmId, message, timeSent, currentTime);
