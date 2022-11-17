@@ -324,6 +324,10 @@ export async function authPasswordResetRequestV1(email: string) {
   return {};
 }
  
+/**
+ * Generates a reset code which is stored in dataStore
+ * @returns {resetCode}
+ */
 function generateResetCode(): any {
   const data = getData();
 
