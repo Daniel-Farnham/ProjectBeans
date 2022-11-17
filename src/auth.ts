@@ -82,9 +82,12 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const userId = data.users.length;
   const caseInsensitiveEmail = email.toLowerCase();
 
+  // Make the first registered user a global owner and
+  // initialize the workplace analytics
   let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
     permissionId = GLOBAL_OWNER;
+    createAnalytics();
   }
 
   const WEB_SERVER_HOST = getWebServerHost();
@@ -124,6 +127,24 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     authUserId: userId
   };
 }
+
+/**
+  * Creates the initial workplace analytics when the
+  * first user is registered
+  *
+  */
+function createAnalytics() {
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const channelStats = { numChannelsExist: 0, timeStamp: timeSent };
+  const dmsStats = { numDmsExist: 0, timeStamp: timeSent };
+  const msgStats = { numMessagesExist: 0, timeStamp: timeSent };
+  data.workspaceStats.channelsExist.push(channelStats);
+  data.workspaceStats.dmsExist.push(dmsStats);
+  data.workspaceStats.messagesExist.push(msgStats);
+  setData(data);
+}
+
 /**
   * Will attempt to logout of a session with the token provided
   *
