@@ -18,7 +18,7 @@ import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
   userProfileV1, usersAllV1, userProfileUploadPhotoV1
 } from './users';
-import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1 } from './message';
+import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1, messagePinV1 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 import { adminUserRemoveV1 } from './admin';
@@ -498,6 +498,13 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const channelId = parseInt(req.query.channelId as string);
   res.json(channelDetailsV1(token, channelId));
+  save();
+});
+
+app.post('/message/pin/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  res.json(messagePinV1(token, messageId));
   save();
 });
 
