@@ -519,7 +519,7 @@ const responseBody = response.getBody();
 fs.writeFileSync('static/defaultpic.jpg', responseBody, { flag: 'w' });
 
 // start server
-const server = app.listen(parseInt(process.env.PORT || config.port), process.env.IP, () => {
+const server = app.listen(PORT, HOST, () => {
   // DO NOT CHANGE THIS LINE
   console.log(`⚡️ Server listening on port ${PORT} at ${HOST}`);
 });
