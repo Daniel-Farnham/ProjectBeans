@@ -3,6 +3,7 @@ import {
   BAD_REQUEST, FORBIDDEN, sleep
 } from './other';
 import { port, url } from './config.json';
+import { messagesOutput } from './types';
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
@@ -60,22 +61,26 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
       start: 0,
     }, regId.token);
 
-    const expectedMessages = [
-      {
-        messageId: newMessageId.messageId,
-        uId: regId.authUserId,
-        message: 'This is also a test.',
-        timeSent: expect.any(Number),
-        reacts: [{
-          reactId: 1,
-          uIds: [],
-          isThisUserReacted: false,
-        }],
-        isPinned: false,
-      }
-    ];
+    const expectedMessages: messagesOutput = {
+      messages: [
+        {
+          messageId: newMessageId.messageId,
+          uId: regId.authUserId,
+          message: 'This is also a test.',
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
+        }
+      ],
+      start: 0,
+      end: -1
+    };
 
-    expect(messages.messages).toStrictEqual(expectedMessages);
+    expect(messages).toStrictEqual(expectedMessages);
   });
 
   test('Testing messageSendlaterV1 sends a message that can\'t be viewed until timeSent', () => {
@@ -112,22 +117,26 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
       start: 0,
     }, regId.token);
 
-    const expectedMessages = [
-      {
-        messageId: newMessageId.messageId,
-        uId: regId.authUserId,
-        message: 'This is also another test.',
-        timeSent: expect.any(Number),
-        reacts: [{
-          reactId: 1,
-          uIds: [],
-          isThisUserReacted: false,
-        }],
-        isPinned: false,
-      }
-    ];
+    const expectedMessages: messagesOutput = {
+      messages: [
+        {
+          messageId: newMessageId.messageId,
+          uId: regId.authUserId,
+          message: 'This is also another test.',
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
+        }
+      ],
+      start: 0,
+      end: -1
+    }
 
-    expect(messages.messages).toStrictEqual(expectedMessages);
+    expect(messages).toStrictEqual(expectedMessages);
   });
 
   test('Testing messageSendlaterV1 sends a message that can\'t be edited until timeSent', () => {
