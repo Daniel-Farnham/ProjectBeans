@@ -1,5 +1,6 @@
 import { getRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
+import { user } from './types';
 const SERVER_URL = `${url}:${port}`;
 
 beforeEach(() => {
@@ -32,6 +33,7 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
         nameFirst: 'Removed',
         nameLast: 'user',
         handleStr: expect.any(String),
+        profileImgUrl: expect.any(String),
       }
     };
 
@@ -97,14 +99,14 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
       }
     };
 
-    const removedInChannel = returnedChannelObj.allMembers.find((member) => member.uId === user.authUserId);
+    const removedInChannel = returnedChannelObj.allMembers.find((member: user): member is user => member.uId === user.authUserId);
     expect(removedInChannel).toEqual(expectedUser.user);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, global.token);
 
-    const removedInDm = dmDetails.members.find((member) => member.uId === user.authUserId);
+    const removedInDm = dmDetails.members.find((member: user): member is user => member.uId === user.authUserId);
     expect(removedInDm).toEqual(expectedUser.user);
   });
 

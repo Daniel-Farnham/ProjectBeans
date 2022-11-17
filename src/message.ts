@@ -1,37 +1,17 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
-  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, Channel, dmIdExists,
-  getDmObjectFromDmlId, getChannelObjectFromChannelId
+  isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
+  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError
 } from './other';
 import { storeMessageInDm } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import { dm, internalChannel, messages, messageIdReturnedObject, messagesReturnObject, Message, messageId } from './types';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
 const GLOBAL_OWNER = 1;
-
-type messageId = { messageId: number }
-type messages = { messages: Array<messages> };
-
-/**
-  * Interface for message object
-*/
-interface Message {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number,
-  reacts: [
-    {
-      reactId: number,
-      uIds: [],
-      isThisUserReacted: boolean,
-    }
-  ],
-  isPinned: boolean,
-}
 
 /**
   * Creates a message and stores it in the messages array in a channel
@@ -43,10 +23,7 @@ interface Message {
   *
   * @returns {messageId} returns an object containing the messageId
 */
-export function messageSendV1 (token: string, channelId: number, message: string): messageId | error {
-  const data = getData();
-  const findChannel = data.channels.find(chan => chan.channelId === channelId);
-
+export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
   if (!(tokenExists(token))) {
     throw HTTPError(403, 'token is invalid');
   }
@@ -60,7 +37,9 @@ export function messageSendV1 (token: string, channelId: number, message: string
     throw HTTPError(400, 'length of message is less than 1 or over 1000 characters');
   }
 
+  const data = getData();
   const uId = getUidFromToken(token);
+  const findChannel = data.channels.find(chan => chan.channelId === channelId);
   if (!isMemberOfChannel(findChannel, uId)) {
     throw HTTPError(403, 'user is not a member of the channel');
   }
@@ -225,11 +204,13 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   return {};
 }
 
-export function messageReactedByUser(message, uId: number, reactId: number): boolean {
+export function messageReactedByUser(message: Message, uId: number, reactId: number): boolean {
   for (const react of message.reacts) {
     if (react.reactId === reactId) {
-      if (react.uIds.includes(uId)) {
-        return true;
+      for (reactId of react.uIds) {
+        if (reactId === uId) {
+          return true;
+        }
       }
     }
   }
@@ -396,7 +377,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   *
   * @returns {{messages}} returns an array containing message objects
 */
-export function searchV1 (token: string, queryStr: string): error | messages {
+export function searchV1 (token: string, queryStr: string): error | messagesReturnObject {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'token is invalid');
   }
@@ -404,7 +385,7 @@ export function searchV1 (token: string, queryStr: string): error | messages {
   if (queryStr.length < MIN_MESSAGE_LEN || queryStr.length > MAX_MESSAGE_LEN) {
     throw HTTPError(BAD_REQUEST, 'length of query is less than 1 or over 1000 characters');
   }
-  let messages = [];
+  let messages: messages = [];
   const uId = getUidFromToken(token);
   messages = getMessagesFromDms(messages, uId, queryStr);
   messages = getMessagesFromChannels(messages, uId, queryStr);
@@ -501,7 +482,7 @@ function messageShareErrorChecking(token: string, ogMessageId: number, message: 
     }
   }
 }
-function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string) {
+function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string): messageId {
   // Create message
   const messageId = getMessageId();
   const timeSent = Math.floor((new Date()).getTime() / 1000);
@@ -544,7 +525,7 @@ function notValidSharing(channelId: number, dmId: number) {
   * @returns newly generated message
   *
 */
-function generateDmNewMessageString(dm, messageId: number, additionalMsg: string) {
+function generateDmNewMessageString(dm: dm, messageId: number, additionalMsg: string) {
   for (const targetmessage of dm.messages) {
     // If there is a message with the correct messageId, edit the message.
     if (targetmessage.messageId === messageId) {
@@ -563,7 +544,7 @@ function generateDmNewMessageString(dm, messageId: number, additionalMsg: string
   *
   * @returns newly generated message
 */
-function generateChannelNewMessageString(channel, messageId: number, additionalMsg: string) {
+function generateChannelNewMessageString(channel: internalChannel, messageId: number, additionalMsg: string) {
   for (const targetmessage of channel.messages) {
     // If there is a message with the correct messageId, edit the message.
     if (targetmessage.messageId === messageId) {
@@ -583,7 +564,7 @@ function generateChannelNewMessageString(channel, messageId: number, additionalM
   *
   * @returns {{messages}} returns an array containing message objects
 */
-function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
+function getMessagesFromDms (messages: messages, uId: number, queryStr: string) {
   const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const dm of data.dms) {
@@ -608,7 +589,7 @@ function getMessagesFromDms (messages: any[], uId: number, queryStr: string) {
   *
   * @returns {{messages}} returns an array containing message objects
 */
-function getMessagesFromChannels (messages: any[], uId: number, queryStr: string) {
+function getMessagesFromChannels (messages: messages, uId: number, queryStr: string) {
   const data = getData();
   const caseInsensitive = queryStr.toLowerCase();
   for (const channel of data.channels) {
@@ -633,7 +614,7 @@ function getMessagesFromChannels (messages: any[], uId: number, queryStr: string
   * @returns {error} returns an error object.
   * @returns {boolean} returns a boolean value.
 */
-function messageFromChannelValid(channel: Channel, messageId: number, uId: number): any {
+function messageFromChannelValid(channel: internalChannel, messageId: number, uId: number): any {
   const data = getData();
 
   let ownerMember = false;
@@ -678,7 +659,8 @@ function removeMessageFromChannel(messageId: number): any {
   for (const channel of data.channels) {
     for (const message of channel.messages) {
       if (message.messageId === messageId) {
-        channel.messages = channel.messages.filter(message => message.messageId !== messageId);
+        channel.messages = channel.messages.filter(
+          (message: Message): message is Message => message.messageId !== messageId);
       }
     }
   }
@@ -700,9 +682,79 @@ function removeMessageFromDM(messageId: number):any {
   for (const dm of data.dms) {
     for (const message of dm.messages) {
       if (message.messageId === messageId) {
-        dm.messages = dm.messages.filter(message => message.messageId !== messageId);
+        dm.messages = dm.messages.filter(
+          (message: Message): message is Message => message.messageId !== messageId);
       }
     }
   }
   setData(data);
+}
+
+/**
+  * Sends a message to a channel automatically at a specified time in the future
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} channelId - id of the channel where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+
+  *
+  * @returns {messageId} returns an object containing the messageId
+  */
+export function messageSendlaterV1(token: string, channelId: number, message: string, timeSent: number): messageIdReturnedObject | error {
+  // Check if the given information is valid
+  const currentTime = Math.floor((new Date()).getTime() / 1000);
+  const isInvalid = sendlaterInfoInvalid(token, channelId, message, timeSent, currentTime);
+  if (isInvalid !== false) {
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
+  }
+
+  // Make the message send at the given time, and return what the messageId will be
+  setTimeout(function() {
+    messageSendV1(token, channelId, message);
+  }, (timeSent - currentTime) * 1000);
+
+  const data = getData();
+  return { messageId: data.messageCount };
+}
+
+/**
+  * Checks the info given in messageSendlaterV1 is valid
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} channelId - id of the channel where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+  * @param {number} currentTime - the current time (in seconds)
+  *
+  * @returns {httpError} returns an error code and message if the info is invalid
+  * @returns {boolean} returns false if the info is valid
+  */
+function sendlaterInfoInvalid(token: string, channelId: number, message: string, timeSent: number, currentTime: number): httpError | boolean {
+  const data = getData();
+
+  if (!tokenExists(token)) {
+    return { code: FORBIDDEN, error: 'Token is invalid' };
+  }
+
+  if (!channelIdExists(channelId)) {
+    return { code: BAD_REQUEST, error: 'ChannelId is invalid' };
+  }
+
+  if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
+    return { code: BAD_REQUEST, error: 'Length of message is less than 1 or over 1000 characters' };
+  }
+
+  if (timeSent - currentTime < 0) {
+    return { code: BAD_REQUEST, error: 'timeSent is in the past' };
+  }
+
+  const uId = getUidFromToken(token);
+  const findChannel = data.channels.find(chan => chan.channelId === channelId);
+  if (!isMemberOfChannel(findChannel, uId)) {
+    return { code: FORBIDDEN, error: 'User is not a member of the channel' };
+  }
+
+  return false;
 }
