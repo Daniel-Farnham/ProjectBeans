@@ -2,13 +2,12 @@ import { getData, setData } from './dataStore';
 import { tokenExists, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
 import HTTPError from 'http-errors';
 
-type standupInfo = {
-    isActive: boolean
-    timeFinish: number | null
+type timeFinish = {
+  timeFinish: number | null,
 }
 
-type timeFinish = {
-    timeFinish: number | null
+type isActive = {
+  isActive: boolean,
 }
 
 /**
@@ -123,7 +122,7 @@ function deactivateStandup(channelId: number, timeFinish: number) {
   * @returns {standupInfo} returns an object containing information
   * regarding whether the standup is active and its finish time
   */
-export function standupActiveV1(token: string, channelId: number): standupInfo {
+export function standupActiveV1(token: string, channelId: number): isActive | timeFinish {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
@@ -147,8 +146,8 @@ export function standupActiveV1(token: string, channelId: number): standupInfo {
     if (channel.channelId === channelId) {
       for (const targetStandup of channel.standUp) {
         if (targetStandup.isActive === true) {
-          isActive = true; 
-          timeFinish = targetStandup.timeFinish; 
+          isActive = true;
+          timeFinish = targetStandup.timeFinish;
         }
       }
     }

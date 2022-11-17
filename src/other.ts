@@ -108,6 +108,10 @@ export const getRequest = (url: string, data: any, token?: string) => {
 /**
   * Checks if the user id is registered in the database.
   * @param {number} userId - userId to check
+
+/**
+  * Checks if the user id is registered in the database.
+  * @param {number} userId - userId to check
   * @returns {Boolean} - returns true if exists, false otherwise
 */
 export function userIdExists(userId: number): boolean {

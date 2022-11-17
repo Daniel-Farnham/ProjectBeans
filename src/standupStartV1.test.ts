@@ -44,14 +44,16 @@ describe('Testing positive cases for standupStartV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const standupStart = postRequest(SERVER_URL + '/standup/start/v1', {
+    postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
       length: length,
     }, userId.token);
 
-    const start = new Date().getTime();
-    const expire = start + length * 1000;
-    while (new Date().getTime() < expire) {
+    // Es Lint does not allow empty loops. Hence the existence of the dummyvariable.
+    let currentTime = new Date().getTime();
+    const expire = currentTime + length * 1000;
+    while (currentTime < expire) {
+      currentTime = new Date().getTime();
     }
 
     const standupStartAgain = postRequest(SERVER_URL + '/standup/start/v1', {
@@ -190,15 +192,3 @@ describe('Testing negative cases for standupStartV1', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
-
-/*
-
-400 Error:
-    channelId does not refer to a valid channel
-    length is a negative integer
-    an active standup is currently running in the channel
-
-403 Error:
-
-    channelId is valid and the authorised user is not a member of the channel
-*/
