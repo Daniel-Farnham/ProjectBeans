@@ -58,8 +58,7 @@ export function standupSendV1 (token: string, channelId: number, message: string
 
   // creating standup message package
 
-  const standupMessagesPackage = [];
-  let index = 0; 
+
 
     // this is the bit where i will be using messages.
 
@@ -82,16 +81,12 @@ export function standupSendV1 (token: string, channelId: number, message: string
 
 
   }
-  standupMessagesPackageString = standupMessagesPackage[index].join('\n');
+  
   
   messageSendV1(token, channelId, standupMessagesPackageString); 
 
   return {}; 
   
-
-   packageAndSendStandUp(token, channelId, standupMessagesPackage) {
-
-   }
    /*
   // all messages are packed together in one single message
   // posted by the user who started the standup 
@@ -110,4 +105,18 @@ export function standupSendV1 (token: string, channelId: number, message: string
 
   */
 
+}
+
+packageAndSendStandUp(token, channelId, standupMessagesPackage) {
+  const standupMessagesPackage = [];
+  let index = 0; 
+
+
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      standupMessagesPackage[index] = token + ':' + messages; 
+    }
+    index++; 
+ }
+ standupMessagesPackageString = standupMessagesPackage[index].join('\n');
 }
