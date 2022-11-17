@@ -504,7 +504,7 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
 app.post('/auth/passwordreset/request/v1', (req: Request, res: Response, next) => {
   const { email } = req.body;
   res.json(authPasswordResetRequestV1(email));
-})
+});
 
 // handles errors nicely
 app.use(errorHandler());

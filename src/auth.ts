@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import HTTPError from 'http-errors';
 import { internalNotification } from './types';
 import { port, url } from './config.json';
+import { postRequest } from './other';
 const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
@@ -267,3 +268,70 @@ export function getHashOf(plaintext: string) {
 }
 
 export { authLoginV1, authRegisterV1 };
+
+function callingauthLogoutV1(token: string) {
+  return postRequest(SERVER_URL + '/auth/logout/v2', { token });
+}
+
+/**
+ * Sends an email to a user with a resetCode provided
+ *
+ * @param {string} email
+ * @returns {}
+ */
+
+export async function authPasswordResetRequestV1(email: string) {
+  const nodeEmail = require('nodemailer');
+  const data = getData();
+
+  const testAccount = await nodeEmail.createTestAccount();
+  const resetCode = generateResetCode();
+
+  data.resetCodeRequests.push({
+    email: email,
+    resetCode: resetCode
+  });
+
+  const sending = nodeEmail.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    secure: false,
+    auth: {
+      user: testAccount.user,
+      pass: testAccount.pass
+    }
+  });
+
+  try {
+    await sending.sendMail({
+      from: '"Some Guy" <BEANS.W17C.BOOST@gmail.com>',
+      to: email,
+      subject: 'Password Reset Request for UNSW Beans Account',
+      text: 'Hi, We have received a password change request for your account with UNSW Beans. Please use this code to reset the password:' +
+      resetCode + 'Thank you, UNSW Beans Team'
+    });
+  } catch (err) {
+    console.log('Sending email has an error');
+  }
+
+  const user = data.users.find((user) => user.email === email);
+
+  const session = data.sessions.find((session) => session.uId === user.uId);
+  for (const token of session.tokens) {
+    callingauthLogoutV1(token);
+  }
+  setData(data);
+  return {};
+}
+
+function generateResetCode(): any {
+  const data = getData();
+
+  const newCode = data.resetCode;
+
+  data.resetCode += 1;
+  setData(data);
+
+  const msg = newCode.toString() + 'resetCode';
+  return { resetCode: getHashOf(msg).slice(0, 6) };
+}
