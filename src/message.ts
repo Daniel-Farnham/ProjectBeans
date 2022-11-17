@@ -710,13 +710,14 @@ export function messageSendlaterdmV1(token: string, dmId: number, message: strin
   }
 
   // Make the message send at the given time, and return what the messageId will be
-  const timeoutId = setTimeout(function() {
+  setTimeout(function() {
     messageSendDmV1(token, dmId, message);
   }, (timeSent - currentTime) * 1000);
 
-  // Store the id returned from the timeout incase it must be cleared before execution
+  // Store the dmId in the timeoutIds array that declares that the dm is still active
+  // This will be used by messageSenddm to determine whether a message should still be sent
   const data = getData();
-  data.timeoutIds.push({ dmId: dmId, timeoutId: timeoutId });
+  data.timeoutIds.push({ dmId: dmId, isActive: true });
   return { messageId: data.messageCount };
 }
 

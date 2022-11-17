@@ -221,22 +221,25 @@ describe('Testing basic messageSendlaterdmV1 functionality', () => {
     }, regId.token);
 
     const timeSent = Math.floor((new Date()).getTime() / 1000);
-    const newMessageId = postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
+    postRequest(SERVER_URL + '/message/sendlaterdm/v1', {
       dmId: dmId.dmId,
-      message: 'This is another test.',
-      timeSent: timeSent + 10
+      message: 'This is another test!!!',
+      timeSent: timeSent + 5
     }, regId.token);
 
-    deleteRequest(SERVER_URL + '/message/remove/v2', {
-      messageId: newMessageId.messageId
+    deleteRequest(SERVER_URL + '/dm/remove/v2', {
+      dmId: dmId.dmId
     }, regId.token);
 
+    sleep(6);
     const messages = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dmId.dmId,
       start: 0,
     }, regId.token);
 
-    expect(messages.messages).toStrictEqual([]);
+    expect(messages.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(messages.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
 

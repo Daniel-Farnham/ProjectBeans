@@ -172,7 +172,7 @@ export type internalDm = {
 };
 export type internalDms = internalDm[];
 
-export type timeoutIds = { dmId: number, timeoutId: any };
+export type timeoutIds = { dmId: number, isActive: boolean };
 export type internalTimeoutIds = timeoutIds[];
 
 export type datastore = {
