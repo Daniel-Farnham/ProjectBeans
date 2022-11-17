@@ -9,30 +9,30 @@ beforeEach(() => {
 
 describe('Testing channelRemoveOwnerV1', () => {
   test('Testing successful return of empty object after executing', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -46,30 +46,30 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing invalid channelId', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -85,30 +85,30 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing invalid uId', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -124,30 +124,30 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing invalid token', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -163,30 +163,30 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing channelRemoveOwnerV1 removes the owner successfully', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
@@ -238,26 +238,26 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing user is not an owner of channel', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -272,14 +272,14 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing user is only owner of channel', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
@@ -295,26 +295,26 @@ describe('Testing channelRemoveOwnerV1', () => {
   });
 
   test('Testing valid channelId but user has no owner permissions', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 

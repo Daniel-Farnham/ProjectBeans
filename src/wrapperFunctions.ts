@@ -5,8 +5,13 @@ const SERVER_URL = `${url}:${port}`;
 export function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
 }
+
+export function authLoginV1(email: string, password: string) {
+  return postRequest(SERVER_URL + '/auth/login/v3', { email, password });
+}
+
 export function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
-  return postRequest(SERVER_URL + '/auth/register/v2', {
+  return postRequest(SERVER_URL + '/auth/register/v3', {
     email: email,
     password: password,
     nameFirst: nameFirst,
@@ -14,12 +19,12 @@ export function authRegisterV1(email: string, password: string, nameFirst: strin
   });
 }
 export function dmCreateV1(token: string, uIds: any[]) {
-  return postRequest(SERVER_URL + '/dm/create/v1', {
+  return postRequest(SERVER_URL + '/dm/create/v2', {
     uIds: uIds,
   }, token);
 }
 export function channelsCreateV1(token: string, name: string, isPublic: boolean) {
-  return postRequest(SERVER_URL + '/channels/create/v2', {
+  return postRequest(SERVER_URL + '/channels/create/v3', {
     name: name,
     isPublic: isPublic,
   }, token);
@@ -72,7 +77,7 @@ export function dmMessagesV1(token: string, dmId: number, start: number) {
   }, token);
 }
 export function dmLeaveV1(token: string, dmId: number) {
-  return postRequest(SERVER_URL + '/dm/leave/v1', {
+  return postRequest(SERVER_URL + '/dm/leave/v2', {
     dmId: dmId
   }, token);
 }

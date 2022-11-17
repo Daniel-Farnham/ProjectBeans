@@ -9,17 +9,17 @@ beforeEach(() => {
 
 describe('Testing channelsListV1', () => {
   test('Test successful return of users channels', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId.token);
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Boost',
       isPublic: false
     }, userId.token);
@@ -41,7 +41,7 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing invalid authUserId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
@@ -56,7 +56,7 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing no channels', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
@@ -71,13 +71,13 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing single channel', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId.token);
@@ -95,29 +95,29 @@ describe('Testing channelsListV1', () => {
   });
 
   test('Testing many channels', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
-    const channelId1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId1 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId.token);
-    const channelId2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId2 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Terrys HELP Room',
       isPublic: true
     }, userId.token);
-    const channelId3 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId3 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Boost',
       isPublic: false
     }, userId.token);
-    const channelId4 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId4 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Aero',
       isPublic: false
     }, userId.token);
-    const channelId5 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channelId5 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Egg',
       isPublic: false
     }, userId.token);

@@ -12,14 +12,14 @@ beforeEach(() => {
 
 describe('Testing basic functionality for messagesOutputV1', () => {
   test('Testing messagesOutputV1 returns the correct types', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
@@ -37,14 +37,14 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing when start is 0 and messages is empty', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
@@ -64,29 +64,29 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing when start is 0 and messages is not empty', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
-    const firstMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const firstMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 1'
     }, newId.token);
 
-    const secondMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const secondMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 2'
     }, newId.token);
 
-    const thirdMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const thirdMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 3'
     }, newId.token);
@@ -142,29 +142,29 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing when start is not 0 and messages is not empty', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
-    postRequest(SERVER_URL + '/message/send/v1', {
+    postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 1'
     }, newId.token);
 
-    const secondMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const secondMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 2'
     }, newId.token);
 
-    const thirdMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const thirdMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 3'
     }, newId.token);
@@ -209,20 +209,20 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing end isn\'t -1 when start is 0 and 51 messages exist', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
     for (let i = 0; i < 51; i++) {
-      postRequest(SERVER_URL + '/message/send/v1', {
+      postRequest(SERVER_URL + '/message/send/v2', {
         channelId: channel.channelId,
         message: i.toString()
       }, newId.token);
@@ -238,20 +238,20 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing end is -1 when start isn\'t 0 and 50 messages exist', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
     for (let i = 0; i < 50; i++) {
-      postRequest(SERVER_URL + '/message/send/v1', {
+      postRequest(SERVER_URL + '/message/send/v2', {
         channelId: channel.channelId,
         message: i.toString()
       }, newId.token);
@@ -297,14 +297,14 @@ describe('Testing messagesOutputV1 error handling', () => {
       statusCode: FORBIDDEN
     },
   ])('$desc', ({ name, isPublic, tokenOffset, channelIdOffset, start, statusCode }) => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
@@ -320,21 +320,21 @@ describe('Testing messagesOutputV1 error handling', () => {
   });
 
   test('Testing a user that isn\'t a member of the channel', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith',
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ABD',
       isPublic: true,
     }, firstId.token);

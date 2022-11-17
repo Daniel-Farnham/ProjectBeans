@@ -9,26 +9,26 @@ beforeEach(() => {
 
 describe('Testing channelLeaveV1', () => {
   test('Testing successful return of empty object', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -40,30 +40,30 @@ describe('Testing channelLeaveV1', () => {
   });
 
   test('Testing successful leaving of channel', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
+    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, userId1.token);
 
@@ -88,7 +88,7 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v2', {
+    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, userId1.token);
 
@@ -107,35 +107,35 @@ describe('Testing channelLeaveV1', () => {
   });
 
   test('Testing successful leaving of channel as owner', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
-    postRequest(SERVER_URL + '/channel/addowner/v1', {
+    postRequest(SERVER_URL + '/channel/addowner/v2', {
       channelId: channel.channelId,
       uId: userId2.authUserId
     }, userId1.token);
 
-    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
+    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, userId1.token);
 
@@ -162,7 +162,7 @@ describe('Testing channelLeaveV1', () => {
       channelId: channel.channelId
     }, userId2.token);
 
-    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v2', {
+    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, userId1.token);
 
@@ -182,26 +182,26 @@ describe('Testing channelLeaveV1', () => {
   });
 
   test('Testing invalid channelId', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -215,26 +215,26 @@ describe('Testing channelLeaveV1', () => {
   });
 
   test('Testing invalid token', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
 
-    postRequest(SERVER_URL + '/channel/join/v2', {
+    postRequest(SERVER_URL + '/channel/join/v3', {
       channelId: channel.channelId
     }, userId2.token);
 
@@ -248,21 +248,21 @@ describe('Testing channelLeaveV1', () => {
   });
 
   test('Testing valid channelId, but user is not a member', () => {
-    const userId1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'Edwin',
       nameLast: 'Ngo'
     });
 
-    const userId2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'john.smith@ad.unsw.edu.au',
       password: 'ANicePassword',
       nameFirst: 'John',
       nameLast: 'Smith'
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId1.token);
