@@ -1,4 +1,4 @@
-import { postRequest, deleteRequest } from './other';
+import { deleteRequest } from './other';
 import { port, url } from './config.json';
 import { authRegisterV1, authPasswordResetRequestV1, authPasswordResetV1 } from './wrapperFunctions';
 
@@ -16,7 +16,7 @@ describe('Testing basic authPasswordReset functionality', () => {
     const result = authPasswordResetV1('1', 'newpassword');
     expect(result).toEqual({ });
   });
-  
+
   test('Test error case if newPassword is too short', () => {
     authRegisterV1('smth@ad.unsw.edu.au', 'password', 'bee', 'jennie');
     authPasswordResetRequestV1('smth@ad.unsw.edu.au');
