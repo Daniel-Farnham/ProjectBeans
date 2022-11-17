@@ -199,7 +199,6 @@ app.get('/user/profile/v2', (req: Request, res: Response, next) => {
 app.get('/user/profile/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
-  console.log(res);
   res.json(userProfileV1(token, uId));
   save();
 });
