@@ -323,7 +323,7 @@ export async function authPasswordResetRequestV1(email: string) {
   setData(data);
   return {};
 }
-
+ 
 /**
  * Generates a reset code which is stored in dataStore
  * @returns {resetCode}
@@ -341,15 +341,15 @@ function generateResetCode(): any {
 }
 
 /**
- * Given a reset code for a user, sets that user's new password to the password provided.
+ * Given a reset code for a user, sets that user's new password to the password provided. 
  * Once a reset code has been used, it is then invalidated.
- *
- * @param {number} resetCode
- * @param {string} newPassword
- * @returns
+ * 
+ * @param {number} resetCode 
+ * @param {string} newPassword 
+ * @returns 
  */
 export function authPasswordResetV1(resetCode: string, newPassword: string) {
-  const data = getData();
+  const data = getData(); 
 
   const reset = data.resetCodeRequests.find((resetCodeRequest) => resetCodeRequest.resetCode === resetCode);
   if (typeof reset === 'undefined') {
@@ -366,5 +366,5 @@ export function authPasswordResetV1(resetCode: string, newPassword: string) {
 
   setData(data);
 
-  return {};
+  return {}
 }
