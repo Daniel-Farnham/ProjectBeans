@@ -6,6 +6,14 @@ export function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
 }
 
+export function authPasswordResetRequestV1(email: string) {
+  return postRequest(SERVER_URL + '/auth/passwordreset/request/v1', { email });
+}
+
+export function authPasswordResetV1(resetCode: string, newPassword: string) {
+  return postRequest(SERVER_URL + '/auth/passwordreset/reset/v1', { resetCode, newPassword });
+}
+
 export function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   return postRequest(SERVER_URL + '/auth/register/v2', {
     email: email,
