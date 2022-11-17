@@ -3,6 +3,9 @@ import validator from 'validator';
 import { error, tokenExists } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
+import { internalNotification } from './types';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
 const GLOBAL_OWNER = 1;
@@ -80,9 +83,12 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const userId = data.users.length;
   const caseInsensitiveEmail = email.toLowerCase();
 
+  // Make the first registered user a global owner and
+  // initialize the workplace analytics
   let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
     permissionId = GLOBAL_OWNER;
+    createAnalytics();
   }
 
   const user = {
@@ -91,13 +97,14 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     nameFirst: nameFirst,
     nameLast: nameLast,
     handleStr: handleStr,
+    profileImgUrl: SERVER_URL + '/static/defaultpic.jpg',
     password: getHashOf(password),
     permissionId: permissionId
   };
 
   data.users.push(user);
 
-  const notification = {
+  const notification: internalNotification = {
     uId: userId,
     notifications: [],
   };
@@ -120,6 +127,24 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     authUserId: userId
   };
 }
+
+/**
+  * Creates the initial workplace analytics when the
+  * first user is registered
+  *
+  */
+function createAnalytics() {
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const channelStats = { numChannelsExist: 0, timeStamp: timeSent };
+  const dmsStats = { numDmsExist: 0, timeStamp: timeSent };
+  const msgStats = { numMessagesExist: 0, timeStamp: timeSent };
+  data.workspaceStats.channelsExist.push(channelStats);
+  data.workspaceStats.dmsExist.push(dmsStats);
+  data.workspaceStats.messagesExist.push(msgStats);
+  setData(data);
+}
+
 /**
   * Will attempt to logout of a session with the token provided
   *
@@ -137,7 +162,8 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
   // Filter out the token from the user's sessions
   const hashedToken = getHashOf(token + GLOBAL_SECRET);
   for (const session of data.sessions) {
-    session.tokens = session.tokens.filter(activeToken => activeToken !== hashedToken);
+    session.tokens = session.tokens.filter(
+      (activeToken: string): activeToken is string => activeToken !== hashedToken);
   }
 
   setData(data);

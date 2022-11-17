@@ -8,10 +8,30 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
+describe('Testing positive cases for standupStartV1', () => {
+  test('Testing successful return of timeFinish', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
 
-// not sure but might need to start each standup before testing or may not? 
-describe('Testing positive cases for standupSendV1', () => {
-  test('Testing successful run of standup send', () => {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      name: 'ChannelBoost',
+      isPublic: true,
+    }, userId.token);
+
+    const standupStart = postRequest(SERVER_URL + '/standup/start/v1', {
+      channelId: channel.channelId,
+      length: 1,
+    }, userId.token);
+
+    expect(standupStart).toStrictEqual({ timeFinish: expect.any(Number) });
+  });
+
+  test('Testing start standup immediately after the end of a prior standup', () => {
+    const length = 3;
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -26,36 +46,42 @@ describe('Testing positive cases for standupSendV1', () => {
 
     postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      length: 1,
+      length: length,
     }, userId.token);
 
-    const standupSend = postRequest(SERVER_URL + '/standup/send/v1', {
+    // Es Lint does not allow empty loops. Hence the existence of the dummyvariable.
+    let currentTime = new Date().getTime();
+    const expire = currentTime + length * 1000;
+    while (currentTime < expire) {
+      currentTime = new Date().getTime();
+    }
+
+    const standupStartAgain = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      message: 'randomtest',
+      length: length,
     }, userId.token);
 
-    expect(standupSend).toStrictEqual({});
+    expect(standupStartAgain).toStrictEqual({ timeFinish: expect.any(Number) });
   });
-
 });
 
-describe('Testing negative cases for standupSendV1', () => {
+describe('Testing negative cases for standupStartV1', () => {
   test('Testing invalid token', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/standup/send/v1', {
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      message: 'randomtest',
+      length: 1,
     }, userId.token + 1);
 
     expect(returnedChannelObject.statusCode).toBe(FORBIDDEN);
@@ -76,9 +102,9 @@ describe('Testing negative cases for standupSendV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/standup/send/v1', {
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId + 1,
-      message: 'randomtest',
+      length: 1,
     }, userId.token);
 
     expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
@@ -86,7 +112,7 @@ describe('Testing negative cases for standupSendV1', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('Message length is over 1000 characters', () => {
+  test('Length is a negative integer', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -94,16 +120,14 @@ describe('Testing negative cases for standupSendV1', () => {
       nameLast: 'Farnham',
     });
 
-    const messageOver1000Char = 'a'.repeat(1001); 
-
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/standup/send/v1', {
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      message: 'a'.repeat(1001),
+      length: -1,
     }, userId.token);
 
     expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
@@ -134,14 +158,8 @@ describe('Testing negative cases for standupSendV1', () => {
       length: 1,
     }, userId.token);
 
-    const standupSend = postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'randomtest',
-    }, userId.token);
-
-    // need to add in /standup/send
-    expect(standupSend.statusCode).toBe(BAD_REQUEST);
-    const bodyObj = JSON.parse(standupSend.body as string);
+    expect(standupStartAgain.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(standupStartAgain.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
@@ -165,9 +183,8 @@ describe('Testing negative cases for standupSendV1', () => {
       isPublic: true,
     }, user1.token);
 
-    const ReturnedChannelObj = postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'randomtest'
+    const ReturnedChannelObj = postRequest(SERVER_URL + '/standup/start/v1', {
+      channelId: channel.channelId
     }, user2.token);
 
     expect(ReturnedChannelObj.statusCode).toBe(FORBIDDEN);
@@ -175,16 +192,3 @@ describe('Testing negative cases for standupSendV1', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
-
-/*
-
-400 Error:
-    channelId does not refer to a valid channel
-    length is a negative integer
-    an active standup is currently running in the channel
-
-403 Error:
-
-    channelId is valid and the authorised user is not a member of the channel
-*/
-
