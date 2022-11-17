@@ -191,7 +191,7 @@ describe('Testing channelRemoveOwnerV1', () => {
       uId: userId2.authUserId
     }, userId1.token);
 
-    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v2', {
+    const detailsBefore = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, userId1.token);
 
@@ -219,7 +219,7 @@ describe('Testing channelRemoveOwnerV1', () => {
       uId: userId2.authUserId
     }, userId1.token);
 
-    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v2', {
+    const detailsAfter = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, userId1.token);
 

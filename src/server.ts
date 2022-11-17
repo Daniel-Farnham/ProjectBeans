@@ -296,12 +296,7 @@ app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
   res.json(adminUserRemoveV1(token, uId));
 });
 
-app.get('/channel/details/v3', (req: Request, res: Response, next) => {
-  const token = req.header('token');
-  const channelId = parseInt(req.query.channelId as string);
-  res.json(channelDetailsV1(token, channelId));
-  save();
-});
+
 
 // handles errors nicely
 app.use(errorHandler());
