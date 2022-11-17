@@ -134,7 +134,7 @@ describe('Testing basic messageSendlaterV1 functionality', () => {
       ],
       start: 0,
       end: -1
-    }
+    };
 
     expect(messages).toStrictEqual(expectedMessages);
   });
