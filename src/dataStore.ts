@@ -9,6 +9,8 @@ let data: datastore = {
   tokenCount: 0,
   dms: [],
   notifications: [],
+  resetCodeRequests: [],
+  resetCode: 0,
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

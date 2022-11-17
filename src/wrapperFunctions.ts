@@ -5,6 +5,7 @@ const SERVER_URL = `${url}:${port}`;
 export function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
 }
+
 export function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   return postRequest(SERVER_URL + '/auth/register/v2', {
     email: email,
