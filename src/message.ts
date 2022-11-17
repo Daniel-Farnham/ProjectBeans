@@ -210,6 +210,15 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
 }
 
 <<<<<<< src/message.ts
+/**
+  * Pins a message in a channel or dm
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} messageId - id of the message to be edited
+  * ...
+  *
+  * @returns {{}}
+*/
 export function messagePinV1 (token: string, messageId: number): error | Record<string, never> {
   const data = getData();
   // check if token is valid
