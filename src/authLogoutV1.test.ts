@@ -1,4 +1,4 @@
-import { getRequest, postRequest, deleteRequest } from './other';
+import { getRequest, postRequest } from './other';
 import { authLoginV1, authRegisterV1, clearV1 } from './wrapperFunctions';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;

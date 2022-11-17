@@ -296,8 +296,6 @@ app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
   res.json(adminUserRemoveV1(token, uId));
 });
 
-
-
 // handles errors nicely
 app.use(errorHandler());
 
