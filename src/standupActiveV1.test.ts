@@ -20,12 +20,12 @@ describe('Testing basic functionality of standupActiveV1', () => {
       isPublic: true
     }, regId.token);
 
-    const standup = postRequest(SERVER_URL + 'standup/start/v1', {
+    const standup = postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channelId.channelId,
       length: 120
     }, regId.token);
 
-    const standupActive = getRequest(SERVER_URL + 'standup/active/v1', {
+    const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
       channelId: channelId
     }, regId.token);
 
@@ -45,7 +45,7 @@ describe('Testing basic functionality of standupActiveV1', () => {
       isPublic: true
     }, regId.token);
 
-    const standupActive = getRequest(SERVER_URL + 'standup/active/v1', {
+    const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
       channelId: channelId
     }, regId.token);
 
@@ -62,7 +62,7 @@ describe('Testing standupActiveV1 error handling', () => {
       nameLast: 'Scully'
     });
 
-    const standupActive = getRequest(SERVER_URL + 'standup/active/v1', {
+    const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
       channelId: 1
     }, regId.token);
 
@@ -91,7 +91,7 @@ describe('Testing standupActiveV1 error handling', () => {
       isPublic: true
     }, regId.token);
 
-    const standupActive = getRequest(SERVER_URL + 'standup/active/v1', {
+    const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
       channelId: channelId.channelId
     }, secondId.token);
 
@@ -113,7 +113,7 @@ describe('Testing standupActiveV1 error handling', () => {
       isPublic: true
     }, regId.token);
 
-    const standupActive = getRequest(SERVER_URL + 'standup/active/v1', {
+    const standupActive = getRequest(SERVER_URL + '/standup/active/v1', {
       channelId: channelId.channelId
     }, regId.token + 'NotAToken');
 
