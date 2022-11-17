@@ -49,29 +49,30 @@ export function standupSendV1 (token: string, channelId: number, message: string
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
-  for (const channel of data.channels) {
-    if (channel.channelId === channelId) {
-      for (const standup of channel.standUp) {
-        if (standup.isActive === true) {
-          throw HTTPError(BAD_REQUEST, 'Active standup already running in the channel');
-        }
-      }
-    }
+  if (standupActiveV1(token, channelId).isActive === false) {
+    throw HTTPError(BAD_REQUEST, 'Active standup is not currently running in the channel');
   }
 
-
+  
   // creating standup message package
-
-
 
     // this is the bit where i will be using messages.
 
-  while(standUpActive(token, channelId).isActive === true ) {
-    const packagedStandup = packageStandUp(token, channelId, standupMessagesPackage);
-    // need to write if statement confirming tags. 
-    standupMessagesPackage[index] = message; 
-    index++; 
-  }
+
+  //&& Math.floor((new Date()).getTime() < standupActiveV1(token, channelId).timeFinish
+  // It's because standupActive only takes a snapshot of the 
+
+  while (Math.floor((new Date()).getTime() / 1000 < standupActiveV1(token, channelId).timeFinish)) {
+  
+    let packagedStandup = packageStandUp(token, channelId, message);
+    
+    
+ }
+ 
+
+  console.log('TEST: ');  
+  console.log(packagedStandup); 
+
   //while(standUpActive(token, channelId).isActive === true ) {
     //for (const channel of data.channels) {
       //if (channel.channelId === channelId) {
@@ -81,9 +82,9 @@ export function standupSendV1 (token: string, channelId: number, message: string
   //}
 
   // Checking if standUp has ended. 
-  if (standUpActive(token, channelId).isActive === false) {
+  if (standupActiveV1(token, channelId).isActive === false) {
     
-    messageSendV1(token, channelId, packagedStandup); 
+    //messageSendV1(token, channelId, packagedStandup); 
 
   }
   
@@ -112,7 +113,8 @@ export function standupSendV1 (token: string, channelId: number, message: string
 
 }
 
-function packageStandUp(token, channelId, standupMessagesPackage) {
+function packageStandUp(token, channelId, message) {
+  const data = getData();
   const standupMessagesPackage = [];
   let index = 0; 
 
@@ -120,18 +122,12 @@ function packageStandUp(token, channelId, standupMessagesPackage) {
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      standupMessagesPackage[index] = token + ':' + messages; 
+      standupMessagesPackage[index] = message; 
     }
     index++; 
  }
- return standupMessagesPackageString = standupMessagesPackage[index].join('\n');
-}
-
-function timeStandup (length: number): number {
-  const timeStart = Math.floor((new Date()).getTime());
-  const timeFinish = timeStart + length;
-
-  return timeFinish;
+ const standupMessagesPackageString = standupMessagesPackage.join('\n');
+ return standupMessagesPackageString;
 }
 
 
@@ -187,6 +183,7 @@ export function standupStartV1 (token: string, channelId: number, length: number
     deactivateStandup(channelId, timeFinish);
   }, (length * 1000));
 
+
   return { timeFinish: timeFinish };
 }
 
@@ -200,7 +197,7 @@ export function standupStartV1 (token: string, channelId: number, length: number
   */
 
 function timeStandup (length: number): number {
-  const timeStart = Math.floor((new Date()).getTime());
+  const timeStart = Math.floor((new Date()).getTime() / 1000);
   const timeFinish = timeStart + length;
 
   return timeFinish;
