@@ -58,7 +58,6 @@ export function standupStartV1 (token: string, channelId: number, length: number
   const ActivateStandup = {
     isActive: true,
     timeFinish: timeFinish,
-    standUpStarter: uId, 
   };
 
   for (const channel of data.channels) {
@@ -143,9 +142,16 @@ export function standupActiveV1(token: string, channelId: number): standupInfo {
   // If the standup is active return its finish time otherwise return null
   let isActive = false;
   let timeFinish = null;
-  if (findChannel.standUp.isActive) {
-    isActive = true;
-    timeFinish = findChannel.standUp.timeFinish;
+
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      for (const targetStandup of channel.standUp) {
+        if (targetStandup.isActive === true) {
+          isActive = true; 
+          timeFinish = targetStandup.timeFinish; 
+        }
+      }
+    }
   }
 
   return { isActive: isActive, timeFinish: timeFinish };

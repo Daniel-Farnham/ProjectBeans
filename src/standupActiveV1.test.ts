@@ -49,7 +49,6 @@ describe('Testing basic functionality of standupActiveV1', () => {
       channelId: channelId.channelId
     }, regId.token);
 
-    expect(standupActive.statusCode).toBe(FORBIDDEN);
     expect(standupActive).toStrictEqual({ isActive: false, timeFinish: null });
   });
 });
