@@ -64,6 +64,7 @@ export function adminUserRemoveV1 (token: string, uId: number) {
       }
     }
   }
+
   setData(data);
   return ({});
 }
