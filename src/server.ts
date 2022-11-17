@@ -18,7 +18,14 @@ import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
   userProfileV1, usersAllV1, userProfileUploadPhotoV1
 } from './users';
+<<<<<<< src/server.ts
 import { messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, messageUnreactV1, searchV1, messageShareV1 } from './message';
+=======
+import {
+  messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
+  messageSendlaterV1, messageUnreactV1
+} from './message';
+>>>>>>> src/server.ts
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 import { adminUserRemoveV1 } from './admin';
@@ -392,6 +399,16 @@ app.post('/message/senddm/v2', (req: Request, res: Response, next) => {
   res.json(messageSendDmV1(token, dmId, message));
   save();
 });
+
+app.post('/message/sendlater/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.body.channelId as string);
+  const message = req.body.message as string;
+  const timeSent = parseInt(req.body.timeSent as string);
+  res.json(messageSendlaterV1(token, channelId, message, timeSent));
+  save();
+});
+
 app.post('/message/react/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
