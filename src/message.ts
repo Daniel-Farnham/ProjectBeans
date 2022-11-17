@@ -769,7 +769,7 @@ function sendlaterInfoInvalid(token: string, channelId: number, message: string,
   *
   * @returns {messageId} returns an object containing the messageId
   */
- export function messageSendlaterdmV1(token: string, dmId: number, message: string, timeSent: number): messageIdReturnedObject | error {
+export function messageSendlaterdmV1(token: string, dmId: number, message: string, timeSent: number): messageIdReturnedObject | error {
   // Check if the given information is valid
   const currentTime = Math.floor((new Date()).getTime() / 1000);
   const isInvalid = sendlaterdmInfoInvalid(token, dmId, message, timeSent, currentTime);
