@@ -3,7 +3,7 @@ import {
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
   getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError
 } from './other';
-import { storeMessageInDm } from './dm';
+import { storeMessageInDm, messageSendDmV1 } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
@@ -754,6 +754,77 @@ function sendlaterInfoInvalid(token: string, channelId: number, message: string,
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
   if (!isMemberOfChannel(findChannel, uId)) {
     return { code: FORBIDDEN, error: 'User is not a member of the channel' };
+  }
+
+  return false;
+}
+
+/**
+  * Sends a message to a dm automatically at a specified time in the future
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} dmId - id of the dm where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+  *
+  * @returns {messageId} returns an object containing the messageId
+  */
+export function messageSendlaterdmV1(token: string, dmId: number, message: string, timeSent: number): messageIdReturnedObject | error {
+  // Check if the given information is valid
+  const currentTime = Math.floor((new Date()).getTime() / 1000);
+  const isInvalid = sendlaterdmInfoInvalid(token, dmId, message, timeSent, currentTime);
+  if (isInvalid !== false) {
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
+  }
+
+  // Make the message send at the given time, and return what the messageId will be
+  setTimeout(function() {
+    messageSendDmV1(token, dmId, message);
+  }, (timeSent - currentTime) * 1000);
+
+  // Store the dmId in the timeoutIds array that declares that the dm is still active
+  // This will be used by messageSenddm to determine whether a message should still be sent
+  const data = getData();
+  data.timeoutIds.push({ dmId: dmId, isActive: true });
+  return { messageId: data.messageCount };
+}
+
+/**
+  * Checks the info given in messageSendlaterdmV1 is valid
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} dmId - id of the dm where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+  * @param {number} currentTime - the current time (in seconds)
+  *
+  * @returns {httpError} returns an error code and message if the info is invalid
+  * @returns {boolean} returns false if the info is valid
+  */
+function sendlaterdmInfoInvalid(token: string, dmId: number, message: string, timeSent: number, currentTime: number): httpError | boolean {
+  const data = getData();
+
+  if (!tokenExists(token)) {
+    return { code: FORBIDDEN, error: 'Token is invalid' };
+  }
+
+  if (!dmIdExists(dmId)) {
+    return { code: BAD_REQUEST, error: 'DmId is invalid' };
+  }
+
+  if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
+    return { code: BAD_REQUEST, error: 'Length of message is less than 1 or over 1000 characters' };
+  }
+
+  if (timeSent - currentTime < 0) {
+    return { code: BAD_REQUEST, error: 'timeSent is in the past' };
+  }
+
+  const uId = getUidFromToken(token);
+  const findDm = data.dms.find(dm => dm.dmId === dmId);
+  if (!isMemberOfDm(findDm, uId)) {
+    return { code: FORBIDDEN, error: 'User is not a member of the dm' };
   }
 
   return false;

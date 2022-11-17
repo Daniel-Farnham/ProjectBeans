@@ -16,6 +16,7 @@ export function clearV1 (): Record<string, never> {
     tokenCount: 0,
     dms: [],
     notifications: [],
+    timeoutIds: []
   };
   setData(data);
   return {};

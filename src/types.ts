@@ -172,6 +172,9 @@ export type internalDm = {
 };
 export type internalDms = internalDm[];
 
+export type timeoutIds = { dmId: number, isActive: boolean };
+export type internalTimeoutIds = timeoutIds[];
+
 export type datastore = {
   users: internalUsers,
   channels: internalChannels,
@@ -180,6 +183,7 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+  timeoutIds: internalTimeoutIds
 };
 
 export type messageContainerType = {
