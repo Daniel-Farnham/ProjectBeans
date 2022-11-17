@@ -16,7 +16,7 @@ import {
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
-  userProfileV1, usersAllV1, userProfileUploadPhotoV1
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1, usersStatsV1
 } from './users';
 import {
   messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
@@ -258,6 +258,12 @@ app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response, next) => 
 app.get('/users/all/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
+  save();
+});
+
+app.get('/users/stats/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(usersStatsV1(token));
   save();
 });
 

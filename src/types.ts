@@ -172,6 +172,17 @@ export type internalDm = {
 };
 export type internalDms = internalDm[];
 
+export type messagesAnalytics = { numMessagesExist: number, timeStamp: number };
+export type internalMessagesExist = messagesAnalytics[];
+export type dmsAnalytics = { numDmsExist: number, timeStamp: number };
+export type internalDmsExist = dmsAnalytics[];
+export type channelsAnalytics = { numChannelsExist: number, timeStamp: number };
+export type internalChannelsExist = channelsAnalytics[];
+export type internalWorkspaceStats = {
+  channelsExist: internalChannelsExist,
+  dmsExist: internalDmsExist,
+  messagesExist: internalMessagesExist
+}
 export type timeoutIds = { dmId: number, isActive: boolean };
 export type internalTimeoutIds = timeoutIds[];
 
@@ -183,6 +194,7 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+  workspaceStats: internalWorkspaceStats
   timeoutIds: internalTimeoutIds
 };
 

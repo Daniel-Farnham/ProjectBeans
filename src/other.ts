@@ -16,6 +16,11 @@ export function clearV1 (): Record<string, never> {
     tokenCount: 0,
     dms: [],
     notifications: [],
+    workspaceStats: {
+      channelsExist: [],
+      dmsExist: [],
+      messagesExist: []
+    },
     timeoutIds: []
   };
   setData(data);
@@ -118,6 +123,18 @@ export function sleep(time: number) {
   while (timeSent !== timeFinish) {
     timeSent = Math.floor((new Date()).getTime() / 1000);
   }
+}
+
+/**
+  * Updates the message analytics
+  * @param {number} timeSent - the time stamp of the analytics change
+  */
+export function updateMessageAnalytics(timeSent: number) {
+  const data = getData();
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs + 1, timeStamp: timeSent });
+  setData(data);
 }
 
 /**

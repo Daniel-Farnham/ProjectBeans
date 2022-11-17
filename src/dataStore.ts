@@ -9,6 +9,11 @@ let data: datastore = {
   tokenCount: 0,
   dms: [],
   notifications: [],
+  workspaceStats: {
+    channelsExist: [],
+    dmsExist: [],
+    messagesExist: []
+  },
   timeoutIds: []
 };
 

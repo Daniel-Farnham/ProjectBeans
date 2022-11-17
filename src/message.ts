@@ -1,7 +1,7 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
-  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError
+  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, updateMessageAnalytics
 } from './other';
 import { storeMessageInDm, messageSendDmV1 } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
@@ -66,6 +66,10 @@ export function messageSendV1 (token: string, channelId: number, message: string
   if (requiresTagging(message)) {
     notificationSetTag(uId, channelId, -1, message, 'channel');
   }
+
+  // Update the workplace analytics
+  updateMessageAnalytics(timeSent);
+
   return { messageId: messageId };
 }
 
@@ -365,7 +369,23 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
     // If no errors, remove
     removeMessageFromDM(messageId);
   }
+
+  // Update the workplace analytics
+  decrementMessageAnalytics();
+
   return {};
+}
+
+/**
+  * Decreases the number of messages in the workplace analytics
+  */
+function decrementMessageAnalytics() {
+  const data = getData();
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs - 1, timeStamp: timeSent });
+  setData(data);
 }
 
 /**
@@ -482,6 +502,7 @@ function messageShareErrorChecking(token: string, ogMessageId: number, message: 
     }
   }
 }
+
 function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string): messageId {
   // Create message
   const messageId = getMessageId();
