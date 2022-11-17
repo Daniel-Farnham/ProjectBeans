@@ -129,7 +129,7 @@ export function sleep(time: number) {
   * Updates the message analytics
   * @param {number} timeSent - the time stamp of the analytics change
   */
- export function updateMessageAnalytics(timeSent: number) {
+export function updateMessageAnalytics(timeSent: number) {
   const data = getData();
   const index = data.workspaceStats.messagesExist.length;
   const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;

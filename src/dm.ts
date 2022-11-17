@@ -81,7 +81,6 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
     throw HTTPError(errorMsg.code, errorMsg.error);
   }
 
-  
   // Sets the dm's status to inactive so any messages sent later get cancelled
   setInactive(dmId);
 
@@ -122,7 +121,7 @@ function setInactive(dmId: number) {
   * Decrements the dm count and message count when dm is removed
   * @param {number} msgCount - the number of messages removed when dm is removed
   */
- export function decrementDmMessageAnalytics(msgCount: number) {
+export function decrementDmMessageAnalytics(msgCount: number) {
   const data = getData();
   // Decrement numMessagesExist
   const index = data.workspaceStats.messagesExist.length;
