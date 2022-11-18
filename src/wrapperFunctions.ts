@@ -114,6 +114,12 @@ export function userStatsV1 (token: string) {
 }
 
 
+export function messagePinV1 (token: string, messageId: number) {
+  return postRequest(SERVER_URL + '/message/pin/v1', { messageId }, token);
+}
+export function messageUnpinV1 (token: string, messageId: number) {
+  return postRequest(SERVER_URL + '/message/unpin/v1', { messageId }, token);
+}
 export function adminUserRemoveV1(token: string, uId: number) {
   return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
 }

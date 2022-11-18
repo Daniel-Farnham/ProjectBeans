@@ -35,9 +35,9 @@ export type numDmsJoined = number;
 export type MessagesSent = number;
 
 export type userStats = {
-	channelsJoined: [{numChannelsJoined: numChannelsJoined, timeStamp: time}],
-	dmsJoined: [{numDmsJoined: numDmsJoined, timeStamp: time}], 
-	messagesSent: [{MessagesSent: MessagesSent, timeStamp: time}], 
+	channelsJoined: {numChannelsJoined: numChannelsJoined, timeStamp: time}[],
+	dmsJoined: {numDmsJoined: numDmsJoined, timeStamp: time}[], 
+	messagesSent: {MessagesSent: MessagesSent, timeStamp: time}[], 
 	involvementRate: involvementRate, 
 }
 

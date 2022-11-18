@@ -1,5 +1,9 @@
 import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
+import {
+  authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
+  messageSendDmV1, messageShareV1
+} from './wrapperFunctions';
 const SERVER_URL = `${url}:${port}`;
 const FORBIDDEN = 403;
 const BAD_REQUEST = 400;
@@ -31,6 +35,21 @@ describe('Testing messageEditV1 success for channels', () => {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, userId.token);
+
+    expect(editedMessage).toStrictEqual({});
+  });
+
+  test('Successfully edit share message in channel', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    const message = messageSendV1(user1.token, channel.channelId, 'original message!');
+    messageShareV1(user2.token, message.messageId, 'sharing this message', channel.channelId, -1);
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    }, user1.token);
 
     expect(editedMessage).toStrictEqual({});
   });
@@ -230,6 +249,21 @@ describe('Testing messageEditV1 success for dms', () => {
       messageId: message.messageId,
       message: 'This is an edited message'
     }, userId.token);
+
+    expect(editedMessage).toStrictEqual({});
+  });
+
+  test('Successfully edit shared message dm', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    const message = messageSendDmV1(user1.token, dm.dmId, 'original message!');
+    messageShareV1(user1.token, message.messageId, 'sharing this message', -1, dm.dmId);
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    }, user1.token);
 
     expect(editedMessage).toStrictEqual({});
   });
