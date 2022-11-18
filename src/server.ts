@@ -24,9 +24,8 @@ import {
 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
-import { standupStartV1 } from './standup';
+import { standupSendV1, standupStartV1, standupActiveV1 } from './standup';
 import { adminUserRemoveV1 } from './admin';
-import { standupActiveV1 } from './standup';
 
 // Set up web app
 const app = express();
@@ -516,6 +515,13 @@ app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
   save();
+});
+
+app.post('/standup/send/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { channelId } = req.body;
+  const message = req.body.message as string;
+  res.json(standupSendV1(token, channelId, message));
 });
 
 app.post('/standup/start/v1', (req: Request, res: Response, next) => {

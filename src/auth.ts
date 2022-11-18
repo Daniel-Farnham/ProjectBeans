@@ -5,7 +5,6 @@ import crypto from 'crypto';
 import HTTPError from 'http-errors';
 import { internalNotification } from './types';
 import { port, url } from './config.json';
-import { postRequest } from './other';
 const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
@@ -290,10 +289,6 @@ export function getHashOf(plaintext: string) {
 
 export { authLoginV1, authRegisterV1 };
 
-function callingauthLogoutV1(token: string) {
-  return postRequest(SERVER_URL + '/auth/logout/v2', { token });
-}
-
 /**
  * Sends an email to a user with a resetCode provided
  *
@@ -337,9 +332,10 @@ export async function authPasswordResetRequestV1(email: string) {
 
   const user = data.users.find((user) => user.email === email);
 
-  const session = data.sessions.find((session) => session.uId === user.uId);
-  for (const token of session.tokens) {
-    callingauthLogoutV1(token);
+  for (const session of data.sessions) {
+    if (session.uId === user.uId) {
+      session.tokens = [];
+    }
   }
   setData(data);
   return {};
