@@ -1,7 +1,7 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
-  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, isOwnerOfChannel, updateMessageAnalytics,
+  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, updateMessageAnalytics, isOwnerOfChannel
 } from './other';
 import { storeMessageInDm, messageSendDmV1 } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';

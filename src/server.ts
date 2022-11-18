@@ -350,10 +350,18 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
   save();
 });
 
+
 app.post('/message/pin/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
   res.json(messagePinV1(token, messageId));
+});
+
+app.post('/message/unpin/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  res.json(messageUnpinV1(token, messageId));
+  save();
 });
 
 app.post('/auth/passwordreset/request/v1', (req: Request, res: Response, next) => {
@@ -368,12 +376,6 @@ app.get('/standup/active/v1', (req: Request, res: Response, next) => {
   save();
 });
 
-app.post('/message/unpin/v1', (req: Request, res: Response, next) => {
-  const token = req.header('token');
-  const messageId = parseInt(req.body.messageId as string);
-  res.json(messageUnpinV1(token, messageId));
-  save();
-});
 // handles errors nicely
 app.use(errorHandler());
 
