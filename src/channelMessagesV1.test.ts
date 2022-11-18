@@ -19,7 +19,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
@@ -44,7 +44,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
@@ -71,22 +71,22 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
-    const firstMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const firstMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 1'
     }, newId.token);
 
-    const secondMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const secondMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 2'
     }, newId.token);
 
-    const thirdMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const thirdMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 3'
     }, newId.token);
@@ -149,22 +149,22 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
-    postRequest(SERVER_URL + '/message/send/v1', {
+    postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 1'
     }, newId.token);
 
-    const secondMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const secondMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 2'
     }, newId.token);
 
-    const thirdMsg = postRequest(SERVER_URL + '/message/send/v1', {
+    const thirdMsg = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Testing 3'
     }, newId.token);
@@ -216,13 +216,13 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
     for (let i = 0; i < 51; i++) {
-      postRequest(SERVER_URL + '/message/send/v1', {
+      postRequest(SERVER_URL + '/message/send/v2', {
         channelId: channel.channelId,
         message: i.toString()
       }, newId.token);
@@ -245,13 +245,13 @@ describe('Testing basic functionality for messagesOutputV1', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
 
     for (let i = 0; i < 50; i++) {
-      postRequest(SERVER_URL + '/message/send/v1', {
+      postRequest(SERVER_URL + '/message/send/v2', {
         channelId: channel.channelId,
         message: i.toString()
       }, newId.token);
@@ -304,7 +304,7 @@ describe('Testing messagesOutputV1 error handling', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: false,
     }, newId.token);
@@ -334,7 +334,7 @@ describe('Testing messagesOutputV1 error handling', () => {
       nameLast: 'Scully',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ABD',
       isPublic: true,
     }, firstId.token);

@@ -11,7 +11,7 @@ beforeEach(() => {
 
 describe('Testing user/profile/setemail/v2 success handling', () => {
   test('Testing successful return of empty object', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
@@ -26,14 +26,14 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
   });
 
   test('Testing channel ownerMembers and allMembers contain user with updated email', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Boost',
       isPublic: true,
     }, user.token);
@@ -42,7 +42,7 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
       email: 'janed@gmail.com',
     }, user.token);
 
-    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+    const result = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId,
     }, user.token);
 
@@ -74,14 +74,14 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
   });
 
   test('Testing dm members contain user with updated email', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, user.token);
 
@@ -89,7 +89,7 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
       email: 'janed@gmail.com',
     }, user.token);
 
-    const result = getRequest(SERVER_URL + '/dm/details/v1', {
+    const result = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dm.dmId,
     }, user.token);
 
@@ -113,7 +113,7 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
   test.each([
     { email: 'jdoe@gmail.com', desc: 'Email updated correctly in user profile' },
   ])('$desc', ({ email }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
@@ -134,7 +134,7 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
       }
     };
 
-    const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
+    const resultUser = getRequest(SERVER_URL + '/user/profile/v3', {
       uId: user.authUserId,
     }, user.token);
 
@@ -149,7 +149,7 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
 
     for (let i = 0; i <= 4; i++) {
       // Create the user
-      const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      const user = postRequest(SERVER_URL + '/auth/register/v3', {
         email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
         password: 'AP@ssW0rd!',
         nameFirst: firstNames[i],
@@ -163,7 +163,7 @@ describe('Testing user/profile/setemail/v2 success handling', () => {
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v2', {}, users[0].token);
 
     // Loop through each user and check the user object has the e-mail domain
     // name changed
@@ -206,7 +206,7 @@ describe('Testing user/profile/setemail/v2 error handling', () => {
       statusCode: INPUT_ERROR
     },
   ])('$desc', ({ token, email, statusCode }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',

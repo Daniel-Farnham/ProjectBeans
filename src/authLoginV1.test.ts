@@ -9,7 +9,7 @@ function clearV1() {
 }
 
 function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
-  return postRequest(SERVER_URL + '/auth/register/v2', { email, password, nameFirst, nameLast });
+  return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
 }
 
 function authLoginV1(email: string, password: string) {
@@ -50,7 +50,7 @@ describe('Testing basic authLoginV1 functionality', () => {
     authRegisterV1('z5361935@ad.unsw.edu.au', 'password', 'Curtis', 'Scully');
     const loginId = authLoginV1('z5361935@ad.unsw.edu.au', 'password');
 
-    const user = getRequest(SERVER_URL + '/user/profile/v2', {
+    const user = getRequest(SERVER_URL + '/user/profile/v3', {
       token: loginId.token,
       uId: loginId.authUserId
     }, loginId.token);

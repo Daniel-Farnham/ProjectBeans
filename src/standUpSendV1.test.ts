@@ -11,14 +11,14 @@ beforeEach(() => {
 // not sure but might need to start each standup before testing or may not?
 describe('Testing positive cases for standupSendV1', () => {
   test('Testing successful run of standup send', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -40,45 +40,6 @@ describe('Testing positive cases for standupSendV1', () => {
 
     expect(standupSend).toMatchObject({});
   });
-
-  /*
-  test('Testing successful run of standup send', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'daniel.farnham@student.unsw.edu.au',
-      password: 'AVeryPoorPassword',
-      nameFirst: 'Daniel',
-      nameLast: 'Farnham',
-    });
-
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      name: 'ChannelBoost',
-      isPublic: true,
-    }, userId.token);
-
-  // might need to increase length
-    postRequest(SERVER_URL + '/standup/start/v1', {
-      channelId: channel.channelId,
-      length: 2,
-    }, userId.token);
-
-    postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'randomtest 1',
-    }, userId.token);
-
-    postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'randomtest 2',
-    }, userId.token);
-
-    const standupSendPackage = postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'randomtest 3',
-    }, userId.token);
-
-    expect(standupSendPackage).toStrictEqual({});
-  });
-  */
 });
 
 describe('Testing negative cases for standupSendV1', () => {
@@ -106,14 +67,14 @@ describe('Testing negative cases for standupSendV1', () => {
   });
 
   test('Testing invalid channelId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -129,14 +90,14 @@ describe('Testing negative cases for standupSendV1', () => {
   });
 
   test('Message length is over 1000 characters', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -152,14 +113,14 @@ describe('Testing negative cases for standupSendV1', () => {
   });
 
   test('An active standup is not current running in the channel', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -176,21 +137,21 @@ describe('Testing negative cases for standupSendV1', () => {
   });
 
   test('Authorised user is not a member of the channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'fake.mcfake@student.unsw.edu.au',
       password: 'AnEvenWorsePassword',
       nameFirst: 'Fake',
       nameLast: 'McFake',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user1.token);

@@ -10,14 +10,14 @@ beforeEach(() => {
 
 describe('Testing positive cases for standupStartV1', () => {
   test('Testing successful return of timeFinish', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -32,14 +32,14 @@ describe('Testing positive cases for standupStartV1', () => {
 
   test('Testing start standup immediately after the end of a prior standup', () => {
     const length = 3;
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -67,14 +67,14 @@ describe('Testing positive cases for standupStartV1', () => {
 
 describe('Testing negative cases for standupStartV1', () => {
   test('Testing invalid token', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -90,14 +90,14 @@ describe('Testing negative cases for standupStartV1', () => {
   });
 
   test('Testing invalid channelId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -113,14 +113,14 @@ describe('Testing negative cases for standupStartV1', () => {
   });
 
   test('Length is a negative integer', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -136,14 +136,14 @@ describe('Testing negative cases for standupStartV1', () => {
   });
 
   test('An active standup is already running', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -164,21 +164,21 @@ describe('Testing negative cases for standupStartV1', () => {
   });
 
   test('Authorised user is not a member of the channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'fake.mcfake@student.unsw.edu.au',
       password: 'AnEvenWorsePassword',
       nameFirst: 'Fake',
       nameLast: 'McFake',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user1.token);
