@@ -48,10 +48,10 @@ function dmCreateV1(token: string, uIds: Array<number>): {dmId: number} | Error 
   const uIdsWithoutAuthUser = uIds.filter(value => value !== uId);
   notificationSetAddDm(dm.dmId, uId, uIdsWithoutAuthUser);
 
-	IncreaseDm(token);
-	for (const uId of uIds) {
-		IncreaseDmbyUid(uId);
-	}
+  IncreaseDm(token);
+  for (const uId of uIds) {
+    IncreaseDmbyUid(uId);
+  }
   return { dmId: dm.dmId };
 }
 
@@ -93,17 +93,16 @@ function dmRemoveV1(token: string, dmId: number): Record<string, never> | error 
   // Remove all the members of the dm
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
-			for (const member of dm.members) {
-				DecreaseDmbyUid(member.uId);
-			}
+      for (const member of dm.members) {
+        DecreaseDmbyUid(member.uId);
+      }
       msgCount = dm.messages.length;
       while (dm.members.length !== 0) {
         dm.members.pop();
       }
     }
   }
-	DecreaseDm(token);
-	
+  DecreaseDm(token);
 
   // Update the workplace analytics
   decrementDmMessageAnalytics(msgCount);
@@ -251,7 +250,7 @@ function dmLeaveV1(token: string, dmId: number): Record<string, never> | error {
       dmRemoveUser(uId, dmId);
     }
   }
-	DecreaseDm(token);
+  DecreaseDm(token);
   return {};
 }
 
@@ -574,12 +573,11 @@ export function messageSendDmV1 (token: string, dmId: number, message: string): 
   if (requiresTagging(message)) {
     notificationSetTag(uId, -1, dmId, message, 'dm');
   }
-  
-	IncreaseMessages(token);
+
+  IncreaseMessages(token);
 
   // Update the workplace analytics
   updateMessageAnalytics(timeSent);
-
 
   return { messageId: messageId };
 }

@@ -63,7 +63,7 @@ export function messageSendV1 (token: string, channelId: number, message: string
     ],
     isPinned: false,
   };
-	IncreaseMessages(token);
+  IncreaseMessages(token);
 
   storeMessageInChannel(messageObj, channelId);
   if (requiresTagging(message)) {
@@ -865,7 +865,6 @@ export function messageSendlaterV1(token: string, channelId: number, message: st
   }, (timeSent - currentTime) * 1000);
 
   const data = getData();
-	IncreaseMessages(token);
   return { messageId: data.messageCount };
 }
 

@@ -54,7 +54,6 @@ export function standupSendV1 (token: string, channelId: number, message: string
       channel.standUp.messages.push(packagedMessage);
     }
   }
-
   return {};
 }
 

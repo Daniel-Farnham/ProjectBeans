@@ -113,7 +113,6 @@ export function userStatsV1 (token: string) {
   return getRequest(SERVER_URL + 'user/stats/v1', token);
 }
 
-
 export function messagePinV1 (token: string, messageId: number) {
   return postRequest(SERVER_URL + '/message/pin/v1', { messageId }, token);
 }
@@ -127,4 +126,3 @@ export function adminUserRemoveV1(token: string, uId: number) {
 export function usersAllV1(token: string) {
   return getRequest(SERVER_URL + '/users/all/v2', { }, token);
 }
-
