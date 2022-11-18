@@ -1,3 +1,5 @@
+import { type } from "os";
+
 // Iteration 0 Types
 export type email = string;
 export type password = string;
@@ -27,6 +29,17 @@ export type isThisUserReacted = boolean;
 export type isPinned = boolean;
 export type uIds = uId[];
 
+export type numChannelsJoined = number;
+export type numDmsJoined = number;
+export type MessagesSent = number;
+
+export type userStats = {
+	channelsJoined: [{numChannelsJoined: numChannelsJoined, timeStamp: time}],
+	dmsJoined: [{numDmsJoined: numDmsJoined, timeStamp: time}], 
+	messagesSent: [{MessagesSent: MessagesSent, timeStamp: time}], 
+	involvementRate: involvementRate, 
+}
+
 export type reactId = number;
 
 export type react = {
@@ -35,6 +48,7 @@ export type react = {
   isThisUserReacted: isThisUserReacted,
 };
 export type reacts = react[];
+export type involvementRate = number;
 export type Message = {
   messageId: messageId,
   uId: uId,
@@ -72,6 +86,12 @@ export type user = {
   nameFirst: nameFirst,
   nameLast: nameLast,
   handleStr: handleStr,
+	userStats: {
+		channelsJoined: [{numChannelsJoined: numChannelsJoined, timeStamp: time}],
+    dmsJoined: [{numDmsJoined: numDmsJoined, timeStamp: time}], 
+    messagesSent: [{MessagesSent: MessagesSent, timeStamp: time}], 
+    involvementRate: involvementRate, 
+	}
 };
 export type members = user[];
 export type users = user[];
@@ -136,7 +156,13 @@ export type internalUser = {
   handleStr: handleStr,
   profileImgUrl: profileImgUrl,
   password: password,
-  permissionId: permissionId
+  permissionId: permissionId,
+	userStats: {
+		channelsJoined: [{numChannelsJoined: numChannelsJoined, timeStamp: time}],
+    dmsJoined: [{numDmsJoined: numDmsJoined, timeStamp: time}], 
+    messagesSent: [{MessagesSent: MessagesSent, timeStamp: time}], 
+    involvementRate: involvementRate, 
+	}
 }
 export type internalUsers = internalUser[];
 
@@ -187,3 +213,5 @@ export type messageContainerType = {
   dm?: internalDm,
   channel?: internalChannel
 };
+
+

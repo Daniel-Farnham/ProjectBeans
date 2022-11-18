@@ -8,6 +8,7 @@ import { notificationSetTag, requiresTagging, notificationSetReact } from './not
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import { dm, internalChannel, messages, messageIdReturnedObject, messagesReturnObject, Message, messageId } from './types';
+import { IncreaseMessages } from './users';
 
 const MIN_MESSAGE_LEN = 1;
 const MAX_MESSAGE_LEN = 1000;
@@ -61,6 +62,7 @@ export function messageSendV1 (token: string, channelId: number, message: string
     ],
     isPinned: false,
   };
+	IncreaseMessages(token);
 
   storeMessageInChannel(messageObj, channelId);
   if (requiresTagging(message)) {
@@ -716,6 +718,7 @@ export function messageSendlaterV1(token: string, channelId: number, message: st
   }, (timeSent - currentTime) * 1000);
 
   const data = getData();
+	IncreaseMessages(token);
   return { messageId: data.messageCount };
 }
 

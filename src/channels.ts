@@ -1,6 +1,7 @@
 import { tokenExists, isMemberOfChannel, error, getUidFromToken, FORBIDDEN, BAD_REQUEST } from './other';
 import { getData, setData } from './dataStore';
 import { internalChannel } from './types';
+import { increaseChannel } from './users';
 import HTTPError from 'http-errors';
 
 // Constants
@@ -133,6 +134,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
     isPublic: isPublic,
   };
 
+	increaseChannel(token);
   // Push the user to the channel
   data.channels.push(channelObj);
   setData(data);

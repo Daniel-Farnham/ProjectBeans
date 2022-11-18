@@ -103,3 +103,6 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
     dmId: dmId,
   }, token);
 }
+export function userStatsV1 (token: string) {
+  return getRequest(SERVER_URL + 'user/stats/v1', token);
+}
