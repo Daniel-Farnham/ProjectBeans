@@ -29,6 +29,7 @@ export type isThisUserReacted = boolean;
 export type isPinned = boolean;
 export type uIds = uId[];
 
+
 export type numChannelsJoined = number;
 export type numDmsJoined = number;
 export type MessagesSent = number;
@@ -40,7 +41,10 @@ export type userStats = {
 	involvementRate: involvementRate, 
 }
 
+
 export type reactId = number;
+export type isActive = boolean;
+export type timeFinish = number | null;
 
 export type react = {
   reactId: reactId,
@@ -63,6 +67,12 @@ export type notification = {
   channelId: channelId,
   dmId: dmId,
   notificationMessage: notificationMessage,
+};
+
+export type StandUp = {
+  messages: message[];
+  isActive: isActive,
+  timeFinish: timeFinish,
 };
 
 // Output Types
@@ -146,6 +156,11 @@ export type channelDetails = {
   ownerMembers: user[],
   allMembers: user[],
 };
+
+// Used for standup functions
+
+export type standUp = StandUp[];
+
 // Internal representations of objects in datastore
 export type profileImgUrl = string;
 export type internalUser = {
@@ -173,6 +188,7 @@ export type internalChannel = {
   allMembers: users,
   messages: messages,
   isPublic: isPublic,
+  standUp: StandUp;
 };
 
 export type session = {
@@ -198,6 +214,26 @@ export type internalDm = {
 };
 export type internalDms = internalDm[];
 
+export type resetCodeRequest = {
+  email: string,
+  resetCode: string,
+};
+
+export type resetCodeRequests = resetCodeRequest[];
+export type messagesAnalytics = { numMessagesExist: number, timeStamp: number };
+export type internalMessagesExist = messagesAnalytics[];
+export type dmsAnalytics = { numDmsExist: number, timeStamp: number };
+export type internalDmsExist = dmsAnalytics[];
+export type channelsAnalytics = { numChannelsExist: number, timeStamp: number };
+export type internalChannelsExist = channelsAnalytics[];
+export type internalWorkspaceStats = {
+  channelsExist: internalChannelsExist,
+  dmsExist: internalDmsExist,
+  messagesExist: internalMessagesExist
+}
+export type timeoutIds = { dmId: number, isActive: boolean };
+export type internalTimeoutIds = timeoutIds[];
+
 export type datastore = {
   users: internalUsers,
   channels: internalChannels,
@@ -206,6 +242,10 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+  resetCodeRequests: resetCodeRequests,
+  resetCode: number,
+  workspaceStats: internalWorkspaceStats
+  timeoutIds: internalTimeoutIds
 };
 
 export type messageContainerType = {
@@ -215,3 +255,7 @@ export type messageContainerType = {
 };
 
 
+export type isActiveOutput = {
+    isActive: boolean,
+    timeFinish: number,
+}

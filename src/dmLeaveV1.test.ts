@@ -8,14 +8,14 @@ beforeEach(() => {
 
 describe('Testing basic dmLeaveV1 functionality', () => {
   test('Testing dmLeaveV1 returns an empty object on success', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
@@ -27,14 +27,14 @@ describe('Testing basic dmLeaveV1 functionality', () => {
   });
 
   test('Testing dmLeaveV1 makes a dm inaccessible if the only member leaves', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
@@ -42,7 +42,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -52,21 +52,21 @@ describe('Testing basic dmLeaveV1 functionality', () => {
   });
 
   test('Testing dmLeaveV1 successfully removes a regular member', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
@@ -74,7 +74,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, secondId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, firstId.token);
 
@@ -92,21 +92,21 @@ describe('Testing basic dmLeaveV1 functionality', () => {
   });
 
   test('Testing dmLeaveV1 successfully removes the creator', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
@@ -114,7 +114,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, secondId.token);
 
@@ -132,21 +132,21 @@ describe('Testing basic dmLeaveV1 functionality', () => {
   });
 
   test('Testing dmLeaveV1 removes a user and they can no longer access the dm', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
@@ -154,7 +154,7 @@ describe('Testing basic dmLeaveV1 functionality', () => {
       dmId: dmId.dmId
     }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, firstId.token);
 
@@ -166,14 +166,14 @@ describe('Testing basic dmLeaveV1 functionality', () => {
 
 describe('Testing dmLeaveV1 error handling', () => {
   test('Testing dmLeaveV1 returns error when dmId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v1', {
+    const dmLeave = postRequest(SERVER_URL + '/dm/leave/v2', {
       dmId: 0
     }, regId.token);
 
@@ -183,21 +183,21 @@ describe('Testing dmLeaveV1 error handling', () => {
   });
 
   test('Testing dmLeaveV1 returns error when authorised user isn\'t a member', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, firstId.token);
 
@@ -211,14 +211,14 @@ describe('Testing dmLeaveV1 error handling', () => {
   });
 
   test('Testing dmLeaveV1 returns error when token is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 

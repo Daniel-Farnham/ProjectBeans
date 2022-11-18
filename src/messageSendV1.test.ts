@@ -8,14 +8,14 @@ describe('Testing positive cases for messageSendV1', () => {
   });
 
   test('Successfully create messageId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -29,19 +29,19 @@ describe('Testing positive cases for messageSendV1', () => {
   });
 
   test('Testing messageId uniqueness', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel1 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel1 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, userId.token);
 
-    const channel2 = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel2 = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Boost',
       isPublic: true
     }, userId.token);
@@ -66,14 +66,14 @@ describe('Testing negative cases for messageSendV1', () => {
   });
 
   test('Testing invalid token', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -89,14 +89,14 @@ describe('Testing negative cases for messageSendV1', () => {
   });
 
   test('Test invalid channelId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -112,21 +112,21 @@ describe('Testing negative cases for messageSendV1', () => {
   });
 
   test('Authorised user is not a member of the channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'fake.mcfake@student.unsw.edu.au',
       password: 'AnEvenWorsePassword',
       nameFirst: 'Fake',
       nameLast: 'McFake',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user1.token);
@@ -152,14 +152,14 @@ describe('Testing negative cases for messageSendV1', () => {
         desc: 'Testing message too short'
       },
     ])('$desc', ({ message }) => {
-      const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      const userId = postRequest(SERVER_URL + '/auth/register/v3', {
         email: 'daniel.farnham@student.unsw.edu.au',
         password: 'AVeryPoorPassword',
         nameFirst: 'Daniel',
         nameLast: 'Farnham',
       });
 
-      const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      const channel = postRequest(SERVER_URL + '/channels/create/v3', {
         name: 'ChannelBoost',
         isPublic: true,
       }, userId.token);

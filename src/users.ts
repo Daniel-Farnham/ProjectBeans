@@ -4,7 +4,7 @@ import HTTPError from 'http-errors';
 import { uId, user, userStats } from './types';
 import {
   userIdExists, tokenExists, error, getUidFromToken, FORBIDDEN,
-  BAD_REQUEST
+  BAD_REQUEST, isMemberOfChannel, isMemberOfDm
 } from './other';
 import request from 'sync-request';
 import fs from 'fs';
@@ -468,7 +468,7 @@ function emailInUse (email: string): boolean {
   * @param {string} handleStr - token session for user requesting change
   *
   * @returns {boolean} - returns true if handle in use
-*/
+  */
 function handleInUse (handleStr: string): boolean {
   const data = getData();
 
@@ -688,3 +688,65 @@ export function DecreaseDmbyUid (uId: number) {
 	}
 	setData(data);
 }
+/*
+  * Returns the required statistics about the workspace's use of the program
+  * @param {string} token - token session for user requesting the stats
+  *
+  * @returns {workspaceStats} - returns true if handle in use
+  */
+export function usersStatsV1 (token: string) {
+  if (!tokenExists(token)) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+
+  const data = getData();
+
+  // Calculate the number of users that exist, and how many of them are in at
+  // least one channel or dm
+  const numUsersInChannelOrDm = findNumUsersInChannelOrDm();
+  const numUsers = data.users.length;
+
+  // Collect the timestamped analytics for channels, dms and messages then
+  // calculate the utilization rate of the workspace
+  const stats = {
+    channelsExist: data.workspaceStats.channelsExist,
+    dmsExist: data.workspaceStats.dmsExist,
+    messagesExist: data.workspaceStats.messagesExist,
+    utilizationRate: numUsersInChannelOrDm / numUsers
+  };
+
+  return { workspaceStats: stats };
+}
+
+/**
+  * Calculates the number of users who have joined at least one channel
+  * or dm
+  * @returns {count} - number of users who are in at least one channel or dm
+  */
+function findNumUsersInChannelOrDm(): number {
+  const data = getData();
+  let count = 0;
+  // For every registered user check if they are in any channels of dms
+  for (const user of data.users) {
+    let active = false;
+    for (const channel of data.channels) {
+      if (isMemberOfChannel(channel, user.uId)) {
+        active = true;
+      }
+    }
+
+    for (const dm of data.dms) {
+      if (isMemberOfDm(dm, user.uId)) {
+        active = true;
+      }
+    }
+
+    // If they are increase the count of users in at least one channel or dm
+    if (active) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
