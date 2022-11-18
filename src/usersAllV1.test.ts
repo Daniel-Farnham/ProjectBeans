@@ -15,7 +15,7 @@ describe('Testing usersAllV1 successful case handling', () => {
     const firstNames = ['jane', 'bob', 'sally', 'john', 'peter'];
     const lastNames = ['doe', 'junior', 'beans', 'wick', 'cordial'];
     for (let i = 0; i <= 4; i++) {
-      const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      const user = postRequest(SERVER_URL + '/auth/register/v3', {
         email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
         password: 'AP@ssW0rd!',
         nameFirst: firstNames[i],
@@ -45,7 +45,7 @@ describe('Testing usersAllV1 successful case handling', () => {
   });
 
   test('Testing successful return of users array with one user', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
@@ -74,7 +74,7 @@ describe('Testing usersAllV1 error handling', () => {
   test.each([
     { token: 'InvalidToken', desc: 'Token is invalid' },
   ])('$desc', ({ token }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',

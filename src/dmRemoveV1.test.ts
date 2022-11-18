@@ -8,14 +8,14 @@ beforeEach(() => {
 
 describe('Testing basic dmRemoveV1 functionality', () => {
   test('Testing dmRemoveV1 successfully returns an empty object', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
@@ -27,18 +27,18 @@ describe('Testing basic dmRemoveV1 functionality', () => {
   });
 
   test('Testing dmRemoveV1 removes all dm members by failing to view dm details', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
-    const firstDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const firstDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -46,7 +46,7 @@ describe('Testing basic dmRemoveV1 functionality', () => {
       dmId: dmId.dmId
     }, regId.token);
 
-    const secondDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const secondDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -69,7 +69,7 @@ describe('Testing basic dmRemoveV1 functionality', () => {
 
 describe('Testing dmRemoveV1 error handling', () => {
   test('Testing dmRemoveV1 returns error when dmId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -86,21 +86,21 @@ describe('Testing dmRemoveV1 error handling', () => {
   });
 
   test('Testing dmRemoveV1 returns error when authorised user isn\'t the dm creator', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [secondId.authUserId]
     }, firstId.token);
 
@@ -114,21 +114,21 @@ describe('Testing dmRemoveV1 error handling', () => {
   });
 
   test('Testing dmRemoveV1 returns error when authorised user isn\'t a member', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, firstId.token);
 
@@ -142,14 +142,14 @@ describe('Testing dmRemoveV1 error handling', () => {
   });
 
   test('Testing dmRemoveV1 returns error when token is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: []
     }, regId.token);
 
