@@ -1,32 +1,33 @@
 import { getData, setData } from './dataStore';
-import { getUidFromToken, tokenExists } from './other';
+import { getUidFromToken, tokenExists, FORBIDDEN, BAD_REQUEST } from './other';
 import HTTPError from 'http-errors';
 
 /**
- *
+ * Removes an admin
+ * 
  * @param {string} token
  * @param {number} uId
- * @returns
+ * @returns {{}}
  */
 export function adminUserRemoveV1 (token: string, uId: number) {
   const data = getData();
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'Token provided is invalid');
+    throw HTTPError(FORBIDDEN, 'Token provided is invalid');
   }
   const globalUid = getUidFromToken(token);
   const global = data.users.find((user) => user.uId === globalUid);
   if (global.permissionId !== 1) {
-    throw HTTPError(403, 'auth user provided is not global owner');
+    throw HTTPError(FORBIDDEN, 'auth user provided is not global owner');
   }
 
   const remove = data.users.find((user) => user.uId === uId);
   if (typeof remove === 'undefined') {
-    throw HTTPError(400, 'Not valid uId');
+    throw HTTPError(BAD_REQUEST, 'Not valid uId');
   }
 
   const globalOwnerNum = data.users.filter((user) => user.permissionId === 1);
   if (remove.permissionId === 1 && globalOwnerNum.length === 1) {
-    throw HTTPError(400, 'Only global owner');
+    throw HTTPError(BAD_REQUEST, 'Only global owner');
   }
 
   remove.permissionId = 10;

@@ -24,11 +24,11 @@ const SERVER_URL = `${url}:${port}`;
 export function userProfileV1 (token: string, uId: number): error | { user: user } | any {
   // If either uId or token does not exist, then return error
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (!userIdExists(uId)) {
-    throw HTTPError(400, 'uId to search is invalid');
+    throw HTTPError(BAD_REQUEST, 'uId to search is invalid');
   }
 
   // Retrieve user profile for matching user
@@ -60,7 +60,7 @@ export function userProfileV1 (token: string, uId: number): error | { user: user
 export function usersAllV1 (token: string): error | {users: any[]} {
   // If token invalid, return error
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
   const data = getData();
 
@@ -94,11 +94,11 @@ export function usersAllV1 (token: string): error | {users: any[]} {
 */
 export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string): error | Record<string, never> {
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (!validName(nameFirst) || !validName(nameLast)) {
-    throw HTTPError(400, 'length of nameFirst/nameLast is not between 1 and 50');
+    throw HTTPError(BAD_REQUEST, 'length of nameFirst/nameLast is not between 1 and 50');
   }
 
   const uId = getUidFromToken(token);
@@ -155,21 +155,21 @@ export function userProfileSetNameV1 (token: string, nameFirst: string, nameLast
 */
 export function userProfileSetHandleV1 (token: string, handleStr: string): error | Record<string, never> {
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (handleInUse(handleStr)) {
-    throw HTTPError(400, 'handle already in use');
+    throw HTTPError(BAD_REQUEST, 'handle already in use');
   }
 
   // Check if handle is valid, if not, then return error appropriate
   // error messages
   const notAlphanumeric = /[^A-Za-z0-9]/;
   if (notAlphanumeric.test(handleStr)) {
-    throw HTTPError(400, 'handle is not alphanumeric');
+    throw HTTPError(BAD_REQUEST, 'handle is not alphanumeric');
   }
   if (handleStr.length < 3 || handleStr.length > 20) {
-    throw HTTPError(400, 'Handle is not between 3 and 20 characters in length');
+    throw HTTPError(BAD_REQUEST, 'Handle is not between 3 and 20 characters in length');
   }
 
   const data = getData();
@@ -219,15 +219,15 @@ export function userProfileSetHandleV1 (token: string, handleStr: string): error
 */
 export function userProfileSetEmailV1 (token: string, email: string): error | Record<string, never> {
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (!(validator.isEmail(email))) {
-    throw HTTPError(400, 'Invalid email address entered');
+    throw HTTPError(BAD_REQUEST, 'Invalid email address entered');
   }
 
   if (emailInUse(email)) {
-    throw HTTPError(400, 'E-mail already in use');
+    throw HTTPError(BAD_REQUEST, 'E-mail already in use');
   }
 
   // Update user profile for matching user with new email address

@@ -36,16 +36,16 @@ function channelDetailsV1(token: string, channelId: number): channelDetails | er
 
   // Check if userId and channelId is invalid.
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (!channelIdExists(channelId)) {
-    throw HTTPError(400, 'channelId is invalid');
+    throw HTTPError(BAD_REQUEST, 'channelId is invalid');
   }
   // Case where authUserId is not a member of the channel
   const uId = getUidFromToken(token);
   if (!isMemberOfChannel(findChannel, uId)) {
-    throw HTTPError(403, 'User is not a member of the channel');
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
   // Return channel details
   return {
@@ -72,23 +72,23 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
   const data = getData();
   const findChannel = data.channels.find(o => o.channelId === channelId);
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'userId is invalid');
+    throw HTTPError(FORBIDDEN, 'userId is invalid');
   }
   // Check if userId or channelId are invalid
   if (!channelIdExists(channelId)) {
-    throw HTTPError(400, 'channelId is invalid');
+    throw HTTPError(BAD_REQUEST, 'channelId is invalid');
   }
   const authUserId = getUidFromToken(token);
   const findUser = data.users.find(user => user.uId === authUserId);
 
   // Check if member is not Global Owner and the channel is private.
   if (!(findChannel.isPublic) && findUser.permissionId !== GLOBAL_OWNER) {
-    throw HTTPError(403, 'Channel is private and user is not global owner or a member of the channel');
+    throw HTTPError(FORBIDDEN, 'Channel is private and user is not global owner or a member of the channel');
   }
 
   // Check if user is already member of channel
   if (isMemberOfChannel(findChannel, authUserId)) {
-    throw HTTPError(400, 'User is already a member of the public channel');
+    throw HTTPError(BAD_REQUEST, 'User is already a member of the public channel');
   }
 
   const userObj = {
@@ -124,11 +124,11 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
 function channelInviteV1(token: string, channelId: number, uId: number): error | boolean | Record<string, never> {
   // If any ids do not exist, return error
   if (!userIdExists(uId) || !channelIdExists(channelId)) {
-    throw HTTPError(400, 'uId/channelId not valid');
+    throw HTTPError(BAD_REQUEST, 'uId/channelId not valid');
   }
 
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'token is not valid');
+    throw HTTPError(FORBIDDEN, 'token is not valid');
   }
   const data = getData();
   const findChannel = data.channels.find(channel => channel.channelId === channelId);
@@ -167,12 +167,12 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
 function invalidMemberships (channel: internalChannel, authUserId: number, uId: number): error | boolean {
   // If user already exists as member, return error
   if (isMemberOfChannel(channel, uId)) {
-    throw HTTPError(400, 'User to invite already a member of channel');
+    throw HTTPError(BAD_REQUEST, 'User to invite already a member of channel');
   }
 
   // If authUserId not found in channel members, return error
   if (!isMemberOfChannel(channel, authUserId)) {
-    throw HTTPError(403, 'authUserId is not a member of channel');
+    throw HTTPError(FORBIDDEN, 'authUserId is not a member of channel');
   }
   return false;
 }
@@ -424,29 +424,29 @@ function messagesInfoInvalid(token: string, channelId: number, start: number): e
   // If channelId or authUserId doesn't exist return error
 
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (!(channelIdExists(channelId))) {
-    throw HTTPError(400, 'channelId is invalid');
+    throw HTTPError(BAD_REQUEST, 'channelId is invalid');
   }
 
   // If start is negative or greater than number of messages return error
   if (start < 0) {
-    throw HTTPError(400, 'Starting index can\'t be negative');
+    throw HTTPError(BAD_REQUEST, 'Starting index can\'t be negative');
   }
   const data = getData();
   const channel = data.channels.find(o => o.channelId === channelId);
   const numMessages = channel.messages.length;
   if (start > numMessages) {
-    throw HTTPError(400, 'Start index is greater than number of messages in channel');
+    throw HTTPError(BAD_REQUEST, 'Start index is greater than number of messages in channel');
   }
 
   // If channelId is valid but user isn't a member of the channel return error
   const uId = getUidFromToken(token);
 
   if (!isMemberOfChannel(channel, uId)) {
-    throw HTTPError(403, 'User is not a member of the channel');
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
   // If no error by now, the info isn't invalid

@@ -26,23 +26,23 @@ const GLOBAL_OWNER = 1;
 */
 export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
   if (!channelIdExists(channelId)) {
-    throw HTTPError(400, 'channelId is invalid');
+    throw HTTPError(BAD_REQUEST, 'channelId is invalid');
   }
 
   // Check if length of the message is between 1-1000 characters long.
   // Create message if true, return error if false.
   if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
-    throw HTTPError(400, 'length of message is less than 1 or over 1000 characters');
+    throw HTTPError(BAD_REQUEST, 'length of message is less than 1 or over 1000 characters');
   }
 
   const data = getData();
   const uId = getUidFromToken(token);
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
   if (!isMemberOfChannel(findChannel, uId)) {
-    throw HTTPError(403, 'user is not a member of the channel');
+    throw HTTPError(FORBIDDEN, 'user is not a member of the channel');
   }
 
   // Create message
@@ -106,17 +106,17 @@ function storeMessageInChannel(message: Message, channelId: number) {
 */
 export function messageEditV1 (token: string, messageId: number, message: string): error | Record<string, never> {
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   if (message.length > MAX_MESSAGE_LEN) {
-    throw HTTPError(400, 'length of message is over 1000 characters.');
+    throw HTTPError(BAD_REQUEST, 'length of message is over 1000 characters.');
   }
 
   // Checking both channels and dms to see if messageId is valid.
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
-    throw HTTPError(400, 'message does not exist in either channels or dms');
+    throw HTTPError(BAD_REQUEST, 'message does not exist in either channels or dms');
   }
 
   const uId = getUidFromToken(token);
@@ -139,7 +139,7 @@ export function messageEditV1 (token: string, messageId: number, message: string
     // If user is not an owner
     for (const message of messageContainer.dm.messages) {
       if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
-        throw HTTPError(403, 'User atttempting edit message is not the owner of the dm or the sender');
+        throw HTTPError(FORBIDDEN, 'User atttempting edit message is not the owner of the dm or the sender');
       }
     }
     // If no errors, edit message from channel.
@@ -173,7 +173,7 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
   // Checking both channels and dms to see if messageId is valid.
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
-    throw HTTPError(400, 'message does not exist in either channels or dms');
+    throw HTTPError(BAD_REQUEST, 'message does not exist in either channels or dms');
   }
   const data = getData();
 
@@ -334,6 +334,17 @@ export function messageUnpinV1 (token: string, messageId: number): error | Recor
   return {};
 }
 
+
+/**
+  * Checks if specific message has been reacted by the relevant user. 
+  *
+  * @param {Message} message - the message object
+  * @param {number} uId - uId
+  * @param {number} reactId - reactId
+  * ...
+  *
+  * @returns {boolean}
+*/
 export function messageReactedByUser(message: Message, uId: number, reactId: number): boolean {
   for (const react of message.reacts) {
     if (react.reactId === reactId) {
@@ -451,13 +462,13 @@ function editMessageFromDM(messageId: number, editedMessage: string) {
 */
 export function messageRemoveV1(token: string, messageId: number): error | Record<string, never> {
   if (!(tokenExists(token))) {
-    throw HTTPError(403, 'token is invalid');
+    throw HTTPError(FORBIDDEN, 'token is invalid');
   }
 
   // Checking both channels and dms to see if messageId is valid.
   const messageContainer = getMessageContainer(messageId);
   if (!messageContainer) {
-    throw HTTPError(400, 'message does not exist in either channels or dms');
+    throw HTTPError(BAD_REQUEST, 'message does not exist in either channels or dms');
   }
 
   const uId = getUidFromToken(token);
@@ -478,7 +489,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
   if (messageContainer.type === 'dm') {
     // If no errors, remove dm from channel.
     if (messageContainer.dm.creator !== uId) {
-      throw HTTPError(403, 'User atttempting remove message is not the owner of the dm');
+      throw HTTPError(FORBIDDEN, 'User atttempting remove message is not the owner of the dm');
     } else {
       removeMessageFromDM(messageId);
     }
@@ -489,7 +500,7 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
     // If user is not an owner
     for (const message of messageContainer.dm.messages) {
       if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
-        throw HTTPError(403, 'User atttempting edit message is not the owner of the dm or the sender');
+        throw HTTPError(FORBIDDEN, 'User atttempting edit message is not the owner of the dm or the sender');
       }
     }
     // If no errors, remove
@@ -781,12 +792,12 @@ function messageFromChannelValid(channel: internalChannel, messageId: number, uI
   // Find user object
   const findUser = data.users.find(user => user.uId === uId);
   if (!isMemberOfChannel(channel, uId)) {
-    throw HTTPError(403, 'User is not a member of the channel');
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
   // If user is a member and now a channel owner and not a global owner
   if (!ownerMember && !isOwnerOfMessage(messageObj, uId) && findUser.permissionId !== GLOBAL_OWNER) {
-    throw HTTPError(403, 'Channel member does not have permissions to remove/edit/share message');
+    throw HTTPError(FORBIDDEN, 'Channel member does not have permissions to remove/edit/share message');
   }
   return true;
 }

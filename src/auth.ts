@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { error, tokenExists } from './other';
+import { error, tokenExists, FORBIDDEN, BAD_REQUEST } from './other';
 import crypto from 'crypto';
 import HTTPError from 'http-errors';
 import { internalNotification } from './types';
@@ -48,12 +48,12 @@ function authLoginV1(email: string, password: string): authInfo | error {
 
       return { token: token.token, authUserId: userId };
     } else if (user.email === caseInsensitiveEmail && user.password !== hashedPassword) {
-      throw HTTPError(400, 'Incorrect password.');
+      throw HTTPError(BAD_REQUEST, 'Incorrect password.');
     }
   }
 
   // If haven't returned yet, email doesn't belong to a user
-  throw HTTPError(400, 'Email doesn\'t belong to a user.');
+  throw HTTPError(BAD_REQUEST, 'Email doesn\'t belong to a user.');
 }
 
 /**
@@ -154,7 +154,7 @@ function createAnalytics() {
   */
 export function authLogoutV1 (token: string): Record<string, never> | error {
   if (!tokenExists(token)) {
-    throw HTTPError(403, 'Token provided is invalid');
+    throw HTTPError(FORBIDDEN, 'Token provided is invalid');
   }
 
   const data = getData();
@@ -184,16 +184,16 @@ export function authLogoutV1 (token: string): Record<string, never> | error {
 function registerInfoInvalid(email: string, password: string, nameFirst: string, nameLast: string): error | boolean {
   // Check whether email, password and first/last name meet the criteria
   if (!(validator.isEmail(email))) {
-    throw HTTPError(400, 'Invalid email.');
+    throw HTTPError(BAD_REQUEST, 'Invalid email.');
   }
   if (password.length < MIN_PASSWORD_LEN) {
-    throw HTTPError(400, 'Password is less than 6 characters.');
+    throw HTTPError(BAD_REQUEST, 'Password is less than 6 characters.');
   }
   if (nameFirst.length < MIN_NAME_LEN || nameFirst.length > MAX_NAME_LEN) {
-    throw HTTPError(400, 'First name isn\'t between 1 and 50 characters (inclusive)');
+    throw HTTPError(BAD_REQUEST, 'First name isn\'t between 1 and 50 characters (inclusive)');
   }
   if (nameLast.length < MIN_NAME_LEN || nameLast.length > MAX_NAME_LEN) {
-    throw HTTPError(400, 'Last name isn\'t between 1 and 50 characters (inclusive)');
+    throw HTTPError(BAD_REQUEST, 'Last name isn\'t between 1 and 50 characters (inclusive)');
   }
 
   // Check if the email is in use
@@ -201,7 +201,7 @@ function registerInfoInvalid(email: string, password: string, nameFirst: string,
   const caseInsensitiveEmail = email.toLowerCase();
   for (const user of data.users) {
     if (caseInsensitiveEmail === user.email) {
-      throw HTTPError(400, 'Email is already in use.');
+      throw HTTPError(BAD_REQUEST, 'Email is already in use.');
     }
   }
 

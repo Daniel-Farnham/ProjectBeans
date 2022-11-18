@@ -58,6 +58,19 @@ export function standupSendV1 (token: string, channelId: number, message: string
   return {};
 }
 
+/**
+  * Starts a standup with given time length. 
+  * At the end of the standup the packaged messages are pushed to channel messages
+  * Standup ends
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} channelId - id of channel to send message to
+  * @param {number} length - time in seconds for the standup length
+  * ...
+  *
+  * @returns {} returns an empty object
+  */
+
 export function standupStartV1 (token: string, channelId: number, length: number): timeFinish | error {
   const data = getData();
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
