@@ -7,7 +7,7 @@ import config from './config.json';
 import cors from 'cors';
 import errorHandler from 'middleware-http-errors';
 import { clearV1 } from './other';
-import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1, authPasswordResetRequestV1 } from './auth';
 import { getData, setData } from './dataStore';
 import {
   channelDetailsV1, channelInviteV1, channelJoinV1, channelMessagesV1,
@@ -16,15 +16,17 @@ import {
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
-  userProfileV1, usersAllV1, userProfileUploadPhotoV1
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1, usersStatsV1
 } from './users';
 import {
   messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
-  messageSendlaterV1, messagePinV1, messageUnpinV1
+  messageSendlaterV1, messageSendlaterdmV1, messagePinV1, messageUnpinV1
 } from './message';
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
+import { standupStartV1 } from './standup';
 import { adminUserRemoveV1 } from './admin';
+import { standupActiveV1 } from './standup';
 
 // Set up web app
 const app = express();
@@ -258,6 +260,12 @@ app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response, next) => 
 app.get('/users/all/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(usersAllV1(token));
+  save();
+});
+
+app.get('/users/stats/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  res.json(usersStatsV1(token));
   save();
 });
 
@@ -495,9 +503,26 @@ app.post('/message/share/v1', (req: Request, res: Response, next) => {
   save();
 });
 
+app.post('/message/sendlaterdm/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const dmId = parseInt(req.body.dmId as string);
+  const message = req.body.message as string;
+  const timeSent = parseInt(req.body.timeSent as string);
+  res.json(messageSendlaterdmV1(token, dmId, message, timeSent));
+  save();
+});
+
 app.get('/dm/list/v2', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(dmListV1(token));
+  save();
+});
+
+app.post('/standup/start/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { channelId } = req.body;
+  const { length } = req.body;
+  res.json(standupStartV1(token, channelId, length));
   save();
 });
 
@@ -505,6 +530,7 @@ app.delete('/admin/user/remove/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const uId = parseInt(req.query.uId as string);
   res.json(adminUserRemoveV1(token, uId));
+  save();
 });
 
 app.get('/channel/details/v3', (req: Request, res: Response, next) => {
@@ -514,6 +540,7 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
   save();
 });
 
+<<<<<<< src/server.ts
 app.post('/message/pin/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
@@ -527,6 +554,20 @@ app.post('/message/unpin/v1', (req: Request, res: Response, next) => {
   res.json(messageUnpinV1(token, messageId));
   save();
 });
+=======
+app.post('/auth/passwordreset/request/v1', (req: Request, res: Response, next) => {
+  const { email } = req.body;
+  res.json(authPasswordResetRequestV1(email));
+});
+
+app.get('/standup/active/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const channelId = parseInt(req.query.channelId as string);
+  res.json(standupActiveV1(token, channelId));
+  save();
+});
+
+>>>>>>> src/server.ts
 // handles errors nicely
 app.use(errorHandler());
 

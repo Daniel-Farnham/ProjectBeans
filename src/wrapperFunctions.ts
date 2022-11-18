@@ -5,6 +5,7 @@ const SERVER_URL = `${url}:${port}`;
 export function clearV1() {
   return deleteRequest(SERVER_URL + '/clear/v1', {});
 }
+
 export function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   return postRequest(SERVER_URL + '/auth/register/v2', {
     email: email,
@@ -103,9 +104,18 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
     dmId: dmId,
   }, token);
 }
+
 export function messagePinV1 (token: string, messageId: number) {
   return postRequest(SERVER_URL + '/message/pin/v1', { messageId }, token);
 }
 export function messageUnpinV1 (token: string, messageId: number) {
   return postRequest(SERVER_URL + '/message/unpin/v1', { messageId }, token);
+}
+
+export function adminUserRemoveV1(token: string, uId: number) {
+  return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
+}
+
+export function usersAllV1(token: string) {
+  return getRequest(SERVER_URL + '/users/all/v2', { }, token);
 }

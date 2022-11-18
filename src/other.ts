@@ -16,6 +16,14 @@ export function clearV1 (): Record<string, never> {
     tokenCount: 0,
     dms: [],
     notifications: [],
+    resetCodeRequests: [],
+    resetCode: 0,
+    workspaceStats: {
+      channelsExist: [],
+      dmsExist: [],
+      messagesExist: []
+    },
+    timeoutIds: []
   };
   setData(data);
   return {};
@@ -118,6 +126,22 @@ export function sleep(time: number) {
     timeSent = Math.floor((new Date()).getTime() / 1000);
   }
 }
+
+/**
+  * Updates the message analytics
+  * @param {number} timeSent - the time stamp of the analytics change
+  */
+export function updateMessageAnalytics(timeSent: number) {
+  const data = getData();
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs + 1, timeStamp: timeSent });
+  setData(data);
+}
+
+/**
+  * Checks if the user id is registered in the database.
+  * @param {number} userId - userId to check
 
 /**
   * Checks if the user id is registered in the database.
