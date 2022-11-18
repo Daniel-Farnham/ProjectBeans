@@ -224,3 +224,8 @@ export type messageContainerType = {
   dm?: internalDm,
   channel?: internalChannel
 };
+
+export type isActiveOutput = {
+    isActive: boolean,
+    timeFinish: number,
+}

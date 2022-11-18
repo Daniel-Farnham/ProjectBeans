@@ -136,8 +136,6 @@ describe('Testing negative cases for standupSendV1', () => {
       nameLast: 'Farnham',
     });
 
-    const messageOver1000Char = 'a'.repeat(1001);
-
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
       isPublic: true,

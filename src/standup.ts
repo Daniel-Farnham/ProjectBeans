@@ -1,23 +1,16 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, storeMessageInChannel, getMessageId, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST, getChannelObjectFromChannelId } from './other';
+import { tokenExists, storeMessageInChannel, getMessageId, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
 import HTTPError from 'http-errors';
-import { channelJoinV1 } from './wrapperFunctions';
-import { Message } from './types';
-import { collapseTextChangeRangesAcrossMultipleVersions, createJSDocComment } from 'typescript';
+import { Message, isActiveOutput } from './types';
 
 const MAX_MESSAGE_LEN = 1000;
 type timeFinish = {
   timeFinish: number | null,
 }
 
-type isActive = {
-  isActive: boolean,
-
-}
-
 /**
-  * Packages the messages sent during the stand up . The standup time is specified by its length
-  * and the standup is set to active. The standup deactivates at the end of length time.
+  * Packages the messages sent during the stand up.
+  * This is then pushed to the channel messages as one package.
   *
   * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to send message to
@@ -27,7 +20,7 @@ type isActive = {
   * @returns {} returns an empty object
   */
 
-export function standupSendV1 (token: string, channelId: number, message: string): error {
+export function standupSendV1 (token: string, channelId: number, message: string): error | Record<string, never> {
   const data = getData();
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
 
@@ -48,7 +41,8 @@ export function standupSendV1 (token: string, channelId: number, message: string
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
-  if (standupActiveV1(token, channelId).isActive === false) {
+  const isActive = (standupActiveV1(token, channelId).isActive);
+  if (isActive === false) {
     throw HTTPError(BAD_REQUEST, 'Active standup is not currently running in the channel');
   }
 
@@ -63,38 +57,6 @@ export function standupSendV1 (token: string, channelId: number, message: string
 
   return {};
 }
-
-/*
-
-  const user = data.users.find(user => user.uId === uId);
-  const packagedMessage = user.handleStr + ': ' + message + '\n';
-
-  const timeFinish = standupActiveV1(token, channelId).timeFinish;
-
-  if (Math.floor((new Date()).getTime() / 1000 < timeFinish)) {
-
-    const standupMessages = standup.messages.join('')
-    const standupMessageId = getMessageId();
-
-    const messageObj = {
-      messageId: standupMessageId,
-      uId: uId,
-      message: packagedMessage,
-      timeStamp: timeFinish,
-    }
-
-    storeMessageInChannel(messageObj, channelId);
-
-    //let packagedStandup = packageStandUp(token, channelId, message);
-    // using an object rather than an array might be best
- }
-
-  const user = data.users.find(user => user.uId === uId);
-  const packagedMessage = user.handleStr + ': ' + message + '\n';
-
-  standup.messages.push(packagedMessage);
-
-  */
 
 export function standupStartV1 (token: string, channelId: number, length: number): timeFinish | error {
   const data = getData();
@@ -117,7 +79,8 @@ export function standupStartV1 (token: string, channelId: number, length: number
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
-  if (standupActiveV1(token, channelId).isActive === true) {
+  const isActive = (standupActiveV1(token, channelId).isActive);
+  if (isActive === true) {
     throw HTTPError(BAD_REQUEST, 'Active standup already running in the channel');
   }
 
@@ -154,15 +117,6 @@ export function standupStartV1 (token: string, channelId: number, length: number
     storeMessageInChannel(messageObj, channelId);
     deactivateStandup(channelId, timeFinish);
   }, (length * 1000));
-  /* ########### Exists just for testing. ############# */
-  // for (const channel of data.channels) {
-  //   if (channel.channelId === channelId) {
-  //     for (const targetmessage of channel.messages) {
-  //       console.log('Channel message: ' + targetmessage.message);
-  //     }
-  //     console.log(channel);
-  //   }
-  // }
 
   return { timeFinish: timeFinish };
 }
@@ -195,11 +149,12 @@ function timeStandup (length: number): number {
 function deactivateStandup(channelId: number, timeFinish: number) {
   const data = getData();
   for (const channel of data.channels) {
-    if (channel.channelId === channelId);
-    if (channel.standUp.timeFinish >= timeFinish) {
-      channel.standUp.isActive = false;
-      channel.standUp.messages = [];
-      channel.standUp.timeFinish = null;
+    if (channel.channelId === channelId) {
+      if (channel.standUp.timeFinish >= timeFinish) {
+        channel.standUp.isActive = false;
+        channel.standUp.messages = [];
+        channel.standUp.timeFinish = null;
+      }
     }
   }
   setData(data);
@@ -217,7 +172,7 @@ function deactivateStandup(channelId: number, timeFinish: number) {
   * @returns {standupInfo} returns an object containing information
   * regarding whether the standup is active and its finish time
   */
-export function standupActiveV1(token: string, channelId: number): isActive | timeFinish {
+export function standupActiveV1(token: string, channelId: number): isActiveOutput {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
