@@ -21,7 +21,7 @@ import {
 
 import {
   messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
-  messageSendlaterV1, messageSendlaterdmV1, messagePinV1
+  messageSendlaterV1, messageSendlaterdmV1, messagePinV1, messageUnpinV1
 } from './message';
 
 import { notificationsGetV1 } from './notifications';
@@ -354,6 +354,13 @@ app.post('/message/pin/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);
   res.json(messagePinV1(token, messageId));
+});
+
+app.post('/message/unpin/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  res.json(messageUnpinV1(token, messageId));
+  save();
 });
 
 app.post('/auth/passwordreset/request/v1', (req: Request, res: Response, next) => {
