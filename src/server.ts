@@ -16,12 +16,12 @@ import {
 import { channelsCreateV1, channelsListAllV1, channelsListV1 } from './channels';
 import {
   userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1,
-  userProfileV1, usersAllV1, userProfileUploadPhotoV1, userStatsV1, usersStatsV1
+  userProfileV1, usersAllV1, userProfileUploadPhotoV1, usersStatsV1
 } from './users';
 
 import {
   messageSendV1, messageEditV1, messageRemoveV1, messageReactV1, searchV1, messageShareV1,
-  messageSendlaterV1, messageSendlaterdmV1, messagePinV1,
+  messageSendlaterV1, messageSendlaterdmV1, messagePinV1, messageUnreactV1, messageUnpinV1
 } from './message';
 
 import { notificationsGetV1 } from './notifications';
@@ -353,6 +353,13 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
 app.get('/user/stats/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(userStatsV1(token));
+});
+
+app.post('/message/unreact/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const messageId = parseInt(req.body.messageId as string);
+  const reactId = parseInt(req.body.reactId as string);
+  res.json(messageUnreactV1(token, messageId, reactId));
 });
 
 app.post('/message/pin/v1', (req: Request, res: Response, next) => {

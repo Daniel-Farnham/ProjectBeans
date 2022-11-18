@@ -1,7 +1,7 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
-  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, updateMessageAnalytics, isOwnerOfChannel
+  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, isOwnerOfChannel, updateMessageAnalytics
 } from './other';
 import { storeMessageInDm, messageSendDmV1 } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
@@ -185,13 +185,15 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
       throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
     }
     for (const message of messageContainer.channel.messages) {
-      if (!isMemberOfChannel(messageContainer.channel, uId)) {
-        throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
+      if (message.messageId === messageId) {
+        if (!isMemberOfChannel(messageContainer.channel, uId)) {
+          throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
+        }
+        if (messageReactedByUser(message, uId, reactId)) {
+          throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
+        }
+        reactToMessage(messageId, uId, reactId, 'channel');
       }
-      if (messageReactedByUser(message, uId, reactId)) {
-        throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
-      }
-      reactToMessage(messageId, uId, reactId, 'channel');
     }
   }
   if (messageContainer.type === 'dm') {
@@ -257,12 +259,14 @@ export function messagePinV1 (token: string, messageId: number): error | Record<
       if (!isMemberOfDm(messageContainer.dm, uId)) {
         throw HTTPError(BAD_REQUEST, 'User is not a member of this dm');
       }
+
       if (message.messageId === messageId) {
         if (message.isPinned === true) {
           throw HTTPError(BAD_REQUEST, 'That message is already pinned');
         } else {
           message.isPinned = true;
-          if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
+          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
+          if (!isOwner) {
             throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
           }
         }
@@ -388,6 +392,109 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
             }
             if (isMemberOfChannel(channel, message.uId)) {
               notificationSetReact(message, uId, channel.channelId, -1, 'channel');
+            }
+          }
+        }
+      }
+    }
+  }
+  setData(data);
+}
+
+/**
+  * Removes a reaction from the message that is entered
+  *
+  * @param {number} messageId - id of the message to unreact to
+  * @param {string} reactId - react value
+  * ...
+  *
+  * @returns {{}}
+*/
+export function messageUnreactV1 (token: string, messageId: number, reactId: number): error | Record<string, never> {
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+
+  if (reactId !== 1) {
+    throw HTTPError(BAD_REQUEST, 'reactId entered is not valid');
+  }
+
+  // Checking both channels and dms to see if messageId is valid.
+  const messageContainer = getMessageContainer(messageId);
+  if (!messageContainer) {
+    throw HTTPError(400, 'message does not exist in either channels or dms');
+  }
+  const data = getData();
+
+  const uId = getUidFromToken(token);
+  if (messageContainer.type === 'channel') {
+    if (!isMemberOfChannel(messageContainer.channel, uId)) {
+      throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
+    }
+    for (const message of messageContainer.channel.messages) {
+      if (message.messageId === messageId) {
+        if (!isMemberOfChannel(messageContainer.channel, uId)) {
+          throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
+        }
+        if (!messageReactedByUser(message, uId, reactId)) {
+          throw HTTPError(BAD_REQUEST, 'Message has not been reacted to by user');
+        }
+        UnreactToMessage(messageId, uId, reactId, 'channel');
+      }
+    }
+  }
+  if (messageContainer.type === 'dm') {
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === messageId) {
+        if (!isMemberOfDm(messageContainer.dm, uId)) {
+          throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
+        }
+        if (!messageReactedByUser(message, uId, reactId)) {
+          throw HTTPError(BAD_REQUEST, 'Message has not been reacted to by user');
+        }
+        UnreactToMessage(messageId, uId, reactId, 'dm');
+      }
+    }
+  }
+  setData(data);
+  return {};
+}
+
+/**
+  * Removes react from user to message
+  *
+  * @param {number} messageId - id of the message to unreact to
+  * @param {number} reactId - reactId
+  * ...
+  *
+  * @returns nothing
+*/
+function UnreactToMessage(messageId: number, uId: number, reactId: number, type: string) {
+  const data = getData();
+  if (type === 'dm') {
+    for (const dm of data.dms) {
+      for (const message of dm.messages) {
+        if (message.messageId === messageId) {
+          for (const reaction of message.reacts) {
+            if (reaction.reactId === reactId) {
+              const index = reaction.uIds.indexOf(uId);
+              reaction.uIds.splice(index, 1);
+              reaction.isThisUserReacted = false;
+            }
+          }
+        }
+      }
+    }
+  }
+  if (type === 'channel') {
+    for (const channel of data.channels) {
+      for (const message of channel.messages) {
+        if (message.messageId === messageId) {
+          for (const reaction of message.reacts) {
+            if (reaction.reactId === reactId) {
+              const index = reaction.uIds.indexOf(uId);
+              reaction.uIds.splice(index, 1);
+              reaction.isThisUserReacted = false;
             }
           }
         }
