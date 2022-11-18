@@ -53,6 +53,7 @@ export type notification = {
 };
 
 export type StandUp = {
+  messages: message[];
   isActive: isActive,
   timeFinish: timeFinish,
 };
@@ -158,7 +159,7 @@ export type internalChannel = {
   allMembers: users,
   messages: messages,
   isPublic: isPublic,
-  standUp: standUp,
+  standUp: StandUp;
 };
 
 export type session = {
@@ -223,3 +224,8 @@ export type messageContainerType = {
   dm?: internalDm,
   channel?: internalChannel
 };
+
+export type isActiveOutput = {
+    isActive: boolean,
+    timeFinish: number,
+}

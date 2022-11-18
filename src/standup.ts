@@ -1,27 +1,63 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
+import { tokenExists, storeMessageInChannel, getMessageId, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
 import HTTPError from 'http-errors';
+import { Message, isActiveOutput } from './types';
 
+const MAX_MESSAGE_LEN = 1000;
 type timeFinish = {
   timeFinish: number | null,
 }
 
-type isActive = {
-  isActive: boolean,
-}
-
 /**
-  * Starts a given standup from a given channel. The standup time is specified by its length
-  * and the standup is set to active. The standup deactivates at the end of length time.
+  * Packages the messages sent during the stand up.
+  * This is then pushed to the channel messages as one package.
   *
   * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to send message to
-  * @param {number} length
+  * @param {string} message
   * ...
   *
-  * @returns {timeFinish} returns an object containing information
-  * regarding the standups finish time
+  * @returns {} returns an empty object
   */
+
+export function standupSendV1 (token: string, channelId: number, message: string): error | Record<string, never> {
+  const data = getData();
+  const findChannel = data.channels.find(chan => chan.channelId === channelId);
+
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+
+  if (!channelIdExists(channelId)) {
+    throw HTTPError(BAD_REQUEST, 'channelId is invalid');
+  }
+
+  if (message.length > MAX_MESSAGE_LEN) {
+    throw HTTPError(BAD_REQUEST, 'length of message is over 1000 characters.');
+  }
+
+  const uId = getUidFromToken(token);
+  if (!isMemberOfChannel(findChannel, uId)) {
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
+  }
+
+  const isActive = (standupActiveV1(token, channelId).isActive);
+  if (isActive === false) {
+    throw HTTPError(BAD_REQUEST, 'Active standup is not currently running in the channel');
+  }
+
+  const user = data.users.find(user => user.uId === uId);
+  const packagedMessage = user.handleStr + ': ' + message + '\n';
+
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.standUp.messages.push(packagedMessage);
+    }
+  }
+
+  return {};
+}
+
 export function standupStartV1 (token: string, channelId: number, length: number): timeFinish | error {
   const data = getData();
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
@@ -43,30 +79,42 @@ export function standupStartV1 (token: string, channelId: number, length: number
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
-  for (const channel of data.channels) {
-    if (channel.channelId === channelId) {
-      for (const standup of channel.standUp) {
-        if (standup.isActive === true) {
-          throw HTTPError(BAD_REQUEST, 'Active standup already running in the channel');
-        }
-      }
-    }
+  const isActive = (standupActiveV1(token, channelId).isActive);
+  if (isActive === true) {
+    throw HTTPError(BAD_REQUEST, 'Active standup already running in the channel');
   }
 
   const timeFinish = timeStandup(length);
-  const ActivateStandup = {
-    isActive: true,
-    timeFinish: timeFinish,
-  };
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      channel.standUp.push(ActivateStandup);
+      channel.standUp.isActive = true;
+      channel.standUp.timeFinish = timeFinish;
     }
   }
-  setData(data);
 
+  setData(data);
   setTimeout(function() {
+    const findChannel = data.channels.find(chan => chan.channelId === channelId);
+    const standupMessages = findChannel.standUp.messages.join('');
+    const standupMessageId = getMessageId();
+
+    const messageObj: Message = {
+      messageId: standupMessageId,
+      uId: uId,
+      message: standupMessages,
+      timeSent: timeFinish,
+      reacts: [
+        {
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        }
+      ],
+      isPinned: false
+    };
+
+    storeMessageInChannel(messageObj, channelId);
     deactivateStandup(channelId, timeFinish);
   }, (length * 1000));
 
@@ -83,7 +131,7 @@ export function standupStartV1 (token: string, channelId: number, length: number
   */
 
 function timeStandup (length: number): number {
-  const timeStart = Math.floor((new Date()).getTime());
+  const timeStart = Math.floor((new Date()).getTime() / 1000);
   const timeFinish = timeStart + length;
 
   return timeFinish;
@@ -101,9 +149,11 @@ function timeStandup (length: number): number {
 function deactivateStandup(channelId: number, timeFinish: number) {
   const data = getData();
   for (const channel of data.channels) {
-    for (const targetStandup of channel.standUp) {
-      if (targetStandup.timeFinish === timeFinish) {
-        targetStandup.isActive = false;
+    if (channel.channelId === channelId) {
+      if (channel.standUp.timeFinish >= timeFinish) {
+        channel.standUp.isActive = false;
+        channel.standUp.messages = [];
+        channel.standUp.timeFinish = null;
       }
     }
   }
@@ -122,7 +172,7 @@ function deactivateStandup(channelId: number, timeFinish: number) {
   * @returns {standupInfo} returns an object containing information
   * regarding whether the standup is active and its finish time
   */
-export function standupActiveV1(token: string, channelId: number): isActive | timeFinish {
+export function standupActiveV1(token: string, channelId: number): isActiveOutput {
   if (!(tokenExists(token))) {
     throw HTTPError(FORBIDDEN, 'Token is invalid');
   }
@@ -144,14 +194,11 @@ export function standupActiveV1(token: string, channelId: number): isActive | ti
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      for (const targetStandup of channel.standUp) {
-        if (targetStandup.isActive === true) {
-          isActive = true;
-          timeFinish = targetStandup.timeFinish;
-        }
+      if (channel.standUp.isActive === true) {
+        isActive = true;
+        timeFinish = channel.standUp.timeFinish;
       }
     }
   }
-
   return { isActive: isActive, timeFinish: timeFinish };
 }

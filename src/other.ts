@@ -337,6 +337,26 @@ export function getMessageId(): number {
 }
 
 /**
+  * Stores message in channel object and saves it to datastore
+  *
+  * @param {string} message - message to store
+  * @param {number} channelId - id of channel to store
+  * ...
+  *
+  * @returns - nothing to return
+*/
+export function storeMessageInChannel(message: Message, channelId: number) {
+  const data = getData();
+
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.messages.push(message);
+    }
+  }
+  setData(data);
+}
+
+/**
   * Get a uId from a token
   * @param {string} token - token to check for userId
   * @returns {uId} - returns uId
