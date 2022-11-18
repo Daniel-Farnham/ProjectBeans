@@ -183,13 +183,15 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
       throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
     }
     for (const message of messageContainer.channel.messages) {
-      if (!isMemberOfChannel(messageContainer.channel, uId)) {
-        throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
+      if (message.messageId === messageId) {
+        if (!isMemberOfChannel(messageContainer.channel, uId)) {
+          throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
+        }
+        if (messageReactedByUser(message, uId, reactId)) {
+          throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
+        }
+        reactToMessage(messageId, uId, reactId, 'channel');
       }
-      if (messageReactedByUser(message, uId, reactId)) {
-        throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
-      }
-      reactToMessage(messageId, uId, reactId, 'channel');
     }
   }
   if (messageContainer.type === 'dm') {
