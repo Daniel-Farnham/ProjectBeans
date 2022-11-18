@@ -59,16 +59,37 @@ export function standupSendV1 (token: string, channelId: number, message: string
   
   const user = data.users.find(user => user.uId === uId); 
   const packagedMessage = user.handleStr + ': ' + message + '\n'; 
-  
+   
   standup.messages.push(packagedMessage);   
+
+  // Testing, messages are successfully packaged. 
+  console.log(packagedMessage); 
+  console.log(standup.messages); 
+
+  const timeFinish = standupActiveV1(token, channelId).timeFinish;
   
+  // ## bug found here ## 
+  // The problem is here. Each time a standUpSend is called a new message object is created with the packaged message. 
+  // This should only be called once at the end. 
+  if (Math.floor((new Date()).getTime() / 1000 < timeFinish)) {
+    const standupMessages = standup.messages.join('')
+    const standupMessageId = getMessageId(); 
+
+    const messageObj = {
+      messageId: standupMessageId,
+      uId: uId, 
+      message: standupMessages,
+      timeStamp: timeFinish, 
+    }
+
+    storeMessageInChannel(messageObj, channelId); 
+  }
 
   /* ########### Exists just for testing. ############# */
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       for (const targetmessage of channel.messages) {
         console.log('Channel message: ' + targetmessage.message);
-        //console.log('MessageId: ' + targetmessage.messageId);
       }
       console.log(channel);
     }
@@ -150,11 +171,10 @@ export function standupStartV1 (token: string, channelId: number, length: number
       channel.standUp.push(ActivateStandup);
     }
   }
+  
   setData(data);
 
   setTimeout(function() {
-    deactivateStandup(channelId, timeFinish);
-
     const standupMessages = standup.messages.join('')
     const standupMessageId = getMessageId(); 
 
@@ -166,9 +186,12 @@ export function standupStartV1 (token: string, channelId: number, length: number
     }
 
     storeMessageInChannel(messageObj, channelId); 
+    deactivateStandup(channelId, timeFinish);
+
+    
   }, (length * 1000));
 
-
+  
   return { timeFinish: timeFinish };
 }
 
