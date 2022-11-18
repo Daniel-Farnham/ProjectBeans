@@ -10,19 +10,19 @@ beforeEach(() => {
 
 describe('Working cases', () => {
   test('Successful return of empty object when executing channelInviteV1', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
@@ -36,20 +36,20 @@ describe('Working cases', () => {
   });
 
   test('User listed as member of channel after being invited to the channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
@@ -59,7 +59,7 @@ describe('Working cases', () => {
       uId: user2.authUserId
     }, user1.token);
 
-    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+    const result = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId,
     }, user2.token);
 
@@ -98,21 +98,21 @@ describe('Working cases', () => {
 
 describe('Testing channelInviteV1 error handling', () => {
   test('channelId does not refer to a valid channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
@@ -128,19 +128,19 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('uId does not refer to a valid user', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
@@ -155,20 +155,20 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('token is invalid', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
@@ -184,13 +184,13 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('uId refers to a user who is already a member of the channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
@@ -205,25 +205,25 @@ describe('Testing channelInviteV1 error handling', () => {
   });
 
   test('channelId is valid and the authorised user is not a member of the channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
-    const user3 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user3 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'stella.jones@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Stella',
       nameLast: 'Jones',
     });
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'General',
       isPublic: true
     }, user1.token);
