@@ -334,9 +334,8 @@ export function messageUnpinV1 (token: string, messageId: number): error | Recor
   return {};
 }
 
-
 /**
-  * Checks if specific message has been reacted by the relevant user. 
+  * Checks if specific message has been reacted by the relevant user.
   *
   * @param {Message} message - the message object
   * @param {number} uId - uId

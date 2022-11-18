@@ -4,7 +4,7 @@ import HTTPError from 'http-errors';
 
 /**
  * Removes an admin
- * 
+ *
  * @param {string} token
  * @param {number} uId
  * @returns {{}}

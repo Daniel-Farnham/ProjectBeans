@@ -59,7 +59,7 @@ export function standupSendV1 (token: string, channelId: number, message: string
 }
 
 /**
-  * Starts a standup with given time length. 
+  * Starts a standup with given time length.
   * At the end of the standup the packaged messages are pushed to channel messages
   * Standup ends
   *
