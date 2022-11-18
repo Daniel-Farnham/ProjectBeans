@@ -108,3 +108,11 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
     dmId: dmId,
   }, token);
 }
+
+export function adminUserRemoveV1(token: string, uId: number) {
+  return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
+}
+
+export function usersAllV1(token: string) {
+  return getRequest(SERVER_URL + '/users/all/v2', { }, token);
+}

@@ -89,25 +89,16 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
       channelId: channel.channelId
     }, global.token);
 
-    const expectedUser = {
-      user: {
-        uId: user.authUserId,
-        email: expect.any(String),
-        nameFirst: 'Removed',
-        nameLast: 'user',
-        handleStr: expect.any(String)
-      }
-    };
-
     const removedInChannel = returnedChannelObj.allMembers.find((member: user): member is user => member.uId === user.authUserId);
-    expect(removedInChannel).toEqual(expectedUser.user);
+    expect(removedInChannel).toEqual(undefined);
 
     const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, global.token);
 
     const removedInDm = dmDetails.members.find((member: user): member is user => member.uId === user.authUserId);
-    expect(removedInDm).toEqual(expectedUser.user);
+
+    expect(removedInDm).toEqual(undefined);
   });
 
   test('Test that adminUserRemoveV1 successfully removes user from users all', () => {

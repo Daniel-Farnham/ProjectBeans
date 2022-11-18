@@ -9,6 +9,8 @@ let data: datastore = {
   tokenCount: 0,
   dms: [],
   notifications: [],
+  resetCodeRequests: [],
+  resetCode: 0,
   workspaceStats: {
     channelsExist: [],
     dmsExist: [],
