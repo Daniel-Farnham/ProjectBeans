@@ -8,7 +8,7 @@ beforeEach(() => {
 
 describe('Testing basic dmCreateV1 functionality', () => {
   test('Test dmCreateV1 successfully creates a new dm and returns an integer dm Id', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -23,7 +23,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
   });
 
   test('Test dmCreateV1 generates the correct dm name when the creator is the only member', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -34,7 +34,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       uIds: []
     }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -42,21 +42,21 @@ describe('Testing basic dmCreateV1 functionality', () => {
   });
 
   test('Test dmCreateV1 generates the correct dm name when there\'s multiple members', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const thirdId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const thirdId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@student.unsw.edu.au',
       password: 'password',
       nameFirst: 'Edwin',
@@ -67,7 +67,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       uIds: [secondId.authUserId, thirdId.authUserId]
     }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, firstId.token);
 
@@ -75,7 +75,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
   });
 
   test('Test dmCreateV1 has only the creator in the members list when no other users are in the dm', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -86,7 +86,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       uIds: []
     }, regId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, regId.token);
 
@@ -104,21 +104,21 @@ describe('Testing basic dmCreateV1 functionality', () => {
   });
 
   test('Test dmCreateV1 adds everyone to the members list', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith'
     });
 
-    const thirdId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const thirdId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'edwin.ngo@student.unsw.edu.au',
       password: 'password',
       nameFirst: 'Edwin',
@@ -129,7 +129,7 @@ describe('Testing basic dmCreateV1 functionality', () => {
       uIds: [secondId.authUserId, thirdId.authUserId]
     }, firstId.token);
 
-    const dmDetails = getRequest(SERVER_URL + '/dm/details/v1', {
+    const dmDetails = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dmId.dmId
     }, firstId.token);
 
@@ -163,14 +163,14 @@ describe('Testing basic dmCreateV1 functionality', () => {
 
 describe('Testing dmCreateV1 error handling', () => {
   test('Testing dmCreateV1 returns error when a given uId is invalid', () => {
-    const regId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const regId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const dmId = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dmId = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [regId.authUserId + 1]
     }, regId.token);
 
@@ -180,14 +180,14 @@ describe('Testing dmCreateV1 error handling', () => {
   });
 
   test('Testing dmCreateV1 returns error when uIds contains a duplicate', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
       nameLast: 'Scully'
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',

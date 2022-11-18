@@ -17,7 +17,13 @@ export function clearV1 (): Record<string, never> {
     dms: [],
     notifications: [],
     resetCodeRequests: [],
-    resetCode: 0
+    resetCode: 0,
+    workspaceStats: {
+      channelsExist: [],
+      dmsExist: [],
+      messagesExist: []
+    },
+    timeoutIds: []
   };
   setData(data);
   return {};
@@ -106,6 +112,36 @@ export const getRequest = (url: string, data: any, token?: string) => {
   }
   return parseBody(res);
 };
+
+/**
+  * Loops for a given amount of time, in other words sleeps, pauses or waits
+  * a certain period of time.
+  * @param {number} time - The length of time to sleep in seconds
+*/
+export function sleep(time: number) {
+  let timeSent = Math.floor((new Date()).getTime() / 1000);
+  const timeFinish = timeSent + time;
+
+  while (timeSent !== timeFinish) {
+    timeSent = Math.floor((new Date()).getTime() / 1000);
+  }
+}
+
+/**
+  * Updates the message analytics
+  * @param {number} timeSent - the time stamp of the analytics change
+  */
+export function updateMessageAnalytics(timeSent: number) {
+  const data = getData();
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs + 1, timeStamp: timeSent });
+  setData(data);
+}
+
+/**
+  * Checks if the user id is registered in the database.
+  * @param {number} userId - userId to check
 
 /**
   * Checks if the user id is registered in the database.
@@ -298,6 +334,26 @@ export function getMessageId(): number {
   setData(data);
 
   return newMessageId;
+}
+
+/**
+  * Stores message in channel object and saves it to datastore
+  *
+  * @param {string} message - message to store
+  * @param {number} channelId - id of channel to store
+  * ...
+  *
+  * @returns - nothing to return
+*/
+export function storeMessageInChannel(message: Message, channelId: number) {
+  const data = getData();
+
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.messages.push(message);
+    }
+  }
+  setData(data);
 }
 
 /**

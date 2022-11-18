@@ -11,6 +11,12 @@ let data: datastore = {
   notifications: [],
   resetCodeRequests: [],
   resetCode: 0,
+  workspaceStats: {
+    channelsExist: [],
+    dmsExist: [],
+    messagesExist: []
+  },
+  timeoutIds: []
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

@@ -9,14 +9,14 @@ beforeEach(() => {
 });
 
 test('Testing successful return of user profile', () => {
-  const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+  const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
     email: 'hang.pham1@student.unsw.edu.au',
     password: 'AP@ssW0rd!',
     nameFirst: 'Hang',
     nameLast: 'Pham',
   });
 
-  const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+  const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
     email: 'jane.doe@student.unsw.edu.au',
     password: 'AP@ssW0rd!',
     nameFirst: 'Jane',
@@ -45,7 +45,7 @@ describe('Testing userProfileV2 error handling', () => {
     { token: '', uId: 100, desc: 'uID to search does not exist', statusCode: INPUT_ERROR },
     { token: 'InvalidToken', uId: 0, desc: 'token is invalid', statusCode: INVALID_TOKEN },
   ])('$desc', ({ token, uId, statusCode }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',

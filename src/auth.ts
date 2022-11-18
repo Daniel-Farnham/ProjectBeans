@@ -5,7 +5,6 @@ import crypto from 'crypto';
 import HTTPError from 'http-errors';
 import { internalNotification } from './types';
 import { port, url } from './config.json';
-import { postRequest } from './other';
 const SERVER_URL = `${url}:${port}`;
 
 const MAX_HANDLE_LEN = 20;
@@ -84,9 +83,12 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const userId = data.users.length;
   const caseInsensitiveEmail = email.toLowerCase();
 
+  // Make the first registered user a global owner and
+  // initialize the workplace analytics
   let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
     permissionId = GLOBAL_OWNER;
+    createAnalytics();
   }
 
   const user = {
@@ -125,6 +127,24 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     authUserId: userId
   };
 }
+
+/**
+  * Creates the initial workplace analytics when the
+  * first user is registered
+  *
+  */
+function createAnalytics() {
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const channelStats = { numChannelsExist: 0, timeStamp: timeSent };
+  const dmsStats = { numDmsExist: 0, timeStamp: timeSent };
+  const msgStats = { numMessagesExist: 0, timeStamp: timeSent };
+  data.workspaceStats.channelsExist.push(channelStats);
+  data.workspaceStats.dmsExist.push(dmsStats);
+  data.workspaceStats.messagesExist.push(msgStats);
+  setData(data);
+}
+
 /**
   * Will attempt to logout of a session with the token provided
   *
@@ -269,10 +289,6 @@ export function getHashOf(plaintext: string) {
 
 export { authLoginV1, authRegisterV1 };
 
-function callingauthLogoutV1(token: string) {
-  return postRequest(SERVER_URL + '/auth/logout/v2', { token });
-}
-
 /**
  * Sends an email to a user with a resetCode provided
  *
@@ -316,14 +332,15 @@ export async function authPasswordResetRequestV1(email: string) {
 
   const user = data.users.find((user) => user.email === email);
 
-  const session = data.sessions.find((session) => session.uId === user.uId);
-  for (const token of session.tokens) {
-    callingauthLogoutV1(token);
+  for (const session of data.sessions) {
+    if (session.uId === user.uId) {
+      session.tokens = [];
+    }
   }
   setData(data);
   return {};
 }
- 
+
 /**
  * Generates a reset code which is stored in dataStore
  * @returns {resetCode}

@@ -12,7 +12,7 @@ beforeEach(() => {
 
 describe('Testing userProfileSetNameV1 successful case handling', () => {
   test('Testing successful return of empty object', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
@@ -28,14 +28,14 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
   });
 
   test('Testing channel ownerMembers and allMembers contain user with updated name', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'Boost',
       isPublic: true,
     }, user.token);
@@ -45,7 +45,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameLast: 'Darcy',
     }, user.token);
 
-    const result = getRequest(SERVER_URL + '/channel/details/v2', {
+    const result = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId,
     }, user.token);
 
@@ -88,7 +88,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       desc: 'Both names 50 letters long'
     },
   ])('$desc', ({ nameFirst, nameLast }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
@@ -110,21 +110,21 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       }
     };
 
-    const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
+    const resultUser = getRequest(SERVER_URL + '/user/profile/v3', {
       uId: user.authUserId,
     }, user.token);
 
     expect(resultUser).toMatchObject(expectedUser);
   });
   test('Testing dm members contain user with updated name', () => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, user.token);
 
@@ -133,7 +133,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       nameLast: 'Darcy',
     }, user.token);
 
-    const result = getRequest(SERVER_URL + '/dm/details/v1', {
+    const result = getRequest(SERVER_URL + '/dm/details/v2', {
       dmId: dm.dmId,
     }, user.token);
 
@@ -166,7 +166,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       desc: 'Both names 50 letters long'
     },
   ])('$desc', ({ nameFirst, nameLast }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
@@ -188,7 +188,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       }
     };
 
-    const resultUser = getRequest(SERVER_URL + '/user/profile/v2', {
+    const resultUser = getRequest(SERVER_URL + '/user/profile/v3', {
       uId: user.authUserId,
     }, user.token);
 
@@ -203,7 +203,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
 
     for (let i = 0; i <= 4; i++) {
       // Create the user
-      const user = postRequest(SERVER_URL + '/auth/register/v2', {
+      const user = postRequest(SERVER_URL + '/auth/register/v3', {
         email: `${firstNames[i]}.${lastNames[i]}@student.unsw.edu.au`,
         password: 'AP@ssW0rd!',
         nameFirst: firstNames[i],
@@ -218,7 +218,7 @@ describe('Testing userProfileSetNameV1 successful case handling', () => {
       users.push(user);
     }
 
-    const resultUsers = getRequest(SERVER_URL + '/users/all/v1', {}, users[0].token);
+    const resultUsers = getRequest(SERVER_URL + '/users/all/v2', {}, users[0].token);
 
     // Loop through each user and check the user object has their first
     // and last names swapped
@@ -263,7 +263,7 @@ describe('Testing user/profile/setname/v2 error handling', () => {
       statusCode: INPUT_ERROR
     },
   ])('$desc', ({ token, nameFirst, nameLast, statusCode }) => {
-    const user = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
