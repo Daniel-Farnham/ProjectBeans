@@ -1,5 +1,10 @@
 import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
+import {
+  clearV1, authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
+  channelJoinV1, messageSendDmV1, messageShareV1, dmMessagesV1, channelMessagesV1,
+  messageRemoveV1
+} from './wrapperFunctions';
 const SERVER_URL = `${url}:${port}`;
 const FORBIDDEN = 403;
 const BAD_REQUEST = 400;
@@ -34,6 +39,58 @@ describe('Testing messageEditV1 success for channels', () => {
 
     expect(editedMessage).toStrictEqual({});
   });
+
+  test('Successfully edit standup message', () => {
+    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+      email: 'daniel.farnham@student.unsw.edu.au',
+      password: 'AVeryPoorPassword',
+      nameFirst: 'Daniel',
+      nameLast: 'Farnham',
+    });
+
+    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+      name: 'ChannelBoost',
+      isPublic: true,
+    }, userId.token);
+
+    postRequest(SERVER_URL + '/standup/start/v1', {
+      channelId: channel.channelId,
+      length: 2,
+    }, userId.token);
+
+    postRequest(SERVER_URL + '/standup/send/v1', {
+      channelId: channel.channelId,
+      message: 'the first random message',
+    }, userId.token);
+
+    postRequest(SERVER_URL + '/standup/send/v1', {
+      channelId: channel.channelId,
+      message: 'the second random message',
+    }, userId.token);
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    }, userId.token);
+
+    expect(editedMessage).toStrictEqual({});
+  });
+
+  test('Successfully edit standup message', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const channel = channelsCreateV1(user1.token, 'Boost', true);
+    const message = messageSendV1(user1.token, channel.channelId, 'original message!');
+    const sharedMsg = messageShareV1(user2.token, msg.messageId, 'sharing this message', channel.channelId, -1);
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    }, userId.token);
+
+    expect(editedMessage).toStrictEqual({});
+  });
+
 });
 
 describe('Testing messageEditV1 error handling for channels', () => {
@@ -225,6 +282,21 @@ describe('Testing messageEditV1 success for dms', () => {
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
     }, userId.token);
+
+    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
+      messageId: message.messageId,
+      message: 'This is an edited message'
+    }, userId.token);
+
+    expect(editedMessage).toStrictEqual({});
+  });
+
+  test('Successfully edit shared message', () => {
+    const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
+    const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
+    const dm = dmCreateV1(user1.token, [user2.authUserId]);
+    const message = messageSendDmV1(user1.token, dm.dmId, 'original message!');
+    const sharedMsg = messageShareV1(user2.token, msg.messageId, 'sharing this message', channel.channelId, -1);
 
     const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
