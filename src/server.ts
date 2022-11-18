@@ -87,7 +87,7 @@ app.get('/channels/list/v3', (req:Request, res: Response, next) => {
   save();
 });
 
-app.get('/channels/listAll/v3', (req: Request, res: Response, next) => {
+app.get('/channels/listall/v3', (req: Request, res: Response, next) => {
   const token = req.header('token');
   res.json(channelsListAllV1(token));
   save();

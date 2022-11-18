@@ -6,7 +6,7 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing successful cases for channels/listAll/v3', () => {
+describe('Testing successful cases for channels/listall/v3', () => {
   test('Testing successful return of empty channels array', () => {
     const user = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
@@ -14,7 +14,7 @@ describe('Testing successful cases for channels/listAll/v3', () => {
       nameFirst: 'Hang',
       nameLast: 'Pham'
     });
-    const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v3', {}, user.token);
+    const resultChannels = getRequest(SERVER_URL + '/channels/listall/v3', {}, user.token);
 
     expect(resultChannels).toMatchObject({ channels: [] });
   });
@@ -59,7 +59,7 @@ describe('Testing successful cases for channels/listAll/v3', () => {
       ],
     };
 
-    const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v3', {}, user.token);
+    const resultChannels = getRequest(SERVER_URL + '/channels/listall/v3', {}, user.token);
 
     expect(resultChannels).toMatchObject(expectedChannels);
   });
@@ -78,7 +78,7 @@ test('Testing invalid token', () => {
     isPublic: true
   }, user.token);
 
-  const resultChannels = getRequest(SERVER_URL + '/channels/listAll/v3', {}, user.token + 'InvalidToken');
+  const resultChannels = getRequest(SERVER_URL + '/channels/listall/v3', {}, user.token + 'InvalidToken');
   expect(resultChannels.statusCode).toBe(FORBIDDEN);
   const bodyObj = JSON.parse(resultChannels.body as string);
   expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
