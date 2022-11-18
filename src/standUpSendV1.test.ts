@@ -8,8 +8,7 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-
-// not sure but might need to start each standup before testing or may not? 
+// not sure but might need to start each standup before testing or may not?
 describe('Testing positive cases for standupSendV1', () => {
   test('Testing successful run of standup send', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v2', {
@@ -24,12 +23,11 @@ describe('Testing positive cases for standupSendV1', () => {
       isPublic: true,
     }, userId.token);
 
-    
     postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
       length: 2,
     }, userId.token);
-    
+
     postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
       message: 'the first randomtest',
@@ -39,7 +37,6 @@ describe('Testing positive cases for standupSendV1', () => {
       channelId: channel.channelId,
       message: 'another randomtest',
     }, userId.token);
-
 
     expect(standupSend).toMatchObject({});
   });
@@ -58,12 +55,11 @@ describe('Testing positive cases for standupSendV1', () => {
       isPublic: true,
     }, userId.token);
 
-  // might need to increase length    
+  // might need to increase length
     postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
       length: 2,
     }, userId.token);
-    
 
     postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
@@ -83,7 +79,6 @@ describe('Testing positive cases for standupSendV1', () => {
     expect(standupSendPackage).toStrictEqual({});
   });
   */
-
 });
 
 describe('Testing negative cases for standupSendV1', () => {
@@ -141,7 +136,7 @@ describe('Testing negative cases for standupSendV1', () => {
       nameLast: 'Farnham',
     });
 
-    const messageOver1000Char = 'a'.repeat(1001); 
+    const messageOver1000Char = 'a'.repeat(1001);
 
     const channel = postRequest(SERVER_URL + '/channels/create/v2', {
       name: 'ChannelBoost',
@@ -224,4 +219,3 @@ describe('Testing negative cases for standupSendV1', () => {
 
     channelId is valid and the authorised user is not a member of the channel
 */
-

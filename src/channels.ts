@@ -131,7 +131,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
     allMembers: allMembers,
     messages: [],
     standUp: {
-      messages :[],
+      messages: [],
       isActive: false,
       timeFinish: null
     },
