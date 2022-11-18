@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
+import { tokenExists, storeMessageInChannel, getMessageId, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
 import HTTPError from 'http-errors';
 
 const  MAX_MESSAGE_LEN = 1000; 
@@ -12,20 +12,24 @@ type isActive = {
 
 }
 
+let standup: Standup = {
+  messages: [],
+  timeFinish: -1,
+
+};
+
+
 /**
   * Starts a given standup from a given channel. The standup time is specified by its length
   * and the standup is set to active. The standup deactivates at the end of length time.
   *
   * @param {string} token - token of authorised user
   * @param {number} channelId - id of channel to send message to
-  * @param {number} length
+  * @param {string} message
   * ...
   *
-  * @returns {timeFinish} returns an object containing information
-  * regarding the standups finish time
+  * @returns {} returns an empty object
   */
-
-
 
 export function standupSendV1 (token: string, channelId: number, message: string): error {
 
@@ -52,86 +56,60 @@ export function standupSendV1 (token: string, channelId: number, message: string
   if (standupActiveV1(token, channelId).isActive === false) {
     throw HTTPError(BAD_REQUEST, 'Active standup is not currently running in the channel');
   }
-
   
-  // creating standup message package
-
-    // this is the bit where i will be using messages.
-
-
-  //&& Math.floor((new Date()).getTime() < standupActiveV1(token, channelId).timeFinish
-  // It's because standupActive only takes a snapshot of the 
-
-  while (Math.floor((new Date()).getTime() / 1000 < standupActiveV1(token, channelId).timeFinish)) {
+  const user = data.users.find(user => user.uId === uId); 
+  const packagedMessage = user.handleStr + ': ' + message + '\n'; 
   
-    let packagedStandup = packageStandUp(token, channelId, message);
-    
-    
- }
- 
+  standup.messages.push(packagedMessage);   
+  
 
-  console.log('TEST: ');  
-  console.log(packagedStandup); 
-
-  //while(standUpActive(token, channelId).isActive === true ) {
-    //for (const channel of data.channels) {
-      //if (channel.channelId === channelId) {
-        //standupMessagesPackage[index] = channel.messages[index]; 
-      //}
-    //}
-  //}
-
-  // Checking if standUp has ended. 
-  if (standupActiveV1(token, channelId).isActive === false) {
-    
-    //messageSendV1(token, channelId, packagedStandup); 
-
+  /* ########### Exists just for testing. ############# */
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      for (const targetmessage of channel.messages) {
+        console.log('Channel message: ' + targetmessage.message);
+        //console.log('MessageId: ' + targetmessage.messageId);
+      }
+      console.log(channel);
+    }
   }
-  
-  
   
 
   return {}; 
+} 
+
+/*
+
+  const user = data.users.find(user => user.uId === uId); 
+  const packagedMessage = user.handleStr + ': ' + message + '\n'; 
+
+  const timeFinish = standupActiveV1(token, channelId).timeFinish;
   
-   /*
-  // all messages are packed together in one single message
-  // posted by the user who started the standup 
-  // the packaged messaged is sent to the channel where the standup started, timestamped at the moment the standup finished. 
+  if (Math.floor((new Date()).getTime() / 1000 < timeFinish)) {
+  
+    const standupMessages = standup.messages.join('')
+    const standupMessageId = getMessageId(); 
 
-  while (standup is active) {
-    - Each message should be saved in an array which will be stored the in the standUp object. 
-    - 
+    const messageObj = {
+      messageId: standupMessageId,
+      uId: uId, 
+      message: packagedMessage,
+      timeStamp: timeFinish, 
+    }
 
-  }
+    storeMessageInChannel(messageObj, channelId); 
 
-  - to get user. In standup/start will need to record in the standup object a standupStart: uId. 
-  - then can use that object to determine who to post the standup in the channel, will also be used to determine timestamp. 
-  - Call messageSend with the joined array. 
 
+    //let packagedStandup = packageStandUp(token, channelId, message);
+    // using an object rather than an array might be best
+ }
+
+  const user = data.users.find(user => user.uId === uId); 
+  const packagedMessage = user.handleStr + ': ' + message + '\n'; 
+  
+  standup.messages.push(packagedMessage);
 
   */
-
-}
-
-function packageStandUp(token, channelId, message) {
-  const data = getData();
-  const standupMessagesPackage = [];
-  let index = 0; 
-
-  // if index = 0. the first token = sta
-
-  for (const channel of data.channels) {
-    if (channel.channelId === channelId) {
-      standupMessagesPackage[index] = message; 
-    }
-    index++; 
- }
- const standupMessagesPackageString = standupMessagesPackage.join('\n');
- return standupMessagesPackageString;
-}
-
-
-
 
 
 export function standupStartV1 (token: string, channelId: number, length: number): timeFinish | error {
@@ -156,19 +134,14 @@ export function standupStartV1 (token: string, channelId: number, length: number
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
-  for (const channel of data.channels) {
-    if (channel.channelId === channelId) {
-      for (const standup of channel.standUp) {
-        if (standup.isActive === true) {
-          throw HTTPError(BAD_REQUEST, 'Active standup already running in the channel');
-        }
-      }
-    }
+  if (standupActiveV1(token, channelId).isActive === true) {
+    throw HTTPError(BAD_REQUEST, 'Active standup already running in the channel');
   }
-
+  
   const timeFinish = timeStandup(length);
   const ActivateStandup = {
     isActive: true,
+    messages: [],
     timeFinish: timeFinish,
   };
 
@@ -181,6 +154,18 @@ export function standupStartV1 (token: string, channelId: number, length: number
 
   setTimeout(function() {
     deactivateStandup(channelId, timeFinish);
+
+    const standupMessages = standup.messages.join('')
+    const standupMessageId = getMessageId(); 
+
+    const messageObj = {
+      messageId: standupMessageId,
+      uId: uId, 
+      message: standupMessages,
+      timeStamp: timeFinish, 
+    }
+
+    storeMessageInChannel(messageObj, channelId); 
   }, (length * 1000));
 
 
@@ -218,6 +203,8 @@ function deactivateStandup(channelId: number, timeFinish: number) {
     for (const targetStandup of channel.standUp) {
       if (targetStandup.timeFinish === timeFinish) {
         targetStandup.isActive = false;
+        targetStandup.messages = []; 
+        targetStandup.timeFinish = -1; 
       }
     }
   }
