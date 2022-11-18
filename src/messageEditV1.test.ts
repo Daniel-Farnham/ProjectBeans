@@ -2,7 +2,7 @@ import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 import {
   authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
-  messageSendDmV1, messageShareV1, channelMessagesV1
+  messageSendDmV1, messageShareV1
 } from './wrapperFunctions';
 const SERVER_URL = `${url}:${port}`;
 const FORBIDDEN = 403;
@@ -39,7 +39,6 @@ describe('Testing messageEditV1 success for channels', () => {
     expect(editedMessage).toStrictEqual({});
   });
 
-  
   test('Successfully edit share message in channel', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
@@ -54,7 +53,6 @@ describe('Testing messageEditV1 success for channels', () => {
 
     expect(editedMessage).toStrictEqual({});
   });
-
 });
 
 describe('Testing messageEditV1 error handling for channels', () => {
