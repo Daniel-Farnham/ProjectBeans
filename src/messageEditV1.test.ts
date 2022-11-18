@@ -63,7 +63,7 @@ describe('Testing messageEditV1 success for channels', () => {
       message: 'the first random message',
     }, userId.token);
 
-    postRequest(SERVER_URL + '/standup/send/v1', {
+    const message = postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
       message: 'the second random message',
     }, userId.token);
@@ -81,12 +81,12 @@ describe('Testing messageEditV1 success for channels', () => {
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
     const channel = channelsCreateV1(user1.token, 'Boost', true);
     const message = messageSendV1(user1.token, channel.channelId, 'original message!');
-    const sharedMsg = messageShareV1(user2.token, msg.messageId, 'sharing this message', channel.channelId, -1);
+    const sharedMsg = messageShareV1(user2.token, message.messageId, 'sharing this message', channel.channelId, -1);
 
     const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    }, userId.token);
+    }, user1.token);
 
     expect(editedMessage).toStrictEqual({});
   });
@@ -291,17 +291,17 @@ describe('Testing messageEditV1 success for dms', () => {
     expect(editedMessage).toStrictEqual({});
   });
 
-  test('Successfully edit shared message', () => {
+  test('Successfully edit shared message dm', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
     const dm = dmCreateV1(user1.token, [user2.authUserId]);
     const message = messageSendDmV1(user1.token, dm.dmId, 'original message!');
-    const sharedMsg = messageShareV1(user2.token, msg.messageId, 'sharing this message', channel.channelId, -1);
+    const sharedMsg = messageShareV1(user1.token, message.messageId, 'sharing this message', -1, dm.dmId);
 
     const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
       messageId: message.messageId,
       message: 'This is an edited message'
-    }, userId.token);
+    }, user1.token);
 
     expect(editedMessage).toStrictEqual({});
   });
