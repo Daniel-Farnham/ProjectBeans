@@ -10,19 +10,19 @@ beforeEach(() => {
 
 describe('Testing messageEditV1 success for channels', () => {
   test('Successfully edit message', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/send/v1', {
+    const message = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -38,19 +38,19 @@ describe('Testing messageEditV1 success for channels', () => {
 
 describe('Testing messageEditV1 error handling for channels', () => {
   test('Testing invalid token', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/send/v1', {
+    const message = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -66,19 +66,19 @@ describe('Testing messageEditV1 error handling for channels', () => {
   });
 
   test('MessageId is invalid', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/send/v1', {
+    const message = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -95,19 +95,19 @@ describe('Testing messageEditV1 error handling for channels', () => {
 
   test('Message is an invalid length', () => {
     const messageGreaterThan1000Char = 'a'.repeat(1001);
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/send/v1', {
+    const message = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'This is an edited message'
     }, userId.token);
@@ -124,7 +124,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
 
   test('Message not sent by authorised user, user does have global owner permission but is not a member of the channel', () => {
     // user1 = the userId with global owner permissions
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
@@ -132,7 +132,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     // user2 = the userId without owner permissions
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'fake.mcfake@student.unsw.edu.au',
       password: 'AnEvenWorsePassword',
       nameFirst: 'Fake',
@@ -140,13 +140,13 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     // if user2 creates this channel, they have owner permissions.
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user2.token);
 
     // a valid message is created by user 2 who is also the owner of the channel.
-    const message = postRequest(SERVER_URL + '/message/send/v1', {
+    const message = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, user2.token);
@@ -164,7 +164,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
 
   test('Message not sent by authorised user and the user does not have the global owner permission but they are a member of the channel', () => {
     // user1 = the userId with owner permissions
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
@@ -172,7 +172,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     // user2 = the userId without owner permissions
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'fake.mcfake@student.unsw.edu.au',
       password: 'AnEvenWorsePassword',
       nameFirst: 'Fake',
@@ -180,7 +180,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
     });
 
     // if user1 creates this channel, they have owner permissions. user2 won't have owner status.
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user1.token);
@@ -191,7 +191,7 @@ describe('Testing messageEditV1 error handling for channels', () => {
     }, user2.token);
 
     // a valid message is created by user 1 who is also the owner of the channel.
-    const message = postRequest(SERVER_URL + '/message/send/v1', {
+    const message = postRequest(SERVER_URL + '/message/send/v2', {
       channelId: channel.channelId,
       message: 'Hello this is a random test message'
     }, user1.token);
@@ -210,18 +210,18 @@ describe('Testing messageEditV1 error handling for channels', () => {
 
 describe('Testing messageEditV1 success for dms', () => {
   test('Successfully remove message', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v2', {
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -237,17 +237,17 @@ describe('Testing messageEditV1 success for dms', () => {
 
 describe('Testing messageEditV1 error handling for dms', () => {
   test('Testing invalid token', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v2', {
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -263,17 +263,17 @@ describe('Testing messageEditV1 error handling for dms', () => {
   });
 
   test('Testing messageId is invalid', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v2', {
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -290,17 +290,17 @@ describe('Testing messageEditV1 error handling for dms', () => {
 
   test('Message is an invalid length', () => {
     const messageGreaterThan1000Char = 'a'.repeat(1001);
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, userId.token);
 
-    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v2', {
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
     }, userId.token);
@@ -317,7 +317,7 @@ describe('Testing messageEditV1 error handling for dms', () => {
 
   test('Message not sent by authorised user and the user does not have global owner permissions', () => {
     // user1 = the userId with global owner permissions
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
@@ -325,7 +325,7 @@ describe('Testing messageEditV1 error handling for dms', () => {
     });
 
     // user2 = the userId without owner permissions
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'fake.mcfake@student.unsw.edu.au',
       password: 'AnEvenWorsePassword',
       nameFirst: 'Fake',
@@ -333,12 +333,12 @@ describe('Testing messageEditV1 error handling for dms', () => {
     });
 
     // if user1 creates this dm, they have dm owner permissions && are global owners.
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [],
     }, user1.token);
 
     // a valid message is created by user 1 who is also the creator of the dm.
-    const message = postRequest(SERVER_URL + '/message/senddm/v1', {
+    const message = postRequest(SERVER_URL + '/message/senddm/v2', {
       dmId: dm.dmId,
       message: 'Hello this is a random test message'
     }, user1.token);

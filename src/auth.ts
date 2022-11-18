@@ -83,9 +83,12 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const userId = data.users.length;
   const caseInsensitiveEmail = email.toLowerCase();
 
+  // Make the first registered user a global owner and
+  // initialize the workplace analytics
   let permissionId = GLOBAL_MEMBER;
   if (userId === 0) {
     permissionId = GLOBAL_OWNER;
+    createAnalytics();
   }
 
   const user = {
@@ -124,6 +127,24 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     authUserId: userId
   };
 }
+
+/**
+  * Creates the initial workplace analytics when the
+  * first user is registered
+  *
+  */
+function createAnalytics() {
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const channelStats = { numChannelsExist: 0, timeStamp: timeSent };
+  const dmsStats = { numDmsExist: 0, timeStamp: timeSent };
+  const msgStats = { numMessagesExist: 0, timeStamp: timeSent };
+  data.workspaceStats.channelsExist.push(channelStats);
+  data.workspaceStats.dmsExist.push(dmsStats);
+  data.workspaceStats.messagesExist.push(msgStats);
+  setData(data);
+}
+
 /**
   * Will attempt to logout of a session with the token provided
   *
@@ -267,3 +288,71 @@ export function getHashOf(plaintext: string) {
 }
 
 export { authLoginV1, authRegisterV1 };
+
+/**
+ * Sends an email to a user with a resetCode provided
+ *
+ * @param {string} email
+ * @returns {}
+ */
+
+export async function authPasswordResetRequestV1(email: string) {
+  const nodeEmail = require('nodemailer');
+  const data = getData();
+
+  const testAccount = await nodeEmail.createTestAccount();
+  const resetCode = generateResetCode();
+
+  data.resetCodeRequests.push({
+    email: email,
+    resetCode: resetCode
+  });
+
+  const sending = nodeEmail.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    secure: false,
+    auth: {
+      user: testAccount.user,
+      pass: testAccount.pass
+    }
+  });
+
+  try {
+    await sending.sendMail({
+      from: '"Some Guy" <BEANS.W17C.BOOST@gmail.com>',
+      to: email,
+      subject: 'Password Reset Request for UNSW Beans Account',
+      text: 'Hi, We have received a password change request for your account with UNSW Beans. Please use this code to reset the password:' +
+      resetCode + 'Thank you, UNSW Beans Team'
+    });
+  } catch (err) {
+    console.log('Sending email has an error');
+  }
+
+  const user = data.users.find((user) => user.email === email);
+
+  for (const session of data.sessions) {
+    if (session.uId === user.uId) {
+      session.tokens = [];
+    }
+  }
+  setData(data);
+  return {};
+}
+
+/**
+ * Generates a reset code which is stored in dataStore
+ * @returns {resetCode}
+ */
+function generateResetCode(): any {
+  const data = getData();
+
+  const newCode = data.resetCode;
+
+  data.resetCode += 1;
+  setData(data);
+
+  const msg = newCode.toString() + 'resetCode';
+  return { resetCode: getHashOf(msg).slice(0, 6) };
+}
