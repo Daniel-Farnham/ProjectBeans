@@ -108,6 +108,9 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
     dmId: dmId,
   }, token);
 }
+export function messageUnreactV1 (token: string, messageId: number, reactId: number) {
+  return postRequest(SERVER_URL + '/message/unreact/v1', { messageId, reactId }, token);
+}
 export function messagePinV1 (token: string, messageId: number) {
   return postRequest(SERVER_URL + '/message/pin/v1', { messageId }, token);
 }
