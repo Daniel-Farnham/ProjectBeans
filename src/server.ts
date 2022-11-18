@@ -522,7 +522,7 @@ app.post('/admin/userpermission/change/v1', (req: Request, res: Response, next) 
   const token = req.header('token');
   const { uId, permissionId } = req.body;
   res.json(adminUserPermissionChangeV1(token, uId, permissionId));
-}); 
+});
 
 app.post('/standup/start/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
