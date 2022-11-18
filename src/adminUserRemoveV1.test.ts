@@ -45,7 +45,7 @@ describe('Testing basic adminUserRemoveV1 functionality', () => {
     const global = authRegisterV1('bubbles@ad.unsw.edu.au', 'password', 'Bubleen', 'Rosie');
     const user = authRegisterV1('roses@ad.unsw.edu.au', 'password', 'Bee', 'Rosie');
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, global.token);

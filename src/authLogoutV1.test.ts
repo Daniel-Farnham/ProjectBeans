@@ -1,5 +1,5 @@
-import { getRequest, postRequest, deleteRequest } from './other';
-
+import { getRequest, postRequest } from './other';
+import { authLoginV1, authRegisterV1, clearV1 } from './wrapperFunctions';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 const INVALID_TOKEN = 403;
@@ -7,18 +7,6 @@ const INVALID_TOKEN = 403;
 beforeEach(() => {
   clearV1();
 });
-
-function clearV1() {
-  return deleteRequest(SERVER_URL + '/clear/v1', {});
-}
-
-function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
-  return postRequest(SERVER_URL + '/auth/register/v3', { email, password, nameFirst, nameLast });
-}
-
-function authLoginV1(email: string, password: string) {
-  return postRequest(SERVER_URL + '/auth/login/v3', { email, password });
-}
 
 describe('Testing successful cases for authLogoutV1', () => {
   test('Testing returning empty object upon successful logout', () => {

@@ -8,30 +8,9 @@ beforeEach(() => {
   deleteRequest(SERVER_URL + '/clear/v1', {});
 });
 
-describe('Testing positive cases for standupStartV1', () => {
-  test('Testing successful return of timeFinish', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
-      email: 'daniel.farnham@student.unsw.edu.au',
-      password: 'AVeryPoorPassword',
-      nameFirst: 'Daniel',
-      nameLast: 'Farnham',
-    });
-
-    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
-      name: 'ChannelBoost',
-      isPublic: true,
-    }, userId.token);
-
-    const standupStart = postRequest(SERVER_URL + '/standup/start/v1', {
-      channelId: channel.channelId,
-      length: 1,
-    }, userId.token);
-
-    expect(standupStart).toStrictEqual({ timeFinish: expect.any(Number) });
-  });
-
-  test('Testing start standup immediately after the end of a prior standup', () => {
-    const length = 3;
+// not sure but might need to start each standup before testing or may not?
+describe('Testing positive cases for standupSendV1', () => {
+  test('Testing successful run of standup send', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -46,26 +25,24 @@ describe('Testing positive cases for standupStartV1', () => {
 
     postRequest(SERVER_URL + '/standup/start/v1', {
       channelId: channel.channelId,
-      length: length,
+      length: 2,
     }, userId.token);
 
-    // Es Lint does not allow empty loops. Hence the existence of the dummyvariable.
-    let currentTime = new Date().getTime();
-    const expire = currentTime + length * 1000;
-    while (currentTime < expire) {
-      currentTime = new Date().getTime();
-    }
-
-    const standupStartAgain = postRequest(SERVER_URL + '/standup/start/v1', {
+    postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
-      length: length,
+      message: 'the first randomtest',
     }, userId.token);
 
-    expect(standupStartAgain).toStrictEqual({ timeFinish: expect.any(Number) });
+    const standupSend = postRequest(SERVER_URL + '/standup/send/v1', {
+      channelId: channel.channelId,
+      message: 'another randomtest',
+    }, userId.token);
+
+    expect(standupSend).toMatchObject({});
   });
 });
 
-describe('Testing negative cases for standupStartV1', () => {
+describe('Testing negative cases for standupSendV1', () => {
   test('Testing invalid token', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
@@ -79,9 +56,9 @@ describe('Testing negative cases for standupStartV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
-      length: 1,
+      message: 'randomtest',
     }, userId.token + 1);
 
     expect(returnedChannelObject.statusCode).toBe(FORBIDDEN);
@@ -102,9 +79,9 @@ describe('Testing negative cases for standupStartV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId + 1,
-      length: 1,
+      message: 'randomtest',
     }, userId.token);
 
     expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
@@ -112,7 +89,7 @@ describe('Testing negative cases for standupStartV1', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('Length is a negative integer', () => {
+  test('Message length is over 1000 characters', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -125,9 +102,9 @@ describe('Testing negative cases for standupStartV1', () => {
       isPublic: true,
     }, userId.token);
 
-    const returnedChannelObject = postRequest(SERVER_URL + '/standup/start/v1', {
+    const returnedChannelObject = postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
-      length: -1,
+      message: 'a'.repeat(1001),
     }, userId.token);
 
     expect(returnedChannelObject.statusCode).toBe(BAD_REQUEST);
@@ -135,7 +112,7 @@ describe('Testing negative cases for standupStartV1', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
-  test('An active standup is already running', () => {
+  test('An active standup is not current running in the channel', () => {
     const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
@@ -148,18 +125,14 @@ describe('Testing negative cases for standupStartV1', () => {
       isPublic: true,
     }, userId.token);
 
-    postRequest(SERVER_URL + '/standup/start/v1', {
+    const standupSend = postRequest(SERVER_URL + '/standup/send/v1', {
       channelId: channel.channelId,
-      length: 1,
+      message: 'randomtest',
     }, userId.token);
 
-    const standupStartAgain = postRequest(SERVER_URL + '/standup/start/v1', {
-      channelId: channel.channelId,
-      length: 1,
-    }, userId.token);
-
-    expect(standupStartAgain.statusCode).toBe(BAD_REQUEST);
-    const bodyObj = JSON.parse(standupStartAgain.body as string);
+    // need to add in /standup/send
+    expect(standupSend.statusCode).toBe(BAD_REQUEST);
+    const bodyObj = JSON.parse(standupSend.body as string);
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
@@ -183,8 +156,9 @@ describe('Testing negative cases for standupStartV1', () => {
       isPublic: true,
     }, user1.token);
 
-    const ReturnedChannelObj = postRequest(SERVER_URL + '/standup/start/v1', {
-      channelId: channel.channelId
+    const ReturnedChannelObj = postRequest(SERVER_URL + '/standup/send/v1', {
+      channelId: channel.channelId,
+      message: 'randomtest'
     }, user2.token);
 
     expect(ReturnedChannelObj.statusCode).toBe(FORBIDDEN);
@@ -192,3 +166,15 @@ describe('Testing negative cases for standupStartV1', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 });
+
+/*
+
+400 Error:
+    channelId does not refer to a valid channel
+    length is a negative integer
+    an active standup is currently running in the channel
+
+403 Error:
+
+    channelId is valid and the authorised user is not a member of the channel
+*/
