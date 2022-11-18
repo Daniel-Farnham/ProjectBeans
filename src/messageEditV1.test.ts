@@ -2,7 +2,7 @@ import { putRequest, postRequest, deleteRequest } from './other';
 import { port, url } from './config.json';
 import {
   authRegisterV1, dmCreateV1, channelsCreateV1, messageSendV1,
-  messageSendDmV1, messageShareV1,
+  messageSendDmV1, messageShareV1, channelMessagesV1
 } from './wrapperFunctions';
 const SERVER_URL = `${url}:${port}`;
 const FORBIDDEN = 403;
@@ -39,48 +39,7 @@ describe('Testing messageEditV1 success for channels', () => {
     expect(editedMessage).toStrictEqual({});
   });
 
-  // Issue with this test
-  /*
-  test('Successfully edit standup message in channel', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
-      email: 'daniel.farnham@student.unsw.edu.au',
-      password: 'AVeryPoorPassword',
-      nameFirst: 'Daniel',
-      nameLast: 'Farnham',
-    });
-
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
-      name: 'ChannelBoost',
-      isPublic: true,
-    }, userId.token);
-
-    postRequest(SERVER_URL + '/standup/start/v1', {
-      channelId: channel.channelId,
-      length: 2,
-    }, userId.token);
-
-    postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'the first random message',
-    }, userId.token);
-
-    const message = postRequest(SERVER_URL + '/standup/send/v1', {
-      channelId: channel.channelId,
-      message: 'the second random message',
-    }, userId.token);
-
-    const editedMessage = putRequest(SERVER_URL + '/message/edit/v2', {
-      messageId: message.messageId,
-      message: 'This is an edited message'
-    }, userId.token);
-
-    expect(editedMessage.statusCode).toBe(FORBIDDEN);
-    const bodyObj = JSON.parse(editedMessage.body as string);
-    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
-    expect(editedMessage).toStrictEqual({});
-  });
-  */
-
+  
   test('Successfully edit share message in channel', () => {
     const user1 = authRegisterV1('hangpham@gmail.com', 'password', 'Hang', 'Pham');
     const user2 = authRegisterV1('janedoe@gmail.com', 'password', 'Jane', 'Doe');
