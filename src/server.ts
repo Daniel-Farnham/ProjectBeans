@@ -27,7 +27,7 @@ import {
 import { notificationsGetV1 } from './notifications';
 import { dmCreateV1, dmDetailsV1, messageSendDmV1, dmMessagesV1, dmListV1, dmLeaveV1, dmRemoveV1 } from './dm';
 import { standupSendV1, standupStartV1, standupActiveV1 } from './standup';
-import { adminUserRemoveV1 } from './admin';
+import { adminUserRemoveV1, adminUserPermissionChangeV1 } from './admin';
 
 // Set up web app
 const app = express();
@@ -62,6 +62,12 @@ app.get('/echo', (req: Request, res: Response, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.post('/admin/userpermission/change/v1', (req: Request, res: Response, next) => {
+  const token = req.header('token');
+  const { uId, permissionId } = req.body;
+  res.json(adminUserPermissionChangeV1(token, uId, permissionId));
 });
 
 app.delete('/clear/v1', (req: Request, res: Response, next) => {
