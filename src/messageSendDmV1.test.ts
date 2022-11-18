@@ -10,21 +10,21 @@ beforeEach(() => {
 
 describe('Testing messagesenddmv2 success case handling', () => {
   test('Testing successful return type for sending DM', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [user2.authUserId],
     }, user1.token);
 
@@ -37,21 +37,21 @@ describe('Testing messagesenddmv2 success case handling', () => {
   });
 
   test('Testing successful viewing of DM after one message sent - NOT checking timestamp', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [user2.authUserId],
     }, user1.token);
 
@@ -60,7 +60,7 @@ describe('Testing messagesenddmv2 success case handling', () => {
       message: 'This is my first message'
     }, user2.token);
 
-    const messagesResult = getRequest(SERVER_URL + '/dm/messages/v1', {
+    const messagesResult = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dm.dmId,
       start: 0
     }, user1.token);
@@ -79,21 +79,21 @@ describe('Testing messagesenddmv2 success case handling', () => {
     expect(messagesResult).toMatchObject(expectedMessages);
   });
   test('Testing successful viewing of DM after one message sent - checking timestamp', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham1@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [user2.authUserId],
     }, user1.token);
 
@@ -103,7 +103,7 @@ describe('Testing messagesenddmv2 success case handling', () => {
     }, user2.token);
     const expectedTimeSent = Math.floor((new Date()).getTime() / 1000);
 
-    const messagesResult = getRequest(SERVER_URL + '/dm/messages/v1', {
+    const messagesResult = getRequest(SERVER_URL + '/dm/messages/v2', {
       dmId: dm.dmId,
       start: 0
     }, user1.token);
@@ -144,20 +144,20 @@ describe('Testing messagesenddmv2 error handling', () => {
       desc: 'Length of message > 1000 characters'
     },
   ])('$desc', ({ statusCode, token, dmId, message }) => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [user2.authUserId],
     }, user1.token);
 
@@ -172,27 +172,27 @@ describe('Testing messagesenddmv2 error handling', () => {
   });
 
   test('dmId is valid and the authorised user is not a member of the DM', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const user3 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user3 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'jane.doe@student.unsw.edu.au',
       password: 'AP@ssW0rd!',
       nameFirst: 'Jane',
       nameLast: 'Doe',
     });
 
-    const dm = postRequest(SERVER_URL + '/dm/create/v1', {
+    const dm = postRequest(SERVER_URL + '/dm/create/v2', {
       uIds: [user2.authUserId],
     }, user1.token);
 

@@ -10,21 +10,21 @@ describe('Testing positive cases for channelJoinV1', () => {
   });
 
   test('Successful return of empty object when joining public channel', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user1.token);
@@ -36,21 +36,21 @@ describe('Testing positive cases for channelJoinV1', () => {
   });
 
   test('Successful return of empty object when joining private channel as global owner', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: false,
     }, user2.token);
@@ -63,21 +63,21 @@ describe('Testing positive cases for channelJoinV1', () => {
   });
 
   test('User is added as a new member of allMembers array', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, user1.token);
@@ -86,7 +86,7 @@ describe('Testing positive cases for channelJoinV1', () => {
       channelId: channel.channelId,
     }, user2.token);
 
-    const channelObj = getRequest(SERVER_URL + '/channel/details/v2', {
+    const channelObj = getRequest(SERVER_URL + '/channel/details/v3', {
       channelId: channel.channelId
     }, user1.token);
 
@@ -129,14 +129,14 @@ describe('Testing negative cases for channelJoinV1', () => {
   });
 
   test('Testing invalid authUserId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -151,14 +151,14 @@ describe('Testing negative cases for channelJoinV1', () => {
   });
 
   test('Testing invalid channelId', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -173,14 +173,14 @@ describe('Testing negative cases for channelJoinV1', () => {
   });
 
   test('Testing if the user is already a member of the channel', () => {
-    const userId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const userId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: true,
     }, userId.token);
@@ -195,21 +195,21 @@ describe('Testing negative cases for channelJoinV1', () => {
   });
 
   test('Testing if user is trying to join private channel assuming they are not global owner', () => {
-    const user1 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user1 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'daniel.farnham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Daniel',
       nameLast: 'Farnham',
     });
 
-    const user2 = postRequest(SERVER_URL + '/auth/register/v2', {
+    const user2 = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hang.pham@student.unsw.edu.au',
       password: 'AVeryPoorPassword',
       nameFirst: 'Hang',
       nameLast: 'Pham',
     });
 
-    const channel = postRequest(SERVER_URL + '/channels/create/v2', {
+    const channel = postRequest(SERVER_URL + '/channels/create/v3', {
       name: 'ChannelBoost',
       isPublic: false,
     }, user1.token);

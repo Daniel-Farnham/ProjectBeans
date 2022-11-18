@@ -1,9 +1,9 @@
 import {
   channelIdExists, tokenExists, getMessageId, FORBIDDEN, BAD_REQUEST, isMemberOfDm,
   isMemberOfChannel, error, getUidFromToken, isOwnerOfMessage, getMessageContainer, dmIdExists,
-  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError
+  getDmObjectFromDmlId, getChannelObjectFromChannelId, httpError, isOwnerOfChannel, updateMessageAnalytics
 } from './other';
-import { storeMessageInDm } from './dm';
+import { storeMessageInDm, messageSendDmV1 } from './dm';
 import { notificationSetTag, requiresTagging, notificationSetReact } from './notifications';
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
@@ -22,6 +22,7 @@ const GLOBAL_OWNER = 1;
   * ...
   *
   * @returns {messageId} returns an object containing the messageId
+
 */
 export function messageSendV1 (token: string, channelId: number, message: string): messageIdReturnedObject | error {
   if (!(tokenExists(token))) {
@@ -66,6 +67,10 @@ export function messageSendV1 (token: string, channelId: number, message: string
   if (requiresTagging(message)) {
     notificationSetTag(uId, channelId, -1, message, 'channel');
   }
+
+  // Update the workplace analytics
+  updateMessageAnalytics(timeSent);
+
   return { messageId: messageId };
 }
 
@@ -205,9 +210,9 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
 }
 
 /**
-  * Removes a reaction from the message that is entered
+  * Unreacts to the message that is entered
   *
-  * @param {number} messageId - id of the message to unreact to
+  * @param {number} messageId - id of the message to be unreacted to
   * @param {string} reactId - react value
   * ...
   *
@@ -239,21 +244,85 @@ export function messageUnreactV1 (token: string, messageId: number, reactId: num
         throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
       }
       if (!messageReactedByUser(message, uId, reactId)) {
-        throw HTTPError(BAD_REQUEST, 'Message has not been reacted to by user');
+        throw HTTPError(BAD_REQUEST, 'Message not reacted by user');
       }
-      UnreactToMessage(messageId, uId, reactId, 'channel');
+      unreactToMessage(messageId, uId, reactId, 'channel');
     }
   }
   if (messageContainer.type === 'dm') {
     for (const message of messageContainer.dm.messages) {
       if (message.messageId === messageId) {
         if (!isMemberOfDm(messageContainer.dm, uId)) {
-          throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
+          throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
         }
-        if (!messageReactedByUser(message, uId, reactId)) {
-          throw HTTPError(BAD_REQUEST, 'Message has not been reacted to by user');
+        if (messageReactedByUser(message, uId, reactId)) {
+          throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
         }
-        UnreactToMessage(messageId, uId, reactId, 'dm');
+        unreactToMessage(messageId, uId, reactId, 'dm');
+      }
+    }
+  }
+  setData(data);
+  return {};
+}
+
+/**
+  * Pins a message in a channel or dm
+  *
+  * @param {string} token - token of authorised user
+  * @param {number} messageId - id of the message to be edited
+  * ...
+  *
+  * @returns {{}}
+*/
+export function messagePinV1 (token: string, messageId: number): error | Record<string, never> {
+  const data = getData();
+  // check if token is valid
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
+  }
+
+  // Checking both channels and dms to see if messageId is valid.
+  const messageContainer = getMessageContainer(messageId);
+  if (!messageContainer) {
+    throw HTTPError(BAD_REQUEST, 'Message does not exist in either channels or dms');
+  }
+  const uId = getUidFromToken(token);
+
+  if (messageContainer.type === 'channel') {
+    if (!isMemberOfChannel(messageContainer.channel, uId)) {
+      throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
+    }
+
+    for (const message of messageContainer.channel.messages) {
+      if (message.messageId === messageId) {
+        if (message.isPinned === true) {
+          throw HTTPError(BAD_REQUEST, 'That message is already pinned');
+        } else {
+          message.isPinned = true;
+          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
+          if (!isOwner) {
+            throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
+          }
+        }
+      }
+    }
+  } else {
+    for (const message of messageContainer.dm.messages) {
+      if (!isMemberOfDm(messageContainer.dm, uId)) {
+        throw HTTPError(BAD_REQUEST, 'User is not a member of this dm');
+      }
+
+      if (message.messageId === messageId) {
+        if (message.isPinned === true) {
+          throw HTTPError(BAD_REQUEST, 'That message is already pinned');
+        } else {
+          message.isPinned = true;
+          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
+          if (!isOwner) {
+            throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
+          }
+        }
       }
     }
   }
@@ -325,13 +394,13 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
 /**
   * Removes react from user to message
   *
-  * @param {number} messageId - id of the message to unreact to
+  * @param {number} messageId - id of the message to be unreacted to
   * @param {number} reactId - reactId
   * ...
   *
   * @returns nothing
 */
-function UnreactToMessage(messageId: number, uId: number, reactId: number, type: string) {
+function unreactToMessage(messageId: number, uId: number, reactId: number, type: string) {
   const data = getData();
   if (type === 'dm') {
     for (const dm of data.dms) {
@@ -340,8 +409,11 @@ function UnreactToMessage(messageId: number, uId: number, reactId: number, type:
           for (const reaction of message.reacts) {
             if (reaction.reactId === reactId) {
               const index = reaction.uIds.indexOf(uId);
-              reaction.uIds.splice(index, 1);
+							reaction.uIds.splice(index, 1);
               reaction.isThisUserReacted = false;
+            }
+            if (isMemberOfDm(dm, message.uId)) {
+              notificationSetReact(message, uId, -1, dm.dmId, 'dm');
             }
           }
         }
@@ -355,8 +427,11 @@ function UnreactToMessage(messageId: number, uId: number, reactId: number, type:
           for (const reaction of message.reacts) {
             if (reaction.reactId === reactId) {
               const index = reaction.uIds.indexOf(uId);
-              reaction.uIds.splice(index, 1);
+							reaction.uIds.splice(index, 1);
               reaction.isThisUserReacted = false;
+            }
+            if (isMemberOfChannel(channel, message.uId)) {
+              notificationSetReact(message, uId, channel.channelId, -1, 'channel');
             }
           }
         }
@@ -365,6 +440,7 @@ function UnreactToMessage(messageId: number, uId: number, reactId: number, type:
   }
   setData(data);
 }
+
 
 /**
   * Edits the message that exists in the channel
@@ -466,7 +542,23 @@ export function messageRemoveV1(token: string, messageId: number): error | Recor
     // If no errors, remove
     removeMessageFromDM(messageId);
   }
+
+  // Update the workplace analytics
+  decrementMessageAnalytics();
+
   return {};
+}
+
+/**
+  * Decreases the number of messages in the workplace analytics
+  */
+function decrementMessageAnalytics() {
+  const data = getData();
+  const index = data.workspaceStats.messagesExist.length;
+  const numMsgs = data.workspaceStats.messagesExist[index - 1].numMessagesExist;
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  data.workspaceStats.messagesExist.push({ numMessagesExist: numMsgs - 1, timeStamp: timeSent });
+  setData(data);
 }
 
 /**
@@ -583,6 +675,7 @@ function messageShareErrorChecking(token: string, ogMessageId: number, message: 
     }
   }
 }
+
 function sendSharedMessage(uId: number, channelId: number, dmId: number, message: string): messageId {
   // Create message
   const messageId = getMessageId();
@@ -855,6 +948,77 @@ function sendlaterInfoInvalid(token: string, channelId: number, message: string,
   const findChannel = data.channels.find(chan => chan.channelId === channelId);
   if (!isMemberOfChannel(findChannel, uId)) {
     return { code: FORBIDDEN, error: 'User is not a member of the channel' };
+  }
+
+  return false;
+}
+
+/**
+  * Sends a message to a dm automatically at a specified time in the future
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} dmId - id of the dm where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+  *
+  * @returns {messageId} returns an object containing the messageId
+  */
+export function messageSendlaterdmV1(token: string, dmId: number, message: string, timeSent: number): messageIdReturnedObject | error {
+  // Check if the given information is valid
+  const currentTime = Math.floor((new Date()).getTime() / 1000);
+  const isInvalid = sendlaterdmInfoInvalid(token, dmId, message, timeSent, currentTime);
+  if (isInvalid !== false) {
+    const errorMsg = isInvalid as any;
+    throw HTTPError(errorMsg.code, errorMsg.error);
+  }
+
+  // Make the message send at the given time, and return what the messageId will be
+  setTimeout(function() {
+    messageSendDmV1(token, dmId, message);
+  }, (timeSent - currentTime) * 1000);
+
+  // Store the dmId in the timeoutIds array that declares that the dm is still active
+  // This will be used by messageSenddm to determine whether a message should still be sent
+  const data = getData();
+  data.timeoutIds.push({ dmId: dmId, isActive: true });
+  return { messageId: data.messageCount };
+}
+
+/**
+  * Checks the info given in messageSendlaterdmV1 is valid
+  *
+  * @param {string} token - the token of the user making the request
+  * @param {number} dmId - id of the dm where the message is being sent
+  * @param {string} message - the message being sent
+  * @param {number} timeSent - the time when the message should be sent (in seconds)
+  * @param {number} currentTime - the current time (in seconds)
+  *
+  * @returns {httpError} returns an error code and message if the info is invalid
+  * @returns {boolean} returns false if the info is valid
+  */
+function sendlaterdmInfoInvalid(token: string, dmId: number, message: string, timeSent: number, currentTime: number): httpError | boolean {
+  const data = getData();
+
+  if (!tokenExists(token)) {
+    return { code: FORBIDDEN, error: 'Token is invalid' };
+  }
+
+  if (!dmIdExists(dmId)) {
+    return { code: BAD_REQUEST, error: 'DmId is invalid' };
+  }
+
+  if (message.length < MIN_MESSAGE_LEN || message.length > MAX_MESSAGE_LEN) {
+    return { code: BAD_REQUEST, error: 'Length of message is less than 1 or over 1000 characters' };
+  }
+
+  if (timeSent - currentTime < 0) {
+    return { code: BAD_REQUEST, error: 'timeSent is in the past' };
+  }
+
+  const uId = getUidFromToken(token);
+  const findDm = data.dms.find(dm => dm.dmId === dmId);
+  if (!isMemberOfDm(findDm, uId)) {
+    return { code: FORBIDDEN, error: 'User is not a member of the dm' };
   }
 
   return false;
