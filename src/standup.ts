@@ -71,6 +71,9 @@ export function standupSendV1 (token: string, channelId: number, message: string
   // ## bug found here ## 
   // The problem is here. Each time a standUpSend is called a new message object is created with the packaged message. 
   // This should only be called once at the end. 
+  console.log('Current time: ' + (new Date()).getTime() / 1000); 
+  console.log('time finish: ' + timeFinish); 
+
   if (Math.floor((new Date()).getTime() / 1000 < timeFinish)) {
     const standupMessages = standup.messages.join('')
     const standupMessageId = getMessageId(); 
@@ -162,7 +165,6 @@ export function standupStartV1 (token: string, channelId: number, length: number
   const timeFinish = timeStandup(length);
   const ActivateStandup = {
     isActive: true,
-    messages: [],
     timeFinish: timeFinish,
   };
 
