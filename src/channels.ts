@@ -139,7 +139,7 @@ function channelsCreateV1 (token: string, name: string, isPublic: boolean): chan
     isPublic: isPublic,
   };
 
-	increaseChannel(token);
+  increaseChannel(token);
   // Push the user to the channel
   data.channels.push(channelObj);
 

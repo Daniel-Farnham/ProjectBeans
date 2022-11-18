@@ -90,7 +90,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     permissionId = GLOBAL_OWNER;
     createAnalytics();
   }
-
+  const time = Math.floor((new Date()).getTime() / 1000);
   const user = {
     uId: userId,
     email: caseInsensitiveEmail,
@@ -99,7 +99,13 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     handleStr: handleStr,
     profileImgUrl: SERVER_URL + '/static/defaultpic.jpg',
     password: getHashOf(password),
-    permissionId: permissionId
+    permissionId: permissionId,
+    userStats: {
+      channelsJoined: [{ numChannelsJoined: 0, timeStamp: time }],
+      dmsJoined: [{ numDmsJoined: 0, timeStamp: time }],
+      messagesSent: [{ MessagesSent: 0, timeStamp: time }],
+      involvementRate: 0,
+    }
   };
 
   data.users.push(user);

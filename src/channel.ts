@@ -8,8 +8,7 @@ import HTTPError from 'http-errors';
 import { notificationSetAddChannel } from './notifications';
 import { messageReactedByUser } from './message';
 import { user, messagesOutput, internalChannel, channelDetails } from './types';
-import { increaseChannel, DecreaseChannel, IncreaseDm, DecreaseDm, IncreaseMessages, InvolvementRateCalc } from './users';
-
+import { increaseChannel, DecreaseChannel } from './users';
 
 const GLOBAL_OWNER = 1;
 
@@ -108,7 +107,7 @@ function channelJoinV1(token: string, channelId: number): error | Record<string,
     }
   }
 
-	increaseChannel(token);
+  increaseChannel(token);
   setData(data);
   return {};
 }
@@ -150,7 +149,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): error |
     if (channel.channelId === channelId) {
       channel.allMembers.push(newMember.user);
       notificationSetAddChannel(channelId, authUserId, uId);
-			increaseChannelbyUId(uId);
+      increaseChannelbyUId(uId);
       setData(data);
       return {};
     }
@@ -285,7 +284,7 @@ function channelLeaveV1 (token: string, channelId: number): error | boolean | Re
       }
     }
   }
-	DecreaseChannel(token);
+  DecreaseChannel(token);
   setData(data);
   return {};
 }

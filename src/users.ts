@@ -333,19 +333,19 @@ export function userProfileUploadPhotoV1 (token: string, imgUrl: string,
   * @returns {userStats} - Returns object containing stats about user
 */
 export function userStatsV1 (token: string): error | { userStats: userStats } | any {
-	const data = getData();
-	const uId = getUidFromToken(token);
+  const data = getData();
+  const uId = getUidFromToken(token);
 
-	// Check if token is valid
-	if (!tokenExists) {
-		throw HTTPError(FORBIDDEN, 'Token is invalid');
-	}
+  // Check if token is valid
+  if (!tokenExists) {
+    throw HTTPError(FORBIDDEN, 'Token is invalid');
+  }
 
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			return { userStats: user.userStats };
-		}
-	}
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      return { userStats: user.userStats };
+    }
+  }
 }
 
 /**
@@ -485,21 +485,21 @@ function handleInUse (handleStr: string): boolean {
   * @param {string} token - token of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function increaseChannel (token: string) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	const uId = getUidFromToken(token);
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numChans = user.userStats.channelsJoined[user.userStats.channelsJoined.length-1].numChannelsJoined;
-			numChans++;
-			const newChannelStat = {numChannelsJoined: numChans, timeStamp: timeSent};
-			user.userStats.channelsJoined.push(newChannelStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const uId = getUidFromToken(token);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numChans = user.userStats.channelsJoined[user.userStats.channelsJoined.length - 1].numChannelsJoined;
+      numChans++;
+      const newChannelStat = { numChannelsJoined: numChans, timeStamp: timeSent };
+      user.userStats.channelsJoined.push(newChannelStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -507,21 +507,21 @@ export function increaseChannel (token: string) {
   * @param {string} token - token of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function DecreaseChannel (token: string) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	const uId = getUidFromToken(token);
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numChans = user.userStats.channelsJoined[user.userStats.channelsJoined.length-1].numChannelsJoined;
-			numChans--;
-			const newChannelStat = {numChannelsJoined: numChans, timeStamp: timeSent};
-			user.userStats.channelsJoined.push(newChannelStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const uId = getUidFromToken(token);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numChans = user.userStats.channelsJoined[user.userStats.channelsJoined.length - 1].numChannelsJoined;
+      numChans--;
+      const newChannelStat = { numChannelsJoined: numChans, timeStamp: timeSent };
+      user.userStats.channelsJoined.push(newChannelStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -529,21 +529,21 @@ export function DecreaseChannel (token: string) {
   * @param {string} token - token of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function IncreaseDm (token: string) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	const uId = getUidFromToken(token);
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length-1].numDmsJoined;
-			numDms++;
-			const newDmStat = {numDmsJoined: numDms, timeStamp: timeSent};
-			user.userStats.dmsJoined.push(newDmStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const uId = getUidFromToken(token);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length - 1].numDmsJoined;
+      numDms++;
+      const newDmStat = { numDmsJoined: numDms, timeStamp: timeSent };
+      user.userStats.dmsJoined.push(newDmStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -551,21 +551,21 @@ export function IncreaseDm (token: string) {
   * @param {string} token - token of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function DecreaseDm (token: string) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	const uId = getUidFromToken(token);
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length-1].numDmsJoined;
-			numDms--;
-			const newDmStat = {numDmsJoined: numDms, timeStamp: timeSent};
-			user.userStats.dmsJoined.push(newDmStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const uId = getUidFromToken(token);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length - 1].numDmsJoined;
+      numDms--;
+      const newDmStat = { numDmsJoined: numDms, timeStamp: timeSent };
+      user.userStats.dmsJoined.push(newDmStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -573,21 +573,21 @@ export function DecreaseDm (token: string) {
   * @param {string} token - token of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function IncreaseMessages (token: string) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	const uId = getUidFromToken(token);
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numMessages = user.userStats.messagesSent[user.userStats.messagesSent.length-1].MessagesSent;
-			numMessages++;
-			const newMessageStat = {numDmsJoined: numMessages, timeStamp: timeSent};
-			user.userStats.dmsJoined.push(newMessageStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+  const uId = getUidFromToken(token);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numMessages = user.userStats.messagesSent[user.userStats.messagesSent.length - 1].MessagesSent;
+      numMessages++;
+      const newMessageStat = { numDmsJoined: numMessages, timeStamp: timeSent };
+      user.userStats.dmsJoined.push(newMessageStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -595,32 +595,32 @@ export function IncreaseMessages (token: string) {
   * @param {string} token - token of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function InvolvementRateCalc (token: string) {
-	const data = getData();
-	const uId = getUidFromToken(token);
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			const numChansJoined = user.userStats.channelsJoined[user.userStats.channelsJoined.length-1].numChannelsJoined;
-			const numDmsJoined = user.userStats.dmsJoined[user.userStats.dmsJoined.length-1].numDmsJoined;
-			const numMessagesSent = user.userStats.messagesSent[user.userStats.messagesSent.length-1].MessagesSent;
-			const numerator = numChansJoined + numDmsJoined + numMessagesSent;
+  const data = getData();
+  const uId = getUidFromToken(token);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      const numChansJoined = user.userStats.channelsJoined[user.userStats.channelsJoined.length - 1].numChannelsJoined;
+      const numDmsJoined = user.userStats.dmsJoined[user.userStats.dmsJoined.length - 1].numDmsJoined;
+      const numMessagesSent = user.userStats.messagesSent[user.userStats.messagesSent.length - 1].MessagesSent;
+      const numerator = numChansJoined + numDmsJoined + numMessagesSent;
 
-			const totalChans = data.channels.length;
-			const totalDms = data.dms.length;
-			const totalMessages = data.messageCount;
-			const denominator = totalChans + totalDms + totalMessages;
+      const totalChans = data.channels.length;
+      const totalDms = data.dms.length;
+      const totalMessages = data.messageCount;
+      const denominator = totalChans + totalDms + totalMessages;
 
-			let involvementRate = numerator/denominator;
-			if (involvementRate > 1) {
-				involvementRate = 1;
-			}
+      let involvementRate = numerator / denominator;
+      if (involvementRate > 1) {
+        involvementRate = 1;
+      }
 
-			user.userStats.involvementRate = involvementRate;
-		}
-	}
-	setData(data);
+      user.userStats.involvementRate = involvementRate;
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -628,21 +628,21 @@ export function InvolvementRateCalc (token: string) {
   * @param {number} uId - uId of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function increaseChannelbyUId (uId: number) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numChans = user.userStats.channelsJoined[user.userStats.channelsJoined.length-1].numChannelsJoined;
-			numChans++;
-			const newChannelStat = {numChannelsJoined: numChans, timeStamp: timeSent};
-			user.userStats.channelsJoined.push(newChannelStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numChans = user.userStats.channelsJoined[user.userStats.channelsJoined.length - 1].numChannelsJoined;
+      numChans++;
+      const newChannelStat = { numChannelsJoined: numChans, timeStamp: timeSent };
+      user.userStats.channelsJoined.push(newChannelStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -650,21 +650,21 @@ export function increaseChannelbyUId (uId: number) {
   * @param {number} uId - uId of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function IncreaseDmbyUid (uId: number) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
 
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length-1].numDmsJoined;
-			numDms++;
-			const newDmStat = {numDmsJoined: numDms, timeStamp: timeSent};
-			user.userStats.dmsJoined.push(newDmStat);
-		}
-	}
-	setData(data);
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length - 1].numDmsJoined;
+      numDms++;
+      const newDmStat = { numDmsJoined: numDms, timeStamp: timeSent };
+      user.userStats.dmsJoined.push(newDmStat);
+    }
+  }
+  setData(data);
 }
 
 /**
@@ -672,21 +672,21 @@ export function IncreaseDmbyUid (uId: number) {
   * @param {number} uId - uId of the user
   *
   * @returns - void
-	* 
+	*
 */
 export function DecreaseDmbyUid (uId: number) {
-	const data = getData();
-	const timeSent = Math.floor((new Date()).getTime()/1000);
-	
-	for (const user of data.users) {
-		if (user.uId === uId) {
-			let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length-1].numDmsJoined;
-			numDms++;
-			const newDmStat = {numDmsJoined: numDms, timeStamp: timeSent};
-			user.userStats.dmsJoined.push(newDmStat);
-		}
-	}
-	setData(data);
+  const data = getData();
+  const timeSent = Math.floor((new Date()).getTime() / 1000);
+
+  for (const user of data.users) {
+    if (user.uId === uId) {
+      let numDms = user.userStats.dmsJoined[user.userStats.dmsJoined.length - 1].numDmsJoined;
+      numDms++;
+      const newDmStat = { numDmsJoined: numDms, timeStamp: timeSent };
+      user.userStats.dmsJoined.push(newDmStat);
+    }
+  }
+  setData(data);
 }
 /*
   * Returns the required statistics about the workspace's use of the program
@@ -749,4 +749,3 @@ function findNumUsersInChannelOrDm(): number {
 
   return count;
 }
-
