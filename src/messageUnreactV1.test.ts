@@ -56,7 +56,7 @@ describe('Testing message/unreact/v1 success handling', () => {
       ])
     );
   });
-  test('channel/messages/v3 - display active react and then unreact array ofuIds', () => {
+  test('channel/messages/v3 - display active react and then unreact array of uIds', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
 

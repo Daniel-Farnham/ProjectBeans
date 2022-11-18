@@ -210,63 +210,6 @@ export function messageReactV1 (token: string, messageId: number, reactId: numbe
 }
 
 /**
-  * Unreacts to the message that is entered
-  *
-  * @param {number} messageId - id of the message to be unreacted to
-  * @param {string} reactId - react value
-  * ...
-  *
-  * @returns {{}}
-*/
-export function messageUnreactV1 (token: string, messageId: number, reactId: number): error | Record<string, never> {
-  if (!(tokenExists(token))) {
-    throw HTTPError(FORBIDDEN, 'token is invalid');
-  }
-
-  if (reactId !== 1) {
-    throw HTTPError(BAD_REQUEST, 'reactId entered is not valid');
-  }
-
-  // Checking both channels and dms to see if messageId is valid.
-  const messageContainer = getMessageContainer(messageId);
-  if (!messageContainer) {
-    throw HTTPError(400, 'message does not exist in either channels or dms');
-  }
-  const data = getData();
-
-  const uId = getUidFromToken(token);
-  if (messageContainer.type === 'channel') {
-    if (!isMemberOfChannel(messageContainer.channel, uId)) {
-      throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
-    }
-    for (const message of messageContainer.channel.messages) {
-      if (!isMemberOfChannel(messageContainer.channel, uId)) {
-        throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
-      }
-      if (!messageReactedByUser(message, uId, reactId)) {
-        throw HTTPError(BAD_REQUEST, 'Message not reacted by user');
-      }
-      unreactToMessage(messageId, uId, reactId, 'channel');
-    }
-  }
-  if (messageContainer.type === 'dm') {
-    for (const message of messageContainer.dm.messages) {
-      if (message.messageId === messageId) {
-        if (!isMemberOfDm(messageContainer.dm, uId)) {
-          throw HTTPError(BAD_REQUEST, 'User attempting to react to message is not a member');
-        }
-        if (messageReactedByUser(message, uId, reactId)) {
-          throw HTTPError(BAD_REQUEST, 'Message already reacted by user');
-        }
-        unreactToMessage(messageId, uId, reactId, 'dm');
-      }
-    }
-  }
-  setData(data);
-  return {};
-}
-
-/**
   * Pins a message in a channel or dm
   *
   * @param {string} token - token of authorised user
@@ -392,15 +335,72 @@ function reactToMessage(messageId: number, uId: number, reactId: number, type: s
 }
 
 /**
+  * Removes a reaction from the message that is entered
+  *
+  * @param {number} messageId - id of the message to unreact to
+  * @param {string} reactId - react value
+  * ...
+  *
+  * @returns {{}}
+*/
+export function messageUnreactV1 (token: string, messageId: number, reactId: number): error | Record<string, never> {
+  if (!(tokenExists(token))) {
+    throw HTTPError(FORBIDDEN, 'token is invalid');
+  }
+
+  if (reactId !== 1) {
+    throw HTTPError(BAD_REQUEST, 'reactId entered is not valid');
+  }
+
+  // Checking both channels and dms to see if messageId is valid.
+  const messageContainer = getMessageContainer(messageId);
+  if (!messageContainer) {
+    throw HTTPError(400, 'message does not exist in either channels or dms');
+  }
+  const data = getData();
+
+  const uId = getUidFromToken(token);
+  if (messageContainer.type === 'channel') {
+    if (!isMemberOfChannel(messageContainer.channel, uId)) {
+      throw HTTPError(BAD_REQUEST, 'User is not a member of the channel');
+    }
+    for (const message of messageContainer.channel.messages) {
+      if (!isMemberOfChannel(messageContainer.channel, uId)) {
+        throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
+      }
+      if (!messageReactedByUser(message, uId, reactId)) {
+        throw HTTPError(BAD_REQUEST, 'Message has not been reacted to by user');
+      }
+      UnreactToMessage(messageId, uId, reactId, 'channel');
+    }
+  }
+  if (messageContainer.type === 'dm') {
+    for (const message of messageContainer.dm.messages) {
+      if (message.messageId === messageId) {
+        if (!isMemberOfDm(messageContainer.dm, uId)) {
+          throw HTTPError(BAD_REQUEST, 'User attempting to unreact to message is not a member');
+        }
+        if (!messageReactedByUser(message, uId, reactId)) {
+          throw HTTPError(BAD_REQUEST, 'Message has not been reacted to by user');
+        }
+        UnreactToMessage(messageId, uId, reactId, 'dm');
+      }
+    }
+  }
+  setData(data);
+  return {};
+}
+
+/**
   * Removes react from user to message
   *
-  * @param {number} messageId - id of the message to be unreacted to
+  * @param {number} messageId - id of the message to unreact to
   * @param {number} reactId - reactId
   * ...
   *
   * @returns nothing
 */
-function unreactToMessage(messageId: number, uId: number, reactId: number, type: string) {
+function UnreactToMessage(messageId: number, uId: number, reactId: number, type: string) {
   const data = getData();
   if (type === 'dm') {
     for (const dm of data.dms) {
@@ -409,11 +409,8 @@ function unreactToMessage(messageId: number, uId: number, reactId: number, type:
           for (const reaction of message.reacts) {
             if (reaction.reactId === reactId) {
               const index = reaction.uIds.indexOf(uId);
-							reaction.uIds.splice(index, 1);
+              reaction.uIds.splice(index, 1);
               reaction.isThisUserReacted = false;
-            }
-            if (isMemberOfDm(dm, message.uId)) {
-              notificationSetReact(message, uId, -1, dm.dmId, 'dm');
             }
           }
         }
@@ -427,11 +424,8 @@ function unreactToMessage(messageId: number, uId: number, reactId: number, type:
           for (const reaction of message.reacts) {
             if (reaction.reactId === reactId) {
               const index = reaction.uIds.indexOf(uId);
-							reaction.uIds.splice(index, 1);
+              reaction.uIds.splice(index, 1);
               reaction.isThisUserReacted = false;
-            }
-            if (isMemberOfChannel(channel, message.uId)) {
-              notificationSetReact(message, uId, channel.channelId, -1, 'channel');
             }
           }
         }
@@ -440,7 +434,6 @@ function unreactToMessage(messageId: number, uId: number, reactId: number, type:
   }
   setData(data);
 }
-
 
 /**
   * Edits the message that exists in the channel
