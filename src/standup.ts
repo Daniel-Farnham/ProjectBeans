@@ -1,6 +1,9 @@
 import { getData, setData } from './dataStore';
-import { tokenExists, storeMessageInChannel, getMessageId, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST } from './other';
+import { tokenExists, storeMessageInChannel, getMessageId, error, getUidFromToken, channelIdExists, isMemberOfChannel, FORBIDDEN, BAD_REQUEST, getChannelObjectFromChannelId } from './other';
 import HTTPError from 'http-errors';
+import { channelJoinV1 } from './wrapperFunctions';
+import { Message } from './types';
+import { collapseTextChangeRangesAcrossMultipleVersions, createJSDocComment } from 'typescript';
 
 const  MAX_MESSAGE_LEN = 1000; 
 type timeFinish = {
@@ -12,11 +15,10 @@ type isActive = {
 
 }
 
-let standup: Standup = {
-  messages: [],
-  timeFinish: -1,
-
-};
+// let standup: Standup = {
+//   messages: [],
+//   timeFinish: -1,
+// };
 
 
 /**
@@ -60,8 +62,12 @@ export function standupSendV1 (token: string, channelId: number, message: string
   const user = data.users.find(user => user.uId === uId); 
   const packagedMessage = user.handleStr + ': ' + message + '\n'; 
    
-  standup.messages.push(packagedMessage);   
-
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.standUp.messages.push(packagedMessage);
+    }
+  }
+  
   // Testing, messages are successfully packaged. 
   // console.log(packagedMessage); 
   // console.log(standup.messages); 
@@ -85,18 +91,18 @@ export function standupSendV1 (token: string, channelId: number, message: string
     }
 
     storeMessageInChannel(messageObj, channelId); 
-    */
+    */ 
   } 
 
   /* ########### Exists just for testing. ############# */
-  for (const channel of data.channels) {
+  /*for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       for (const targetmessage of channel.messages) {
         console.log('Channel message: ' + targetmessage.message);
       }
       console.log(channel);
     }
-  }
+  }*/
   
 
   return {}; 
@@ -163,46 +169,47 @@ export function standupStartV1 (token: string, channelId: number, length: number
   }
   
   const timeFinish = timeStandup(length);
-  const ActivateStandup = {
-    isActive: true,
-    timeFinish: timeFinish,
-  };
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      channel.standUp.push(ActivateStandup);
+      channel.standUp.isActive = true;
+      channel.standUp.timeFinish = timeFinish;
     }
   }
   
   setData(data);
-
   setTimeout(function() {
-    const standupMessages = standup.messages.join('')
+    const findChannel = data.channels.find(chan => chan.channelId === channelId);
+    const standupMessages = findChannel.standUp.messages.join('');
     const standupMessageId = getMessageId(); 
 
-    const messageObj = {
+    const messageObj: Message = {
       messageId: standupMessageId,
       uId: uId, 
       message: standupMessages,
-      timeStamp: timeFinish, 
+      timeSent: timeFinish,
+      reacts: [
+        {
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        }
+      ],
+      isPinned: false
     }
 
     storeMessageInChannel(messageObj, channelId); 
     deactivateStandup(channelId, timeFinish);
-
-    
   }, (length * 1000));
-
-  console.log('hello'); 
   /* ########### Exists just for testing. ############# */
-  for (const channel of data.channels) {
-    if (channel.channelId === channelId) {
-      for (const targetmessage of channel.messages) {
-        console.log('Channel message: ' + targetmessage.message);
-      }
-      console.log(channel);
-    }
-  }
+  // for (const channel of data.channels) {
+  //   if (channel.channelId === channelId) {
+  //     for (const targetmessage of channel.messages) {
+  //       console.log('Channel message: ' + targetmessage.message);
+  //     }
+  //     console.log(channel);
+  //   }
+  // }
   
   return { timeFinish: timeFinish };
 }
@@ -235,13 +242,12 @@ function timeStandup (length: number): number {
 function deactivateStandup(channelId: number, timeFinish: number) {
   const data = getData();
   for (const channel of data.channels) {
-    for (const targetStandup of channel.standUp) {
-      if (targetStandup.timeFinish === timeFinish) {
-        targetStandup.isActive = false;
-        targetStandup.messages = []; 
-        targetStandup.timeFinish = -1; 
+    if (channel.channelId === channelId);
+      if (channel.standUp.timeFinish >= timeFinish) {
+        channel.standUp.isActive = false;
+        channel.standUp.messages = []; 
+        channel.standUp.timeFinish = null; 
       }
-    }
   }
   setData(data);
 }
@@ -280,15 +286,12 @@ export function standupActiveV1(token: string, channelId: number): isActive | ti
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
-      for (const targetStandup of channel.standUp) {
-        if (targetStandup.isActive === true) {
+        if (channel.standUp.isActive === true) {
           isActive = true;
-          timeFinish = targetStandup.timeFinish;
+          timeFinish = channel.standUp.timeFinish;
         }
-      }
     }
   }
-
   return { isActive: isActive, timeFinish: timeFinish };
 }
 
