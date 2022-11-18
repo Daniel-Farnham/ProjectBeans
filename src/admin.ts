@@ -34,14 +34,17 @@ export function adminUserRemoveV1 (token: string, uId: number) {
   remove.nameLast = 'user';
   remove.email = 'Not a user - removed';
   remove.handleStr = '~RemovedUserRemovedUserRemovedUserRemovedUser~';
+  for (const session of data.sessions) {
+    if (session.uId === uId) {
+      session.tokens = [];
+    }
+  }
 
   for (const channel of data.channels) {
     const removeChannel = channel.allMembers.find((member) => member.uId === uId);
     if (typeof removeChannel !== 'undefined') {
-      removeChannel.nameFirst = 'Removed';
-      removeChannel.nameLast = 'user';
-      removeChannel.email = 'Not a user - removed';
-      removeChannel.handleStr = '~RemovedUserRemovedUserRemovedUserRemovedUser~';
+      channel.allMembers = channel.allMembers.filter((member) => member.uId !== removeChannel.uId);
+      channel.ownerMembers = channel.ownerMembers.filter((member) => member.uId !== removeChannel.uId);
       for (const message of channel.messages) {
         if (message.uId === uId) {
           message.message = 'Removed user';
@@ -53,10 +56,7 @@ export function adminUserRemoveV1 (token: string, uId: number) {
   for (const dm of data.dms) {
     const removeDm = dm.members.find((member) => member.uId === uId);
     if (typeof removeDm !== 'undefined') {
-      removeDm.nameFirst = 'Removed';
-      removeDm.nameLast = 'user';
-      removeDm.email = 'Not a user - removed';
-      removeDm.handleStr = '~RemovedUserRemovedUserRemovedUserRemovedUser~';
+      dm.members = dm.members.filter((member) => member.uId !== removeDm.uId);
       for (const message of dm.messages) {
         if (message.uId === uId) {
           message.message = 'Removed user';
@@ -64,6 +64,7 @@ export function adminUserRemoveV1 (token: string, uId: number) {
       }
     }
   }
+
   setData(data);
   return ({});
 }
