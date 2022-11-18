@@ -63,18 +63,17 @@ export function standupSendV1 (token: string, channelId: number, message: string
   standup.messages.push(packagedMessage);   
 
   // Testing, messages are successfully packaged. 
-  console.log(packagedMessage); 
-  console.log(standup.messages); 
-
+  // console.log(packagedMessage); 
+  // console.log(standup.messages); 
+  
   const timeFinish = standupActiveV1(token, channelId).timeFinish;
   
   // ## bug found here ## 
   // The problem is here. Each time a standUpSend is called a new message object is created with the packaged message. 
   // This should only be called once at the end. 
-  console.log('Current time: ' + (new Date()).getTime() / 1000); 
-  console.log('time finish: ' + timeFinish); 
-
+ 
   if (Math.floor((new Date()).getTime() / 1000 < timeFinish)) {
+    /*
     const standupMessages = standup.messages.join('')
     const standupMessageId = getMessageId(); 
 
@@ -86,7 +85,8 @@ export function standupSendV1 (token: string, channelId: number, message: string
     }
 
     storeMessageInChannel(messageObj, channelId); 
-  }
+    */
+  } 
 
   /* ########### Exists just for testing. ############# */
   for (const channel of data.channels) {
@@ -193,6 +193,16 @@ export function standupStartV1 (token: string, channelId: number, length: number
     
   }, (length * 1000));
 
+  console.log('hello'); 
+  /* ########### Exists just for testing. ############# */
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      for (const targetmessage of channel.messages) {
+        console.log('Channel message: ' + targetmessage.message);
+      }
+      console.log(channel);
+    }
+  }
   
   return { timeFinish: timeFinish };
 }
