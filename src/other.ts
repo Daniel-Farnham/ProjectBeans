@@ -16,6 +16,8 @@ export function clearV1 (): Record<string, never> {
     tokenCount: 0,
     dms: [],
     notifications: [],
+    resetCodeRequests: [],
+    resetCode: 0,
     workspaceStats: {
       channelsExist: [],
       dmsExist: [],

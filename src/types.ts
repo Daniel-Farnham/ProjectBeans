@@ -184,6 +184,12 @@ export type internalDm = {
 };
 export type internalDms = internalDm[];
 
+export type resetCodeRequest = {
+  email: string,
+  resetCode: string,
+};
+
+export type resetCodeRequests = resetCodeRequest[];
 export type messagesAnalytics = { numMessagesExist: number, timeStamp: number };
 export type internalMessagesExist = messagesAnalytics[];
 export type dmsAnalytics = { numDmsExist: number, timeStamp: number };
@@ -206,6 +212,8 @@ export type datastore = {
   tokenCount: number,
   dms: internalDms,
   notifications: internalNotifications,
+  resetCodeRequests: resetCodeRequests,
+  resetCode: number,
   workspaceStats: internalWorkspaceStats
   timeoutIds: internalTimeoutIds
 };

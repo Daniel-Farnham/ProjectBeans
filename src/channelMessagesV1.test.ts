@@ -12,7 +12,7 @@ beforeEach(() => {
 
 describe('Testing basic functionality for messagesOutputV1', () => {
   test('Testing messagesOutputV1 returns the correct types', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -37,7 +37,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing when start is 0 and messages is empty', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -64,7 +64,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing when start is 0 and messages is not empty', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -142,7 +142,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing when start is not 0 and messages is not empty', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -209,7 +209,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing end isn\'t -1 when start is 0 and 51 messages exist', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -238,7 +238,7 @@ describe('Testing basic functionality for messagesOutputV1', () => {
   });
 
   test('Testing end is -1 when start isn\'t 0 and 50 messages exist', () => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -297,7 +297,7 @@ describe('Testing messagesOutputV1 error handling', () => {
       statusCode: FORBIDDEN
     },
   ])('$desc', ({ name, isPublic, tokenOffset, channelIdOffset, start, statusCode }) => {
-    const newId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const newId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
@@ -320,14 +320,14 @@ describe('Testing messagesOutputV1 error handling', () => {
   });
 
   test('Testing a user that isn\'t a member of the channel', () => {
-    const firstId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const firstId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'hayden.smith@unsw.edu.au',
       password: '123456',
       nameFirst: 'Hayden',
       nameLast: 'Smith',
     });
 
-    const secondId = postRequest(SERVER_URL + '/auth/register/v2', {
+    const secondId = postRequest(SERVER_URL + '/auth/register/v3', {
       email: 'z5361935@ad.unsw.edu.au',
       password: 'password',
       nameFirst: 'Curtis',
