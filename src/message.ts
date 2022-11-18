@@ -262,11 +262,10 @@ export function messagePinV1 (token: string, messageId: number): error | Record<
         if (message.isPinned === true) {
           throw HTTPError(BAD_REQUEST, 'That message is already pinned');
         } else {
-          message.isPinned = true;
-          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
-          if (!isOwner) {
+          if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
             throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
           }
+          message.isPinned = true;
         }
       }
     }
@@ -326,10 +325,10 @@ export function messageUnpinV1 (token: string, messageId: number): error | Recor
         if (message.isPinned === false) {
           throw HTTPError(BAD_REQUEST, 'That message is not pinned');
         } else {
-          message.isPinned = false;
           if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
             throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
           }
+          message.isPinned = false;
         }
       }
     }
