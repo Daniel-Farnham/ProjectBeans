@@ -350,7 +350,6 @@ app.get('/channel/details/v3', (req: Request, res: Response, next) => {
   save();
 });
 
-
 app.post('/message/pin/v1', (req: Request, res: Response, next) => {
   const token = req.header('token');
   const messageId = parseInt(req.body.messageId as string);

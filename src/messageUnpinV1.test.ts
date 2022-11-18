@@ -110,6 +110,22 @@ describe('Testing message/unpin/v1 error handling', () => {
     expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
   });
 
+  test('Authorised user does not have owner permissions', () => {
+    const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
+    const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');
+
+    const chan = channelsCreateV1(user1.token, 'channel1', true);
+    channelJoinV1(user2.token, chan.channelId);
+    const msg = messageSendV1(user2.token, chan.channelId, 'hello!');
+
+    messagePinV1(user1.token, msg.messageId);
+    const result = messageUnpinV1(user2.token, msg.messageId);
+
+    expect(result.statusCode).toBe(FORBIDDEN);
+    const bodyObj = JSON.parse(result.body as string);
+    expect(bodyObj.error).toStrictEqual({ message: expect.any(String) });
+  });
+
   test('dm: the message is not pinned', () => {
     const user1 = authRegisterV1('jackblack@gmail.com', 'password', 'Jack', 'Black');
     const user2 = authRegisterV1('jeffbrown@gmail.com', 'password', 'Jeff', 'Brown');

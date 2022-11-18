@@ -323,8 +323,7 @@ export function messageUnpinV1 (token: string, messageId: number): error | Recor
           throw HTTPError(BAD_REQUEST, 'That message is not pinned');
         } else {
           message.isPinned = false;
-          const isOwner = isOwnerOfChannel(messageContainer.channel, getUidFromToken(token));
-          if (!isOwner) {
+          if (message.messageId === messageId && uId !== message.uId && messageContainer.dm.creator !== uId) {
             throw HTTPError(FORBIDDEN, 'Authorised user does not have owner permisssions');
           }
         }
