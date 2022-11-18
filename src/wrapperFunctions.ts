@@ -108,7 +108,9 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
     dmId: dmId,
   }, token);
 }
-
+export function messagePinV1 (token: string, messageId: number) {
+  return postRequest(SERVER_URL + '/message/pin/v1', { messageId }, token);
+}
 export function adminUserRemoveV1(token: string, uId: number) {
   return deleteRequest(SERVER_URL + '/admin/user/remove/v1', { uId }, token);
 }
