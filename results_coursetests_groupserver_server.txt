@@ -1,0 +1,203 @@
+
+> start
+> ts-node -T src/server.ts
+
+⚡️ Server listening on port 48237 at localhost
+Token provided is invalid
+[0mPOST /auth/logout/v2 [33m403[0m - ms - 49[0m
+userId is invalid
+[0mPOST /channel/join/v3 [33m403[0m - ms - 41[0m
+Not valid uId
+[0mDELETE /admin/user/remove/v1?uId=-1 [33m400[0m - ms - 37[0m
+Only global owner
+[0mDELETE /admin/user/remove/v1?uId=0 [33m400[0m - ms - 41[0m
+auth user provided is not global owner
+[0mDELETE /admin/user/remove/v1?uId=0 [33m403[0m - ms - 62[0m
+Token provided is invalid
+[0mDELETE /admin/user/remove/v1?uId=1 [33m403[0m - ms - 49[0m
+Only global owner and is being demoted
+[0mPOST /admin/userpermission/change/v1 [33m400[0m - ms - 62[0m
+auth user provided is not global owner
+[0mPOST /admin/userpermission/change/v1 [33m403[0m - ms - 62[0m
+Not valid uId
+[0mPOST /admin/userpermission/change/v1 [33m400[0m - ms - 37[0m
+permissionId is invalid
+[0mPOST /admin/userpermission/change/v1 [33m400[0m - ms - 47[0m
+permissionId is already the same
+[0mPOST /admin/userpermission/change/v1 [33m400[0m - ms - 56[0m
+Token provided is invalid
+[0mPOST /admin/userpermission/change/v1 [33m403[0m - ms - 49[0m
+token is invalid
+[0mGET /user/profile/v3?uId=0 [33m403[0m - ms - 40[0m
+Email doesn't belong to a user.
+[0mPOST /auth/login/v3 [33m400[0m - ms - 55[0m
+Incorrect password.
+[0mPOST /auth/login/v3 [33m400[0m - ms - 43[0m
+Token provided is invalid
+[0mPOST /auth/logout/v2 [33m403[0m - ms - 49[0m
+Invalid email.
+[0mPOST /auth/register/v3 [33m400[0m - ms - 38[0m
+Invalid email.
+[0mPOST /auth/register/v3 [33m400[0m - ms - 38[0m
+Invalid email.
+[0mPOST /auth/register/v3 [33m400[0m - ms - 38[0m
+Password is less than 6 characters.
+[0mPOST /auth/register/v3 [33m400[0m - ms - 59[0m
+Password is less than 6 characters.
+[0mPOST /auth/register/v3 [33m400[0m - ms - 59[0m
+First name isn't between 1 and 50 characters (inclusive)
+[0mPOST /auth/register/v3 [33m400[0m - ms - 80[0m
+First name isn't between 1 and 50 characters (inclusive)
+[0mPOST /auth/register/v3 [33m400[0m - ms - 80[0m
+Last name isn't between 1 and 50 characters (inclusive)
+[0mPOST /auth/register/v3 [33m400[0m - ms - 79[0m
+Last name isn't between 1 and 50 characters (inclusive)
+[0mPOST /auth/register/v3 [33m400[0m - ms - 79[0m
+Email is already in use.
+[0mPOST /auth/register/v3 [33m400[0m - ms - 48[0m
+[0mPOST /auth/passwordreset/reset/v1 [33m404[0m 1.061 ms - 167[0m
+User is not a member of the channel
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 59[0m
+User is not a member of the channel
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 59[0m
+User is not a member of the channel
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 59[0m
+User is not a member of the channel
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 59[0m
+Authorising user does not have owner permissions in this channel
+[0mPOST /channel/addowner/v2 [33m403[0m - ms - 88[0m
+User is already an owner of the channel
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 63[0m
+uId is invalid
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 38[0m
+channelId is invalid
+[0mPOST /channel/addowner/v2 [33m400[0m - ms - 44[0m
+token is invalid
+[0mPOST /channel/addowner/v2 [33m403[0m - ms - 40[0m
+User is not a member of the channel
+[0mGET /channel/details/v3?channelId=0 [33m403[0m - ms - 59[0m
+channelId is invalid
+[0mGET /channel/details/v3?channelId=-1 [33m400[0m - ms - 44[0m
+token is invalid
+[0mGET /channel/details/v3?channelId=0 [33m403[0m - ms - 40[0m
+User to invite already a member of channel
+[0mPOST /channel/invite/v3 [33m400[0m - ms - 66[0m
+authUserId is not a member of channel
+[0mPOST /channel/invite/v3 [33m403[0m - ms - 61[0m
+uId/channelId not valid
+[0mPOST /channel/invite/v3 [33m400[0m - ms - 47[0m
+uId/channelId not valid
+[0mPOST /channel/invite/v3 [33m400[0m - ms - 47[0m
+token is not valid
+[0mPOST /channel/invite/v3 [33m403[0m - ms - 42[0m
+Channel is private and user is not global owner or a member of the channel
+[0mPOST /channel/join/v3 [33m403[0m - ms - 98[0m
+User is already a member of the public channel
+[0mPOST /channel/join/v3 [33m400[0m - ms - 70[0m
+channelId is invalid
+[0mPOST /channel/join/v3 [33m400[0m - ms - 44[0m
+userId is invalid
+[0mPOST /channel/join/v3 [33m403[0m - ms - 41[0m
+User is not a member of the channel
+[0mPOST /channel/leave/v2 [33m403[0m - ms - 59[0m
+channelId is invalid
+[0mPOST /channel/leave/v2 [33m400[0m - ms - 44[0m
+token is invalid
+[0mPOST /channel/leave/v2 [33m403[0m - ms - 40[0m
+Start index is greater than number of messages in channel
+[0mGET /channel/messages/v3?channelId=0&start=21389429 [33m400[0m - ms - 81[0m
+User is not a member of the channel
+[0mGET /channel/messages/v3?channelId=0&start=0 [33m403[0m - ms - 59[0m
+channelId is invalid
+[0mGET /channel/messages/v3?channelId=-1&start=0 [33m400[0m - ms - 44[0m
+token is invalid
+[0mGET /channel/messages/v3?channelId=0&start=0 [33m403[0m - ms - 40[0m
+Auth user is not a member of the channel
+[0mPOST /channel/removeowner/v2 [33m403[0m - ms - 64[0m
+Auth user is not a member of the channel
+[0mPOST /channel/removeowner/v2 [33m403[0m - ms - 64[0m
+Authorising user does not have owner permissions in this channel
+[0mPOST /channel/removeowner/v2 [33m403[0m - ms - 88[0m
+The user to remove is the only owner of the channel
+[0mPOST /channel/removeowner/v2 [33m400[0m - ms - 75[0m
+The user to remove is the only owner of the channel
+[0mPOST /channel/removeowner/v2 [33m400[0m - ms - 75[0m
+User to remove is not the owner of a channel
+[0mPOST /channel/removeowner/v2 [33m400[0m - ms - 68[0m
+uId is invalid
+[0mPOST /channel/removeowner/v2 [33m400[0m - ms - 38[0m
+channelId is invalid
+[0mPOST /channel/removeowner/v2 [33m400[0m - ms - 44[0m
+Token is invalid
+[0mPOST /channel/removeowner/v2 [33m403[0m - ms - 40[0m
+Channel is private and user is not global owner or a member of the channel
+[0mPOST /channel/join/v3 [33m403[0m - ms - 98[0m
+Channel name is invalid.
+[0mPOST /channels/create/v3 [33m400[0m - ms - 48[0m
+Channel name is invalid.
+[0mPOST /channels/create/v3 [33m400[0m - ms - 48[0m
+Channel name is invalid.
+[0mPOST /channels/create/v3 [33m400[0m - ms - 48[0m
+Channel name is invalid.
+[0mPOST /channels/create/v3 [33m400[0m - ms - 48[0m
+token is invalid.
+[0mPOST /channels/create/v3 [33m403[0m - ms - 41[0m
+token is invalid
+[0mGET /channels/list/v3 [33m403[0m - ms - 40[0m
+token is invalid
+[0mGET /channels/listAll/v3 [33m403[0m - ms - 40[0m
+One or more given uId's doesn't exist
+[0mPOST /dm/create/v2 [33m400[0m - ms - 61[0m
+One or more given uId's doesn't exist
+[0mPOST /dm/create/v2 [33m400[0m - ms - 61[0m
+A duplicate uId has been given
+[0mPOST /dm/create/v2 [33m400[0m - ms - 54[0m
+Token is invalid
+[0mPOST /dm/create/v2 [33m403[0m - ms - 40[0m
+User is not a member of the dm
+[0mGET /dm/details/v2?dmId=1 [33m403[0m - ms - 54[0m
+dmId is invalid
+[0mGET /dm/details/v2?dmId=-1 [33m400[0m - ms - 39[0m
+Token is invalid
+[0mGET /dm/details/v2?dmId=1 [33m403[0m - ms - 40[0m
+User is not a member of the dm
+[0mPOST /dm/leave/v2 [33m403[0m - ms - 54[0m
+dmId is invalid
+[0mPOST /dm/leave/v2 [33m400[0m - ms - 39[0m
+Token is invalid
+[0mPOST /dm/leave/v2 [33m403[0m - ms - 40[0m
+Token is invalid
+[0mGET /dm/list/v2 [33m403[0m - ms - 40[0m
+Start index is greater than number of messages in dm
+[0mGET /dm/messages/v2?dmId=1&start=21389429 [33m400[0m - ms - 76[0m
+User is not a member of dm
+[0mGET /dm/messages/v2?dmId=1&start=0 [33m403[0m - ms - 50[0m
+dmId is invalid
+[0mGET /dm/messages/v2?dmId=-1&start=0 [33m400[0m - ms - 39[0m
+Token is invalid
+[0mGET /dm/messages/v2?dmId=1&start=0 [33m403[0m - ms - 40[0m
+Authorised user isn't the dm creator
+[0mDELETE /dm/remove/v2?dmId=1 [33m403[0m - ms - 60[0m
+Authorised user is not a member of the dm
+[0mDELETE /dm/remove/v2?dmId=1 [33m403[0m - ms - 65[0m
+Authorised user is not a member of the dm
+[0mDELETE /dm/remove/v2?dmId=1 [33m403[0m - ms - 65[0m
+Token is invalid
+[0mDELETE /dm/remove/v2?dmId=1 [33m403[0m - ms - 40[0m
+User atttempting edit message is not the owner of the dm or the sender
+[0mPUT /message/edit/v2 [33m403[0m - ms - 94[0m
+length of message is over 1000 characters.
+[0mPUT /message/edit/v2 [33m400[0m - ms - 66[0m
+Channel member does not have permissions to remove/edit/share message
+[0mPUT /message/edit/v2 [33m403[0m - ms - 93[0m
+token is invalid
+[0mPUT /message/edit/v2 [33m403[0m - ms - 40[0m
+/import/kamen/3/cs1531/project-automarking/tempstore/src/auth.ts:33
+  const data = getData();
+                      ^
+TypeError: Cannot read properties of undefined (reading 'uId')
+    at /import/kamen/3/cs1531/project-automarking/tempstore/src/auth.ts:336:30
+    at step (/import/kamen/3/cs1531/project-automarking/tempstore/src/auth.ts:33:23)
+    at Object.next (/import/kamen/3/cs1531/project-automarking/tempstore/src/auth.ts:14:53)
+    at fulfilled (/import/kamen/3/cs1531/project-automarking/tempstore/src/auth.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)

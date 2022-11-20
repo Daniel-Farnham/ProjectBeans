@@ -1,0 +1,188 @@
+
+src/admin.ts
+  0:0  passing  No linting issues  success
+
+src/adminUserPermissionChangeV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminUserRemoveV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/auth.ts
+  0:0  passing  No linting issues  success
+
+src/authLoginV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/authLogoutV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/authPasswordResetRequestV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/authRegisterV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channel.ts
+  0:0  passing  No linting issues  success
+
+src/channelAddOwnerV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelDetailsV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelInviteV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelJoinV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelLeaveV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelMessagesV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelRemoveOwnerV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channels.ts
+  0:0  passing  No linting issues  success
+
+src/channelsCreateV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelsListAllV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/channelsListV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/clear.test.ts
+  0:0  passing  No linting issues  success
+
+src/dataStore.ts
+  0:0  passing  No linting issues  success
+
+src/dm.ts
+  0:0  passing  No linting issues  success
+
+src/dmCreateV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/dmDetailsV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/dmLeaveV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/dmListV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/dmMessagesV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/dmRemoveV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/echo.test.ts
+  0:0  passing  No linting issues  success
+
+src/echo.ts
+  0:0  passing  No linting issues  success
+
+src/message.ts
+  0:0  passing  No linting issues  success
+
+src/messageEditV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messagePinV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageReactV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageRemoveV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageSendDmV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageSendV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageSendlaterV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageSendlaterdmV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageShareV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageUnpinV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/messageUnreactV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/notifications.ts
+  0:0  passing  No linting issues  success
+
+src/notificationsGetV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/other.ts
+  0:0  passing  No linting issues  success
+
+src/searchV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/server.ts
+  0:0  passing  No linting issues  success
+
+src/standUpSendV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/standup.ts
+  0:0  passing  No linting issues  success
+
+src/standupActiveV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/standupStartV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/types.ts
+  0:0  passing  No linting issues  success
+
+src/userProfileSetEmailV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/userProfileSetHandleV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/userProfileSetNameV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/userProfileUploadPhotoV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/userProfileV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/users.ts
+  0:0  passing  No linting issues  success
+
+src/usersAllV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/usersStatsV1.test.ts
+  0:0  passing  No linting issues  success
+
+src/wrapperFunctions.ts
+  0:0  passing  No linting issues  success
+
+✔ 62 files successfully linted.

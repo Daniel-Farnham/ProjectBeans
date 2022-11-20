@@ -1,0 +1,51 @@
+
+> test
+> jest **/?(*.)+(test).ts
+
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+PASS src/standupStartV1.test.ts (8.954 s)
+PASS src/dmRemoveV1.test.ts
+PASS src/channelLeaveV1.test.ts
+PASS src/dmMessagesV1.test.ts (11.559 s)
+PASS src/messageEditV1.test.ts (6.479 s)
+PASS src/notificationsGetV1.test.ts (8.75 s)
+PASS src/messageRemoveV1.test.ts
+PASS src/messagePinV1.test.ts (6.253 s)
+PASS src/userProfileSetHandleV1.test.ts (5.156 s)
+PASS src/messageUnpinV1.test.ts (6.457 s)
+PASS src/messageUnreactV1.test.ts (7.223 s)
+PASS src/channelRemoveOwnerV1.test.ts
+PASS src/messageReactV1.test.ts (8.284 s)
+PASS src/channelAddOwnerV1.test.ts
+PASS src/standupActiveV1.test.ts
+PASS src/userProfileUploadPhotoV1.test.ts (5.373 s)
+PASS src/messageSendDmV1.test.ts
+PASS src/userProfileSetEmailV1.test.ts
+PASS src/channelMessagesV1.test.ts (11.962 s)
+PASS src/channelsCreateV1.test.ts
+PASS src/adminUserPermissionChangeV1.test.ts
+PASS src/authRegisterV1.test.ts
+PASS src/adminUserRemoveV1.test.ts
+PASS src/messageSendV1.test.ts
+PASS src/dmLeaveV1.test.ts
+PASS src/authLoginV1.test.ts
+PASS src/channelDetailsV1.test.ts
+PASS src/channelJoinV1.test.ts
+PASS src/channelsListV1.test.ts
+PASS src/dmCreateV1.test.ts
+PASS src/userProfileSetNameV1.test.ts (7.45 s)
+PASS src/dmDetailsV1.test.ts
+PASS src/usersStatsV1.test.ts
+PASS src/searchV1.test.ts (6.716 s)
+PASS src/channelInviteV1.test.ts
+PASS src/dmListV1.test.ts
+PASS src/userProfileV1.test.ts
+PASS src/channelsListAllV1.test.ts
+PASS src/authPasswordResetRequestV1.test.ts
+PASS src/clear.test.ts
+PASS src/usersAllV1.test.ts
+PASS src/authLogoutV1.test.ts
+PASS src/echo.test.ts
+PASS src/messageSendlaterdmV1.test.ts (27.926 s)
+PASS src/messageSendlaterV1.test.ts (21.954 s)
