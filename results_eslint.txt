@@ -1,0 +1,189 @@
+
+[4msrc/admin.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/adminUserPermissionChangeV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/adminUserRemoveV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/auth.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/authLoginV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/authLogoutV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/authPasswordResetRequestV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/authRegisterV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channel.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelAddOwnerV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelDetailsV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelInviteV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelJoinV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelLeaveV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelMessagesV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelRemoveOwnerV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channels.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelsCreateV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelsListAllV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelsListV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/clear.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dataStore.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dm.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmCreateV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmDetailsV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmLeaveV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmListV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmMessagesV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmRemoveV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/echo.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/echo.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/message.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageEditV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messagePinV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageReactV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageRemoveV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageSendDmV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageSendV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageSendlaterV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageSendlaterdmV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageShareV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageUnpinV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/messageUnreactV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/notifications.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/notificationsGetV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/other.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/searchV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/server.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/standUpSendV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/standup.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/standupActiveV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/standupStartV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/types.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/userProfileSetEmailV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/userProfileSetHandleV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/userProfileSetNameV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/userProfileUploadPhotoV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/userProfileV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/users.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/usersAllV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/usersStatsV1.test.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/wrapperFunctions.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[32m[1m✔ 62 files successfully linted.[22m[39m
+[32m[1m[22m[39m

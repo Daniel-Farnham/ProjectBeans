@@ -1,0 +1,63 @@
+
+> test
+> jest **/?(*.)+(test).ts
+
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+PASS src/standupStartV1.test.ts (6.201 s)
+PASS src/standupActiveV1.test.ts
+PASS src/messageEditV1.test.ts
+PASS src/dmMessagesV1.test.ts
+PASS src/channelMessagesV1.test.ts
+PASS src/messageShareV1.test.ts
+PASS src/notificationsGetV1.test.ts
+PASS src/messagePinV1.test.ts
+PASS src/messageUnpinV1.test.ts
+PASS src/channelRemoveOwnerV1.test.ts
+PASS src/messageUnreactV1.test.ts
+PASS src/messageRemoveV1.test.ts
+PASS src/messageSendDmV1.test.ts
+PASS src/channelAddOwnerV1.test.ts
+PASS src/messageReactV1.test.ts
+PASS src/channelInviteV1.test.ts
+PASS src/channelLeaveV1.test.ts
+PASS src/channelJoinV1.test.ts
+PASS src/dmDetailsV1.test.ts
+PASS src/messageSendV1.test.ts
+PASS src/dmCreateV1.test.ts
+PASS src/channelsListV1.test.ts
+PASS src/authRegisterV1.test.ts
+PASS src/authLoginV1.test.ts
+PASS src/messageSendlaterV1.test.ts (19.75 s)
+PASS src/messageSendlaterdmV1.test.ts (26.017 s)
+PASS src/dmListV1.test.ts
+PASS src/authLogoutV1.test.ts
+PASS src/adminUserRemoveV1.test.ts
+PASS src/channelsCreateV1.test.ts
+PASS src/channelDetailsV1.test.ts
+PASS src/channelsListAllV1.test.ts
+PASS src/clear.test.ts
+PASS src/userProfileSetNameV1.test.ts
+PASS src/searchV1.test.ts
+PASS src/userProfileSetHandleV1.test.ts
+PASS src/dmLeaveV1.test.ts
+PASS src/userProfileSetEmailV1.test.ts
+PASS src/standUpSendV1.test.ts
+PASS src/dmRemoveV1.test.ts
+PASS src/usersStatsV1.test.ts
+PASS src/adminUserPermissionChangeV1.test.ts
+PASS src/userProfileUploadPhotoV1.test.ts
+PASS src/usersAllV1.test.ts
+PASS src/userProfileV1.test.ts
+PASS src/authPasswordResetRequestV1.test.ts
+PASS src/echo.test.ts
+
+Test Suites: 47 passed, 47 total
+Tests:       370 passed, 370 total
+Snapshots:   0 total
+Time:        119.658 s
+Ran all test suites.
+
+> posttest
+> pkill -f 'node_modules/sync-rpc/lib/worker.js' > /dev/null 2>&1
+
